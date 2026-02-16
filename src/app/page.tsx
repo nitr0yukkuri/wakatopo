@@ -3,191 +3,146 @@ import { fetchPlanetData } from '@/lib/actions';
 import ClientInitializer from '@/components/ClientInitializer';
 
 export default async function Home() {
-  // サーバーサイドでデータ取得
   const data = await fetchPlanetData();
 
+  const works = [
+    { id: '01', title: 'GitHub Planet', cat: 'THREE.JS / VISUALIZATION', desc: 'Activity-based terrain generation' },
+    { id: '02', title: 'Otenki Gurashi', cat: 'NEXT.JS / PWA', desc: 'Weather-sync life simulation' },
+    { id: '03', title: 'ColdKeep', cat: 'AI / IOT', desc: 'Audio-based volume estimation' },
+  ];
+
   return (
-    <main className="relative w-full min-h-screen text-white font-mono selection:bg-cyan-500/30 bg-slate-950">
-      {/* データをクライアントストアに注入（表示なし） */}
+    <main className="relative w-full min-h-screen text-white font-sans bg-[#050505]">
       <ClientInitializer
         initialWeather={data.weather as any}
         initialActivity={data.activityLevel}
       />
 
-      {/* 3D Scene Background (Fixed) */}
-      {/* z-0 に配置し、画面全体に固定。余白部分のイベントはCanvasが受け取る */}
-      <div className="fixed inset-0 z-0">
+      {/* 3D Scene Background */}
+      <div className="fixed inset-0 z-0 opacity-80 mix-blend-screen">
         <Scene />
       </div>
 
-      {/* Scrollable Overlay Content */}
-      {/* z-10 で手前に配置。コンテンツ以外はクリック透過(pointer-events-none)させるのがコツ */}
-      <div className="relative z-10 w-full h-full">
+      {/* === FIXED HUD UI === */}
+      <div className="fixed inset-0 z-50 pointer-events-none p-6 md:p-8 flex flex-col justify-between text-xs font-mono tracking-widest text-gray-500">
+        {/* Top Left */}
+        <div className="flex flex-col gap-2">
+          <h1 className="text-white font-bold text-sm tracking-tighter">WAKATOPO</h1>
+          <p>IMMERSIVE PORTFOLIO</p>
+        </div>
 
-        {/* === HERO SECTION (Full Screen) === */}
-        <section className="min-h-screen flex flex-col justify-between p-6 md:p-12 pointer-events-none">
-          {/* Header Stats */}
-          <header className="flex justify-between items-start pointer-events-auto">
-            <div>
-              <h1 className="text-xl md:text-2xl font-bold tracking-widest mb-2 flex items-center gap-3">
-                <span className="w-3 h-3 bg-cyan-500 rounded-full animate-pulse shadow-[0_0_10px_#06b6d4]" />
-                LIVING PLANET
-              </h1>
-              <div className="text-xs text-cyan-300/80 space-y-1 font-light tracking-wider">
-                <p>SYSTEM: ONLINE</p>
-                <p>TARGET: NITR0YUKKURI</p>
-              </div>
-            </div>
-
-            {/* Live Data Badge */}
-            <div className="text-right text-xs text-cyan-100/70 border border-cyan-900/50 bg-slate-950/40 backdrop-blur-md p-3 rounded-lg shadow-lg">
-              <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-left">
-                <span className="text-gray-500">LOC</span>
-                <span>OSAKA, JP</span>
-                <span className="text-gray-500">WTHR</span>
-                <span className={data.weather === 'Rain' ? 'text-blue-400' : 'text-orange-400'}>
-                  {data.weather.toUpperCase()}
-                </span>
-                <span className="text-gray-500">ACTV</span>
-                <span className="text-green-400">{(data.activityLevel * 100).toFixed(0)}%</span>
-              </div>
-            </div>
-          </header>
-
-          {/* Hero Text */}
-          <div className="pointer-events-auto mb-20 md:mb-32">
-            <h2 className="text-5xl md:text-8xl font-black tracking-tighter mb-6 text-transparent bg-clip-text bg-gradient-to-r from-cyan-100 via-cyan-400 to-blue-600 drop-shadow-[0_0_15px_rgba(34,211,238,0.3)]">
-              WAKATOPO
-            </h2>
-            <p className="text-lg md:text-2xl text-slate-300 max-w-2xl leading-relaxed border-l-2 border-cyan-500 pl-6 bg-gradient-to-r from-slate-900/50 to-transparent py-2">
-              "Code breathes with the atmosphere."<br />
-              <span className="text-base text-slate-400 mt-2 block">
-                An immersive 3D portfolio fusing GitHub activities with real-world weather.
-              </span>
-            </p>
+        {/* Top Right */}
+        <div className="absolute top-8 right-8 text-right flex flex-col gap-1">
+          <div className="flex items-center justify-end gap-2 text-cyan-400">
+            <span className="w-1.5 h-1.5 bg-cyan-400 rounded-none animate-pulse" />
+            <span>SYSTEM ONLINE</span>
           </div>
+          <span>TARGET: NITR0YUKKURI</span>
+        </div>
 
-          {/* Scroll Indicator */}
-          <div className="absolute bottom-10 right-10 flex flex-col items-center gap-2 animate-bounce pointer-events-auto opacity-70">
-            <span className="text-[10px] tracking-widest text-cyan-400">SCROLL TO EXPLORE</span>
-            <div className="w-[1px] h-12 bg-gradient-to-b from-cyan-400 to-transparent"></div>
+        {/* Bottom Left */}
+        <div className="flex flex-col gap-1 border-l border-gray-800 pl-4">
+          <div className="flex gap-4">
+            <span className="w-12">LOC</span>
+            <span className="text-gray-300">OSAKA, JP</span>
+          </div>
+          <div className="flex gap-4">
+            <span className="w-12">WTHR</span>
+            <span className={data.weather === 'Rain' ? 'text-blue-400' : 'text-orange-400'}>
+              {data.weather.toUpperCase()}
+            </span>
+          </div>
+          <div className="flex gap-4">
+            <span className="w-12">ACTV</span>
+            <span className="text-white">{(data.activityLevel * 100).toFixed(0)}%</span>
+          </div>
+        </div>
+
+        {/* Bottom Right */}
+        <div className="text-right flex flex-col items-end gap-2">
+          <span>SCROLL TO EXPLORE</span>
+          <div className="w-[1px] h-8 bg-gray-600"></div>
+        </div>
+      </div>
+
+      {/* === SCROLLABLE CONTENT === */}
+      <div className="relative z-10 w-full">
+
+        {/* HERO */}
+        <section className="h-screen flex items-center justify-center pointer-events-none">
+          <div className="text-center space-y-6">
+            <h2 className="text-6xl md:text-9xl font-bold tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white to-transparent opacity-80">
+              LIVING<br />PLANET
+            </h2>
+            <p className="text-sm md:text-base text-gray-400 font-mono">
+              Code breathes with the atmosphere.
+            </p>
           </div>
         </section>
 
-        {/* === CONTENT SECTIONS (Scrollable) === */}
-        {/* 背景にグラデーションをかけ、下に行くほど3Dが暗くなり文字が読みやすくなるようにする */}
-        <div className="bg-gradient-to-b from-transparent via-slate-950/80 to-slate-950/95 backdrop-blur-[2px]">
+        {/* PHILOSOPHY */}
+        <section className="py-32 px-6 md:px-20 max-w-4xl mx-auto pointer-events-auto">
+          <span className="text-cyan-500 text-xs font-mono mb-8 block">01 / CONCEPT</span>
+          <p className="text-2xl md:text-4xl font-light leading-snug text-gray-200">
+            Webサイトを<br />
+            「静的な情報の羅列」から<br />
+            <span className="text-white font-normal border-b border-cyan-500/50">「呼吸する惑星」</span>へ。
+          </p>
+          <p className="mt-8 text-sm text-gray-500 leading-relaxed max-w-xl font-mono">
+            GitHubの活動が地形を作り、現実の天気が空気を変える。<br />
+            エンジニアとしての生存記録を有機的なデジタルアートへ昇華させる実験。
+          </p>
+        </section>
 
-          {/* PHILOSOPHY */}
-          <section className="container mx-auto px-6 py-32 pointer-events-auto">
-            <div className="max-w-4xl mx-auto">
-              <span className="text-cyan-500 text-sm tracking-widest font-bold mb-4 block">01 / PHILOSOPHY</span>
-              <h3 className="text-3xl md:text-5xl font-bold mb-12 leading-tight">
-                Webサイトを<br />
-                「静的な情報の羅列」から<br />
-                <span className="text-cyan-400">「呼吸する惑星」</span>へ。
-              </h3>
-              <div className="grid md:grid-cols-2 gap-12 text-slate-300 leading-8 text-lg">
-                <p>
-                  このポートフォリオは、単なる作品集ではありません。
-                  <b>GitHubの活動履歴（Commit）</b>が惑星の地形を隆起させ、
-                  <b>現実世界の気象（Weather）</b>がその空間の空気を決定づけます。
-                </p>
-                <p>
-                  クリエイティブコーディングと最新のWeb技術を駆使し、
-                  エンジニアとしての「生存記録」を、有機的なデジタルアートとして昇華させる実験的プロジェクトです。
-                </p>
-              </div>
-            </div>
-          </section>
+        {/* WORKS */}
+        <section className="py-32 bg-black/40 backdrop-blur-sm pointer-events-auto border-y border-white/5">
+          <div className="container mx-auto px-6 md:px-20">
+            <span className="text-cyan-500 text-xs font-mono mb-12 block">02 / SELECTED WORKS</span>
 
-          {/* PROJECTS */}
-          <section className="container mx-auto px-6 py-32 pointer-events-auto border-t border-slate-800/50">
-            <div className="max-w-6xl mx-auto">
-              <span className="text-cyan-500 text-sm tracking-widest font-bold mb-8 block">02 / SELECTED WORKS</span>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {/* Project 1 */}
-                <div className="group relative bg-slate-900/40 border border-slate-700/50 rounded-xl overflow-hidden hover:border-cyan-500/50 hover:bg-slate-800/60 transition-all duration-500">
-                  <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-100 transition-opacity text-6xl">🌍</div>
-                  <div className="p-8 h-full flex flex-col">
-                    <h4 className="text-2xl font-bold mb-2 text-cyan-100 group-hover:text-cyan-400 transition-colors">GitHub Planet</h4>
-                    <div className="flex gap-2 mb-4 text-[10px] text-cyan-300/70 uppercase tracking-wider">
-                      <span className="border border-cyan-900 px-2 py-1 rounded">Three.js</span>
-                      <span className="border border-cyan-900 px-2 py-1 rounded">GraphQL</span>
-                    </div>
-                    <p className="text-slate-400 text-sm leading-relaxed mb-6 flex-grow">
-                      開発者の活動量に応じて地形が変化する3D惑星生成アプリケーション。
-                      日々のコードコミットが惑星の「質量」となり、エンジニアとしてのアイデンティティを可視化します。
-                    </p>
-                  </div>
-                </div>
-
-                {/* Project 2 */}
-                <div className="group relative bg-slate-900/40 border border-slate-700/50 rounded-xl overflow-hidden hover:border-cyan-500/50 hover:bg-slate-800/60 transition-all duration-500">
-                  <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-100 transition-opacity text-6xl">🌦️</div>
-                  <div className="p-8 h-full flex flex-col">
-                    <h4 className="text-2xl font-bold mb-2 text-cyan-100 group-hover:text-cyan-400 transition-colors">Otenki Gurashi</h4>
-                    <div className="flex gap-2 mb-4 text-[10px] text-cyan-300/70 uppercase tracking-wider">
-                      <span className="border border-cyan-900 px-2 py-1 rounded">Next.js</span>
-                      <span className="border border-cyan-900 px-2 py-1 rounded">PWA</span>
-                    </div>
-                    <p className="text-slate-400 text-sm leading-relaxed mb-6 flex-grow">
-                      現実の天気と完全にリンクする生活シミュレーション。
-                      雨の日にはアンニュイに、晴れの日には活発に。デジタル上のキャラクターが「同じ空の下」で暮らします。
-                    </p>
-                  </div>
-                </div>
-
-                {/* Project 3 */}
-                <div className="group relative bg-slate-900/40 border border-slate-700/50 rounded-xl overflow-hidden hover:border-cyan-500/50 hover:bg-slate-800/60 transition-all duration-500">
-                  <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-100 transition-opacity text-6xl">🧊</div>
-                  <div className="p-8 h-full flex flex-col">
-                    <h4 className="text-2xl font-bold mb-2 text-cyan-100 group-hover:text-cyan-400 transition-colors">ColdKeep</h4>
-                    <div className="flex gap-2 mb-4 text-[10px] text-cyan-300/70 uppercase tracking-wider">
-                      <span className="border border-cyan-900 px-2 py-1 rounded">AI Analysis</span>
-                      <span className="border border-cyan-900 px-2 py-1 rounded">Audio</span>
-                    </div>
-                    <p className="text-slate-400 text-sm leading-relaxed mb-6 flex-grow">
-                      水筒を振った「音」だけで氷の残量を推定するAIプロダクト。
-                      非接触センシング技術とDeep Learningを用いた、日常に溶け込むIoTソリューション。
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* SKILLS */}
-          <section className="container mx-auto px-6 py-32 pointer-events-auto border-t border-slate-800/50">
-            <div className="max-w-4xl mx-auto text-center">
-              <span className="text-cyan-500 text-sm tracking-widest font-bold mb-8 block">03 / TECHNOLOGY STACK</span>
-              <div className="flex flex-wrap justify-center gap-3">
-                {['TypeScript', 'React', 'Next.js 15', 'Three.js (R3F)', 'GLSL Shaders', 'Supabase', 'Tailwind CSS', 'Node.js', 'Python', 'Git', 'Vercel'].map((tech) => (
-                  <span key={tech} className="px-6 py-3 bg-slate-900 rounded-full text-cyan-100 border border-slate-800 text-sm hover:border-cyan-500/50 hover:bg-cyan-900/20 hover:text-cyan-400 transition-all cursor-default">
-                    {tech}
+            <div className="flex flex-col">
+              {works.map((work) => (
+                <div key={work.id} className="group relative border-t border-white/10 py-12 flex flex-col md:flex-row md:items-baseline justify-between transition-colors hover:bg-white/5 cursor-pointer">
+                  <span className="font-mono text-xs text-gray-600 mb-2 md:mb-0 w-16 group-hover:text-cyan-400 transition-colors">
+                    {work.id}
                   </span>
-                ))}
-              </div>
-            </div>
-          </section>
 
-          {/* FOOTER */}
-          <footer className="border-t border-slate-800 bg-black/80 py-16 pointer-events-auto">
-            <div className="container mx-auto px-6 text-center">
-              <h2 className="text-3xl font-bold text-white mb-8 tracking-tighter">LET'S CONNECT</h2>
-              <div className="flex justify-center gap-8 mb-12">
-                <a href="https://github.com/nitr0yukkuri" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-cyan-400 transition-colors uppercase tracking-widest text-sm">GitHub</a>
-                <a href="#" className="text-slate-400 hover:text-cyan-400 transition-colors uppercase tracking-widest text-sm">Twitter</a>
-                <a href="#" className="text-slate-400 hover:text-cyan-400 transition-colors uppercase tracking-widest text-sm">Mail</a>
-              </div>
-              <p className="text-xs text-slate-600">
-                © 2026 WAKATO NAKATA. ALL RIGHTS RESERVED.<br />
-                DESIGNED & DEVELOPED WITH ❤️ IN OSAKA.
-              </p>
+                  <h3 className="text-3xl md:text-5xl font-bold text-gray-300 group-hover:text-white transition-colors flex-1">
+                    {work.title}
+                  </h3>
+
+                  <div className="mt-4 md:mt-0 md:text-right">
+                    <div className="text-[10px] font-mono text-cyan-500/80 mb-1 tracking-wider uppercase">
+                      {work.cat}
+                    </div>
+                    <div className="text-sm text-gray-500 group-hover:text-gray-400">
+                      {work.desc}
+                    </div>
+                  </div>
+                </div>
+              ))}
+              <div className="border-t border-white/10" />
             </div>
-          </footer>
-        </div>
+          </div>
+        </section>
+
+        {/* FOOTER */}
+        <footer className="py-24 px-6 md:px-20 bg-[#050505] pointer-events-auto">
+          <div className="flex flex-col md:flex-row justify-between items-end gap-12">
+            <div>
+              <h2 className="text-4xl font-bold tracking-tight mb-6 text-white">LET'S CONNECT</h2>
+              <div className="flex gap-8 font-mono text-xs text-gray-400">
+                <a href="https://github.com/nitr0yukkuri" target="_blank" className="hover:text-cyan-400 transition-colors">GITHUB</a>
+                <a href="#" className="hover:text-cyan-400 transition-colors">TWITTER</a>
+                <a href="#" className="hover:text-cyan-400 transition-colors">MAIL</a>
+              </div>
+            </div>
+            <p className="text-[10px] text-gray-700 font-mono text-right">
+              © 2026 WAKATO NAKATA.<br />
+              DESIGNED IN OSAKA.
+            </p>
+          </div>
+        </footer>
+
       </div>
     </main>
   );
