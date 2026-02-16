@@ -1,9 +1,13 @@
 export const vertexShader = `
 varying vec2 vUv;
 varying float vDisplacement;
+varying vec3 vNormal;
+varying vec3 vViewPosition;
 uniform float uTime;
 uniform float uActivity;
+uniform float uIntro;
 
+// Simple Perlin Noise
 vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
 vec4 mod289(vec4 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
 vec4 permute(vec4 x) { return mod289(((x*34.0)+1.0)*x); }
@@ -57,24 +61,51 @@ float snoise(vec3 v) {
 
 void main() {
   vUv = uv;
-  float noise = snoise(position * 2.0 + uTime * 0.5);
-  vDisplacement = noise * (0.2 + uActivity * 0.5);
-  vec3 newPosition = position + normal * vDisplacement;
-  gl_Position = projectionMatrix * modelViewMatrix * vec4(newPosition, 1.0);
+  vNormal = normalize(normalMatrix * normal);
+  
+  // 非常に細かいノイズ（結晶のような輝き用）
+  float noise = snoise(position * 10.0 + uTime * 0.05);
+  vDisplacement = noise * (0.01 + uActivity * 0.03);
+  
+  vec3 animatedPos = position * (0.8 + 0.2 * uIntro);
+  vec3 newPosition = animatedPos + normal * vDisplacement;
+  
+  vec4 mvPosition = modelViewMatrix * vec4(newPosition, 1.0);
+  vViewPosition = -mvPosition.xyz;
+  
+  gl_Position = projectionMatrix * mvPosition;
 }
 `;
 
 export const fragmentShader = `
 varying vec2 vUv;
 varying float vDisplacement;
+varying vec3 vNormal;
+varying vec3 vViewPosition;
 uniform float uTime;
 uniform vec3 uColorA;
 uniform vec3 uColorB;
+uniform float uIntro;
 
 void main() {
-  float intensity = smoothstep(-0.2, 0.5, vDisplacement);
-  vec3 color = mix(uColorA, uColorB, intensity);
-  float scanline = sin(vUv.y * 50.0 + uTime * 2.0) * 0.1;
-  gl_FragColor = vec4(color + scanline, 1.0);
+  vec3 normal = normalize(vNormal);
+  vec3 viewDir = normalize(vViewPosition);
+  
+  // 極細のフレネル（エッジ強調）
+  float fresnel = pow(1.0 - dot(normal, viewDir), 5.0);
+  
+  // 走査線グリッド（Kajita風デザイン）
+  float grid = step(0.98, fract(vUv.y * 150.0)) * 0.2;
+  float gridV = step(0.99, fract(vUv.x * 150.0)) * 0.1;
+  
+  // 半透明のクリスタル感
+  vec3 baseColor = mix(uColorA, uColorB, 0.1);
+  vec3 finalColor = baseColor + (uColorB * fresnel * 2.0);
+  finalColor += (grid + gridV) * uColorB;
+  
+  // 導入時のフェード
+  float alpha = (fresnel * 0.8 + 0.1) * uIntro;
+  
+  gl_FragColor = vec4(finalColor, alpha);
 }
 `;
