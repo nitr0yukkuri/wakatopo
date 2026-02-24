@@ -4,45 +4,35 @@ import { useRef, useMemo } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
-function WarpStars() {
-    const count = 3000;
+function GentleWarpStars() {
+    const count = 2000;
     const linesRef = useRef<THREE.LineSegments>(null);
 
-    const { positions, colors } = useMemo(() => {
+    // 最初は点として配置し、徐々に線として伸びる
+    const { positions, randoms } = useMemo(() => {
         const pos = new Float32Array(count * 6);
-        const col = new Float32Array(count * 6);
-
-        const color1 = new THREE.Color('#ffffff'); // Core white
-        const color2 = new THREE.Color('#00ffff'); // Cyan
-        const color3 = new THREE.Color('#0088ff'); // Deep blue
+        const rnd = new Float32Array(count);
 
         for (let i = 0; i < count; i++) {
-            // 円柱状（トンネル状）に星を配置し、中央を開ける
-            const r = 5 + Math.random() * 80;
+            // 空間の中心は少し空けつつ、外側に広がるように分布
+            const r = 4 + Math.pow(Math.random(), 1.5) * 60;
             const theta = Math.random() * Math.PI * 2;
             const x = Math.cos(theta) * r;
             const y = Math.sin(theta) * r;
-            const z = -200 + Math.random() * 400;
+            const z = -20 - Math.random() * 80;
 
-            // Start point (closer to camera)
             pos[i * 6] = x;
             pos[i * 6 + 1] = y;
             pos[i * 6 + 2] = z;
 
-            // End point (pushed deep into Z to create a long streak)
+            // 尾も最初は同位置（点）
             pos[i * 6 + 3] = x;
             pos[i * 6 + 4] = y;
-            pos[i * 6 + 5] = z - (40 + Math.random() * 80);
+            pos[i * 6 + 5] = z;
 
-            // Assign color
-            const randColor = Math.random();
-            const c = randColor > 0.8 ? color2 : (randColor > 0.5 ? color3 : color1);
-
-            // Head is bright, tail is dark
-            col[i * 6] = c.r; col[i * 6 + 1] = c.g; col[i * 6 + 2] = c.b;
-            col[i * 6 + 3] = c.r * 0.05; col[i * 6 + 4] = c.g * 0.05; col[i * 6 + 5] = c.b * 0.05;
+            rnd[i] = Math.random();
         }
-        return { positions: pos, colors: col };
+        return { positions: pos, randoms: rnd };
     }, []);
 
     useFrame((state, delta) => {
@@ -50,52 +40,81 @@ function WarpStars() {
         const posAttribute = linesRef.current.geometry.attributes.position;
         const pos = posAttribute.array as Float32Array;
 
-        // 加速するワープスピード
         const time = state.clock.getElapsedTime();
-        const speed = 20.0 + Math.min(time * 60.0, 300.0); // 爆発的に加速
+
+        // --- 非常にリッチで滑らかなイージング (目に優しいカーブ) ---
+        // 最初はゆっくり動き出し、流れるように加速するInOutExpo的な動き
+        const progress = Math.min(time / 2.0, 1.0);
+        const ease = progress === 0 ? 0 : progress === 1 ? 1 : progress < 0.5 ? Math.pow(2, 20 * progress - 10) / 2 : (2 - Math.pow(2, -20 * progress + 10)) / 2;
+
+        const speed = 0.5 + ease * 30.0;
+        const tailLength = ease * 35.0; // 尾の長さも徐々に伸びる
 
         for (let i = 0; i < count; i++) {
-            pos[i * 6 + 2] += speed;
-            pos[i * 6 + 5] += speed;
+            // 進行
+            pos[i * 6 + 2] += speed + randoms[i] * ease * 5.0;
+            // 尾の追従（Z軸後方に引っ張る）
+            pos[i * 6 + 5] = pos[i * 6 + 2] - (tailLength + randoms[i] * tailLength * 0.5);
 
-            // カメラを通り過ぎたら奥へリセット
-            if (pos[i * 6 + 2] > 50) {
-                const z = -500 - Math.random() * 200;
+            // カメラを通り過ぎたら奥へ静かにリセット
+            if (pos[i * 6 + 2] > 10) {
+                const z = -80 - Math.random() * 40;
                 pos[i * 6 + 2] = z;
-                pos[i * 6 + 5] = z - (40 + Math.random() * 80);
+                pos[i * 6 + 5] = z;
 
-                // 少しだけxyを揺らして躍動感を出す
-                const r = 5 + Math.random() * 80;
+                const r = 4 + Math.pow(Math.random(), 1.5) * 60;
                 const theta = Math.random() * Math.PI * 2;
-                const newX = Math.cos(theta) * r;
-                const newY = Math.sin(theta) * r;
-                pos[i * 6] = newX; pos[i * 6 + 1] = newY;
-                pos[i * 6 + 3] = newX; pos[i * 6 + 4] = newY;
+                pos[i * 6] = Math.cos(theta) * r;
+                pos[i * 6 + 1] = Math.sin(theta) * r;
+                pos[i * 6 + 3] = pos[i * 6];
+                pos[i * 6 + 4] = pos[i * 6 + 1];
             }
         }
         posAttribute.needsUpdate = true;
 
-        // トンネル全体を少し回転させる
-        linesRef.current.rotation.z += delta * 0.2;
+        // 優雅に全体を回転させる
+        linesRef.current.rotation.z += delta * (0.05 + ease * 0.1);
     });
 
     return (
         <lineSegments ref={linesRef}>
             <bufferGeometry>
                 <bufferAttribute attach="attributes-position" args={[positions, 3]} />
-                <bufferAttribute attach="attributes-color" args={[colors, 3]} />
             </bufferGeometry>
-            <lineBasicMaterial vertexColors transparent opacity={0.9} blending={THREE.AdditiveBlending} depthWrite={false} />
+            {/* 色は淡いシアン。不透明度を抑えて目に優しく、滑らかにブレンド */}
+            <lineBasicMaterial color="#a8efff" transparent opacity={0.25} blending={THREE.AdditiveBlending} depthWrite={false} />
         </lineSegments>
+    );
+}
+
+// 画面全体を柔らかく覆うフォグと光のオーラ（目に優しいフェードアウト用）
+function AmbientGlow() {
+    const meshRef = useRef<THREE.Mesh>(null);
+    useFrame((state) => {
+        if (!meshRef.current) return;
+        const time = state.clock.getElapsedTime();
+        const progress = Math.min(time / 2.0, 1.0);
+        // 遷移の最後に画面全体が優しくフェードホワイトアウト/ブルーアウトするように
+        const ease = Math.pow(progress, 3);
+        const material = meshRef.current.material as THREE.MeshBasicMaterial;
+        material.opacity = ease * 0.9;
+    });
+
+    return (
+        <mesh ref={meshRef} position={[0, 0, -5]}>
+            <planeGeometry args={[100, 100]} />
+            <meshBasicMaterial color="#001830" transparent opacity={0} depthWrite={false} blending={THREE.AdditiveBlending} />
+        </mesh>
     );
 }
 
 export default function WarpEffectCanvas() {
     return (
-        <Canvas camera={{ position: [0, 0, 0], fov: 90 }} className="w-full h-full">
+        <Canvas camera={{ position: [0, 0, 0], fov: 75 }} className="w-full h-full">
             <color attach="background" args={['#000000']} />
-            <fog attach="fog" args={['#000000', 10, 300]} />
-            <WarpStars />
+            <fog attach="fog" args={['#000000', 5, 80]} />
+            <GentleWarpStars />
+            <AmbientGlow />
         </Canvas>
     );
 }

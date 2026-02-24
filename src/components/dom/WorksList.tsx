@@ -2,7 +2,7 @@
 
 import { useStore } from '@/store';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import WarpEffectCanvas from '@/components/canvas/WarpEffectCanvas';
 
 interface Work {
@@ -17,6 +17,20 @@ export default function WorksList({ works }: { works: Work[] }) {
     const router = useRouter();
     const [isWarping, setIsWarping] = useState(false);
 
+    useEffect(() => {
+        if (isWarping) {
+            document.body.style.overflow = 'hidden';
+            document.body.style.touchAction = 'none';
+        } else {
+            document.body.style.overflow = '';
+            document.body.style.touchAction = '';
+        }
+        return () => {
+            document.body.style.overflow = '';
+            document.body.style.touchAction = '';
+        };
+    }, [isWarping]);
+
     const handleWorkClick = (id: string) => {
         if (id === '01') {
             setActiveWork('01');
@@ -24,7 +38,7 @@ export default function WorksList({ works }: { works: Work[] }) {
             setTimeout(() => {
                 router.push('/github-planet');
                 setTimeout(() => setIsWarping(false), 500); // 遷移後に状態をリセット
-            }, 1500); // 1.5秒間のワープ演出後にページ遷移
+            }, 2000); // 2.0秒かけて優雅に遷移
         } else {
             setActiveWork(activeWorkId === id ? null : id);
         }
@@ -61,7 +75,7 @@ export default function WorksList({ works }: { works: Work[] }) {
             </div>
 
             {isWarping && (
-                <div className="fixed inset-0 z-[100] pointer-events-none transition-opacity duration-1000 bg-black">
+                <div className="fixed inset-0 z-[9999] pointer-events-auto bg-[#000000] animate-fade-in">
                     <WarpEffectCanvas />
                 </div>
             )}
