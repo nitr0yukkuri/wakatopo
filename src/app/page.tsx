@@ -1,6 +1,7 @@
 import Scene from '@/components/canvas/Scene';
 import { fetchPlanetData } from '@/lib/actions';
 import ClientInitializer from '@/components/ClientInitializer';
+import WorksList from '@/components/dom/WorksList';
 
 export default async function Home() {
   const data = await fetchPlanetData();
@@ -99,29 +100,7 @@ export default async function Home() {
           <div className="container mx-auto px-6 md:px-20">
             <span className="text-cyan-500 text-xs font-mono mb-12 block">02 / SELECTED WORKS</span>
 
-            <div className="flex flex-col">
-              {works.map((work) => (
-                <div key={work.id} className="group relative border-t border-white/10 py-12 flex flex-col md:flex-row md:items-baseline justify-between transition-colors hover:bg-white/5 cursor-pointer">
-                  <span className="font-mono text-xs text-gray-600 mb-2 md:mb-0 w-16 group-hover:text-cyan-400 transition-colors">
-                    {work.id}
-                  </span>
-
-                  <h3 className="text-3xl md:text-5xl font-bold text-gray-300 group-hover:text-white transition-colors flex-1">
-                    {work.title}
-                  </h3>
-
-                  <div className="mt-4 md:mt-0 md:text-right">
-                    <div className="text-[10px] font-mono text-cyan-500/80 mb-1 tracking-wider uppercase">
-                      {work.cat}
-                    </div>
-                    <div className="text-sm text-gray-500 group-hover:text-gray-400">
-                      {work.desc}
-                    </div>
-                  </div>
-                </div>
-              ))}
-              <div className="border-t border-white/10" />
-            </div>
+            <WorksList works={works} />
           </div>
         </section>
 
