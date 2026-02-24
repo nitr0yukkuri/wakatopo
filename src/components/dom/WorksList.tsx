@@ -3,6 +3,7 @@
 import { useStore } from '@/store';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import WarpEffectCanvas from '@/components/canvas/WarpEffectCanvas';
 
 interface Work {
     id: string;
@@ -60,10 +61,8 @@ export default function WorksList({ works }: { works: Work[] }) {
             </div>
 
             {isWarping && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 pointer-events-none bg-black/40 backdrop-blur-sm transition-opacity duration-1000">
-                    <h2 className="text-4xl md:text-8xl font-black tracking-widest text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-800 animate-pulse">
-                        WARPING...
-                    </h2>
+                <div className="fixed inset-0 z-[100] pointer-events-none transition-opacity duration-1000 bg-black">
+                    <WarpEffectCanvas />
                 </div>
             )}
         </>

@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useStore } from '@/store';
+import RealisticPlanetScene from '@/components/canvas/RealisticPlanetScene';
 
 export default function GitHubPlanetPage() {
     const router = useRouter();
@@ -13,42 +14,82 @@ export default function GitHubPlanetPage() {
     };
 
     return (
-        <main className="relative w-full min-h-screen bg-[#020202] text-white flex items-center justify-center overflow-hidden">
-            {/* 簡易的な星屑背景（CSSアニメーション） */}
-            <div className="absolute inset-0 z-0 opacity-40">
-                <div className="absolute w-2 h-2 bg-white rounded-full top-[20%] left-[30%] animate-pulse" />
-                <div className="absolute w-1 h-1 bg-white rounded-full top-[50%] left-[80%] animate-pulse delay-75" />
-                <div className="absolute w-3 h-3 bg-cyan-400 rounded-full top-[80%] left-[40%] animate-pulse delay-150 blur-[2px]" />
-                <div className="absolute w-1 h-1 bg-white rounded-full top-[10%] left-[70%] animate-pulse delay-300" />
-            </div>
+        <main className="relative w-full min-h-[120vh] bg-[#020202] text-white overflow-x-hidden">
+            {/* 3Dのリアルな惑星背景（GitHub Planetからの移植・調整版） */}
+            <RealisticPlanetScene />
 
-            <div className="relative z-10 w-full max-w-4xl px-6 flex flex-col items-center animate-fade-in-up">
+            <div className="relative z-10 w-full max-w-5xl mx-auto px-6 pt-32 pb-32 flex flex-col items-center animate-fade-in-up">
                 <h1 className="text-5xl md:text-8xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-600 drop-shadow-[0_0_30px_rgba(255,255,255,0.2)] mb-8">
                     GITHUB PLANET
                 </h1>
 
-                <div className="bg-white/5 backdrop-blur-xl border border-white/10 p-8 md:p-12 rounded-3xl w-full text-center shadow-[0_0_50px_rgba(0,0,0,0.5)]">
-                    <p className="text-xl md:text-2xl font-light text-gray-200 mb-8 leading-relaxed">
+                <div className="bg-black/40 backdrop-blur-md border border-white/10 p-8 md:p-14 rounded-[2.5rem] w-full shadow-[0_0_80px_rgba(0,0,0,0.8)]">
+                    <p className="text-xl md:text-3xl font-light text-gray-200 mb-12 leading-relaxed text-center">
                         あなたのコードが、星になる。<br />
-                        GitHubの活動履歴からあなただけの惑星を生成するデジタル空間。
+                        <span className="text-cyan-400 font-medium">GitHub Planet</span> は、コミット履歴からあなただけの惑星を生成するデジタル空間です。
                     </p>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left mb-10">
-                        <div className="bg-black/40 p-6 rounded-2xl border border-white/5">
-                            <h3 className="text-cyan-400 font-mono text-sm mb-3">01 // TERRAIN</h3>
-                            <p className="text-gray-400 text-sm">使用言語とコントリビューション数で惑星の色と輝きが変化します。</p>
+                    <div className="space-y-16">
+                        {/* THE CONCEPT */}
+                        <div>
+                            <h2 className="text-2xl font-bold tracking-widest text-white mb-6 border-b border-white/10 pb-4">01 // THE CONCEPT</h2>
+                            <p className="text-gray-400 leading-relaxed max-w-3xl">
+                                エンジニアの日々の営みである「コードを書く」という行為。それは時に孤独で無機質な作業に感じられるかもしれません。
+                                GitHub Planet は、そんな見えない努力を可視化し、宇宙空間に浮かぶ美しく有機的な「惑星」として表現するWebアプリケーションです。
+                                あなたの活動が、静かだった宇宙に新たな星を誕生させます。
+                            </p>
                         </div>
-                        <div className="bg-black/40 p-6 rounded-2xl border border-white/5">
-                            <h3 className="text-cyan-400 font-mono text-sm mb-3">02 // ROTATION</h3>
-                            <p className="text-gray-400 text-sm">コミットが活発なほど、惑星の自転速度が上昇します。</p>
+
+                        {/* HOW IT WORKS */}
+                        <div>
+                            <h2 className="text-2xl font-bold tracking-widest text-white mb-6 border-b border-white/10 pb-4">02 // HOW IT WORKS</h2>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <div className="bg-white/5 p-6 rounded-2xl border border-white/5 hover:border-cyan-500/30 transition-colors">
+                                    <h3 className="text-cyan-400 font-mono text-base mb-3 font-bold">TERRAIN & COLOR</h3>
+                                    <p className="text-gray-400 text-sm leading-relaxed">
+                                        GitHubのAPIを通じてあなたのメイン言語を解析し、惑星の地表構造（テクスチャ）とベースカラーを決定します。
+                                        コントリビューション数が増えるにつれて、惑星はより鮮やかに、生命力に満ちた輝きを放つようになります。
+                                    </p>
+                                </div>
+                                <div className="bg-white/5 p-6 rounded-2xl border border-white/5 hover:border-cyan-500/30 transition-colors">
+                                    <h3 className="text-cyan-400 font-mono text-base mb-3 font-bold">LIVING ROTATION</h3>
+                                    <p className="text-gray-400 text-sm leading-relaxed">
+                                        惑星は生きています。直近のコミット活動が活発なほど、惑星の自転速度が上昇し、よりダイナミックな動きを見せます。
+                                        逆に少し開発を休んでいる時は、静かにゆっくりと自転し、休息の時間を表現します。
+                                    </p>
+                                </div>
+                                <div className="bg-white/5 p-6 rounded-2xl border border-white/5 hover:border-cyan-500/30 transition-colors">
+                                    <h3 className="text-cyan-400 font-mono text-base mb-3 font-bold">AURA & STARS</h3>
+                                    <p className="text-gray-400 text-sm leading-relaxed">
+                                        星の周囲には、カスタムシェーダーによって描画される美しい光のオーラが漂っています。
+                                        これまでの星（Star）の獲得数や実績に応じて、惑星の周りには小さな光の粒（Starfield）が集まり、重力に引かれるように公転し始めます。
+                                    </p>
+                                </div>
+                                <div className="bg-white/5 p-6 rounded-2xl border border-white/5 hover:border-cyan-500/30 transition-colors">
+                                    <h3 className="text-cyan-400 font-mono text-base mb-3 font-bold">METEORS</h3>
+                                    <p className="text-gray-400 text-sm leading-relaxed">
+                                        Socket.IOを利用したリアルタイム通信により、同じ瞬間に世界のどこかで誰かがコミットしたとき、あなたの空に一筋の流星（Meteor）が駆け抜けます。
+                                        スケールや透明度がAnime.jsによって滑らかに制御され、他のエンジニアとの緩やかな繋がりを感じさせます。
+                                    </p>
+                                </div>
+                            </div>
                         </div>
-                        <div className="bg-black/40 p-6 rounded-2xl border border-white/5">
-                            <h3 className="text-cyan-400 font-mono text-sm mb-3">03 // AURA</h3>
-                            <p className="text-gray-400 text-sm">活動量に応じて、周囲を回る光のオーラが成長します。</p>
+
+                        {/* TECHNICAL STACK */}
+                        <div>
+                            <h2 className="text-2xl font-bold tracking-widest text-white mb-6 border-b border-white/10 pb-4">03 // TECHNICAL STACK</h2>
+                            <div className="flex flex-wrap gap-3">
+                                <span className="px-4 py-2 bg-gray-900 border border-gray-700 rounded-full text-xs font-mono text-gray-300">Three.js</span>
+                                <span className="px-4 py-2 bg-gray-900 border border-gray-700 rounded-full text-xs font-mono text-gray-300">WebGL / GLSL</span>
+                                <span className="px-4 py-2 bg-gray-900 border border-gray-700 rounded-full text-xs font-mono text-gray-300">Socket.IO</span>
+                                <span className="px-4 py-2 bg-gray-900 border border-gray-700 rounded-full text-xs font-mono text-gray-300">Node.js</span>
+                                <span className="px-4 py-2 bg-gray-900 border border-gray-700 rounded-full text-xs font-mono text-gray-300">Anime.js</span>
+                                <span className="px-4 py-2 bg-gray-900 border border-gray-700 rounded-full text-xs font-mono text-gray-300">GitHub GraphQL API</span>
+                            </div>
                         </div>
                     </div>
 
-                    <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+                    <div className="mt-20 pt-10 border-t border-white/10 flex flex-col sm:flex-row items-center justify-center gap-6">
                         <a
                             href="https://github.com/nitr0yukkuri/githubplanet"
                             target="_blank"
