@@ -2,7 +2,7 @@
 
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Environment, Stars } from '@react-three/drei';
-import Planet from './Planet';
+import AbstractCore from './AbstractCore';
 import Weather from './Weather';
 import { Suspense } from 'react';
 
@@ -20,7 +20,7 @@ export default function Scene() {
                     <pointLight position={[10, 10, 10]} intensity={1.5} />
                     <pointLight position={[-10, -10, -10]} intensity={0.5} color="#00ffff" />
 
-                    <Planet />
+                    <AbstractCore />
                     <Weather />
 
                     {/* 星の密度を調整 */}
