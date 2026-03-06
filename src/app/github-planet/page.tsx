@@ -18,12 +18,12 @@ export default function GitHubPlanetPage() {
             {/* 3Dのリアルな惑星背景（GitHub Planetからの移植・調整版） */}
             <RealisticPlanetScene />
 
-            <div className="relative z-10 w-full max-w-5xl mx-auto px-6 pt-32 pb-32 flex flex-col items-center animate-fade-in-up">
+            <div className="relative z-10 w-full max-w-5xl mx-auto px-6 pt-32 pb-32 flex flex-col items-center animate-fade-in-up pointer-events-none">
                 <h1 className="text-5xl md:text-8xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-600 drop-shadow-[0_0_30px_rgba(255,255,255,0.2)] mb-8">
                     GITHUB PLANET
                 </h1>
 
-                <div className="bg-black/40 backdrop-blur-md border border-white/10 p-8 md:p-14 rounded-[2.5rem] w-full shadow-[0_0_80px_rgba(0,0,0,0.8)]">
+                <div className="bg-black/40 backdrop-blur-md border border-white/10 p-8 md:p-14 rounded-[2.5rem] w-full shadow-[0_0_80px_rgba(0,0,0,0.8)] pointer-events-auto">
                     <p className="text-xl md:text-3xl font-light text-gray-200 mb-12 leading-relaxed text-center">
                         あなたのコードが、星になる。<br />
                         <span className="text-cyan-400 font-medium">GitHub Planet</span> は、コミット履歴からあなただけの惑星を生成するデジタル空間です。

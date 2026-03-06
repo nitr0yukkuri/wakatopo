@@ -67,7 +67,7 @@ export default async function Home() {
       </div>
 
       {/* === SCROLLABLE CONTENT === */}
-      <div className="relative z-10 w-full">
+      <div className="relative z-10 w-full pointer-events-none">
 
         {/* HERO */}
         <section className="h-screen flex items-center justify-center pointer-events-none">

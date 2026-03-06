@@ -8,7 +8,7 @@ import { Suspense } from 'react';
 
 export default function Scene() {
     return (
-        <div className="absolute inset-0 z-0 bg-black pointer-events-none">
+        <div className="absolute inset-0 z-0 bg-black">
             <Canvas camera={{ position: [0, 0, 8], fov: 35 }}>
                 <Suspense fallback={null}>
                     <color attach="background" args={['#050505']} />

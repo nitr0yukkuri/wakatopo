@@ -86,7 +86,7 @@ function Meteors({ count = 15 }) {
 
 export default function RealisticPlanetScene() {
     return (
-        <div className="absolute inset-0 z-0 bg-black pointer-events-none">
+        <div className="absolute inset-0 z-0 bg-black">
             <Canvas camera={{ position: [0, 0, 8], fov: 40 }}>
                 <Suspense fallback={null}>
                     <color attach="background" args={['#020202']} />
