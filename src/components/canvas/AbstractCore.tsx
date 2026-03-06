@@ -69,8 +69,8 @@ export default function AbstractCore() {
     // 天候に応じた色合い
     // ホログラム感を出すために少しトーンをいじる
     const baseColorHolo = weather === 'Rain' ? new THREE.Color('#aaddff') : new THREE.Color('#00eeff');
-    const hoverColor = weather === 'Rain' ? new THREE.Color('#ffffff') : new THREE.Color('#55ffff');
-    const activeColor = new THREE.Color('#ff00aa'); // クリックでサイバーパンクなネオンピンク
+    const hoverColor = weather === 'Rain' ? new THREE.Color('#e0f0ff') : new THREE.Color('#33ddee');
+    const activeColor = new THREE.Color('#d900bb'); // 発光を少し抑えめに調整
 
     useFrame((state, delta) => {
         const time = state.clock.getElapsedTime();
@@ -94,12 +94,12 @@ export default function AbstractCore() {
             meshRef.current.rotation.y += rotSpeedY * delta;
             meshRef.current.rotation.x += rotSpeedX * delta;
 
-            const scale = 1.0 + activeLevel * 0.1 + Math.sin(time * 3.0) * 0.02 * (1 + activeLevel * 2);
+            const scale = 1.0 + activeLevel * 0.05 + Math.sin(time * 3.0) * 0.02 * (1 + activeLevel);
             meshRef.current.scale.set(scale, scale, scale);
 
             const mat = meshRef.current.material as THREE.MeshBasicMaterial;
             mat.color.lerp(currentColor, 0.1);
-            mat.opacity = THREE.MathUtils.lerp(0.15, 0.6, hoverLevel + activeLevel);
+            mat.opacity = THREE.MathUtils.lerp(0.15, 0.35, hoverLevel + activeLevel);
         }
 
         // 2. 内側の複雑な幾何学（逆回転・高密度）
@@ -109,7 +109,7 @@ export default function AbstractCore() {
 
             const mat = wireframe2Ref.current.material as THREE.MeshBasicMaterial;
             mat.color.lerp(currentColor, 0.1);
-            mat.opacity = THREE.MathUtils.lerp(0.1, 0.4, hoverLevel + activeLevel);
+            mat.opacity = THREE.MathUtils.lerp(0.1, 0.25, hoverLevel + activeLevel);
         }
 
         // 3. インナーコア（パルス光）
@@ -127,8 +127,8 @@ export default function AbstractCore() {
             ring2Ref.current.rotation.z -= (0.15 + hoverLevel * 0.5 + activeLevel * 1.5) * delta;
 
             // クリック時にリングが展開するような挙動
-            const r1Scale = 1.0 + hoverLevel * 0.05 + activeLevel * 0.2;
-            const r2Scale = 1.0 + hoverLevel * 0.1 + activeLevel * 0.4;
+            const r1Scale = 1.0 + hoverLevel * 0.02 + activeLevel * 0.1;
+            const r2Scale = 1.0 + hoverLevel * 0.05 + activeLevel * 0.2;
 
             ring1Ref.current.scale.lerp(new THREE.Vector3(r1Scale, r1Scale, r1Scale), 0.1);
             ring2Ref.current.scale.lerp(new THREE.Vector3(r2Scale, r2Scale, r2Scale), 0.1);
@@ -209,7 +209,7 @@ export default function AbstractCore() {
 
             const pMat = particlesRef.current.material as THREE.PointsMaterial;
             pMat.color.lerp(currentColor, 0.1);
-            pMat.size = THREE.MathUtils.lerp(0.015, 0.04, activeLevel);
+            pMat.size = THREE.MathUtils.lerp(0.025, 0.05, activeLevel);
         }
     });
 
@@ -295,10 +295,10 @@ export default function AbstractCore() {
                     <bufferAttribute attach="attributes-position" args={[positions, 3]} />
                 </bufferGeometry>
                 <pointsMaterial
-                    size={0.015}
+                    size={0.025}
                     color="#00ffff"
                     transparent
-                    opacity={0.6}
+                    opacity={0.85}
                     blending={THREE.AdditiveBlending}
                     depthWrite={false}
                 />
