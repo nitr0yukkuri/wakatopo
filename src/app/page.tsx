@@ -28,8 +28,8 @@ export default async function Home() {
       <div className="fixed inset-0 z-50 pointer-events-none p-6 md:p-8 flex flex-col justify-between text-xs font-mono tracking-widest text-gray-500">
         {/* Top Left */}
         <div className="flex flex-col gap-2">
-          <h1 className="text-white font-bold text-sm tracking-tighter">WAKATOPO</h1>
-          <p>IMMERSIVE PORTFOLIO</p>
+          <h1 className="text-white font-bold text-sm tracking-widest">WAKATO <span className="text-cyan-500">//</span> PORTFOLIO</h1>
+          <p className="opacity-70">INTERACTIVE WEB EXPERIENCE</p>
         </div>
 
         {/* Top Right */}
@@ -116,7 +116,7 @@ export default async function Home() {
               </div>
             </div>
             <p className="text-[10px] text-gray-700 font-mono text-right">
-              © 2026 WAKATO NAKATA.<br />
+              © 2026 WAKATO. ALL RIGHTS RESERVED.<br />
               DESIGNED IN OSAKA.
             </p>
           </div>
