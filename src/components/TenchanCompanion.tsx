@@ -92,10 +92,19 @@ export function CharacterFace({
                         <path d="M 35 55 Q 40 60 45 55" fill="none" stroke="#5D4037" strokeWidth="4" strokeLinecap="round" />
                         <path d="M 75 55 Q 80 60 85 55" fill="none" stroke="#5D4037" strokeWidth="4" strokeLinecap="round" />
                     </g>
+                ) : mood === 'looking' ? (
+                    <motion.g
+                        animate={isStatic ? undefined : { x: [2, -2, 2], y: [0, -2, 0] }}
+                        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                    >
+                        <circle cx="40" cy="55" r="5" fill="#5D4037" />
+                        <circle cx="80" cy="55" r="5" fill="#5D4037" />
+                    </motion.g>
                 ) : (
                     <motion.g
-                        animate={isStatic ? undefined : { scaleY: [1, 0.1, 1, 1, 1] }}
-                        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", repeatDelay: 1 }}
+                        style={{ transformOrigin: "60px 55px" }}
+                        animate={isStatic ? undefined : { scaleY: [1, 0.1, 1] }}
+                        transition={{ duration: 0.15, repeat: Infinity, repeatDelay: 3, ease: "easeInOut" }}
                     >
                         <circle cx="40" cy="55" r="5" fill="#5D4037" />
                         <circle cx="80" cy="55" r="5" fill="#5D4037" />
@@ -141,7 +150,7 @@ export default function TenchanCompanion({ section }: TenchanCompanionProps) {
             case 'tech':
                 return { text: "Next.jsで作られてるんだ！", mood: "surprised" as const };
             case 'bottom':
-                return { text: "アプリであそんでみてね！", mood: "happy" as const };
+                return { text: "おてんきぐらしで待ってるよ！", mood: "happy" as const };
             default:
                 return { text: "...", mood: "neutral" as const };
         }
