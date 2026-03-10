@@ -76,10 +76,14 @@ export default function OtenkiGurashiPage() {
 
             <div className="relative z-10 w-full max-w-5xl mx-auto px-6 pt-24 pb-32 flex flex-col items-center animate-fade-in-up">
 
-                {/* Pop Title */}
-                <h1 id="hero" ref={heroRef} className="text-5xl md:text-7xl font-black tracking-tight text-[#ffb03a] drop-shadow-[0_4px_0_#e69a2e] mb-10 text-center scroll-mt-24">
-                    OTENKI GURASHI
-                </h1>
+                {/* Pop Title Logo */}
+                <div id="hero" ref={heroRef} className="mb-10 text-center scroll-mt-24 w-full flex justify-center">
+                    <img
+                        src="/otenkigurashi-logo.png"
+                        alt="OTENKI GURASHI Logo"
+                        className="w-full max-w-sm md:max-w-md drop-shadow-md"
+                    />
+                </div>
 
                 {/* Fluffy White Content Card */}
                 <div className="bg-white/95 backdrop-blur-sm border-4 border-white p-8 md:p-14 rounded-[3rem] w-full shadow-[0_20px_60px_-15px_rgba(152,173,194,0.3)]">
