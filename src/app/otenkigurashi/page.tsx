@@ -2,7 +2,22 @@
 
 import { useRouter } from 'next/navigation';
 import { useStore } from '@/store';
-import Scene from '@/components/canvas/Scene';
+
+// A simple CSS cloud decoration component
+function CloudDecoration({ className }: { className: string }) {
+    return (
+        <div className={`absolute pointer-events-none opacity-80 ${className}`}>
+            <svg viewBox="0 0 200 100" className="w-full h-full drop-shadow-md">
+                <path
+                    fill="#ffffff"
+                    stroke="#98adc2"
+                    strokeWidth="3"
+                    d="M 50 80 Q 20 80 20 55 Q 20 30 50 30 Q 60 10 90 10 Q 120 10 130 30 Q 170 30 170 55 Q 170 80 140 80 Z"
+                />
+            </svg>
+        </div>
+    );
+}
 
 export default function OtenkiGurashiPage() {
     const router = useRouter();
@@ -14,28 +29,36 @@ export default function OtenkiGurashiPage() {
     };
 
     return (
-        <main className="relative w-full min-h-[120vh] bg-[#020202] text-white overflow-x-hidden">
-            {/* バックグラウンドにはWeatherを含むSceneを使用 */}
-            <div className="fixed inset-0 z-0 opacity-40 mix-blend-screen pointer-events-none">
-                <Scene />
-            </div>
+        // Bright sky blue gradient background
+        <main className="relative w-full min-h-[120vh] bg-gradient-to-b from-[#aee1f9] to-[#e0f4fc] text-gray-700 overflow-x-hidden font-sans">
 
-            <div className="relative z-10 w-full max-w-5xl mx-auto px-6 pt-32 pb-32 flex flex-col items-center animate-fade-in-up pointer-events-none">
-                <h1 className="text-5xl md:text-8xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-600 drop-shadow-[0_0_30px_rgba(255,255,255,0.2)] mb-8">
+            {/* Background Decorations */}
+            <CloudDecoration className="top-10 left-[-5%] w-64" />
+            <CloudDecoration className="top-40 right-[-10%] w-80 transform -scale-x-100" />
+            <CloudDecoration className="bottom-20 left-10 w-48" />
+
+            <div className="relative z-10 w-full max-w-5xl mx-auto px-6 pt-24 pb-32 flex flex-col items-center animate-fade-in-up">
+
+                {/* Pop Title */}
+                <h1 className="text-5xl md:text-7xl font-black tracking-tight text-[#ffb03a] drop-shadow-[0_4px_0_#e69a2e] mb-10 text-center">
                     OTENKI GURASHI
                 </h1>
 
-                <div className="bg-black/60 backdrop-blur-md border border-white/10 p-8 md:p-14 rounded-[2.5rem] w-full shadow-[0_0_80px_rgba(0,0,0,0.8)] pointer-events-auto">
-                    <p className="text-xl md:text-2xl font-light text-gray-200 mb-12 leading-relaxed text-center">
+                {/* Fluffy White Content Card */}
+                <div className="bg-white/95 backdrop-blur-sm border-4 border-white p-8 md:p-14 rounded-[3rem] w-full shadow-[0_20px_60px_-15px_rgba(152,173,194,0.3)]">
+
+                    <p className="text-xl md:text-2xl font-bold text-gray-600 mb-12 leading-relaxed text-center">
                         天気予報を見ないあなたの、<br className="md:hidden" />いちばん優しいおまもり。<br />
-                        <span className="text-orange-400 font-medium">おてんきぐらし</span> は、現実の天気と連動する心地よいシミュレーション体験です。
+                        <span className="text-[#ffb03a] text-2xl md:text-3xl inline-block mt-2">おてんきぐらし</span> は、<br className="md:hidden" />現実の天気と連動するシミュレーションです。
                     </p>
 
-                    <div className="space-y-16">
+                    <div className="space-y-12">
                         {/* THE CONCEPT */}
-                        <div>
-                            <h2 className="text-2xl font-bold tracking-widest text-white mb-6 border-b border-white/10 pb-4">01 // THE CONCEPT</h2>
-                            <p className="text-gray-400 leading-relaxed max-w-3xl">
+                        <div className="bg-[#f8fcfd] rounded-3xl p-8 border-2 border-[#e0f4fc]">
+                            <h2 className="text-xl font-black tracking-wider text-[#7ab8cc] mb-4 flex items-center gap-3">
+                                <span className="text-[#ffb03a]">01</span> CONCEPT
+                            </h2>
+                            <p className="text-gray-600 leading-relaxed max-w-3xl font-medium">
                                 天気予報の確認は面倒だけど、急な雨や気圧の変化はつらい… そんな方々のために生まれました。
                                 ゲーム性のある優しい世界を通して、面倒だった天気確認を「雨だから、ゲーム内で特別なことができるかも？」という、ポジティブな体験へと変えていきます。
                             </p>
@@ -43,23 +66,25 @@ export default function OtenkiGurashiPage() {
 
                         {/* FEATURES */}
                         <div>
-                            <h2 className="text-2xl font-bold tracking-widest text-white mb-6 border-b border-white/10 pb-4">02 // FEATURES</h2>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                <div className="bg-white/5 p-6 rounded-2xl border border-white/5 hover:border-orange-500/30 transition-colors">
-                                    <h3 className="text-orange-400 font-mono text-base mb-3 font-bold">REALTIME WEATHER SYNC</h3>
-                                    <p className="text-gray-400 text-sm leading-relaxed">
+                            <h2 className="text-xl font-black tracking-wider text-[#7ab8cc] mb-6 flex items-center gap-3 pl-2">
+                                <span className="text-[#ffb03a]">02</span> FEATURES
+                            </h2>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="bg-white p-8 rounded-3xl border-2 border-[#e0f4fc] shadow-sm hover:border-[#ffb03a] transition-all hover:-translate-y-1">
+                                    <h3 className="text-[#ffb03a] font-bold text-lg mb-3">☀ REALTIME WEATHER SYNC</h3>
+                                    <p className="text-gray-600 text-sm leading-relaxed font-medium">
                                         あなたのいる場所の「今」が、キャラクターの世界に直接反映されます。大阪で雨が降ればゲームの中も雨が降り、夜になればキャラクターも眠りにつきます。
                                     </p>
                                 </div>
-                                <div className="bg-white/5 p-6 rounded-2xl border border-white/5 hover:border-orange-500/30 transition-colors">
-                                    <h3 className="text-orange-400 font-mono text-base mb-3 font-bold">OSANPO (WALKING)</h3>
-                                    <p className="text-gray-400 text-sm leading-relaxed">
+                                <div className="bg-white p-8 rounded-3xl border-2 border-[#e0f4fc] shadow-sm hover:border-[#ffb03a] transition-all hover:-translate-y-1">
+                                    <h3 className="text-[#ffb03a] font-bold text-lg mb-3">🚶 Osanpo (Walking)</h3>
+                                    <p className="text-gray-600 text-sm leading-relaxed font-medium">
                                         キャラクターを「おさんぽ」に出すことができます。おさんぽ先の景色や、手に入るアイテムは天気によって変化。コレクションする楽しみが待っています。
                                     </p>
                                 </div>
-                                <div className="bg-white/5 p-6 rounded-2xl border border-white/5 hover:border-orange-500/30 transition-colors md:col-span-2">
-                                    <h3 className="text-orange-400 font-mono text-base mb-3 font-bold">COLLECTION & ACHIEVEMENTS</h3>
-                                    <p className="text-gray-400 text-sm leading-relaxed">
+                                <div className="bg-white p-8 rounded-3xl border-2 border-[#e0f4fc] shadow-sm hover:border-[#ffb03a] transition-all hover:-translate-y-1 md:col-span-2">
+                                    <h3 className="text-[#ffb03a] font-bold text-lg mb-3">✨ COLLECTION & ACHIEVEMENTS</h3>
+                                    <p className="text-gray-600 text-sm leading-relaxed font-medium">
                                         レベルアップのようなノルマはありません。「おさんぽ」で集めたアイテムを眺める「ずかん」や、「はじめて雨の日におさんぽした」といったキャラクターとの思い出を記録する「実績」が、あなたの毎日を彩ります。
                                     </p>
                                 </div>
@@ -68,42 +93,45 @@ export default function OtenkiGurashiPage() {
 
                         {/* TECHNICAL STACK */}
                         <div>
-                            <h2 className="text-2xl font-bold tracking-widest text-white mb-6 border-b border-white/10 pb-4">03 // TECHNICAL STACK</h2>
+                            <h2 className="text-xl font-black tracking-wider text-[#7ab8cc] mb-6 flex items-center gap-3 pl-2">
+                                <span className="text-[#ffb03a]">03</span> TECH STACK
+                            </h2>
                             <div className="flex flex-wrap gap-3">
-                                <span className="px-4 py-2 bg-gray-900 border border-gray-700 rounded-full text-xs font-mono text-gray-300">Next.js</span>
-                                <span className="px-4 py-2 bg-gray-900 border border-gray-700 rounded-full text-xs font-mono text-gray-300">TypeScript</span>
-                                <span className="px-4 py-2 bg-gray-900 border border-gray-700 rounded-full text-xs font-mono text-gray-300">Tailwind CSS</span>
-                                <span className="px-4 py-2 bg-gray-900 border border-gray-700 rounded-full text-xs font-mono text-gray-300">OpenWeatherMap API</span>
-                                <span className="px-4 py-2 bg-gray-900 border border-gray-700 rounded-full text-xs font-mono text-gray-300">PWA</span>
+                                {['Next.js', 'TypeScript', 'Tailwind CSS', 'OpenWeatherMap API', 'PWA'].map((tech) => (
+                                    <span key={tech} className="px-5 py-2.5 bg-white border-2 border-[#a0e1fa] rounded-full text-sm font-bold text-[#7ab8cc] shadow-sm">
+                                        {tech}
+                                    </span>
+                                ))}
                             </div>
                         </div>
                     </div>
 
-                    <div className="mt-20 pt-10 border-t border-white/10 flex flex-col sm:flex-row items-center justify-center gap-6">
+                    {/* Pop Buttons */}
+                    <div className="mt-16 pt-10 border-t-2 border-[#e0f4fc] flex flex-col sm:flex-row items-center justify-center gap-6">
                         <a
                             href="https://weather-live-ochre.vercel.app"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="bg-orange-500/10 border border-orange-500/50 text-orange-400 px-8 py-4 rounded-full font-mono text-sm hover:bg-orange-500/20 hover:scale-105 transition-all duration-300 flex items-center gap-3"
+                            className="bg-[#ffb03a] text-white px-8 py-4 rounded-full font-bold text-base shadow-[0_6px_0_#e69a2e] hover:translate-y-[2px] hover:shadow-[0_4px_0_#e69a2e] active:translate-y-[6px] active:shadow-none transition-all flex items-center gap-2"
                         >
-                            <span>LAUNCH APP</span>
-                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+                            <span>アプリをひらく</span>
+                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
                         </a>
 
                         <a
                             href="https://github.com/nitr0yukkuri/otenkigurashi"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="bg-gray-800/50 border border-gray-600 text-gray-300 px-8 py-4 rounded-full font-mono text-sm hover:bg-gray-700 transition-all duration-300 flex items-center gap-3"
+                            className="bg-white text-[#7ab8cc] border-2 border-[#a0e1fa] px-8 py-4 rounded-full font-bold text-base shadow-[0_6px_0_#a0e1fa] hover:translate-y-[2px] hover:shadow-[0_4px_0_#a0e1fa] active:translate-y-[6px] active:shadow-none transition-all"
                         >
-                            <span>VIEW ON GITHUB</span>
+                            GitHubをみる
                         </a>
 
                         <button
                             onClick={handleReturn}
-                            className="text-gray-500 font-mono text-sm hover:text-white transition-colors underline underline-offset-4 ml-0 sm:ml-4 mt-4 sm:mt-0"
+                            className="text-[#98adc2] font-bold text-sm hover:text-[#7ab8cc] transition-colors underline underline-offset-4 ml-0 sm:ml-4 mt-6 sm:mt-0"
                         >
-                            Return Home
+                            ホームにもどる
                         </button>
                     </div>
                 </div>
