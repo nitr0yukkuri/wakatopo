@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useStore } from '@/store';
+import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import TenchanCompanion from '@/components/TenchanCompanion';
 
@@ -141,23 +142,22 @@ export default function OtenkiGurashiPage() {
                     </p>
 
                     <div className="space-y-12">
-                        {/* THE CONCEPT */}
-                        <div
-                            id="concept"
-                            ref={conceptRef}
-                            onClick={() => handleInteract("ゲームみたいに天気を楽しめるんだ！", "happy")}
-                            className="bg-[#f8fcfd] rounded-3xl p-8 border-2 border-[#e0f4fc] scroll-mt-32 cursor-pointer hover:border-[#ffb03a] hover:shadow-lg transition-all"
-                        >
-                            <h2 className="text-xl font-black tracking-wider text-[#7ab8cc] mb-4 flex items-center gap-3">
-                                <span className="text-[#ffb03a]">01</span> CONCEPT
-                            </h2>
-                            <p className="text-gray-600 leading-relaxed max-w-3xl font-medium">
-                                天気予報の確認は面倒だけど、急な雨や気圧の変化はつらい… そんな方々のために生まれました。
-                                ゲーム性のある優しい世界を通して、面倒だった天気確認を「雨だから、ゲーム内で特別なことができるかも？」という、ポジティブな体験へと変えていきます。
-                            </p>
-                        </div>
-
-                        {/* FEATURES */}
+                        {/* Section 1: Concept */}
+                        <section id="concept" ref={conceptRef} className="mb-32 animate-fade-in-up scroll-mt-32" style={{ animationDelay: '0.6s' }}>
+                            <div className="flex items-center gap-4 mb-8">
+                                <span className="text-4xl font-bold text-[#ffb03a]">01</span>
+                                <h2 className="text-2xl font-bold tracking-widest text-[#7ab8cc]">コンセプト</h2>
+                            </div>
+                            <div
+                                onClick={() => handleInteract("ゲームみたいに天気を楽しめるんだ！", "happy")}
+                                className="bg-white/90 backdrop-blur-md rounded-[3rem] p-8 md:p-12 border-4 border-white shadow-xl max-w-3xl cursor-pointer hover:border-[#ffb03a] hover:shadow-lg transition-all"
+                            >
+                                <p className="text-lg md:text-xl leading-relaxed text-gray-700 font-medium">
+                                    天気予報の確認は面倒だけど、急な雨や気圧の変化はつらい… そんな方々のために生まれました。
+                                    ゲーム性のある優しい世界を通して、面倒だった天気確認を「雨だから、ゲーム内で特別なことができるかも？」という、ポジティブな体験へと変えていきます。
+                                </p>
+                            </div>
+                        </section>
                         <div id="features" ref={featuresRef} className="scroll-mt-32">
                             <h2 className="text-xl font-black tracking-wider text-[#7ab8cc] mb-6 flex items-center gap-3 pl-2">
                                 <span className="text-[#ffb03a]">02</span> FEATURES
@@ -167,7 +167,7 @@ export default function OtenkiGurashiPage() {
                                     onClick={() => handleInteract("大阪で雨なら、ゲームでも雨だよ！", "talking")}
                                     className="bg-white p-8 rounded-3xl border-2 border-[#e0f4fc] shadow-sm hover:border-[#ffb03a] cursor-pointer transition-all hover:-translate-y-1"
                                 >
-                                    <h3 className="text-[#ffb03a] font-bold text-lg mb-3">☀ REALTIME WEATHER SYNC</h3>
+                                    <h3 className="text-[#ffb03a] font-bold text-lg mb-3">☀ リアルタイム天気連動</h3>
                                     <p className="text-gray-600 text-sm leading-relaxed font-medium">
                                         あなたのいる場所の「今」が、キャラクターの世界に直接反映されます。大阪で雨が降ればゲームの中も雨が降り、夜になればキャラクターも眠りにつきます。
                                     </p>
@@ -176,7 +176,7 @@ export default function OtenkiGurashiPage() {
                                     onClick={() => handleInteract("おさんぽで色んなアイテムを集めよう！", "happy")}
                                     className="bg-white p-8 rounded-3xl border-2 border-[#e0f4fc] shadow-sm hover:border-[#ffb03a] cursor-pointer transition-all hover:-translate-y-1"
                                 >
-                                    <h3 className="text-[#ffb03a] font-bold text-lg mb-3">🚶 Osanpo (Walking)</h3>
+                                    <h3 className="text-[#ffb03a] font-bold text-lg mb-3">🚶 おさんぽ (Walking)</h3>
                                     <p className="text-gray-600 text-sm leading-relaxed font-medium">
                                         キャラクターを「おさんぽ」に出すことができます。おさんぽ先の景色や、手に入るアイテムは天気によって変化。コレクションする楽しみが待っています。
                                     </p>
@@ -185,7 +185,7 @@ export default function OtenkiGurashiPage() {
                                     onClick={() => handleInteract("思い出がたくさん記録されるよ！", "surprised")}
                                     className="bg-white p-8 rounded-3xl border-2 border-[#e0f4fc] shadow-sm hover:border-[#ffb03a] cursor-pointer transition-all hover:-translate-y-1 md:col-span-2"
                                 >
-                                    <h3 className="text-[#ffb03a] font-bold text-lg mb-3">✨ COLLECTION & ACHIEVEMENTS</h3>
+                                    <h3 className="text-[#ffb03a] font-bold text-lg mb-3">✨ コレクション＆実績</h3>
                                     <p className="text-gray-600 text-sm leading-relaxed font-medium">
                                         レベルアップのようなノルマはありません。「おさんぽ」で集めたアイテムを眺める「ずかん」や、「はじめて雨の日におさんぽした」といったキャラクターとの思い出を記録する「実績」が、あなたの毎日を彩ります。
                                     </p>
@@ -198,12 +198,17 @@ export default function OtenkiGurashiPage() {
                             <h2 className="text-xl font-black tracking-wider text-[#7ab8cc] mb-6 flex items-center gap-3 pl-2">
                                 <span className="text-[#ffb03a]">03</span> TECH STACK
                             </h2>
-                            <div className="flex flex-wrap gap-3">
-                                {['Next.js', 'TypeScript', 'Tailwind CSS', 'OpenWeatherMap API', 'PWA'].map((tech) => (
-                                    <span key={tech} className="px-5 py-2.5 bg-white border-2 border-[#a0e1fa] rounded-full text-sm font-bold text-[#7ab8cc] shadow-sm">
-                                        {tech}
-                                    </span>
-                                ))}
+                            <div
+                                onClick={() => handleInteract("Next.jsで作られてるよ！", "surprised")}
+                                className="bg-white p-8 rounded-3xl border-2 border-[#e0f4fc] shadow-sm hover:border-[#ffb03a] cursor-pointer transition-all"
+                            >
+                                <ul className="grid grid-cols-2 md:grid-cols-3 gap-4 font-bold text-gray-700">
+                                    <li className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-[#ffb03a]" />Next.js</li>
+                                    <li className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-[#ffb03a]" />TypeScript</li>
+                                    <li className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-[#ffb03a]" />Tailwind CSS</li>
+                                    <li className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-[#ffb03a]" />OpenWeatherMap API</li>
+                                    <li className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-[#ffb03a]" />PWA</li>
+                                </ul>
                             </div>
                         </div>
                     </div>
@@ -211,31 +216,29 @@ export default function OtenkiGurashiPage() {
                     {/* Pop Buttons */}
                     <div id="bottom" ref={bottomRef} className="mt-16 pt-10 border-t-2 border-[#e0f4fc] flex flex-col sm:flex-row items-center justify-center gap-6 scroll-mt-32">
                         <a
-                            href="https://weather-live-ochre.vercel.app"
+                            href="https://otenki-gurashi.vercel.app/"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="bg-[#ffb03a] text-white px-8 py-4 rounded-full font-bold text-base shadow-[0_6px_0_#e69a2e] hover:translate-y-[2px] hover:shadow-[0_4px_0_#e69a2e] active:translate-y-[6px] active:shadow-none transition-all flex items-center gap-2"
                         >
-                            <span>アプリをひらく</span>
-                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+                            <span>アプリをひらく</span> ↗
                         </a>
 
                         <a
                             href="https://github.com/nitr0yukkuri/otenkigurashi"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="bg-white text-[#7ab8cc] border-2 border-[#a0e1fa] px-8 py-4 rounded-full font-bold text-base shadow-[0_6px_0_#a0e1fa] hover:translate-y-[2px] hover:shadow-[0_4px_0_#a0e1fa] active:translate-y-[6px] active:shadow-none transition-all"
+                            className="bg-white text-[#7ab8cc] border-2 border-[#e0f4fc] px-8 py-4 rounded-full font-bold text-base shadow-[0_6px_0_#d1effa] hover:translate-y-[2px] hover:border-[#7ab8cc] hover:shadow-[0_4px_0_#a0e1fa] active:translate-y-[6px] active:shadow-none transition-all flex items-center gap-2"
                         >
-                            GitHubをみる
+                            <span>GitHubをみる</span> ↗
                         </a>
-
-                        <button
-                            onClick={handleReturn}
-                            className="text-[#98adc2] font-bold text-sm hover:text-[#7ab8cc] transition-colors underline underline-offset-4 ml-0 sm:ml-4 mt-6 sm:mt-0"
-                        >
-                            ホームにもどる
-                        </button>
                     </div>
+                </div>
+
+                <div className="mt-24 text-center animate-fade-in-up" style={{ animationDelay: '0.8s' }}>
+                    <Link href="/" className="inline-block border-2 border-[#7ab8cc] text-[#7ab8cc] hover:bg-[#7ab8cc] hover:text-white font-bold py-4 px-12 rounded-full transition-colors">
+                        ホームにもどる
+                    </Link>
                 </div>
             </div>
 

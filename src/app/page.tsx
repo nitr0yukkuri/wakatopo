@@ -9,7 +9,7 @@ export default async function Home() {
 
   const works = [
     { id: '01', title: 'GitHub Planet', cat: 'THREE.JS / VISUALIZATION', desc: 'Activity-based terrain generation' },
-    { id: '02', title: 'Otenki Gurashi', cat: 'NEXT.JS / PWA', desc: 'Weather-sync life simulation' },
+    { id: '02', title: 'おてんきぐらし', cat: 'NEXT.JS / PWA', desc: 'Weather-sync life simulation' },
     { id: '03', title: 'ColdKeep', cat: 'AI / IOT', desc: 'Audio-based volume estimation' },
   ];
 
