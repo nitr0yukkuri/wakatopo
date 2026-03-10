@@ -98,3 +98,21 @@ body {
     transform: translateY(0) scale(1);
   }
 }
+
+@keyframes scroll-cloud-right {
+  from {
+    transform: translateX(-100vw);
+  }
+  to {
+    transform: translateX(100vw);
+  }
+}
+
+@keyframes scroll-cloud-left {
+  from {
+    transform: translateX(100vw);
+  }
+  to {
+    transform: translateX(-100vw);
+  }
+}

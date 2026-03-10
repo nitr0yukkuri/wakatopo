@@ -6,10 +6,10 @@ import { useEffect, useRef, useState } from 'react';
 import TenchanCompanion from '@/components/TenchanCompanion';
 
 // A simple CSS cloud decoration component
-function CloudDecoration({ className, style }: { className: string, style?: React.CSSProperties }) {
+function CloudDecoration({ className, style, flip }: { className: string, style?: React.CSSProperties, flip?: boolean }) {
     return (
         <div className={`absolute pointer-events-none flex items-center justify-center ${className}`} style={style}>
-            <svg viewBox="0 0 200 100" className="w-full h-full drop-shadow-md">
+            <svg viewBox="0 0 200 100" className={`w-full h-full drop-shadow-md ${flip ? 'transform -scale-x-100' : ''}`}>
                 <path
                     fill="#ffffff"
                     stroke="#98adc2"
@@ -100,17 +100,17 @@ export default function OtenkiGurashiPage() {
                 <CloudDecoration className="opacity-30 w-32 top-[10%] animate-cloud-scroll-left-slow" style={{ animationDelay: '-10s' }} />
                 <CloudDecoration className="opacity-30 w-40 top-[40%] animate-cloud-scroll-left-slow" style={{ animationDelay: '-40s' }} />
                 <CloudDecoration className="opacity-30 w-24 top-[70%] animate-cloud-scroll-left-slow" style={{ animationDelay: '-80s' }} />
-                <CloudDecoration className="opacity-20 w-36 top-[85%] animate-cloud-scroll-left-slow transform -scale-x-100" style={{ animationDelay: '-20s' }} />
+                <CloudDecoration className="opacity-20 w-36 top-[85%] animate-cloud-scroll-left-slow" flip style={{ animationDelay: '-20s' }} />
 
                 {/* --- 2. 中間のレイヤー（普通サイズ、中速、少し薄め、右へ） --- */}
-                <CloudDecoration className="opacity-60 w-52 top-[5%] animate-cloud-scroll-right-medium transform -scale-x-100" style={{ animationDelay: '-5s' }} />
+                <CloudDecoration className="opacity-60 w-52 top-[5%] animate-cloud-scroll-right-medium" flip style={{ animationDelay: '-5s' }} />
                 <CloudDecoration className="opacity-50 w-64 top-[35%] animate-cloud-scroll-right-medium" style={{ animationDelay: '-50s' }} />
-                <CloudDecoration className="opacity-50 w-48 top-[60%] animate-cloud-scroll-right-medium transform -scale-x-100" style={{ animationDelay: '-25s' }} />
+                <CloudDecoration className="opacity-50 w-48 top-[60%] animate-cloud-scroll-right-medium" flip style={{ animationDelay: '-25s' }} />
                 <CloudDecoration className="opacity-60 w-56 bottom-[5%] animate-cloud-scroll-right-medium" style={{ animationDelay: '-70s' }} />
 
                 {/* --- 1. 手前のレイヤー（大きく、速く、不透明、左へ） --- */}
                 <CloudDecoration className="opacity-90 w-72 top-[20%] animate-cloud-scroll-left-fast filter blur-[1px]" style={{ animationDelay: '-15s' }} />
-                <CloudDecoration className="opacity-80 w-80 top-[50%] animate-cloud-scroll-left-fast transform -scale-x-100 filter blur-[1px]" style={{ animationDelay: '-35s' }} />
+                <CloudDecoration className="opacity-80 w-80 top-[50%] animate-cloud-scroll-left-fast filter blur-[1px]" flip style={{ animationDelay: '-35s' }} />
                 <CloudDecoration className="opacity-95 w-96 bottom-[15%] animate-cloud-scroll-left-fast filter blur-[2px]" style={{ animationDelay: '-55s' }} />
             </div>
 
