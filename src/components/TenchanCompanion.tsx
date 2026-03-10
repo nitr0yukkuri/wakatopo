@@ -21,9 +21,9 @@ export function CharacterFace({
             case "happy":
                 return "M 45 75 Q 60 90 75 75";
             case "talking":
-                return "M 45 75 Q 60 85 75 75 Q 60 95 45 75"; // あいた口
+                return "M 48 78 Q 60 88 72 78 M 55 82 Q 60 88 65 82"; // 小さい口を追加して喋っている感
             case "surprised":
-                return "M 55 75 A 5 5 0 1 0 65 75 A 5 5 0 1 0 55 75"; // まるい口
+                return "M 57 80 A 3 3 0 1 0 63 80 A 3 3 0 1 0 57 80"; // 小さく「おっ」という口
             case "neutral":
             case "looking":
                 return "M 45 80 Q 60 85 75 80";
@@ -122,7 +122,7 @@ export function CharacterFace({
                         transition={{ duration: 0.2 }}
                         stroke="#5D4037"
                         strokeWidth="5"
-                        fill={mood === 'talking' ? "#5D4037" : "none"}
+                        fill="none"
                         strokeLinecap="round"
                         strokeLinejoin="round"
                     />
@@ -144,7 +144,7 @@ export default function TenchanCompanion({ section }: TenchanCompanionProps) {
             case 'hero':
                 return { text: "やっほー！てんちゃんだよ！", mood: "happy" as const };
             case 'concept':
-                return { text: "天気予報、見ないでしょ？", mood: "looking" as const };
+                return { text: "天気予報、見ないでしょ？", mood: "neutral" as const };
             case 'features':
                 return { text: "現実の天気と連動するよ！", mood: "talking" as const };
             case 'tech':
