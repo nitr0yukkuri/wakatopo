@@ -46,6 +46,37 @@ body {
   .animate-fade-in {
     animation: fadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
   }
+  .animate-float-medium {
+    animation: float 5s ease-in-out infinite alternate;
+  }
+  .animate-float-slow {
+    animation: float 7s ease-in-out infinite alternate;
+  }
+  .animate-float-fast {
+    animation: float 3s ease-in-out infinite alternate;
+  }
+
+  /* 雲のスクロール用アニメーション (右へ) */
+  .animate-cloud-scroll-right-slow {
+    animation: scroll-cloud-right 120s linear infinite;
+  }
+  .animate-cloud-scroll-right-medium {
+    animation: scroll-cloud-right 80s linear infinite;
+  }
+  .animate-cloud-scroll-right-fast {
+    animation: scroll-cloud-right 50s linear infinite;
+  }
+
+  /* 雲のスクロール用アニメーション (左へ) */
+  .animate-cloud-scroll-left-slow {
+    animation: scroll-cloud-left 140s linear infinite;
+  }
+  .animate-cloud-scroll-left-medium {
+    animation: scroll-cloud-left 90s linear infinite;
+  }
+  .animate-cloud-scroll-left-fast {
+    animation: scroll-cloud-left 60s linear infinite;
+  }
 }
 
 @keyframes fadeIn {
