@@ -16,11 +16,19 @@ function Sun() {
 
     useFrame((state) => {
         if (!meshRef.current) return;
-        uniforms.uTime.value = state.clock.getElapsedTime();
+        const time = state.clock.getElapsedTime();
+        uniforms.uTime.value = time;
+
+        // 太陽が下から昇ってくる演出
+        // time=0 の時は y=-20 (画面下部)、そこからスッと上がって中央付近でゆっくりになる
+        const progress = Math.min(time / 2.0, 1.0);
+        const yPos = -20 + (Math.pow(progress, 0.5) * 45); // easeOut風に上に昇る
+
+        meshRef.current.position.y = yPos;
     });
 
     return (
-        <mesh ref={meshRef} position={[0, 5, -40]} scale={[30, 30, 1]}>
+        <mesh ref={meshRef} position={[0, -20, -50]} scale={[50, 50, 1]}>
             <planeGeometry args={[1, 1]} />
             <shaderMaterial
                 vertexShader={sunVertexShader}
@@ -34,7 +42,7 @@ function Sun() {
 }
 
 function AscendingClouds() {
-    const count = 120; // Reduced count because 2D planes cover more space and look better sparse
+    const count = 150; // 少し数を増やしてリッチに
     const meshRef = useRef<THREE.InstancedMesh>(null);
 
     // 雲の初期配置
@@ -44,19 +52,16 @@ function AscendingClouds() {
         const scl = new Float32Array(count);
 
         for (let i = 0; i < count; i++) {
-            // Screen-space like distribution
-            const x = (Math.random() - 0.5) * 80;
-            const y = Math.random() * 80 - 40;
-            // Keep Z fairly tight so they layer nicely in front of the sun
-            const z = (Math.random() - 0.5) * 20 - 10;
+            const x = (Math.random() - 0.5) * 100;
+            const y = Math.random() * 100 - 20;
+            const z = (Math.random() - 0.5) * 60 - 20;
 
             pos[i * 3] = x;
             pos[i * 3 + 1] = y;
             pos[i * 3 + 2] = z;
 
             rnd[i] = Math.random();
-            // Scale reduced significantly from 12+8 to 4+6 for smaller, cuter clouds
-            scl[i] = 4.0 + Math.random() * 6.0;
+            scl[i] = 5.0 + Math.random() * 10.0;
         }
         return { positions: pos, randoms: rnd, scales: scl };
     }, []);
@@ -69,10 +74,7 @@ function AscendingClouds() {
             dummy.position.set(positions[i * 3], positions[i * 3 + 1], positions[i * 3 + 2]);
             const s = scales[i];
 
-            // Planes need to be scaled symmetrically, shape is handled in shader
             dummy.scale.set(s, s, 1);
-
-            // No rotation! Kept flat to the camera for 2D illustration look
             dummy.rotation.set(0, 0, 0);
 
             dummy.updateMatrix();
@@ -83,8 +85,8 @@ function AscendingClouds() {
 
     const uniforms = useMemo(() => ({
         uTime: { value: 0 },
-        uBaseColor: { value: new THREE.Color('#ffffff') },       // 基本の白
-        uOutlineColor: { value: new THREE.Color('#98adc2') }     // アニメ・イラスト調のフチ（落ち着いたグレーブルー）
+        uBaseColor: { value: new THREE.Color('#ffffff') },
+        uOutlineColor: { value: new THREE.Color('#98adc2') }
     }), []);
 
     useFrame((state, delta) => {
@@ -93,33 +95,41 @@ function AscendingClouds() {
         const time = state.clock.getElapsedTime();
         uniforms.uTime.value = time;
 
-        // --- 超ゆったりした動き ---
-        // 激しい加速をやめ、一定の気持ち良い速度で流れ続ける
-        // "上に昇っている" 感じを強くするため、少し速度にグラデーションをつける
-        const fallSpeed = 5.0 + Math.min(time * 1.5, 10.0); // 5 から最大 15 くらいまでの速度
+        // --- 強烈な上昇感の演出 ---
+        const progress = Math.min(time / 2.5, 1.0);
+        const ease = progress * progress; // 二次曲線で加速する
+
+        // 下方向への猛烈なスピード ＋ 手前(Z方向)へのスピードを合わせて「斜め上へ突き抜ける」立体感を出す
+        const fallSpeed = 10.0 + ease * 80.0;
+        const forwardSpeed = 5.0 + ease * 30.0;
 
         const dummy = new THREE.Object3D();
 
         for (let i = 0; i < count; i++) {
             let y = positions[i * 3 + 1];
-            y -= fallSpeed * delta;
+            let z = positions[i * 3 + 2];
 
-            // 画面外（カメラの後ろ）に行ったら上空にリセット（ループ）
-            if (y < -30) {
-                y = 50 + Math.random() * 30; // 遥か上空に再配置
-                positions[i * 3] = (Math.random() - 0.5) * 80;
-                positions[i * 3 + 2] = (Math.random() - 0.5) * 20 - 10;
+            y -= fallSpeed * delta;
+            z += forwardSpeed * delta;
+
+            // 画面の下(y<-40) または カメラの後ろ(z>5) に突き抜けたら上空の奥にリセット
+            if (y < -40 || z > 5) {
+                y = 60 + Math.random() * 40; // 遥か上空
+                z = -50 - Math.random() * 20; // 遥か奥
+                positions[i * 3] = (Math.random() - 0.5) * 100;
             }
             positions[i * 3 + 1] = y;
+            positions[i * 3 + 2] = z;
 
-            dummy.position.set(positions[i * 3], y, positions[i * 3 + 2]);
+            dummy.position.set(positions[i * 3], y, z);
 
             const s = scales[i];
-            // 雲がふわふわと大きさを変える動き (これも非常にゆっくり)
-            const dynamicScale = s * (1.0 + Math.sin(time * 0.5 + randoms[i] * Math.PI * 2) * 0.05);
-            dummy.scale.set(dynamicScale, dynamicScale, 1);
+            // 手前に来る(Zが大きくなる)ほど大きく見える錯覚を強調（遠近法エンハンス）
+            const depthScale = Math.max(0.2, (z + 60) / 60);
+            // 雲のふわふわアニメーション
+            const dynamicScale = s * depthScale * (1.0 + Math.sin(time * 2.0 + randoms[i] * Math.PI * 2) * 0.05);
 
-            // No rotation
+            dummy.scale.set(dynamicScale, dynamicScale, 1);
             dummy.rotation.set(0, 0, 0);
 
             dummy.updateMatrix();
@@ -148,10 +158,10 @@ function SkyFade() {
     useFrame((state) => {
         if (!meshRef.current) return;
         const time = state.clock.getElapsedTime();
-        const progress = Math.min(time / 4.0, 1.0); // ゆっくりとしたフェードアウト
+        const progress = Math.min(time / 2.5, 1.0);
 
-        // 最後につれて画面全体が白く(または淡い色に)フェードアウト
-        const ease = Math.pow(progress, 3);
+        // 最後に一気に白くフェードアウトしてページ遷移へ繋ぐ
+        const ease = Math.pow(progress, 4);
         const material = meshRef.current.material as THREE.MeshBasicMaterial;
         material.opacity = ease;
     });
@@ -159,7 +169,7 @@ function SkyFade() {
     return (
         <mesh ref={meshRef} position={[0, 0, -2]}>
             <planeGeometry args={[100, 100]} />
-            <meshBasicMaterial color="#e0f4fc" transparent opacity={0} depthWrite={false} />
+            <meshBasicMaterial color="#ffffff" transparent opacity={0} depthWrite={false} />
         </mesh>
     );
 }
@@ -167,7 +177,7 @@ function SkyFade() {
 export default function CloudAscentCanvas() {
     return (
         <Canvas camera={{ position: [0, 0, 0], fov: 75 }} className="w-full h-full">
-            <color attach="background" args={['#aee1f9']} /> {/* より明るくポップな青空背景 */}
+            <color attach="background" args={['#aee1f9']} />
 
             <Sun />
             <AscendingClouds />
