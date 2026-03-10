@@ -2,9 +2,7 @@
 
 import { useStore } from '@/store';
 import { useRouter } from 'next/navigation';
-import { useState, useEffect } from 'react';
-import WarpEffectCanvas from '@/components/canvas/WarpEffectCanvas';
-import CloudAscentCanvas from '@/components/canvas/CloudAscentCanvas';
+import { useEffect } from 'react';
 
 interface Work {
     id: string;
@@ -14,25 +12,12 @@ interface Work {
 }
 
 export default function WorksList({ works }: { works: Work[] }) {
-    const { setActiveWork, activeWorkId } = useStore();
+    const { setActiveWork, activeWorkId, setTransitionType } = useStore();
     const router = useRouter();
-    // 'none' | 'warp' | 'cloud'
-    const [transitionType, setTransitionType] = useState<'none' | 'warp' | 'cloud'>('none');
 
     useEffect(() => {
-        // トランジション中はスクロールを無効化
-        if (transitionType !== 'none') {
-            document.body.style.overflow = 'hidden';
-            document.body.style.touchAction = 'none';
-        } else {
-            document.body.style.overflow = '';
-            document.body.style.touchAction = '';
-        }
-        return () => {
-            document.body.style.overflow = '';
-            document.body.style.touchAction = '';
-        };
-    }, [transitionType]);
+        // ... (スクロール無効化はGlobalTransitionOverlayに移動したので削除)
+    }, []);
 
     const handleWorkClick = (id: string) => {
         if (id === '01') {
@@ -40,14 +25,15 @@ export default function WorksList({ works }: { works: Work[] }) {
             setTransitionType('warp');
             setTimeout(() => {
                 router.push('/github-planet');
-                setTimeout(() => setTransitionType('none'), 500);
+                // 次のページが表示され、オーバレイがフェードアウトする時間を確保するため少し長めに待つ
+                setTimeout(() => setTransitionType('none'), 1000);
             }, 2000);
         } else if (id === '02') {
             setActiveWork('02');
             setTransitionType('cloud');
             setTimeout(() => {
                 router.push('/otenkigurashi');
-                setTimeout(() => setTransitionType('none'), 500);
+                setTimeout(() => setTransitionType('none'), 1000);
             }, 2000);
         } else {
             setActiveWork(activeWorkId === id ? null : id);
@@ -83,18 +69,6 @@ export default function WorksList({ works }: { works: Work[] }) {
                 ))}
                 <div className="border-t border-white/10" />
             </div>
-
-            {transitionType === 'warp' && (
-                <div className="fixed inset-0 z-[9999] pointer-events-auto bg-[#000000] animate-fade-in">
-                    <WarpEffectCanvas />
-                </div>
-            )}
-
-            {transitionType === 'cloud' && (
-                <div className="fixed inset-0 z-[9999] pointer-events-auto bg-[#000000] animate-fade-in">
-                    <CloudAscentCanvas />
-                </div>
-            )}
         </>
     );
 }
