@@ -2,6 +2,8 @@
 
 import { useRouter } from 'next/navigation';
 import { useStore } from '@/store';
+import { useEffect, useRef, useState } from 'react';
+import TenchanCompanion from '@/components/TenchanCompanion';
 
 // A simple CSS cloud decoration component
 function CloudDecoration({ className }: { className: string }) {
@@ -23,6 +25,41 @@ export default function OtenkiGurashiPage() {
     const router = useRouter();
     const { setActiveWork } = useStore();
 
+    // スクロール検知用の状態とRef
+    const [activeSection, setActiveSection] = useState<'hero' | 'concept' | 'features' | 'tech' | 'bottom'>('hero');
+    const heroRef = useRef<HTMLDivElement>(null);
+    const conceptRef = useRef<HTMLDivElement>(null);
+    const featuresRef = useRef<HTMLDivElement>(null);
+    const techRef = useRef<HTMLDivElement>(null);
+    const bottomRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const observerOptions = {
+            root: null,
+            rootMargin: '-30% 0px -40% 0px', // 画面の中央付近で検知する
+            threshold: 0
+        };
+
+        const observerCallback: IntersectionObserverCallback = (entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id as 'hero' | 'concept' | 'features' | 'tech' | 'bottom';
+                    setActiveSection(id);
+                }
+            });
+        };
+
+        const observer = new IntersectionObserver(observerCallback, observerOptions);
+
+        if (heroRef.current) observer.observe(heroRef.current);
+        if (conceptRef.current) observer.observe(conceptRef.current);
+        if (featuresRef.current) observer.observe(featuresRef.current);
+        if (techRef.current) observer.observe(techRef.current);
+        if (bottomRef.current) observer.observe(bottomRef.current);
+
+        return () => observer.disconnect();
+    }, []);
+
     const handleReturn = () => {
         setActiveWork(null); // ワープ状態をリセット
         router.push('/');
@@ -30,7 +67,7 @@ export default function OtenkiGurashiPage() {
 
     return (
         // Bright sky blue gradient background
-        <main className="relative w-full min-h-[120vh] bg-gradient-to-b from-[#aee1f9] to-[#e0f4fc] text-gray-700 overflow-x-hidden font-sans">
+        <main className="relative w-full min-h-[120vh] bg-gradient-to-b from-[#aee1f9] to-[#e0f4fc] text-gray-700 overflow-x-hidden font-sans pb-32">
 
             {/* Background Decorations */}
             <CloudDecoration className="top-10 left-[-5%] w-64" />
@@ -40,7 +77,7 @@ export default function OtenkiGurashiPage() {
             <div className="relative z-10 w-full max-w-5xl mx-auto px-6 pt-24 pb-32 flex flex-col items-center animate-fade-in-up">
 
                 {/* Pop Title */}
-                <h1 className="text-5xl md:text-7xl font-black tracking-tight text-[#ffb03a] drop-shadow-[0_4px_0_#e69a2e] mb-10 text-center">
+                <h1 id="hero" ref={heroRef} className="text-5xl md:text-7xl font-black tracking-tight text-[#ffb03a] drop-shadow-[0_4px_0_#e69a2e] mb-10 text-center scroll-mt-24">
                     OTENKI GURASHI
                 </h1>
 
@@ -54,7 +91,7 @@ export default function OtenkiGurashiPage() {
 
                     <div className="space-y-12">
                         {/* THE CONCEPT */}
-                        <div className="bg-[#f8fcfd] rounded-3xl p-8 border-2 border-[#e0f4fc]">
+                        <div id="concept" ref={conceptRef} className="bg-[#f8fcfd] rounded-3xl p-8 border-2 border-[#e0f4fc] scroll-mt-32">
                             <h2 className="text-xl font-black tracking-wider text-[#7ab8cc] mb-4 flex items-center gap-3">
                                 <span className="text-[#ffb03a]">01</span> CONCEPT
                             </h2>
@@ -65,7 +102,7 @@ export default function OtenkiGurashiPage() {
                         </div>
 
                         {/* FEATURES */}
-                        <div>
+                        <div id="features" ref={featuresRef} className="scroll-mt-32">
                             <h2 className="text-xl font-black tracking-wider text-[#7ab8cc] mb-6 flex items-center gap-3 pl-2">
                                 <span className="text-[#ffb03a]">02</span> FEATURES
                             </h2>
@@ -92,7 +129,7 @@ export default function OtenkiGurashiPage() {
                         </div>
 
                         {/* TECHNICAL STACK */}
-                        <div>
+                        <div id="tech" ref={techRef} className="scroll-mt-32">
                             <h2 className="text-xl font-black tracking-wider text-[#7ab8cc] mb-6 flex items-center gap-3 pl-2">
                                 <span className="text-[#ffb03a]">03</span> TECH STACK
                             </h2>
@@ -107,7 +144,7 @@ export default function OtenkiGurashiPage() {
                     </div>
 
                     {/* Pop Buttons */}
-                    <div className="mt-16 pt-10 border-t-2 border-[#e0f4fc] flex flex-col sm:flex-row items-center justify-center gap-6">
+                    <div id="bottom" ref={bottomRef} className="mt-16 pt-10 border-t-2 border-[#e0f4fc] flex flex-col sm:flex-row items-center justify-center gap-6 scroll-mt-32">
                         <a
                             href="https://weather-live-ochre.vercel.app"
                             target="_blank"
@@ -136,6 +173,9 @@ export default function OtenkiGurashiPage() {
                     </div>
                 </div>
             </div>
+
+            {/* Ten-chan Companion */}
+            <TenchanCompanion section={activeSection} />
         </main>
     );
 }
