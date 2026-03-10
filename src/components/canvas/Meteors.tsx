@@ -128,11 +128,12 @@ export default function Meteors() {
             id,
             startPos: new THREE.Vector3(startX, startY, startZ),
             endPos: new THREE.Vector3(endX, endY, endZ),
-            color: new THREE.Color().setHSL(Math.random(), 1.0, 0.8).getStyle(),
+            // 星空に映える、さまざまな明るい色をランダムに選択（白、青、ピンク、緑、黄色など）
+            color: ['#ffffff', '#00ffff', '#ff00ff', '#00ff00', '#ffff00', '#ff8800', '#8888ff'][Math.floor(Math.random() * 7)],
             // 星のサイズを元の 1/4 ~ 1/3 まで小さくして「巨大な物体感」をなくす
             scale: 0.15 + Math.random() * 0.15,
-            // 0.4 ~ 0.8秒で一瞬で消え去る(超高速)
-            duration: 0.4 + Math.random() * 0.4
+            // 0.8 ~ 1.4秒くらいかけてゆっくり流れるように変更
+            duration: 0.8 + Math.random() * 0.6
         };
 
         setMeteors(prev => [...prev, newMeteor]);

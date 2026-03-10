@@ -135,10 +135,12 @@ export function CharacterFace({
 // Ten-chan Companion Component
 type TenchanCompanionProps = {
     section: 'hero' | 'concept' | 'features' | 'tech' | 'bottom';
+    overrideDialog?: { text: string; mood: "happy" | "neutral" | "sad" | "scared" | "sleepy" | "looking" | "surprised" | "talking" } | null;
+    onClick?: () => void;
 };
 
-export default function TenchanCompanion({ section }: TenchanCompanionProps) {
-    // セクションに応じたメッセージと表情を設定
+export default function TenchanCompanion({ section, overrideDialog, onClick }: TenchanCompanionProps) {
+    // セクションに応じたデフォルトメッセージと表情を設定
     const getDialogue = () => {
         switch (section) {
             case 'hero':
@@ -156,14 +158,15 @@ export default function TenchanCompanion({ section }: TenchanCompanionProps) {
         }
     };
 
-    const { text, mood } = getDialogue();
+    const defaultDialog = getDialogue();
+    const activeDialog = overrideDialog || defaultDialog;
 
     return (
         <div className="fixed bottom-6 right-6 z-50 flex items-end gap-4 pointer-events-none">
             {/* 吹き出し */}
             <AnimatePresence mode="wait">
                 <motion.div
-                    key={text}
+                    key={activeDialog.text}
                     initial={{ opacity: 0, y: 10, scale: 0.9 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 5, scale: 0.95 }}
@@ -171,7 +174,7 @@ export default function TenchanCompanion({ section }: TenchanCompanionProps) {
                     className="relative bg-white border-4 border-[#e0f4fc] rounded-3xl px-6 py-4 shadow-[0_10px_30px_rgba(152,173,194,0.3)] mb-8"
                 >
                     <p className="text-gray-700 font-bold text-sm md:text-base whitespace-nowrap">
-                        {text}
+                        {activeDialog.text}
                     </p>
                     {/* しっぽ (三角形) */}
                     <div className="absolute -bottom-3 right-6 w-0 h-0 border-l-[10px] border-l-transparent border-t-[14px] border-t-white border-r-[10px] border-r-transparent z-10" />
@@ -181,12 +184,15 @@ export default function TenchanCompanion({ section }: TenchanCompanionProps) {
 
             {/* てんちゃん本体 */}
             <motion.div
-                className="w-24 h-24 md:w-32 md:h-32 drop-shadow-[0_10px_20px_rgba(152,173,194,0.4)]"
+                className={`w-24 h-24 md:w-32 md:h-32 drop-shadow-[0_10px_20px_rgba(152,173,194,0.4)] ${onClick ? 'pointer-events-auto cursor-pointer' : ''}`}
                 initial={{ y: 100, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
+                whileHover={onClick ? { scale: 1.05 } : undefined}
+                whileTap={onClick ? { scale: 0.95 } : undefined}
                 transition={{ type: "spring", stiffness: 200, damping: 20, delay: 0.5 }}
+                onClick={onClick}
             >
-                <CharacterFace mood={mood} />
+                <CharacterFace mood={activeDialog.mood} />
             </motion.div>
         </div>
     );
