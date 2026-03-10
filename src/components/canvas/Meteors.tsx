@@ -1,38 +1,26 @@
-import { useRef, useEffect, useMemo, useState } from 'react';
+import { useRef, useMemo, useState } from 'react';
+import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
-import anime from 'animejs';
 
 // 1つの流星コンポーネント
-function Meteor({ startPos, endPos, color = '#ffffff', scale = 1.0, onComplete }: any) {
+function Meteor({ startPos, endPos, color = '#ffffff', scale = 1.0, duration = 2.0, onComplete }: any) {
     const meteorRef = useRef<THREE.Group>(null);
-    const headRef = useRef<THREE.Mesh>(null);
-    const tailRef = useRef<THREE.Mesh>(null);
+    const headMaterialRef = useRef<THREE.MeshBasicMaterial>(null);
+    const tailMaterialRef = useRef<THREE.MeshBasicMaterial>(null);
+    const timeRef = useRef(0);
 
-    // Initial positioning
-    useEffect(() => {
-        if (meteorRef.current) {
-            meteorRef.current.position.copy(startPos);
-
-            // Calculate rotation to face the movement direction
-            const direction = new THREE.Vector3().subVectors(endPos, startPos).normalize();
-
-            // Default object faces Z+ axis. We need it to face the direction.
-            // Using lookAt to orient the object.
-            // We create a dummy object to use lookAt safely without messing up existing matrices in a weird state
-            const dummy = new THREE.Object3D();
-            dummy.position.copy(startPos);
-            dummy.lookAt(startPos.clone().add(direction));
-
-            const euler = dummy.rotation;
-
-            if (headRef.current) headRef.current.rotation.copy(euler);
-            if (tailRef.current) tailRef.current.rotation.copy(euler);
-        }
+    // Initial positioning and rotation
+    useMemo(() => {
+        // We only want to compute this once per meteor
+        const direction = new THREE.Vector3().subVectors(endPos, startPos).normalize();
+        const dummy = new THREE.Object3D();
+        dummy.position.copy(startPos);
+        dummy.lookAt(startPos.clone().add(direction));
+        return { initialRotation: dummy.rotation };
     }, [startPos, endPos]);
 
-    // Shape Geometry Memoization (Same as original repo)
+    // Shape Geometry Memoization
     const { geometry, tailGeometry } = useMemo(() => {
-        // Create Meteor Head (Star Shape)
         const starShape = new THREE.Shape();
         const outerRadius = 0.5 * scale;
         const innerRadius = 0.2 * scale;
@@ -49,45 +37,55 @@ function Meteor({ startPos, endPos, color = '#ffffff', scale = 1.0, onComplete }
 
         const geom = new THREE.ExtrudeGeometry(starShape, { depth: 0.2 * scale, bevelEnabled: false });
 
-        // Create Meteor Tail (Glow)
-        // Adjusting cylinder rotation because cylinder default is Y-aligned
-        const tGeom = new THREE.CylinderGeometry(0.02 * scale, 0.5 * scale, 5 * scale, 16);
-        tGeom.rotateX(Math.PI / 2); // Make tail face Z axis to match lookAt
-        tGeom.translate(0, 0, -2.5 * scale); // Offset behind the head
+        // もっと細くて、シュッと長い尾を引くように変更
+        const tGeom = new THREE.CylinderGeometry(0.005 * scale, 0.1 * scale, 12 * scale, 16);
+        tGeom.rotateX(Math.PI / 2);
+        tGeom.translate(0, 0, -6.0 * scale);
 
         return { geometry: geom, tailGeometry: tGeom };
     }, [scale]);
 
-    useEffect(() => {
-        if (meteorRef.current) {
-            // Animate using anime.js exactly like original
-            anime({
-                targets: meteorRef.current.position,
-                x: [startPos.x, endPos.x],
-                y: [startPos.y, endPos.y],
-                z: [startPos.z, endPos.z],
-                duration: 2000,
-                easing: 'linear',
-                complete: () => {
-                    if (onComplete) onComplete();
-                }
-            });
-        }
-    }, [startPos, endPos, onComplete]);
+    // Animation via useFrame instead of anime.js
+    useFrame((state, delta) => {
+        if (!meteorRef.current) return;
 
+        timeRef.current += delta;
+        const progress = Math.min(timeRef.current / duration, 1.0);
+
+        // Linear interpolation from start to end
+        meteorRef.current.position.lerpVectors(startPos, endPos, progress);
+
+        // Make sure it faces the right way
+        const direction = new THREE.Vector3().subVectors(endPos, startPos).normalize();
+        const targetPoint = meteorRef.current.position.clone().add(direction);
+        meteorRef.current.lookAt(targetPoint);
+
+        // 流れ星らしく、最後にかけてフェードアウト（燃え尽きる）
+        if (headMaterialRef.current && tailMaterialRef.current) {
+            const easeOut = 1.0 - progress * progress; // 二乗で後半一気に消える
+            headMaterialRef.current.opacity = easeOut;
+            tailMaterialRef.current.opacity = easeOut * 0.8;
+        }
+
+        if (progress >= 1.0 && onComplete) {
+            onComplete();
+        }
+    });
 
     return (
-        <group ref={meteorRef}>
-            <mesh ref={headRef} geometry={geometry}>
-                <meshBasicMaterial color={color} />
+        <group ref={meteorRef} position={startPos}>
+            <mesh geometry={geometry}>
+                <meshBasicMaterial ref={headMaterialRef} color={color} transparent={true} fog={false} />
             </mesh>
-            <mesh ref={tailRef} geometry={tailGeometry}>
+            <mesh geometry={tailGeometry}>
                 <meshBasicMaterial
+                    ref={tailMaterialRef}
                     color={color}
                     transparent={true}
-                    opacity={0.5}
+                    opacity={0.8}
                     blending={THREE.AdditiveBlending}
                     depthWrite={false}
+                    fog={false}
                 />
             </mesh>
         </group>
@@ -95,39 +93,46 @@ function Meteor({ startPos, endPos, color = '#ffffff', scale = 1.0, onComplete }
 }
 
 // Manager component that spawns meteors randomly over time
-export default function Meteors({ isInteractive = false }) {
+export default function Meteors() {
     const [meteors, setMeteors] = useState<any[]>([]);
     const nextId = useRef(0);
+    const timeSinceLastSpawn = useRef(0);
 
-    // Auto-spawner (since we don't have socket.io yet in this template)
-    useEffect(() => {
-        const interval = setInterval(() => {
-            if (Math.random() > 0.5) { // 50% chance every 1.5s
+    useFrame((state, delta) => {
+        timeSinceLastSpawn.current += delta;
+        // Spawn every ~0.8 seconds (roughly matches the setInterval logic)
+        if (timeSinceLastSpawn.current > 0.8) {
+            if (Math.random() > 0.3) {
                 spawnMeteor();
             }
-        }, 1500);
-        return () => clearInterval(interval);
-    }, []);
+            timeSinceLastSpawn.current = 0;
+        }
+    });
 
     const spawnMeteor = () => {
         const id = nextId.current++;
 
-        // Random positions matching the original logic context
-        // Meteor comes from far top-right/left and shoots down-left/right
-        const startX = (Math.random() - 0.5) * 60;
-        const startY = 20 + Math.random() * 10;
-        const startZ = -20 - Math.random() * 20;
+        const isRight = Math.random() > 0.5;
 
-        const endX = startX + (Math.random() > 0.5 ? 20 : -20);
-        const endY = startY - 40;
-        const endZ = startZ + 20;
+        // 流れ星らしく、かなり遠く(X=40付近)から、宇宙の奥深くより斜めに高速で突っ込んでくる
+        const startX = isRight ? (35 + Math.random() * 15) : (-35 - Math.random() * 15);
+        const startY = 20 + Math.random() * 10;
+        const startZ = -15 - Math.random() * 20;
+
+        // 画面の反対側へ一気に突き抜ける
+        const endX = isRight ? (-20 - Math.random() * 20) : (20 + Math.random() * 20);
+        const endY = startY - 20 - Math.random() * 15; // やや下へ
+        const endZ = startZ + 10 + Math.random() * 10;
 
         const newMeteor = {
             id,
             startPos: new THREE.Vector3(startX, startY, startZ),
             endPos: new THREE.Vector3(endX, endY, endZ),
-            color: new THREE.Color().setHSL(Math.random(), 1.0, 0.7).getStyle(),
-            scale: 0.5 + Math.random() * 1.5
+            color: new THREE.Color().setHSL(Math.random(), 1.0, 0.8).getStyle(),
+            // 星のサイズを元の 1/4 ~ 1/3 まで小さくして「巨大な物体感」をなくす
+            scale: 0.15 + Math.random() * 0.15,
+            // 0.4 ~ 0.8秒で一瞬で消え去る(超高速)
+            duration: 0.4 + Math.random() * 0.4
         };
 
         setMeteors(prev => [...prev, newMeteor]);
@@ -146,6 +151,7 @@ export default function Meteors({ isInteractive = false }) {
                     endPos={m.endPos}
                     color={m.color}
                     scale={m.scale}
+                    duration={m.duration}
                     onComplete={() => removeMeteor(m.id)}
                 />
             ))}

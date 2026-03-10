@@ -4,6 +4,7 @@ import { useStore } from '@/store';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import WarpEffectCanvas from '@/components/canvas/WarpEffectCanvas';
+import CloudAscentCanvas from '@/components/canvas/CloudAscentCanvas';
 
 interface Work {
     id: string;
@@ -15,10 +16,12 @@ interface Work {
 export default function WorksList({ works }: { works: Work[] }) {
     const { setActiveWork, activeWorkId } = useStore();
     const router = useRouter();
-    const [isWarping, setIsWarping] = useState(false);
+    // 'none' | 'warp' | 'cloud'
+    const [transitionType, setTransitionType] = useState<'none' | 'warp' | 'cloud'>('none');
 
     useEffect(() => {
-        if (isWarping) {
+        // トランジション中はスクロールを無効化
+        if (transitionType !== 'none') {
             document.body.style.overflow = 'hidden';
             document.body.style.touchAction = 'none';
         } else {
@@ -29,16 +32,23 @@ export default function WorksList({ works }: { works: Work[] }) {
             document.body.style.overflow = '';
             document.body.style.touchAction = '';
         };
-    }, [isWarping]);
+    }, [transitionType]);
 
     const handleWorkClick = (id: string) => {
         if (id === '01') {
             setActiveWork('01');
-            setIsWarping(true);
+            setTransitionType('warp');
             setTimeout(() => {
                 router.push('/github-planet');
-                setTimeout(() => setIsWarping(false), 500); // 遷移後に状態をリセット
-            }, 2000); // 2.0秒かけて優雅に遷移
+                setTimeout(() => setTransitionType('none'), 500);
+            }, 2000);
+        } else if (id === '02') {
+            setActiveWork('02');
+            setTransitionType('cloud');
+            setTimeout(() => {
+                router.push('/otenkigurashi');
+                setTimeout(() => setTransitionType('none'), 500);
+            }, 2000);
         } else {
             setActiveWork(activeWorkId === id ? null : id);
         }
@@ -74,9 +84,15 @@ export default function WorksList({ works }: { works: Work[] }) {
                 <div className="border-t border-white/10" />
             </div>
 
-            {isWarping && (
+            {transitionType === 'warp' && (
                 <div className="fixed inset-0 z-[9999] pointer-events-auto bg-[#000000] animate-fade-in">
                     <WarpEffectCanvas />
+                </div>
+            )}
+
+            {transitionType === 'cloud' && (
+                <div className="fixed inset-0 z-[9999] pointer-events-auto bg-[#000000] animate-fade-in">
+                    <CloudAscentCanvas />
                 </div>
             )}
         </>
