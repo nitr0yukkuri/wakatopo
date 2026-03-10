@@ -115,9 +115,9 @@ export default async function Home() {
             <div>
               <h2 className="text-4xl font-bold tracking-tight mb-6 text-white">LET'S CONNECT</h2>
               <div className="flex gap-8 font-mono text-xs text-gray-400">
-                <a href="https://github.com/nitr0yukkuri" target="_blank" className="hover:text-cyan-400 transition-colors">GITHUB</a>
-                <a href="#" className="hover:text-cyan-400 transition-colors">TWITTER</a>
-                <a href="#" className="hover:text-cyan-400 transition-colors">MAIL</a>
+                <a href="https://github.com/nitr0yukkuri" target="_blank" rel="noopener noreferrer" className="hover:text-cyan-400 transition-colors">GITHUB</a>
+                <a href="https://x.com/0ts_st" target="_blank" rel="noopener noreferrer" className="hover:text-cyan-400 transition-colors">TWITTER</a>
+                <a href="mailto:nakatawakato@gmail.com" className="hover:text-cyan-400 transition-colors">MAIL</a>
               </div>
             </div>
             <p className="text-[10px] text-gray-700 font-mono text-right">

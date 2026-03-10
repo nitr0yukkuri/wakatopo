@@ -92,12 +92,12 @@ export default function AboutPage() {
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="#" className="flex items-center gap-2 hover:underline underline-offset-4">
+                                    <a href="https://x.com/0ts_st" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:underline underline-offset-4">
                                         Twitter ↗
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="#" className="flex items-center gap-2 hover:underline underline-offset-4">
+                                    <a href="https://zenn.dev/0st_ts" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:underline underline-offset-4">
                                         Zenn ↗
                                     </a>
                                 </li>
