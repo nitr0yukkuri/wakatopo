@@ -18,8 +18,8 @@ export default function GitHubPlanetPage() {
             {/* 3Dのリアルな惑星背景（GitHub Planetからの移植・調整版） */}
             <RealisticPlanetScene />
 
-            <div className="relative z-10 w-full max-w-5xl mx-auto px-6 pt-32 pb-32 flex flex-col items-center animate-fade-in-up pointer-events-none">
-                <h1 className="text-5xl md:text-8xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-600 drop-shadow-[0_0_30px_rgba(255,255,255,0.2)] mb-8">
+            <div className="relative z-10 w-full max-w-5xl mx-auto px-6 pt-32 pb-16 flex flex-col items-center animate-fade-in-up pointer-events-none">
+                <h1 className="text-5xl md:text-8xl font-black tracking-widest text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-600 drop-shadow-[0_0_30px_rgba(255,255,255,0.2)] mb-4 uppercase">
                     GITHUB PLANET
                 </h1>
 
