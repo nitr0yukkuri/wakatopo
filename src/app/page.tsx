@@ -14,7 +14,7 @@ export default async function Home() {
   ];
 
   return (
-    <main className="relative w-full min-h-screen text-white font-sans bg-[#050505]">
+    <main className="relative w-full min-h-[100dvh] text-white font-sans bg-[#050505]">
       <ClientInitializer
         initialWeather={data.weather as any}
         initialActivity={data.activityLevel}
@@ -38,36 +38,39 @@ export default async function Home() {
         </div>
 
         {/* Top Right */}
-        <div className="absolute top-8 right-8 text-right flex flex-col gap-1">
+        <div className="absolute top-6 right-6 md:top-8 md:right-8 text-right flex flex-col gap-1">
           <div className="flex items-center justify-end gap-2 text-cyan-400">
             <span className="w-1.5 h-1.5 bg-cyan-400 rounded-none animate-pulse" />
             <span>SYSTEM ONLINE</span>
           </div>
-          <span>TARGET: NITR0YUKKURI</span>
+          <span className="hidden sm:inline">TARGET: NITR0YUKKURI</span>
         </div>
 
-        {/* Bottom Left */}
-        <div className="flex flex-col gap-1 border-l border-gray-800 pl-4">
-          <div className="flex gap-4">
-            <span className="w-12">LOC</span>
-            <span className="text-gray-300">OSAKA, JP</span>
+        {/* Bottom HUD Container */}
+        <div className="flex justify-between items-end w-full">
+          {/* Bottom Left */}
+          <div className="flex flex-col gap-1 border-l border-gray-800 pl-4">
+            <div className="flex gap-4">
+              <span className="w-12">LOC</span>
+              <span className="text-gray-300">OSAKA, JP</span>
+            </div>
+            <div className="flex gap-4">
+              <span className="w-12">WTHR</span>
+              <span className={data.weather === 'Rain' ? 'text-blue-400' : 'text-orange-400'}>
+                {data.weather.toUpperCase()}
+              </span>
+            </div>
+            <div className="flex gap-4">
+              <span className="w-12">ACTV</span>
+              <span className="text-white">{(data.activityLevel * 100).toFixed(0)}%</span>
+            </div>
           </div>
-          <div className="flex gap-4">
-            <span className="w-12">WTHR</span>
-            <span className={data.weather === 'Rain' ? 'text-blue-400' : 'text-orange-400'}>
-              {data.weather.toUpperCase()}
-            </span>
-          </div>
-          <div className="flex gap-4">
-            <span className="w-12">ACTV</span>
-            <span className="text-white">{(data.activityLevel * 100).toFixed(0)}%</span>
-          </div>
-        </div>
 
-        {/* Bottom Right */}
-        <div className="text-right flex flex-col items-end gap-2">
-          <span>SCROLL TO EXPLORE</span>
-          <div className="w-[1px] h-8 bg-gray-600"></div>
+          {/* Bottom Right */}
+          <div className="hidden sm:flex text-right flex-col items-end gap-2">
+            <span>SCROLL TO EXPLORE</span>
+            <div className="w-[1px] h-8 bg-gray-600"></div>
+          </div>
         </div>
       </div>
 
@@ -75,8 +78,8 @@ export default async function Home() {
       <div className="relative z-10 w-full pointer-events-none">
 
         {/* HERO */}
-        <section className="h-screen flex items-center justify-center pointer-events-none">
-          <div className="text-center space-y-6">
+        <section className="h-[100dvh] min-h-[100dvh] flex items-center justify-center pointer-events-none">
+          <div className="text-center space-y-4 md:space-y-6">
             <h2 className="text-6xl md:text-9xl font-bold tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white to-transparent opacity-80">
               LIVING<br />PLANET
             </h2>

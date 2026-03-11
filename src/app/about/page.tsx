@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 export default function AboutPage() {
     return (
-        <main className="relative min-h-screen bg-[#050505] text-white overflow-hidden font-sans selection:bg-cyan-500 selection:text-black">
+        <main className="relative min-h-[100dvh] bg-[#050505] text-white overflow-hidden font-sans selection:bg-cyan-500 selection:text-black">
 
             {/* Background Glows */}
             <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-cyan-900/20 blur-[120px] pointer-events-none" />
@@ -19,7 +19,7 @@ export default function AboutPage() {
                 </Link>
             </nav>
 
-            <div className="relative z-10 container mx-auto px-6 md:px-12 pt-12 pb-32 flex flex-col md:flex-row gap-16 md:gap-32 items-start justify-center min-h-[80vh]">
+            <div className="relative z-10 container mx-auto px-6 md:px-12 pt-8 pb-32 flex flex-col md:flex-row gap-12 md:gap-32 items-start justify-center min-h-[80dvh]">
 
                 {/* Left Column: Identity */}
                 <div className="flex-1 max-w-lg animate-fade-in-up">

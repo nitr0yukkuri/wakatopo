@@ -93,7 +93,7 @@ export default function OtenkiGurashiPage() {
 
     return (
         // Bright sky blue gradient background
-        <main className="relative w-full min-h-[120vh] bg-gradient-to-b from-[#aee1f9] to-[#e0f4fc] text-gray-700 overflow-hidden font-sans pb-32">
+        <main className="relative w-full min-h-[120dvh] bg-gradient-to-b from-[#aee1f9] to-[#e0f4fc] text-gray-700 overflow-hidden font-sans pb-32">
 
             {/* Background Parallax Clouds Layer */}
             <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
@@ -122,23 +122,23 @@ export default function OtenkiGurashiPage() {
                 <CloudDecoration className="opacity-95 w-96 bottom-[10%] animate-cloud-scroll-left-fast filter blur-[2px]" style={{ animationDelay: '-55s' }} />
             </div>
 
-            <div className="relative z-10 w-full max-w-5xl mx-auto px-6 pt-24 pb-32 flex flex-col items-center animate-fade-in-up">
+            <div className="relative z-10 w-full max-w-5xl mx-auto px-4 md:px-6 pt-20 md:pt-24 pb-32 flex flex-col items-center animate-fade-in-up">
 
                 {/* Pop Title Logo */}
-                <div id="hero" ref={heroRef} className="mb-10 text-center scroll-mt-24 w-full flex justify-center">
+                <div id="hero" ref={heroRef} className="mb-8 md:mb-10 text-center scroll-mt-24 w-full flex justify-center">
                     <img
                         src="/otenkigurashi-logo.png"
                         alt="OTENKI GURASHI Logo"
-                        className="w-full max-w-sm md:max-w-md drop-shadow-md"
+                        className="w-full max-w-[16rem] md:max-w-md drop-shadow-md"
                     />
                 </div>
 
                 {/* Fluffy White Content Card */}
-                <div className="bg-white/95 backdrop-blur-sm border-4 border-white p-8 md:p-14 rounded-[3rem] w-full shadow-[0_20px_60px_-15px_rgba(152,173,194,0.3)]">
+                <div className="bg-white/95 backdrop-blur-sm border-4 border-white px-6 py-10 md:p-14 rounded-[2.5rem] md:rounded-[3rem] w-full shadow-[0_20px_60px_-15px_rgba(152,173,194,0.3)]">
 
-                    <p className="text-xl md:text-2xl font-bold text-gray-600 mb-12 leading-relaxed text-center">
+                    <p className="text-lg md:text-2xl font-bold text-gray-600 mb-10 md:mb-12 leading-relaxed text-center">
                         天気予報を見ないあなたの、<br className="md:hidden" />いちばん優しいおまもり。<br />
-                        <span className="text-[#ffb03a] text-2xl md:text-3xl inline-block mt-2">おてんきぐらし</span> は、<br className="md:hidden" />現実の天気と連動するシミュレーションです。
+                        <span className="text-[#ffb03a] text-xl md:text-3xl inline-block mt-2 font-black">おてんきぐらし</span> は、<br className="md:hidden" />現実の天気と連動するシミュレーションです。
                     </p>
 
                     <div className="space-y-12">
@@ -150,9 +150,9 @@ export default function OtenkiGurashiPage() {
                             </div>
                             <div
                                 onClick={() => handleInteract("ゲームみたいに天気を楽しめるんだ！", "happy")}
-                                className="bg-white/90 backdrop-blur-md rounded-[3rem] p-8 md:p-12 border-4 border-white shadow-xl max-w-3xl cursor-pointer hover:border-[#ffb03a] hover:shadow-lg transition-all"
+                                className="bg-white/90 backdrop-blur-md rounded-[2.5rem] md:rounded-[3rem] p-6 md:p-12 border-4 border-white shadow-xl max-w-3xl cursor-pointer hover:border-[#ffb03a] hover:shadow-lg transition-all"
                             >
-                                <p className="text-lg md:text-xl leading-relaxed text-gray-700 font-medium">
+                                <p className="text-base md:text-xl leading-relaxed text-gray-700 font-medium">
                                     天気予報の確認は面倒だけど、急な雨や気圧の変化はつらい… そんな方々のために生まれました。
                                     ゲーム性のある優しい世界を通して、面倒だった天気確認を「雨だから、ゲーム内で特別なことができるかも？」という、ポジティブな体験へと変えていきます。
                                 </p>

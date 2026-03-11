@@ -14,7 +14,7 @@ export default function GitHubPlanetPage() {
     };
 
     return (
-        <main className="relative w-full min-h-[120vh] bg-[#020202] text-white overflow-x-hidden">
+        <main className="relative w-full min-h-[120dvh] bg-[#020202] text-white overflow-x-hidden">
             {/* 3Dのリアルな惑星背景（GitHub Planetからの移植・調整版） */}
             <RealisticPlanetScene />
 

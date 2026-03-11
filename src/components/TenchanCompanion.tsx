@@ -171,9 +171,9 @@ export default function TenchanCompanion({ section, overrideDialog, onClick }: T
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 5, scale: 0.95 }}
                     transition={{ duration: 0.3 }}
-                    className="relative bg-white border-4 border-[#e0f4fc] rounded-3xl px-6 py-4 shadow-[0_10px_30px_rgba(152,173,194,0.3)] mb-8"
+                    className="relative bg-white border-4 border-[#e0f4fc] rounded-3xl px-5 py-3 md:px-6 md:py-4 shadow-[0_10px_30px_rgba(152,173,194,0.3)] mb-4 md:mb-8 max-w-[calc(100vw-8rem)] md:max-w-none"
                 >
-                    <p className="text-gray-700 font-bold text-sm md:text-base whitespace-nowrap">
+                    <p className="text-gray-700 font-bold text-sm md:text-base whitespace-normal break-words sm:whitespace-nowrap">
                         {activeDialog.text}
                     </p>
                     {/* しっぽ (三角形) */}

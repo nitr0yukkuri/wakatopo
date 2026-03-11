@@ -47,7 +47,7 @@ export default function WorksList({ works }: { works: Work[] }) {
                     <div
                         key={work.id}
                         onClick={() => handleWorkClick(work.id)}
-                        className="group relative border-t border-white/10 py-12 flex flex-col md:flex-row md:items-baseline justify-between transition-colors hover:bg-white/5 cursor-pointer"
+                        className="group relative border-t border-white/10 py-8 md:py-12 flex flex-col md:flex-row md:items-baseline justify-between transition-colors hover:bg-white/5 cursor-pointer"
                     >
                         <span className="font-mono text-xs text-gray-600 mb-2 md:mb-0 w-16 group-hover:text-cyan-400 transition-colors">
                             {work.id}
