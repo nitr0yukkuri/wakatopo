@@ -22,21 +22,40 @@ export function RainParticles() {
 
     return (
         <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
-            {drops.map((drop) => (
-                <motion.div
-                    key={drop.id}
-                    className="absolute -top-12 w-[1px] h-12 bg-white/40"
-                    style={{ left: drop.left }}
-                    initial={{ opacity: 0 }}
-                    animate={{ y: '120vh', opacity: [0, 1, 0.8, 0] }}
-                    transition={{
-                        duration: drop.duration,
-                        repeat: Infinity,
-                        delay: drop.delay,
-                        ease: 'linear'
-                    }}
-                />
-            ))}
+            {drops.map((drop) => {
+                // Add variation to create depth
+                const zDepth = Math.random();
+                const isClose = zDepth > 0.7; // 30% are "close" to camera
+
+                return (
+                    <motion.div
+                        key={drop.id}
+                        className="absolute bg-white/40 origin-top"
+                        style={{
+                            left: drop.left,
+                            width: isClose ? '2px' : '1px',
+                            // Initial height
+                            height: isClose ? '15vh' : '8vh',
+                            top: '-20vh', // Start higher above screen
+                        }}
+                        initial={{ opacity: 0, y: 0, scaleY: 1, scaleX: 1 }}
+                        animate={{
+                            y: '140vh', // Fall further past screen
+                            opacity: [0, 0.8, 1, 0],
+                            // "Camera moving forward" effect: particles stretch and widen as they pass
+                            scaleY: [1, 2, 3],
+                            scaleX: [1, isClose ? 2 : 1, isClose ? 3 : 1]
+                        }}
+                        transition={{
+                            // Much faster duration to simulate speed
+                            duration: drop.duration * (isClose ? 0.3 : 0.4),
+                            repeat: Infinity,
+                            delay: drop.delay,
+                            ease: 'linear'
+                        }}
+                    />
+                );
+            })}
         </div>
     );
 }
@@ -44,10 +63,10 @@ export function RainParticles() {
 export default function RainTransitionCanvas() {
     return (
         <motion.div
-            className="w-full h-full bg-gradient-to-t from-[#60a5fa] to-[#bfdbfe] transform-gpu origin-center"
-            initial={{ scale: 4, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 2.5, ease: [0.16, 1, 0.3, 1] }}
+            className="w-full h-full bg-gradient-to-t from-[#60a5fa] to-[#bfdbfe]"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1.5, ease: 'easeInOut' }}
         >
             <RainParticles />
         </motion.div>
