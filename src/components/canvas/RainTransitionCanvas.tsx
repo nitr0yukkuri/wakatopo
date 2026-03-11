@@ -43,8 +43,13 @@ export function RainParticles() {
 
 export default function RainTransitionCanvas() {
     return (
-        <div className="w-full h-full bg-gradient-to-t from-[#60a5fa] to-[#bfdbfe]">
+        <motion.div
+            className="w-full h-full bg-gradient-to-t from-[#60a5fa] to-[#bfdbfe] transform-gpu origin-center"
+            initial={{ scale: 4, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 2.5, ease: [0.16, 1, 0.3, 1] }}
+        >
             <RainParticles />
-        </div>
+        </motion.div>
     );
 }
