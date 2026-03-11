@@ -30,7 +30,17 @@ export default function WorksList({ works }: { works: Work[] }) {
             }, 2000);
         } else if (id === '02') {
             setActiveWork('02');
-            setTransitionType('cloud');
+
+            // 天候に応じて遷移アニメーションを分岐
+            const currentWeather = useStore.getState().weather;
+            if (currentWeather === 'Rain') {
+                setTransitionType('rain');
+            } else if (currentWeather === 'Snow') {
+                setTransitionType('snow');
+            } else {
+                setTransitionType('cloud'); // Clear/Clouds/Night
+            }
+
             setTimeout(() => {
                 router.push('/otenkigurashi');
                 setTimeout(() => setTransitionType('none'), 1000);

@@ -1,16 +1,16 @@
 import { create } from 'zustand';
 
-export type WeatherType = 'Clear' | 'Rain' | 'Clouds' | 'Night';
+export type WeatherType = 'Clear' | 'Rain' | 'Clouds' | 'Snow' | 'Night';
 
 interface AppState {
     weather: WeatherType;
     githubActivityLevel: number;
     activeWorkId: string | null;
-    transitionType: 'none' | 'warp' | 'cloud' | 'freeze';
+    transitionType: 'none' | 'warp' | 'cloud' | 'freeze' | 'rain' | 'snow';
     setWeather: (weather: WeatherType) => void;
     setActivity: (level: number) => void;
     setActiveWork: (id: string | null) => void;
-    setTransitionType: (type: 'none' | 'warp' | 'cloud' | 'freeze') => void;
+    setTransitionType: (type: 'none' | 'warp' | 'cloud' | 'freeze' | 'rain' | 'snow') => void;
 }
 
 export const useStore = create<AppState>((set) => ({

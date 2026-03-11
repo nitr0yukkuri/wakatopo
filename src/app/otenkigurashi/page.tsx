@@ -24,7 +24,7 @@ function CloudDecoration({ className, style, flip }: { className: string, style?
 
 export default function OtenkiGurashiPage() {
     const router = useRouter();
-    const { setActiveWork } = useStore();
+    const { setActiveWork, weather } = useStore();
 
     // スクロール検知用の状態とRef
     const [activeSection, setActiveSection] = useState<'hero' | 'concept' | 'features' | 'tech' | 'bottom'>('hero');
@@ -91,12 +91,22 @@ export default function OtenkiGurashiPage() {
         router.push('/');
     };
 
-    return (
-        // Bright sky blue gradient background
-        <main className="relative w-full min-h-[120dvh] bg-gradient-to-b from-[#aee1f9] to-[#e0f4fc] text-gray-700 overflow-hidden font-sans pb-32">
+    let bgGradient = "from-[#aee1f9] to-[#e0f4fc]"; // Default (Clear / Night)
+    let cardText = "text-gray-700";
 
-            {/* Background Parallax Clouds Layer */}
-            <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
+    if (weather === 'Clouds') {
+        bgGradient = "from-[#b5c2ca] to-[#d8e1e8]";
+    } else if (weather === 'Rain') {
+        bgGradient = "from-[#4b5b6e] to-[#7f94aa]";
+    } else if (weather === 'Snow') {
+        bgGradient = "from-[#d1e6eb] to-[#f4fbfc]";
+    }
+
+    return (
+        <main className={`relative w-full min-h-[120dvh] bg-gradient-to-b ${bgGradient} text-gray-700 overflow-hidden font-sans pb-32 transition-colors duration-1000`}>
+
+            {/* Background Parallax Clouds Layer (Hidden in Rain to emphasize rain, but kept in snow for blizzard feel) */}
+            <div className={`absolute inset-0 pointer-events-none overflow-hidden z-0 transition-opacity duration-1000 ${weather === 'Rain' ? 'opacity-10' : 'opacity-100'}`}>
                 {/* --- 3. 奥のレイヤー（小さく、ゆっくり、薄い、左へ） --- */}
                 <CloudDecoration className="opacity-20 w-32 top-[5%] animate-cloud-scroll-left-slow" style={{ animationDelay: '-10s' }} />
                 <CloudDecoration className="opacity-30 w-40 top-[40%] animate-cloud-scroll-left-slow" style={{ animationDelay: '-40s' }} />
@@ -241,6 +251,18 @@ export default function OtenkiGurashiPage() {
                     </Link>
                 </div>
             </div>
+
+            {/* Additional Screen Effects based on Weather */}
+            {weather === 'Rain' && (
+                <div className="fixed inset-0 pointer-events-none z-0 opacity-40">
+                    <div className="w-full h-full bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] mix-blend-overlay animate-[fall_0.2s_linear_infinite]" />
+                </div>
+            )}
+            {weather === 'Snow' && (
+                <div className="fixed inset-0 pointer-events-none z-0 opacity-60">
+                    <div className="w-full h-full bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] mix-blend-overlay animate-[fall_10s_linear_infinite]" />
+                </div>
+            )}
 
             {/* Ten-chan Companion */}
             <TenchanCompanion

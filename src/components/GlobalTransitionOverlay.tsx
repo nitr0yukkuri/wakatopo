@@ -6,6 +6,8 @@ import { AnimatePresence, motion } from 'framer-motion';
 import WarpEffectCanvas from '@/components/canvas/WarpEffectCanvas';
 import CloudAscentCanvas from '@/components/canvas/CloudAscentCanvas';
 import FreezeTransitionCanvas from '@/components/canvas/FreezeTransitionCanvas';
+import RainTransitionCanvas from '@/components/canvas/RainTransitionCanvas';
+import SnowTransitionCanvas from '@/components/canvas/SnowTransitionCanvas';
 
 export default function GlobalTransitionOverlay() {
     const transitionType = useStore((state) => state.transitionType);
@@ -49,18 +51,46 @@ export default function GlobalTransitionOverlay() {
                 </motion.div>
             )}
 
-            {transitionType === 'freeze' && (
+            {/* Otenki Gurashi: Rain Transition */}
+            {transitionType === 'rain' && (
                 <motion.div
-                    key="freeze"
+                    key="rain"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.8 }}
                     className="fixed inset-0 z-[9999] pointer-events-auto bg-transparent"
                 >
-                    <FreezeTransitionCanvas />
+                    <RainTransitionCanvas />
                 </motion.div>
             )}
+
+            {/* Otenki Gurashi: Snow Transition */}
+            {transitionType === 'snow' && (
+                <motion.div
+                    key="snow"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.8 }}
+                    className="fixed inset-0 z-[9999] pointer-events-auto bg-transparent"
+                >
+                    <SnowTransitionCanvas />
+                </motion.div>
+            )}
+
+            {/* Freeze Transition (ColdKeep) */}
+            <div
+                className={`fixed inset-0 z-50 pointer-events-none transition-opacity duration-700 bg-[#020b16] flex items-center justify-center ${transitionType === 'freeze' ? 'opacity-100' : 'opacity-0'
+                    }`}
+                style={{ visibility: transitionType === 'freeze' || transitionType === 'none' ? 'visible' : 'hidden' }}
+            >
+                {transitionType === 'freeze' && (
+                    <div className="absolute inset-0">
+                        <FreezeTransitionCanvas />
+                    </div>
+                )}
+            </div>
         </AnimatePresence>
     );
 }

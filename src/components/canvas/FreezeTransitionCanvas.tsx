@@ -5,22 +5,15 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { freezeVertexShader, freezeFragmentShader } from '@/shaders/freeze';
 
-// ------------------------------------------------------------------
-// Rushing Blizzard Particles
-// ------------------------------------------------------------------
 const blizzardVertexShader = `
 uniform float uTime;
 attribute float scale;
 varying float vAlpha;
 void main() {
     vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-    
-    // Fast rushing towards camera and downwards
-    // Higher uTime multiplier implies a sudden blizzard
     mvPosition.z += mod(uTime * 150.0 * scale, 200.0) - 100.0;
     mvPosition.y -= mod(uTime * 60.0 * scale, 100.0) - 50.0;
     mvPosition.x += sin(uTime * 2.0 + position.y) * 5.0; // Violent wind
-    
     vAlpha = 1.0;
     gl_PointSize = scale * (200.0 / max(0.1, -mvPosition.z));
     gl_Position = projectionMatrix * mvPosition;
@@ -33,7 +26,6 @@ void main() {
     float dist = length(gl_PointCoord - vec2(0.5));
     if (dist > 0.5) discard;
     float alpha = (1.0 - (dist * 2.0)) * vAlpha;
-    // Cold Cyan / White snow
     gl_FragColor = vec4(0.8, 0.95, 1.0, alpha * 0.8);
 }
 `;
@@ -49,9 +41,9 @@ function TransitionBlizzard() {
         const p = new Float32Array(count * 3);
         const s = new Float32Array(count);
         for (let i = 0; i < count; i++) {
-            p[i * 3] = (Math.random() - 0.5) * 150;     // X spreading
-            p[i * 3 + 1] = (Math.random() - 0.5) * 150;   // Y spreading
-            p[i * 3 + 2] = (Math.random() - 0.5) * -200;  // Z starting deep far away
+            p[i * 3] = (Math.random() - 0.5) * 150;
+            p[i * 3 + 1] = (Math.random() - 0.5) * 150;
+            p[i * 3 + 2] = (Math.random() - 0.5) * -200;
             s[i] = Math.random() * 2.0 + 1.0;
         }
         return { positions: p, scales: s };
@@ -80,15 +72,12 @@ function TransitionBlizzard() {
     );
 }
 
-// ------------------------------------------------------------------
-// Freeze Shader Overlay
-// ------------------------------------------------------------------
 function FreezingEffect() {
     const meshRef = useRef<THREE.Mesh>(null);
     const uniforms = useMemo(() => ({
         uTime: { value: 0 },
-        uColor1: { value: new THREE.Color('#020b16') }, // Deep Navy
-        uColor2: { value: new THREE.Color('#e0f2fe') }  // Frost White
+        uColor1: { value: new THREE.Color('#020b16') },
+        uColor2: { value: new THREE.Color('#e0f2fe') }
     }), []);
 
     useFrame((state) => {
@@ -99,7 +88,6 @@ function FreezingEffect() {
 
     return (
         <mesh ref={meshRef} position={[0, 0, -5]}>
-            {/* Extremely large plane to cover everything regardless of aspect ratio */}
             <planeGeometry args={[100, 100]} />
             <shaderMaterial
                 vertexShader={freezeVertexShader}
@@ -112,15 +100,10 @@ function FreezingEffect() {
     );
 }
 
-// ------------------------------------------------------------------
-// Main Canvas
-// ------------------------------------------------------------------
 export default function FreezeTransitionCanvas() {
     return (
         <Canvas camera={{ position: [0, 0, 10], fov: 75 }} className="w-full h-full pointer-events-none">
-            {/* Rushed Blizzard Particles */}
             <TransitionBlizzard />
-            {/* Frost Screen overlay drawing slowly over the screen */}
             <FreezingEffect />
         </Canvas>
     );
