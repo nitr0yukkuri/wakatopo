@@ -59,7 +59,7 @@ void main() {
     
     // The "front" of the freezing wave creates an icy ring
     float freezeFront = smoothstep(growth - 0.4, growth, dist - frostPattern * 0.3);
-    float frozen = smoothstep(growth, growth - 0.1, dist - frostPattern * 0.3);
+    float frozen = 1.0 - smoothstep(growth - 0.1, growth, dist - frostPattern * 0.3);
     
     // As it freezes, it transitions from transparent to Frost White (icing over),
     // and then settles into a Deep Ice Blue
@@ -67,10 +67,11 @@ void main() {
     
     // Calculate final alpha
     // Transparent where not frozen yet, opaque where frozen
-    float alpha = smoothstep(growth, growth - 0.2, dist - frostPattern * 0.3);
+    float alpha = 1.0 - smoothstep(growth - 0.2, growth, dist - frostPattern * 0.3);
+    
     // Add a glowing icy edge
-    float glow = smoothstep(growth + 0.1, growth - 0.1, dist - frostPattern * 0.3) 
-               - smoothstep(growth - 0.05, growth - 0.15, dist - frostPattern * 0.3);
+    float distFromGrowth = abs(dist - frostPattern * 0.3 - growth);
+    float glow = 1.0 - smoothstep(0.0, 0.1, distFromGrowth);
                
     alpha = max(alpha, glow * 1.5);
 

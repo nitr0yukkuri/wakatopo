@@ -20,8 +20,8 @@ void main() {
     mvPosition.y -= mod(uTime * 2.0 * scale, 100.0) - 50.0;
     mvPosition.x += sin(uTime + position.y) * 2.0 * scale;
     
-    // Fade out near camera and far away
-    vAlpha = smoothstep(-50.0, -10.0, mvPosition.z) * smoothstep(5.0, -10.0, mvPosition.z);
+    // Fade out near camera and far away (Fix smoothstep inversion)
+    vAlpha = smoothstep(-50.0, -10.0, mvPosition.z) * (1.0 - smoothstep(-10.0, 5.0, mvPosition.z));
     
     // Size attenuation
     gl_PointSize = scale * (100.0 / -mvPosition.z);
@@ -67,8 +67,8 @@ function SnowParticles() {
     return (
         <points ref={meshRef}>
             <bufferGeometry>
-                <bufferAttribute attach="attributes-position" count={count} array={positions} itemSize={3} />
-                <bufferAttribute attach="attributes-scale" count={count} array={scales} itemSize={1} />
+                <bufferAttribute attach="attributes-position" args={[positions, 3]} />
+                <bufferAttribute attach="attributes-scale" args={[scales, 1]} />
             </bufferGeometry>
             <shaderMaterial
                 vertexShader={particleVertexShader}

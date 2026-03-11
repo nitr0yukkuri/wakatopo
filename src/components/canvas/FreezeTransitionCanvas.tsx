@@ -24,7 +24,7 @@ function FreezingEffect() {
 
     return (
         <mesh ref={meshRef} position={[0, 0, -1]}>
-            <planeGeometry args={[viewport.width * 1.5, viewport.height * 1.5]} />
+            <planeGeometry args={[100, 100]} />
             <shaderMaterial
                 vertexShader={freezeVertexShader}
                 fragmentShader={freezeFragmentShader}
