@@ -5,6 +5,8 @@ import { useStore } from '@/store';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import TenchanCompanion from '@/components/TenchanCompanion';
+import { Canvas } from '@react-three/fiber';
+import { RainParticles } from '@/components/canvas/RainTransitionCanvas';
 
 // A simple CSS cloud decoration component
 function CloudDecoration({ className, style, flip }: { className: string, style?: React.CSSProperties, flip?: boolean }) {
@@ -95,15 +97,15 @@ export default function OtenkiGurashiPage() {
     let cardText = "text-gray-700";
 
     if (weather === 'Clouds') {
-        bgGradient = "from-[#b5c2ca] to-[#d8e1e8]";
+        bgGradient = "from-[#b5c2ca] to-[#d8e1e8] bg-gradient-to-b";
     } else if (weather === 'Rain') {
-        bgGradient = "from-[#4b5b6e] to-[#7f94aa]";
+        bgGradient = "from-[#60a5fa] to-[#bfdbfe] bg-gradient-to-t"; // Original Rain Gradient
     } else if (weather === 'Snow') {
-        bgGradient = "from-[#d1e6eb] to-[#f4fbfc]";
+        bgGradient = "from-[#d1e6eb] to-[#f4fbfc] bg-gradient-to-b";
     }
 
     return (
-        <main className={`relative w-full min-h-[120dvh] bg-gradient-to-b ${bgGradient} text-gray-700 overflow-hidden font-sans pb-32 transition-colors duration-1000`}>
+        <main className={`relative w-full min-h-[120dvh] ${weather !== 'Rain' ? 'bg-gradient-to-b' : ''} ${bgGradient} text-gray-700 overflow-hidden font-sans pb-32 transition-colors duration-1000`}>
 
             {/* Background Parallax Clouds Layer (Hidden in Rain to emphasize rain, but kept in snow for blizzard feel) */}
             <div className={`absolute inset-0 pointer-events-none overflow-hidden z-0 transition-opacity duration-1000 ${weather === 'Rain' ? 'opacity-10' : 'opacity-100'}`}>
@@ -243,19 +245,19 @@ export default function OtenkiGurashiPage() {
                             <span>GitHubをみる</span> ↗
                         </a>
                     </div>
-                </div>
 
-                <div className="mt-24 text-center animate-fade-in-up" style={{ animationDelay: '0.8s' }}>
-                    <Link href="/" className="inline-block border-2 border-[#7ab8cc] text-[#7ab8cc] hover:bg-[#7ab8cc] hover:text-white font-bold py-4 px-12 rounded-full transition-colors">
-                        ホームにもどる
-                    </Link>
+                    <div className="mt-12 text-center animate-fade-in-up" style={{ animationDelay: '0.8s' }}>
+                        <Link href="/" className="inline-block border-2 border-[#7ab8cc] text-[#7ab8cc] hover:bg-[#7ab8cc] hover:text-white font-bold py-4 px-12 rounded-full transition-colors">
+                            ホームにもどる
+                        </Link>
+                    </div>
                 </div>
             </div>
 
             {/* Additional Screen Effects based on Weather */}
             {weather === 'Rain' && (
-                <div className="fixed inset-0 pointer-events-none z-0 opacity-40">
-                    <div className="w-full h-full bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] mix-blend-overlay animate-[fall_0.2s_linear_infinite]" />
+                <div className="fixed inset-0 pointer-events-none z-0">
+                    <RainParticles />
                 </div>
             )}
             {weather === 'Snow' && (
