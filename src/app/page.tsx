@@ -47,9 +47,9 @@ export default async function Home() {
         </div>
 
         {/* Bottom HUD Container */}
-        <div className="flex justify-between items-end w-full">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end w-full gap-6 md:gap-0">
           {/* Bottom Left */}
-          <div className="flex flex-col gap-1 border-l border-gray-800 pl-4">
+          <div className="flex flex-col gap-1 border-l border-gray-800 pl-4 w-full md:w-auto opacity-50 hover:opacity-100 md:opacity-100 transition-opacity">
             <div className="flex gap-4">
               <span className="w-12">LOC</span>
               <span className="text-gray-300">OSAKA, JP</span>
@@ -104,7 +104,7 @@ export default async function Home() {
         </section>
 
         {/* WORKS */}
-        <section className="py-32 bg-black/40 backdrop-blur-sm pointer-events-auto border-y border-white/5">
+        <section className="pt-32 pb-48 md:pb-32 bg-black/40 backdrop-blur-sm pointer-events-auto border-y border-white/5 relative z-40">
           <div className="container mx-auto px-6 md:px-20">
             <span className="text-cyan-500 text-xs font-mono mb-12 block">02 / SELECTED WORKS</span>
 

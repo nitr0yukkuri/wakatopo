@@ -12,18 +12,18 @@ export default function OverlayUI({ data }: { data: PlanetData }) {
     return (
         <div className="absolute inset-0 z-10 pointer-events-none p-8 flex flex-col justify-between">
             {/* Header */}
-            <header className="flex justify-between items-start">
+            <header className="flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
                 <motion.div
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 1, ease: 'easeOut' }}
                 >
-                    <h1 className="text-5xl font-bold tracking-tighter mb-2 text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400 drop-shadow-[0_0_15px_rgba(255,255,255,0.5)]">
+                    <h1 className="text-4xl md:text-5xl font-bold tracking-tighter mb-1 md:mb-2 text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400 drop-shadow-[0_0_15px_rgba(255,255,255,0.5)]">
                         WAKATOPO
                     </h1>
                     <div className="flex items-center gap-3">
                         <span className="w-2.5 h-2.5 bg-cyan-400 rounded-full animate-pulse shadow-[0_0_10px_#22d3ee]" />
-                        <p className="text-sm text-cyan-100/80 uppercase tracking-widest font-medium">System Online</p>
+                        <p className="text-xs md:text-sm text-cyan-100/80 uppercase tracking-widest font-medium">System Online</p>
                     </div>
                 </motion.div>
 
@@ -31,7 +31,7 @@ export default function OverlayUI({ data }: { data: PlanetData }) {
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 1, delay: 0.2, ease: 'easeOut' }}
-                    className="text-right text-xs text-gray-300 border border-white/10 p-4 rounded-xl bg-black/40 backdrop-blur-xl shadow-2xl font-mono"
+                    className="text-left md:text-right text-[10px] md:text-xs text-gray-300 border border-white/10 p-3 md:p-4 rounded-xl bg-black/40 backdrop-blur-xl shadow-2xl font-mono self-start md:self-auto"
                 >
                     <p className="mb-1 text-gray-500">LOC // OSAKA, JP</p>
                     <p className="mb-1">WTH // <span className="text-cyan-400">{data.weather.toUpperCase()}</span></p>
@@ -40,7 +40,7 @@ export default function OverlayUI({ data }: { data: PlanetData }) {
             </header>
 
             {/* Footer */}
-            <footer className="pointer-events-auto flex justify-between items-end">
+            <footer className="pointer-events-auto flex flex-col md:flex-row justify-between items-end md:items-end gap-6">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
