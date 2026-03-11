@@ -12,7 +12,6 @@ uniform vec3 uColor1; // Deep Ice Blue
 uniform vec3 uColor2; // Frost White
 varying vec2 vUv;
 
-// Simple 2D noise for the frost texture
 float random (in vec2 st) {
     return fract(sin(dot(st.xy, vec2(12.9898,78.233))) * 43758.5453123);
 }
@@ -31,7 +30,6 @@ float noise(in vec2 st) {
     return mix(a, b, u.x) + (c - a)* u.y * (1.0 - u.x) + (d - b) * u.x * u.y;
 }
 
-// Fractal Brownian Motion for frosty details
 float fbm(in vec2 st) {
     float value = 0.0;
     float amplitude = 0.5;
@@ -47,34 +45,40 @@ float fbm(in vec2 st) {
 
 void main() {
     vec2 st = vUv;
-    vec2 center = vec2(0.5);
-    float dist = distance(st, center) * 2.0; // 0.0 at center, 1.0 at edges
-
-    // Frost crystallization growing outward
-    // uTime controls the growth speed (0.0 to ~2.0)
-    float growth = uTime * 1.2; 
     
-    // Add fractal noise for jagged, crystal-like edges
-    float frostPattern = fbm(st * 10.0);
+    // Distance from edges (0.0 at edge, 1.0 at center)
+    // We want frost to start at 0.0 (edge) and move to 1.0
+    float distFromCenter = distance(st, vec2(0.5)) * 2.0; 
     
-    // The "front" of the freezing wave creates an icy ring
-    float freezeFront = smoothstep(growth - 0.4, growth, dist - frostPattern * 0.3);
-    float frozen = 1.0 - smoothstep(growth - 0.1, growth, dist - frostPattern * 0.3);
+    // uTime represents freezing progress (0.0 to ~2.0)
+    // Scale uTime so it quickly covers the screen
+    float freezeProgress = uTime * 1.5;
     
-    // As it freezes, it transitions from transparent to Frost White (icing over),
-    // and then settles into a Deep Ice Blue
-    vec3 mixColor = mix(uColor2, uColor1, frozen * 0.8);
+    // Generate complex frost crystal patterns
+    float frostPattern = fbm(st * 15.0);
+    float frostPatternLarge = fbm(st * 3.0);
     
-    // Calculate final alpha
-    // Transparent where not frozen yet, opaque where frozen
-    float alpha = 1.0 - smoothstep(growth - 0.2, growth, dist - frostPattern * 0.3);
+    // Combined detail
+    float detail = (frostPattern * 0.7 + frostPatternLarge * 0.3);
     
-    // Add a glowing icy edge
-    float distFromGrowth = abs(dist - frostPattern * 0.3 - growth);
-    float glow = 1.0 - smoothstep(0.0, 0.1, distFromGrowth);
-               
-    alpha = max(alpha, glow * 1.5);
-
+    // Calculate if this specific pixel is frozen based on distance from center + noise
+    // Progress starts at edges (distFromCenter = 1.0) and moves inward (distFromCenter = 0.0)
+    // We use freezeProgress to overcome the distance constraint
+    
+    float threshold = freezeProgress - (1.0 - distFromCenter * 0.5) - detail * 0.4;
+    
+    // frozen = 1 when threshold > 0, else 0
+    float frozenAlpha = 1.0 - smoothstep(0.0, 0.3, -threshold);
+    
+    // Ice color mix (Frost white edges, deep blue center/solid ice)
+    vec3 mixColor = mix(uColor2, uColor1, distFromCenter * 0.5 + detail * 0.2);
+    
+    // Add glowing frost tips
+    float glow = 1.0 - smoothstep(0.0, 0.1, abs(threshold));
+    
+    // Total alpha: 1.0 if frozen, else 0.0, with soft bright edges
+    float alpha = max(frozenAlpha, glow * 1.2);
+    
     gl_FragColor = vec4(mixColor + glow * uColor2, alpha);
 }
 `;
