@@ -1,13 +1,16 @@
 'use client'
 
 import { useRef, useMemo } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 import { cloudVertexShader, cloudFragmentShader } from '@/shaders/cloud';
 import { sunVertexShader, sunFragmentShader } from '@/shaders/sun';
 
 function Sun() {
     const meshRef = useRef<THREE.Mesh>(null);
+    const { size } = useThree();
+    const isMobile = size.width < 768;
+    const sunScale = isMobile ? 30 : 50;
     const uniforms = useMemo(() => ({
         uTime: { value: 0 },
         uSunColor: { value: new THREE.Color('#ffb03a') }, // Cute orange/yellow
@@ -28,7 +31,7 @@ function Sun() {
     });
 
     return (
-        <mesh ref={meshRef} position={[0, -20, -50]} scale={[50, 50, 1]}>
+        <mesh ref={meshRef} position={[0, -20, -50]} scale={[sunScale, sunScale, 1]}>
             <planeGeometry args={[1, 1]} />
             <shaderMaterial
                 vertexShader={sunVertexShader}
