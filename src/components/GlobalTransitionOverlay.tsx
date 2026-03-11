@@ -5,6 +5,7 @@ import { useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import WarpEffectCanvas from '@/components/canvas/WarpEffectCanvas';
 import CloudAscentCanvas from '@/components/canvas/CloudAscentCanvas';
+import FreezeTransitionCanvas from '@/components/canvas/FreezeTransitionCanvas';
 
 export default function GlobalTransitionOverlay() {
     const transitionType = useStore((state) => state.transitionType);
@@ -45,6 +46,19 @@ export default function GlobalTransitionOverlay() {
                     className="fixed inset-0 z-[9999] pointer-events-auto bg-[#000000]"
                 >
                     <CloudAscentCanvas />
+                </motion.div>
+            )}
+
+            {transitionType === 'freeze' && (
+                <motion.div
+                    key="freeze"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.8 }}
+                    className="fixed inset-0 z-[9999] pointer-events-auto bg-transparent"
+                >
+                    <FreezeTransitionCanvas />
                 </motion.div>
             )}
         </AnimatePresence>

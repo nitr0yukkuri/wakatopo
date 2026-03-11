@@ -35,6 +35,13 @@ export default function WorksList({ works }: { works: Work[] }) {
                 router.push('/otenkigurashi');
                 setTimeout(() => setTransitionType('none'), 1000);
             }, 2000);
+        } else if (id === '03') {
+            setActiveWork('03');
+            setTransitionType('freeze');
+            setTimeout(() => {
+                router.push('/coldkeep');
+                setTimeout(() => setTransitionType('none'), 1000);
+            }, 2000);
         } else {
             setActiveWork(activeWorkId === id ? null : id);
         }
