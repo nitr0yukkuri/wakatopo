@@ -223,8 +223,8 @@ export default function AbstractCore() {
                 onPointerUp={(e) => { e.stopPropagation(); setActive(false); }}
                 onPointerMove={(e) => { e.stopPropagation(); hitPointRef.current = e.point; }}
             >
-                {/* 軌道上のパーティクル範囲までカバーするよう大きめの球にする */}
-                <sphereGeometry args={[3.5, 32, 32]} />
+                {/* 軌道上のパーティクル範囲ではなく、コア本体付近に当たり判定を絞る */}
+                <sphereGeometry args={[1.8, 32, 32]} />
                 <meshBasicMaterial color="white" transparent opacity={0.0} depthWrite={false} />
             </mesh>
             {/* 1. 外側のメインワイヤーフレーム（粗め） */}
