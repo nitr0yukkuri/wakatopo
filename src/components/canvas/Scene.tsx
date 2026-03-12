@@ -8,7 +8,14 @@ import { Suspense } from 'react';
 
 export default function Scene() {
     return (
-        <div className="absolute inset-0 z-0 bg-black">
+        <div className="absolute inset-0 z-0 bg-black touch-pan-wrapper">
+            {/* スマホで強制的に縦スクロールを許可するためのスタイルを注入 */}
+            <style>{`
+                .touch-pan-wrapper canvas {
+                    touch-action: pan-y !important;
+                }
+            `}</style>
+
             <Canvas camera={{ position: [0, 0, 8], fov: 35 }}>
                 <Suspense fallback={null}>
                     <color attach="background" args={['#050505']} />
@@ -28,7 +35,14 @@ export default function Scene() {
 
                     <Environment preset="city" environmentIntensity={0.3} />
 
-                    <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={0.8} />
+                    {/* スクロールを妨害しないよう、手動回転(enableRotate)のみ無効化 */}
+                    <OrbitControls
+                        enableZoom={false}
+                        enablePan={false}
+                        enableRotate={false}
+                        autoRotate
+                        autoRotateSpeed={0.8}
+                    />
                 </Suspense>
             </Canvas>
         </div>
