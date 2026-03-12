@@ -2,7 +2,7 @@
 
 <div align="center">
   <img src="https://img.shields.io/badge/Status-In_Development-orange?style=for-the-badge&logo=git&logoColor=white" />
-  <img src="https://img.shields.io/badge/Stack-Next.js_15_×_R3F-000000?style=for-the-badge&logo=next.js&logoColor=white" />
+  <img src="https://img.shields.io/badge/Stack-Next.js_16_×_R3F-000000?style=for-the-badge&logo=next.js&logoColor=white" />
   <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" />
 </div>
 
@@ -18,21 +18,47 @@
 
 ---
 
-## 🧬 Concept: Fusion of Two Origins
+# 🌐 Live Demo
 
-このプロジェクトは、過去に開発された2つの代表作のコンセプトを融合し、最新のWeb技術で再構築した**「技術と表現の集大成」**です。
+**Experience the living planet directly in your browser**
 
-### 01. Structural DNA from [GitHub Planet]
+👉 **https://wakatopo.vercel.app**
+
+GitHubの活動履歴とリアルタイム天気が融合した
+**インタラクティブな3Dポートフォリオ**を実際に体験できます。
+
+---
+
+# 🧬 Concept: Fusion of Two Origins
+
+このプロジェクトは、過去に開発された2つの代表作のコンセプトを融合し、
+最新のWeb技術で再構築した **「技術と表現の集大成」** です。
+
+## 01. Structural DNA from GitHub Planet
+
 > **"Code as Terrain"**
->
-> 開発者のGitHub活動履歴（Contributions）を解析し、3D空間上の惑星として可視化するプロジェクト「GitHub Planet」のアルゴリズムを継承。
-> 日々のコミット数、使用言語、継続力が、惑星の「地形（Displacement）」や「鼓動（Pulse）」を形成します。エンジニアとしてのアイデンティティそのものを、惑星の質量として表現します。
 
-### 02. Atmospheric DNA from [Otenki Gurashi]
+開発者のGitHub活動履歴（Contributions）を解析し、
+3D空間上の惑星として可視化するプロジェクト「GitHub Planet」のアルゴリズムを継承。
+
+日々のコミット数、使用言語、継続力が
+惑星の **地形（Displacement）** や **鼓動（Pulse）** を形成します。
+
+エンジニアとしてのアイデンティティそのものを、
+惑星の質量として表現します。
+
+## 02. Atmospheric DNA from Otenki Gurashi
+
 > **"Life synced with Weather"**
->
-> 現実の気象とリンクして生活する育成ゲーム「おてんきぐらし」の環境連動エンジンを統合。
-> ユーザー（または開発者拠点）のリアルタイムな天気情報が、3D空間内の天候（雨、雲、光）と直結します。デジタル空間に「湿度」や「温度」といった情緒的なレイヤーをもたらします。
+
+現実の気象とリンクして生活する育成ゲーム
+「おてんきぐらし」の環境連動エンジンを統合。
+
+ユーザー（または開発者拠点）のリアルタイム天気情報が、
+3D空間内の **天候（雨・雲・光）** と直結します。
+
+デジタル空間に
+**湿度や温度のような情緒的レイヤー** を追加します。
 
 <div align="center">
   <h3>GitHub Planet × Otenki Gurashi = <b>WAKATOPO</b></h3>
@@ -40,81 +66,116 @@
 
 ---
 
-## ✨ Features
+# ✨ Features
 
-### 🪐 Living Planet Core
-GLSLカスタムシェーダーにより、単なる3Dモデルではなく「呼吸する有機体」としての惑星を描画。
-GitHubの活動量が高い時期は激しく脈打ち、活動が停滞すると静寂に包まれます。
+## 🪐 Living Planet Core
 
-### 🌦️ Immersive Weather System
-OpenWeatherMap APIと連動し、Web上のキャンバスに物理的な気象現象を再現。
-- **Rain:** パーティクルシステムによる降雨と、スクリーン上の水滴エフェクト。
-- **Clear:** ブルーム（発光）処理による、鮮烈な日差しの表現。
-- **Night:** 活動時間外における、静謐でノスタルジックな夜のライティング。
+GLSLカスタムシェーダーにより
+単なる3Dモデルではなく **「呼吸する有機体」** として惑星を描画。
 
-### ⚡ Next-Gen Performance
-「見て楽しい」だけでなく、エンジニアリングとしての品質も追求。
-- **React Server Components (RSC):** 初期ロードの高速化とSEOへの配慮。
-- **Instanced Mesh & Shader Optimization:** 数千のパーティクルや複雑な計算を、GPUのみで処理し60fpsを維持。
+GitHub活動量が高い時期は激しく脈打ち、
+活動が停滞すると静寂に包まれます。
 
 ---
 
-## 🛠 Tech Stack
+## 🌦️ Immersive Weather System
 
-過去のプロジェクト（Vanilla JS / Three.js）で培った知見をベースに、より堅牢でスケーラブルなモダンスタックへ移行しました。
+OpenWeatherMap API と連動し
+Webキャンバス上に気象現象を再現。
 
-| Domain | Technology | Role |
-| :--- | :--- | :--- |
-| **Framework** | ![Next.js](https://img.shields.io/badge/-Next.js_15-black) | App Router, Server Actions |
-| **Language** | ![TypeScript](https://img.shields.io/badge/-TypeScript-blue) | Type Safety, Strict Mode |
-| **3D Engine** | ![R3F](https://img.shields.io/badge/-React_Three_Fiber-red) | Declarative 3D Scene Management |
-| **Shaders** | ![GLSL](https://img.shields.io/badge/-GLSL-purple) | Custom Material, Vertex Displacement |
-| **Styling** | ![Tailwind](https://img.shields.io/badge/-Tailwind_CSS-38bdf8) | UI Overlay, Responsive Design |
-| **State** | ![Zustand](https://img.shields.io/badge/-Zustand-orange) | Global State Management |
+* **Rain**
+  パーティクルによる降雨 + スクリーン水滴エフェクト
+
+* **Clear**
+  ブルーム処理による強い日差し
+
+* **Night**
+  ノスタルジックな夜のライティング
 
 ---
 
-## 📂 Architecture
+## ⚡ Next-Gen Performance
+
+「見て楽しい」だけでなく
+**エンジニアリング品質** も重視。
+
+* **React Server Components (RSC)**
+  初期ロード高速化 + SEO最適化
+
+* **Instanced Mesh & Shader Optimization**
+  GPUのみで数千パーティクル処理
+
+* **Fluid Animations**
+  Framer Motion + Anime.js による滑らかなUI
+
+---
+
+# 🛠 Tech Stack
+
+| Domain    | Technology               | Role                        |
+| --------- | ------------------------ | --------------------------- |
+| Framework | Next.js 16               | App Router / Server Actions |
+| Language  | TypeScript               | Strict Mode                 |
+| 3D Engine | React Three Fiber        | 3D Scene                    |
+| Shaders   | GLSL                     | Vertex Displacement         |
+| Styling   | Tailwind CSS v4          | UI                          |
+| Animation | Framer Motion / Anime.js | Motion                      |
+| State     | Zustand                  | Global State                |
+
+---
+
+# 📂 Architecture
 
 ```bash
 src/
 ├── app/                  # Next.js App Router
 ├── components/
 │   ├── canvas/           # 3D World (R3F)
-│   │   ├── Planet.tsx    # "GitHub Planet" Logic
-│   │   ├── Weather.tsx   # "Otenki Gurashi" Logic
-│   │   └── Scene.tsx     # Composition
+│   │   ├── Planet.tsx
+│   │   ├── Weather.tsx
+│   │   └── Scene.tsx
 │   └── dom/              # UI Overlay
 ├── lib/
-│   └── actions.ts        # Data Fetching (GitHub/Weather API)
-├── shaders/              # GLSL Source Code
-└── store/                # Global State
-🚀 Getting Started
-Experience the planet locally.
+│   └── actions.ts        # API Fetch
+├── shaders/              # GLSL
+└── store/                # Zustand
+```
 
-Bash
-# Clone the repository
-git clone [https://github.com/nitr0yukkuri/wakatopo.git](https://github.com/nitr0yukkuri/wakatopo.git)
+---
 
-# Install dependencies
+# 🚀 Getting Started
+
+```bash
+# Clone
+git clone https://github.com/nitr0yukkuri/wakatopo.git
+
+# Install
 npm install
 
-# Run development server
+# Run
 npm run dev
-Open http://localhost:3000 with your browser.
+```
 
-🔮 Roadmap
-[ ] Repository Galaxy: 単一の惑星だけでなく、リポジトリ群を「衛星」として周回させる。
+Open
+http://localhost:3000
 
-[ ] Interactive Wind: マイク入力（息）で雲を吹き飛ばすインタラクションの実装。
+---
 
-[ ] Mobile Gyro: スマホの傾きによる視差効果（Parallax）の追加。
+# 🔮 Roadmap
+
+
+
+
+* [ ] Mobile Gyro
+  スマホ傾きによるパララックス
+
+---
 
 <div align="center">
-<p>
-Built with 💻, ☕, and 🌧️ by <a href="https://www.google.com/search?q=https://github.com/nitr0yukkuri"><b>nitr0yukkuri</b></a>
-</p>
-<p>
-<i>"This portfolio is a living organism."</i>
-</p>
+
+Built with 💻 ☕ 🌧️
+by **nitr0yukkuri**
+
+*"This portfolio is a living organism."*
+
 </div>
