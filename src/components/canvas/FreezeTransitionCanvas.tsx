@@ -1,35 +1,32 @@
 'use client'
 
-import { useRef, useMemo } from 'react';
+import { useRef, useMemo, useState, useEffect } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
+import { motion, AnimatePresence } from 'framer-motion';
+import { freezeVertexShader, freezeFragmentShader } from '@/shaders/freeze';
 
-// === シェーダー定義 (氷の破片/クリスタル用) ===
+// =============================
+// Phase 1: 奥から飛んでくる氷の結晶
+// =============================
 const iceVertexShader = `
 uniform float uTime;
 attribute float scale;
 attribute vec3 randomRotation;
 varying float vAlpha;
-varying vec2 vUv;
 varying vec3 vRotation;
 
 void main() {
-    vUv = uv;
     vRotation = randomRotation;
     
     vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
 
-    // 非常にゆっくりと漂う（静寂の氷）
-    mvPosition.y -= mod(uTime * 2.5 * scale, 150.0) - 75.0;
+    // 少しゆっくり目に降る
+    mvPosition.y -= mod(uTime * 3.0 * scale, 150.0) - 75.0;
+    mvPosition.x += sin(uTime * 0.3 + position.y * 0.5) * 1.5 * scale;
     
-    // 回転しながら少しだけ左右に揺れる
-    mvPosition.x += sin(uTime * 0.3 + position.y * 0.5) * 2.0 * scale;
-    
-    // カメラに近づくほどフェードイン、近すぎるとフェードアウト
-    vAlpha = smoothstep(-100.0, -30.0, mvPosition.z) * (1.0 - smoothstep(-10.0, 5.0, mvPosition.z));
-    
-    // 鋭い破片を表現するためサイズを調整
-    gl_PointSize = scale * (350.0 / max(0.1, -mvPosition.z));
+    vAlpha = smoothstep(-100.0, -25.0, mvPosition.z) * (1.0 - smoothstep(-8.0, 5.0, mvPosition.z));
+    gl_PointSize = scale * (400.0 / max(0.1, -mvPosition.z));
     gl_Position = projectionMatrix * mvPosition;
 }
 `;
@@ -38,57 +35,43 @@ const iceFragmentShader = `
 varying float vAlpha;
 varying vec3 vRotation;
 
-// 擬似的な回転行列（2D）
 mat2 rotate2d(float _angle){
-    return mat2(cos(_angle),-sin(_angle),
-                sin(_angle),cos(_angle));
+    return mat2(cos(_angle),-sin(_angle), sin(_angle),cos(_angle));
 }
 
-// ひし形（氷の結晶）を生成する関数
 float sharpDiamond(vec2 st) {
     vec2 pos = vec2(0.5) - st;
-    return smoothstep(0.48, 0.5, 1.0 - (abs(pos.x) + abs(pos.y)));
+    return smoothstep(0.46, 0.5, 1.0 - (abs(pos.x) + abs(pos.y)));
 }
 
 void main() {
-    // 頂点ごとのランダムな回転を適用
     vec2 rotatedCoord = vec2(0.5) + rotate2d(vRotation.z * 15.0) * (gl_PointCoord - vec2(0.5));
-    
-    // ひし形のマスクを生成
     float shape = sharpDiamond(rotatedCoord);
+    if (shape < 0.08) discard;
     
-    if (shape < 0.1) discard;
-    
-    // 氷のようなシャープな輝き（中心が明るく、エッジが鋭い）
     float dist = length(rotatedCoord - vec2(0.5));
-    float glow = exp(-dist * 5.0);
+    float glow = exp(-dist * 4.5);
     
-    // ピュアなブルー〜シアン系の氷の色
-    vec3 iceColor = mix(vec3(0.4, 0.8, 1.0), vec3(0.9, 0.95, 1.0), glow);
-    
-    gl_FragColor = vec4(iceColor, shape * vAlpha * glow * 1.5);
+    // より鮮やかな氷の色（白に近い輝き）
+    vec3 iceColor = mix(vec3(0.5, 0.9, 1.0), vec3(1.0, 1.0, 1.0), glow * 0.8);
+    gl_FragColor = vec4(iceColor, shape * vAlpha * glow * 2.0);
 }
 `;
 
 function IceShardParticles() {
-    const count = 1200; // 空間を埋めるために少し多めに
+    const count = 1500;
     const meshRef = useRef<THREE.Points>(null);
-    const uniforms = useMemo(() => ({
-        uTime: { value: 0 }
-    }), []);
+    const uniforms = useMemo(() => ({ uTime: { value: 0 } }), []);
 
     const { positions, scales, rotations } = useMemo(() => {
         const p = new Float32Array(count * 3);
         const s = new Float32Array(count);
         const r = new Float32Array(count * 3);
-
         for (let i = 0; i < count; i++) {
-            p[i * 3] = (Math.random() - 0.5) * 150;
-            p[i * 3 + 1] = (Math.random() - 0.5) * 150;
-            p[i * 3 + 2] = (Math.random() - 0.5) * 100 - 20; // 奥行き
-            s[i] = Math.random() * 2.0 + 0.5; // サイズバリエーション
-
-            // ランダムな初期回転
+            p[i * 3] = (Math.random() - 0.5) * 120;
+            p[i * 3 + 1] = (Math.random() - 0.5) * 120;
+            p[i * 3 + 2] = (Math.random() - 0.5) * 80 - 20;
+            s[i] = Math.random() * 2.5 + 0.5;
             r[i * 3] = Math.random() * Math.PI;
             r[i * 3 + 1] = Math.random() * Math.PI;
             r[i * 3 + 2] = Math.random() * Math.PI;
@@ -99,8 +82,10 @@ function IceShardParticles() {
     useFrame((state) => {
         if (!meshRef.current) return;
         uniforms.uTime.value = state.clock.getElapsedTime();
-        // カメラが氷の世界の奥へ進んでいく
-        meshRef.current.position.z += 0.05;
+        // 最初はゆっくり、後半は急加速してカメラに迫る感じ
+        const t = state.clock.getElapsedTime();
+        const speed = t < 1.0 ? 0.03 : 0.03 + (t - 1.0) * 0.04;
+        meshRef.current.position.z += speed;
     });
 
     return (
@@ -122,14 +107,88 @@ function IceShardParticles() {
     );
 }
 
-export default function FreezeTransitionCanvas() {
+// =============================
+// Phase 2: フリーズシェーダー（画面を氷で覆う）
+// =============================
+function FreezingEffect({ startDelay }: { startDelay: number }) {
+    const meshRef = useRef<THREE.Mesh>(null);
+    const startTimeRef = useRef<number | null>(null);
+    const uniforms = useMemo(() => ({
+        uTime: { value: 0 },
+        uColor1: { value: new THREE.Color('#020b16') },
+        uColor2: { value: new THREE.Color('#a8e4f8') },
+    }), []);
+
+    useFrame((state) => {
+        if (!meshRef.current) return;
+        const elapsed = state.clock.getElapsedTime();
+        if (startTimeRef.current === null) {
+            // startDelay秒後に開始
+            if (elapsed >= startDelay) {
+                startTimeRef.current = elapsed;
+            } else {
+                uniforms.uTime.value = -1; // まだ表示しない
+                return;
+            }
+        }
+        uniforms.uTime.value = elapsed - startTimeRef.current;
+    });
+
     return (
-        // デイタイムの雪空から、深い氷の世界（深海のようなブルー）へ
-        <div className="w-full h-full pointer-events-none">
-            {/* The background color is handled by GlobalTransitionOverlay */}
-            <Canvas camera={{ position: [0, 0, 10], fov: 60 }}>
+        <mesh ref={meshRef} position={[0, 0, -4]}>
+            <planeGeometry args={[100, 100]} />
+            <shaderMaterial
+                vertexShader={freezeVertexShader}
+                fragmentShader={freezeFragmentShader}
+                uniforms={uniforms}
+                transparent={true}
+                depthWrite={false}
+            />
+        </mesh>
+    );
+}
+
+// =============================
+// メインコンポーネント
+// =============================
+export default function FreezeTransitionCanvas() {
+    const [showFlash, setShowFlash] = useState(false);
+
+    useEffect(() => {
+        // 1.5秒後に白いフラッシュを表示（フリーズが画面を覆い切るタイミング）
+        const t = setTimeout(() => setShowFlash(true), 1500);
+        return () => clearTimeout(t);
+    }, []);
+
+    return (
+        <div className="w-full h-full pointer-events-none relative overflow-hidden"
+            style={{ background: 'linear-gradient(to bottom, #020b16 0%, #051a30 50%, #020b16 100%)' }}>
+
+            {/* Phase1: 氷の結晶パーティクル / Phase2: フリーズシェーダー */}
+            <Canvas camera={{ position: [0, 0, 10], fov: 65 }}>
                 <IceShardParticles />
+                {/* 0.8秒後にフリーズシェーダーが起動 */}
+                <FreezingEffect startDelay={0.8} />
             </Canvas>
+
+            {/* Phase3: 最後の白フラッシュ（氷の世界へ突入する瞬間） */}
+            <AnimatePresence>
+                {showFlash && (
+                    <motion.div
+                        key="ice-flash"
+                        className="absolute inset-0 bg-white pointer-events-none"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: [0, 0.95, 0.6] }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.5, ease: 'easeOut' }}
+                    />
+                )}
+            </AnimatePresence>
+
+            {/* 氷の霜（エッジに薄い水色のビネット） */}
+            <div className="absolute inset-0 pointer-events-none" style={{
+                background: 'radial-gradient(ellipse 100% 100% at 50% 50%, transparent 40%, rgba(100,200,255,0.12) 80%, rgba(150,220,255,0.35) 100%)',
+            }} />
         </div>
     );
 }
