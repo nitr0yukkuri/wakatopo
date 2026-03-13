@@ -8,14 +8,7 @@ import { Suspense } from 'react';
 
 export default function Scene() {
     return (
-        <div className="absolute inset-0 z-0 bg-black touch-pan-wrapper">
-            {/* スマホで強制的に縦スクロールを許可するためのスタイルを注入 */}
-            <style>{`
-                .touch-pan-wrapper canvas {
-                    touch-action: pan-y !important;
-                }
-            `}</style>
-
+        <div className="absolute inset-0 z-0 bg-black pointer-events-none md:pointer-events-auto">
             <Canvas camera={{ position: [0, 0, 8], fov: 35 }}>
                 <Suspense fallback={null}>
                     <color attach="background" args={['#050505']} />
@@ -47,4 +40,4 @@ export default function Scene() {
             </Canvas>
         </div>
     );
-}
+}
