@@ -25,7 +25,7 @@ export default function RealisticPlanetScene() {
                     <Meteors />
 
                     {/* 無数の星屑 */}
-                    <Stars radius={100} depth={50} count={4000} factor={3} saturation={0} fade speed={1} />
+                    <Stars radius={100} depth={50} count={2000} factor={3} saturation={0} fade speed={1} />
 
                     {/* 背景光 */}
                     <Environment preset="city" environmentIntensity={0.1} />

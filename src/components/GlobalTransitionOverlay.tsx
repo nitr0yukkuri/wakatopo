@@ -3,14 +3,17 @@
 import { useStore } from '@/store';
 import { useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import WarpEffectCanvas from '@/components/canvas/WarpEffectCanvas';
-import CloudAscentCanvas from '@/components/canvas/CloudAscentCanvas';
-import FreezeTransitionCanvas from '@/components/canvas/FreezeTransitionCanvas';
-import RainTransitionCanvas from '@/components/canvas/RainTransitionCanvas';
-import SnowTransitionCanvas from '@/components/canvas/SnowTransitionCanvas';
-import HeavyCloudTransitionCanvas from '@/components/canvas/HeavyCloudTransitionCanvas';
-import ThunderTransitionCanvas from '@/components/canvas/ThunderTransitionCanvas';
-import SunburstTransitionCanvas from '@/components/canvas/SunburstTransitionCanvas';
+import dynamic from 'next/dynamic';
+
+// Lazy load all transition canvases — only loaded when triggered
+const WarpEffectCanvas = dynamic(() => import('@/components/canvas/WarpEffectCanvas'), { ssr: false });
+const CloudAscentCanvas = dynamic(() => import('@/components/canvas/CloudAscentCanvas'), { ssr: false });
+const FreezeTransitionCanvas = dynamic(() => import('@/components/canvas/FreezeTransitionCanvas'), { ssr: false });
+const RainTransitionCanvas = dynamic(() => import('@/components/canvas/RainTransitionCanvas'), { ssr: false });
+const SnowTransitionCanvas = dynamic(() => import('@/components/canvas/SnowTransitionCanvas'), { ssr: false });
+const HeavyCloudTransitionCanvas = dynamic(() => import('@/components/canvas/HeavyCloudTransitionCanvas'), { ssr: false });
+const ThunderTransitionCanvas = dynamic(() => import('@/components/canvas/ThunderTransitionCanvas'), { ssr: false });
+const SunburstTransitionCanvas = dynamic(() => import('@/components/canvas/SunburstTransitionCanvas'), { ssr: false });
 
 export default function GlobalTransitionOverlay() {
     const transitionType = useStore((state) => state.transitionType);

@@ -192,6 +192,9 @@ export default function Weather() {
     const linesRef = useRef<THREE.LineSegments>(null);
     const screenRef = useRef<THREE.ShaderMaterial>(null);
 
+    // Memoize uniforms to avoid recreating on every render
+    const screenUniforms = useMemo(() => ({ uTime: { value: 0 } }), []);
+
     // === 1. 空間の雨 (Spatial Rain) ===
     // ノスタルジックな雰囲気を出すための調整
     const count = 1200; // 雨の量を増やす
@@ -293,7 +296,7 @@ export default function Weather() {
                     transparent
                     vertexShader={vertexShader}
                     fragmentShader={fragmentShader}
-                    uniforms={{ uTime: { value: 0 } }}
+                    uniforms={screenUniforms}
                     depthTest={false}
                     depthWrite={false}
                 />

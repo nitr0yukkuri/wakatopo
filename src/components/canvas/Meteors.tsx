@@ -1,4 +1,4 @@
-import { useRef, useMemo, useState } from 'react';
+import { useRef, useMemo, useState, useCallback } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
@@ -8,6 +8,9 @@ function Meteor({ startPos, endPos, color = '#ffffff', scale = 1.0, duration = 2
     const headMaterialRef = useRef<THREE.MeshBasicMaterial>(null);
     const tailMaterialRef = useRef<THREE.MeshBasicMaterial>(null);
     const timeRef = useRef(0);
+    // Cached vectors to avoid per-frame allocations
+    const _dir = useMemo(() => new THREE.Vector3().subVectors(endPos, startPos).normalize(), [startPos, endPos]);
+    const _target = useMemo(() => new THREE.Vector3(), []);
 
     // Initial positioning and rotation
     useMemo(() => {
@@ -55,9 +58,9 @@ function Meteor({ startPos, endPos, color = '#ffffff', scale = 1.0, duration = 2
         // Linear interpolation from start to end
         meteorRef.current.position.lerpVectors(startPos, endPos, progress);
 
-        // Make sure it faces the right way
-        const direction = new THREE.Vector3().subVectors(endPos, startPos).normalize();
-        const targetPoint = meteorRef.current.position.clone().add(direction);
+        // Make sure it faces the right way (reuse cached vectors)
+        _target.copy(meteorRef.current.position).add(_dir);
+        const targetPoint = _target;
         meteorRef.current.lookAt(targetPoint);
 
         // 流れ星らしく、最後にかけてフェードアウト（燃え尽きる）
@@ -139,9 +142,9 @@ export default function Meteors() {
         setMeteors(prev => [...prev, newMeteor]);
     };
 
-    const removeMeteor = (idToRemove: number) => {
+    const removeMeteor = useCallback((idToRemove: number) => {
         setMeteors(prev => prev.filter(m => m.id !== idToRemove));
-    };
+    }, []);
 
     return (
         <group>

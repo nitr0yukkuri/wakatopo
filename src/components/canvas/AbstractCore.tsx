@@ -37,8 +37,14 @@ export default function AbstractCore() {
         };
     }, [hovered, active]);
 
+    // Reusable temp objects to avoid per-frame GC pressure
+    const _tempColor = useMemo(() => new THREE.Color(), []);
+    const _tempVec3A = useMemo(() => new THREE.Vector3(), []);
+    const _tempVec3B = useMemo(() => new THREE.Vector3(), []);
+    const _tempLocalPos = useMemo(() => new THREE.Vector3(), []);
+
     // コアの周囲を漂うデータ粒子（土星のリング状・軌道帯）の生成
-    const particleCount = 2000;
+    const particleCount = 1200;
     const { positions, randoms, baseRadii, baseYs } = useMemo(() => {
         const pos = new Float32Array(particleCount * 3);
         const rnd = new Float32Array(particleCount);
@@ -81,10 +87,11 @@ export default function AbstractCore() {
 
         const { hoverLevel, activeLevel } = interactionValues.current;
 
-        // メイン色
-        const currentColor = baseColorHolo.clone()
+        // メイン色 (reuse temp color to avoid allocation)
+        _tempColor.copy(baseColorHolo)
             .lerp(hoverColor, hoverLevel)
             .lerp(activeColor, activeLevel);
+        const currentColor = _tempColor;
 
         // 1. 中心ワイヤーフレームのアニメーション
         if (meshRef.current) {
@@ -130,8 +137,8 @@ export default function AbstractCore() {
             const r1Scale = 1.0 + hoverLevel * 0.02 + activeLevel * 0.1;
             const r2Scale = 1.0 + hoverLevel * 0.05 + activeLevel * 0.2;
 
-            ring1Ref.current.scale.lerp(new THREE.Vector3(r1Scale, r1Scale, r1Scale), 0.1);
-            ring2Ref.current.scale.lerp(new THREE.Vector3(r2Scale, r2Scale, r2Scale), 0.1);
+            ring1Ref.current.scale.lerp(_tempVec3A.set(r1Scale, r1Scale, r1Scale), 0.1);
+            ring2Ref.current.scale.lerp(_tempVec3B.set(r2Scale, r2Scale, r2Scale), 0.1);
 
             (ring1Ref.current.material as THREE.MeshBasicMaterial).color.lerp(currentColor, 0.1);
             (ring2Ref.current.material as THREE.MeshBasicMaterial).color.lerp(currentColor, 0.1);
@@ -146,9 +153,9 @@ export default function AbstractCore() {
             particlesRef.current.rotation.x = THREE.MathUtils.lerp(particlesRef.current.rotation.x, Math.PI * 0.1 + hoverLevel * 0.1 - activeLevel * 0.1, 0.05);
             particlesRef.current.rotation.z = THREE.MathUtils.lerp(particlesRef.current.rotation.z, -Math.PI * 0.05 + activeLevel * 0.2, 0.05);
 
-            // マウスの正確な3Dワールド交差座標をローカル座標に変換
+            // マウスの正確な3Dワールド交差座標をローカル座標に変換 (reuse vector)
             const mouseLocal = hitPointRef.current
-                ? particlesRef.current.worldToLocal(hitPointRef.current.clone())
+                ? particlesRef.current.worldToLocal(_tempLocalPos.copy(hitPointRef.current))
                 : null;
 
             const posAttr = particlesRef.current.geometry.attributes.position;

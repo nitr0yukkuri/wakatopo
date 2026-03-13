@@ -9,6 +9,8 @@ import { useStore } from '@/store';
 export default function Planet() {
     const meshRef = useRef<THREE.Mesh>(null);
     const { githubActivityLevel, weather } = useStore();
+    // Reusable color to avoid per-frame allocation
+    const _tempColor = useMemo(() => new THREE.Color(), []);
 
     // インタラクション用のステート
     const [hovered, setHovered] = useState(false);
@@ -48,8 +50,8 @@ export default function Planet() {
         material.uniforms.uHover.value = THREE.MathUtils.lerp(material.uniforms.uHover.value, hovered ? 1 : 0, 0.1);
         material.uniforms.uActive.value = THREE.MathUtils.lerp(material.uniforms.uActive.value, active ? 1 : 0, 0.15);
 
-        const targetColor = weather === 'Rain' ? '#ffffff' : '#00ffff';
-        material.uniforms.uColorB.value.lerp(new THREE.Color(targetColor), 0.05);
+        _tempColor.set(weather === 'Rain' ? '#ffffff' : '#00ffff');
+        material.uniforms.uColorB.value.lerp(_tempColor, 0.05);
 
         // 自転のスピードを、触っているときに少し早くする（回している感）
         const baseSpeed = 0.1;
@@ -65,7 +67,7 @@ export default function Planet() {
             onPointerUp={() => setActive(false)}
         >
             <mesh ref={meshRef}>
-                <sphereGeometry args={[2.5, 128, 128]} />
+                <sphereGeometry args={[2.5, 64, 64]} />
                 <shaderMaterial
                     vertexShader={vertexShader}
                     fragmentShader={fragmentShader}
