@@ -79,6 +79,48 @@ export default function GlobalTransitionOverlay() {
                 </motion.div>
             )}
 
+            {/* Otenki Gurashi: Sunburst (Clear/Morning) Transition Placeholder */}
+            {transitionType === 'sunburst' && (
+                <motion.div
+                    key="sunburst"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.8 }}
+                    className="fixed inset-0 z-[9999] pointer-events-auto bg-white"
+                >
+                    {/* Implementation for antigravity */}
+                </motion.div>
+            )}
+
+            {/* Otenki Gurashi: Flash (Thunder) Transition Placeholder */}
+            {transitionType === 'flash' && (
+                <motion.div
+                    key="flash"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.8 }}
+                    className="fixed inset-0 z-[9999] pointer-events-auto bg-transparent"
+                >
+                    {/* Implementation for antigravity */}
+                </motion.div>
+            )}
+
+            {/* Otenki Gurashi: Heavy Cloud (Clouds) Transition Placeholder */}
+            {transitionType === 'heavy-cloud' && (
+                <motion.div
+                    key="heavy-cloud"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.8 }}
+                    className="fixed inset-0 z-[9999] pointer-events-auto bg-gray-900"
+                >
+                    {/* Implementation for antigravity */}
+                </motion.div>
+            )}
+
             {/* Freeze Transition (ColdKeep) */}
             <div
                 className={`fixed inset-0 z-50 pointer-events-none transition-opacity duration-700 bg-[#020b16] flex items-center justify-center ${transitionType === 'freeze' ? 'opacity-100' : 'opacity-0'

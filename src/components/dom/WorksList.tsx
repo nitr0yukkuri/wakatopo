@@ -37,8 +37,14 @@ export default function WorksList({ works }: { works: Work[] }) {
                 setTransitionType('rain');
             } else if (currentWeather === 'Snow') {
                 setTransitionType('snow');
+            } else if (currentWeather === 'Thunder') {
+                setTransitionType('flash');
+            } else if (currentWeather === 'Clouds') {
+                setTransitionType('heavy-cloud');
+            } else if (currentWeather === 'Clear' || currentWeather === 'Morning') {
+                setTransitionType('sunburst');
             } else {
-                setTransitionType('cloud'); // Clear/Clouds/Night
+                setTransitionType('cloud'); // Night
             }
 
             setTimeout(() => {

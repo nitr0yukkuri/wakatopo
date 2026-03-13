@@ -1,8 +1,10 @@
 'use server'
 
 export async function fetchPlanetData() {
-    // シミュレーション用データ
-    const hours = new Date().getHours();
+    // サーバーのタイムゾーンに依存せず、常に日本時間(JST)で時刻を取得
+    const jstDate = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Tokyo' }));
+    const hours = jstDate.getHours();
+
     const isNight = hours < 6 || hours > 18;
 
     return {
