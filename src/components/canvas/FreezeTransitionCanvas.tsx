@@ -21,9 +21,9 @@ void main() {
     
     vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
 
-    // 水筒を揺らしたみたいに、ゆっくり上昇＋揺れる
+    // 上から降ってくる
     float phase = randomRotation.x * 6.28;
-    mvPosition.y += mod(uTime * 1.5 * scale * 0.5, 120.0) - 60.0;
+    mvPosition.y -= mod(uTime * 1.5 * scale * 0.5, 120.0) - 60.0;
     mvPosition.x += sin(uTime * 0.4 + phase) * 3.0 * scale;
     mvPosition.z += cos(uTime * 0.3 + phase) * 1.0 * scale;
     
@@ -124,7 +124,7 @@ function IceChunkParticles() {
             p[i * 3] = (Math.random() - 0.5) * 100;
             p[i * 3 + 1] = (Math.random() - 0.5) * 100;
             p[i * 3 + 2] = (Math.random() - 0.5) * 80 - 20;
-            s[i] = Math.random() * 4.0 + 1.5; // 大きめに
+            s[i] = Math.random() * 6.0 + 3.0; // 大きく
             r[i * 3] = Math.random();
             r[i * 3 + 1] = Math.random();
             r[i * 3 + 2] = Math.random() * Math.PI * 2;

@@ -125,27 +125,6 @@ export default function AboutPage() {
 
                         <ul className="space-y-6 text-sm">
                             <li className="flex flex-col md:flex-row gap-2 md:gap-8 hover:bg-white/5 p-4 -ml-4 rounded-lg transition-colors">
-                                <span className="text-gray-500 min-w-[3rem]">03/</span>
-                                <div className="flex-1">
-                                    <span className="text-white block font-bold">CyberAgent Internship (2days)</span>
-                                    <span className="text-gray-400">機械学習基盤体験型インターンシップ 参加</span>
-                                </div>
-                            </li>
-                            <li className="flex flex-col md:flex-row gap-2 md:gap-8 hover:bg-white/5 p-4 -ml-4 rounded-lg transition-colors">
-                                <span className="text-gray-500 min-w-[3rem]">02/08</span>
-                                <div className="flex-1">
-                                    <span className="text-yellow-400 block font-bold tracking-wider">★ 最優秀賞</span>
-                                    <span className="text-gray-400">技育CAMP Vol.19</span> <span className="text-white ml-2">「recaptchaゲーム」</span>
-                                </div>
-                            </li>
-                            <li className="flex flex-col md:flex-row gap-2 md:gap-8 hover:bg-white/5 p-4 -ml-4 rounded-lg transition-colors">
-                                <span className="text-gray-500 min-w-[3rem]">02/01</span>
-                                <div className="flex-1">
-                                    <span className="text-cyan-300 block font-bold tracking-wider">企業賞 (ウイングアーク１ｓｔ)</span>
-                                    <span className="text-gray-400">技育博 Vol.6</span> <span className="text-white ml-2">「GitHub Planet」</span>
-                                </div>
-                            </li>
-                            <li className="flex flex-col md:flex-row gap-2 md:gap-8 hover:bg-white/5 p-4 -ml-4 rounded-lg transition-colors">
                                 <span className="text-gray-500 min-w-[3rem]">03/17</span>
                                 <div className="flex-1">
                                     <span className="text-blue-400 block font-bold tracking-wider text-xs mb-1">■ EVENT</span>
@@ -171,6 +150,13 @@ export default function AboutPage() {
                                 <div className="flex-1">
                                     <span className="text-blue-400 block font-bold tracking-wider text-xs mb-1">■ EVENT</span>
                                     <span className="text-gray-400">LINEヤフー Tech</span> <span className="text-white ml-2">「GitHub Copilot Meetup - Agent Skills ハンズオン」</span>
+                                </div>
+                            </li>
+                            <li className="flex flex-col md:flex-row gap-2 md:gap-8 hover:bg-white/5 p-4 -ml-4 rounded-lg transition-colors">
+                                <span className="text-gray-500 min-w-[3rem]">02/28</span>
+                                <div className="flex-1">
+                                    <span className="text-white block font-bold">◆ CyberAgent Internship (2days)</span>
+                                    <span className="text-gray-400">機械学習基盤体験型インターンシップ 参加</span>
                                 </div>
                             </li>
                             <li className="flex flex-col md:flex-row gap-2 md:gap-8 hover:bg-white/5 p-4 -ml-4 rounded-lg transition-colors">
@@ -216,10 +202,24 @@ export default function AboutPage() {
                                 </div>
                             </li>
                             <li className="flex flex-col md:flex-row gap-2 md:gap-8 hover:bg-white/5 p-4 -ml-4 rounded-lg transition-colors">
+                                <span className="text-gray-500 min-w-[3rem]">02/08</span>
+                                <div className="flex-1">
+                                    <span className="text-yellow-400 block font-bold tracking-wider">★ 最優秀賞</span>
+                                    <span className="text-gray-400">技育CAMP Vol.19</span> <span className="text-white ml-2">「recaptchaゲーム」</span>
+                                </div>
+                            </li>
+                            <li className="flex flex-col md:flex-row gap-2 md:gap-8 hover:bg-white/5 p-4 -ml-4 rounded-lg transition-colors">
+                                <span className="text-gray-500 min-w-[3rem]">02/01</span>
+                                <div className="flex-1">
+                                    <span className="text-cyan-300 block font-bold tracking-wider">企業賞 (ウイングアーク１ｓｔ)</span>
+                                    <span className="text-gray-400">技育博 Vol.6</span> <span className="text-white ml-2">「GitHub Planet」</span>
+                                </div>
+                            </li>
+                            <li className="flex flex-col md:flex-row gap-2 md:gap-8 hover:bg-white/5 p-4 -ml-4 rounded-lg transition-colors">
                                 <span className="text-gray-500 min-w-[3rem]">01/24</span>
                                 <div className="flex-1">
-                                    <span className="text-blue-400 block font-bold tracking-wider text-xs mb-1">■ EVENT</span>
-                                    <span className="text-gray-400">うめきたTechBase</span> <span className="text-white ml-2">「うめきたTechカンファレンス ~大新年会~」</span>
+                                    <span className="text-blue-300 block font-bold tracking-wider">▲ 展示出展</span>
+                                    <span className="text-gray-400">うめきたTechBase</span> <span className="text-white ml-2">「うめきたTechカンファレンス ~大新年会~」「おてんきぐらし」「GitHub Planet」</span>
                                 </div>
                             </li>
                             <li className="flex flex-col md:flex-row gap-2 md:gap-8 hover:bg-white/5 p-4 -ml-4 rounded-lg transition-colors">
@@ -246,31 +246,24 @@ export default function AboutPage() {
 
                         <ul className="space-y-6 text-sm">
                             <li className="flex flex-col md:flex-row gap-2 md:gap-8 hover:bg-white/5 p-4 -ml-4 rounded-lg transition-colors">
-                                <span className="text-gray-500 min-w-[3rem]">12/06</span>
+                                <span className="text-gray-500 min-w-[3rem]">12/21</span>
                                 <div className="flex-1">
-                                    <span className="text-orange-400 block font-bold tracking-wider">決勝進出</span>
-                                    <span className="text-gray-400">ヒーローズ・リーグ</span> <span className="text-white ml-2">「GitHub Planet」</span>
+                                    <span className="text-blue-400 block font-bold tracking-wider text-xs mb-1">■ EVENT</span>
+                                    <span className="text-gray-400">NxTEND</span> <span className="text-white ml-2">「KC3 Meet! Vol.04」</span>
                                 </div>
                             </li>
                             <li className="flex flex-col md:flex-row gap-2 md:gap-8 hover:bg-white/5 p-4 -ml-4 rounded-lg transition-colors">
                                 <span className="text-gray-500 min-w-[3rem]">12/07</span>
                                 <div className="flex-1">
-                                    <span className="text-blue-300 block font-bold tracking-wider">展示出展</span>
+                                    <span className="text-blue-300 block font-bold tracking-wider">▲ 展示出展</span>
                                     <span className="text-gray-400">技育博 Vol.5</span> <span className="text-white ml-2">「おてんきぐらし」「グルメイカー」</span>
                                 </div>
                             </li>
                             <li className="flex flex-col md:flex-row gap-2 md:gap-8 hover:bg-white/5 p-4 -ml-4 rounded-lg transition-colors">
-                                <span className="text-gray-500 min-w-[3rem]">11/09</span>
+                                <span className="text-gray-500 min-w-[3rem]">12/06</span>
                                 <div className="flex-1">
-                                    <span className="text-yellow-400 block font-bold tracking-wider">★ 優秀賞</span>
-                                    <span className="text-gray-400">技育CAMP Vol.14</span> <span className="text-white ml-2">「GitHub Planet」</span>
-                                </div>
-                            </li>
-                            <li className="flex flex-col md:flex-row gap-2 md:gap-8 hover:bg-white/5 p-4 -ml-4 rounded-lg transition-colors">
-                                <span className="text-gray-500 min-w-[3rem]">12/21</span>
-                                <div className="flex-1">
-                                    <span className="text-blue-400 block font-bold tracking-wider text-xs mb-1">■ EVENT</span>
-                                    <span className="text-gray-400">NxTEND</span> <span className="text-white ml-2">「KC3 Meet! Vol.04」</span>
+                                    <span className="text-orange-400 block font-bold tracking-wider">◆ 決勝進出</span>
+                                    <span className="text-gray-400">ヒーローズ・リーグ</span> <span className="text-white ml-2">「GitHub Planet」</span>
                                 </div>
                             </li>
                             <li className="flex flex-col md:flex-row gap-2 md:gap-8 hover:bg-white/5 p-4 -ml-4 rounded-lg transition-colors">
@@ -285,6 +278,13 @@ export default function AboutPage() {
                                 <div className="flex-1">
                                     <span className="text-blue-400 block font-bold tracking-wider text-xs mb-1">■ EVENT</span>
                                     <span className="text-gray-400">一般社団法人MA</span> <span className="text-white ml-2">「#ヒーローズリーグ 2025 予選 in 第三部」</span>
+                                </div>
+                            </li>
+                            <li className="flex flex-col md:flex-row gap-2 md:gap-8 hover:bg-white/5 p-4 -ml-4 rounded-lg transition-colors">
+                                <span className="text-gray-500 min-w-[3rem]">11/09</span>
+                                <div className="flex-1">
+                                    <span className="text-yellow-400 block font-bold tracking-wider">★ 優秀賞</span>
+                                    <span className="text-gray-400">技育CAMP Vol.14</span> <span className="text-white ml-2">「GitHub Planet」</span>
                                 </div>
                             </li>
                             <li className="flex flex-col md:flex-row gap-2 md:gap-8 hover:bg-white/5 p-4 -ml-4 rounded-lg transition-colors">
@@ -304,7 +304,7 @@ export default function AboutPage() {
                             <li className="flex flex-col md:flex-row gap-2 md:gap-8 hover:bg-white/5 p-4 -ml-4 rounded-lg transition-colors">
                                 <span className="text-gray-500 min-w-[3rem]">09/07</span>
                                 <div className="flex-1">
-                                    <span className="text-green-400 block font-bold tracking-wider">努力賞</span>
+                                    <span className="text-green-400 block font-bold tracking-wider">★ 努力賞</span>
                                     <span className="text-gray-400">技育CAMP Vol.12</span> <span className="text-white ml-2">「きじょバト」</span>
                                 </div>
                             </li>
