@@ -113,9 +113,12 @@ export default function ColdKeepPage() {
                         <span className="inline-block border border-[#38bdf8]/30 backdrop-blur-md bg-white/5 text-[#7dd3fc] px-4 py-1.5 rounded-full text-xs font-mono tracking-widest mb-10 shadow-[0_0_15px_rgba(56,189,248,0.3)]">
                             STATUS: R&amp;D PHASE
                         </span>
-                        <h1 className="text-6xl md:text-9xl font-black tracking-tighter mb-6 bg-clip-text text-transparent bg-gradient-to-b from-white to-[#bae6fd] drop-shadow-[0_0_30px_rgba(255,255,255,0.4)]">
-                            ColdKeep
-                        </h1>
+                        <img
+                            src="/coldkeep-logo.png"
+                            alt="コールドキープ COLDKEEP"
+                            className="w-full max-w-xs md:max-w-md mx-auto mb-6 drop-shadow-[0_0_40px_rgba(100,200,255,0.5)]"
+                            style={{ mixBlendMode: 'screen' }}
+                        />
                         <p className="text-xl md:text-3xl font-light text-[#e0f2fe] tracking-widest">
                             AI Water Bottle Assistant
                         </p>
