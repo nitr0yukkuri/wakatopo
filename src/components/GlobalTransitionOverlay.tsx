@@ -8,6 +8,9 @@ import CloudAscentCanvas from '@/components/canvas/CloudAscentCanvas';
 import FreezeTransitionCanvas from '@/components/canvas/FreezeTransitionCanvas';
 import RainTransitionCanvas from '@/components/canvas/RainTransitionCanvas';
 import SnowTransitionCanvas from '@/components/canvas/SnowTransitionCanvas';
+import HeavyCloudTransitionCanvas from '@/components/canvas/HeavyCloudTransitionCanvas';
+import ThunderTransitionCanvas from '@/components/canvas/ThunderTransitionCanvas';
+import SunburstTransitionCanvas from '@/components/canvas/SunburstTransitionCanvas';
 
 export default function GlobalTransitionOverlay() {
     const transitionType = useStore((state) => state.transitionType);
@@ -79,35 +82,35 @@ export default function GlobalTransitionOverlay() {
                 </motion.div>
             )}
 
-            {/* Otenki Gurashi: Sunburst (Clear/Morning) Transition Placeholder */}
+            {/* Otenki Gurashi: Sunburst (Clear/Morning) Transition */}
             {transitionType === 'sunburst' && (
                 <motion.div
                     key="sunburst"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    transition={{ duration: 0.8 }}
-                    className="fixed inset-0 z-[9999] pointer-events-auto bg-white"
+                    transition={{ duration: 0.5 }}
+                    className="fixed inset-0 z-[9999] pointer-events-auto"
                 >
-                    {/* Implementation for antigravity */}
+                    <SunburstTransitionCanvas />
                 </motion.div>
             )}
 
-            {/* Otenki Gurashi: Flash (Thunder) Transition Placeholder */}
+            {/* Otenki Gurashi: Flash (Thunder) Transition */}
             {transitionType === 'flash' && (
                 <motion.div
                     key="flash"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    transition={{ duration: 0.8 }}
-                    className="fixed inset-0 z-[9999] pointer-events-auto bg-transparent"
+                    transition={{ duration: 0.3 }}
+                    className="fixed inset-0 z-[9999] pointer-events-auto"
                 >
-                    {/* Implementation for antigravity */}
+                    <ThunderTransitionCanvas />
                 </motion.div>
             )}
 
-            {/* Otenki Gurashi: Heavy Cloud (Clouds) Transition Placeholder */}
+            {/* Otenki Gurashi: Heavy Cloud (Clouds) Transition */}
             {transitionType === 'heavy-cloud' && (
                 <motion.div
                     key="heavy-cloud"
@@ -115,9 +118,9 @@ export default function GlobalTransitionOverlay() {
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.8 }}
-                    className="fixed inset-0 z-[9999] pointer-events-auto bg-gray-900"
+                    className="fixed inset-0 z-[9999] pointer-events-auto"
                 >
-                    {/* Implementation for antigravity */}
+                    <HeavyCloudTransitionCanvas />
                 </motion.div>
             )}
 

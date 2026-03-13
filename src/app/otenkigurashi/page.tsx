@@ -97,15 +97,18 @@ export default function OtenkiGurashiPage() {
     let cardText = "text-gray-700";
 
     if (weather === 'Clouds') {
-        bgGradient = "from-[#b5c2ca] to-[#d8e1e8] bg-gradient-to-b";
+        bgGradient = "from-[#6b7a8d] via-[#8fa0b0] to-[#b5c2ca]";
     } else if (weather === 'Rain') {
         bgGradient = "from-[#60a5fa] to-[#bfdbfe] bg-gradient-to-t"; // Original Rain Gradient
     } else if (weather === 'Snow') {
-        bgGradient = "from-[#d1e6eb] to-[#f4fbfc] bg-gradient-to-b";
+        bgGradient = "from-[#dbeeff] via-[#eef5fc] to-[#f4fbfc]";
+    } else if (weather === 'Thunder') {
+        bgGradient = "from-[#1a1a2e] via-[#16213e] to-[#0f3460]";
+        cardText = "text-gray-200";
     }
 
     return (
-        <main className={`relative w-full min-h-[120dvh] ${weather !== 'Rain' ? 'bg-gradient-to-b' : ''} ${bgGradient} text-gray-700 overflow-hidden font-sans pb-32 transition-colors duration-1000`}>
+        <main className={`relative w-full min-h-[120dvh] ${weather !== 'Rain' ? 'bg-gradient-to-b' : ''} ${bgGradient} ${weather === 'Thunder' ? 'text-gray-200' : 'text-gray-700'} overflow-hidden font-sans pb-32 transition-colors duration-1000`}>
 
             {/* Background Parallax Clouds Layer (Hidden in Rain to emphasize rain, but kept in snow for blizzard feel) */}
             <div className={`absolute inset-0 pointer-events-none overflow-hidden z-0 transition-opacity duration-1000 ${weather === 'Rain' ? 'opacity-10' : 'opacity-100'}`}>
@@ -261,9 +264,43 @@ export default function OtenkiGurashiPage() {
                 </div>
             )}
             {weather === 'Snow' && (
-                <div className="fixed inset-0 pointer-events-none z-0 opacity-60">
-                    <div className="w-full h-full bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] mix-blend-overlay animate-[fall_10s_linear_infinite]" />
+                <div className="fixed inset-0 pointer-events-none z-0 opacity-70">
+                    {/* Snow flakes as CSS dots */}
+                    <div className="w-full h-full" style={{
+                        backgroundImage: 'radial-gradient(ellipse 2px 3px at 50% 50%, rgba(255,255,255,0.85) 0%, transparent 100%)',
+                        backgroundSize: '80px 80px',
+                        animation: 'snowfall 8s linear infinite',
+                    }} />
+                    <style>{`
+                        @keyframes snowfall {
+                            from { background-position: 0 -80px; }
+                            to { background-position: 40px 80px; }
+                        }
+                    `}</style>
                 </div>
+            )}
+            {weather === 'Clouds' && (
+                <div className="fixed inset-0 pointer-events-none z-0 opacity-30">
+                    <div className="w-full h-full" style={{
+                        background: 'radial-gradient(ellipse 80% 40% at 50% 10%, rgba(100,120,140,0.4), transparent)',
+                    }} />
+                </div>
+            )}
+            {weather === 'Thunder' && (
+                <>
+                    {/* 雨のライン */}
+                    <div className="fixed inset-0 pointer-events-none z-0 opacity-40" style={{
+                        backgroundImage: 'repeating-linear-gradient(175deg, transparent, transparent 2px, rgba(140,160,210,0.4) 2px, rgba(140,160,210,0.4) 4px)',
+                        backgroundSize: '4px 60px',
+                        animation: 'thunder-rain 0.25s linear infinite',
+                    }} />
+                    <style>{`
+                        @keyframes thunder-rain {
+                            from { background-position: 0 0; }
+                            to { background-position: 4px 60px; }
+                        }
+                    `}</style>
+                </>
             )}
 
             {/* Ten-chan Companion */}
