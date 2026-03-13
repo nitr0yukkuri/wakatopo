@@ -2,7 +2,10 @@
 
 import { useRouter } from 'next/navigation';
 import { useStore } from '@/store';
-import RealisticPlanetScene from '@/components/canvas/RealisticPlanetScene';
+import dynamic from 'next/dynamic';
+
+// Lazy load the heavy 3D scene to reduce TBT
+const RealisticPlanetScene = dynamic(() => import('@/components/canvas/RealisticPlanetScene'), { ssr: false });
 
 export default function GitHubPlanetPage() {
     const router = useRouter();
@@ -21,8 +24,12 @@ export default function GitHubPlanetPage() {
             <div className="relative z-10 w-full max-w-5xl mx-auto px-6 pt-32 pb-16 flex flex-col items-center animate-fade-in-up pointer-events-none">
                 {/* GitHub Planet Logo */}
                 <img
-                    src="/github-planet-logo.png"
+                    src="/github-planet-logo.webp"
                     alt="GitHub Planet"
+                    width={640}
+                    height={221}
+                    fetchPriority="high"
+                    decoding="async"
                     className="w-full max-w-xs md:max-w-sm mx-auto mb-4 drop-shadow-[0_0_30px_rgba(120,120,255,0.4)]"
                     style={{ mixBlendMode: 'screen' }}
                 />
@@ -40,6 +47,10 @@ export default function GitHubPlanetPage() {
                             <img
                                 src="https://image.thum.io/get/width/800/crop/400/noanimate/wait/8/https://githubplanet.onrender.com/card.html?username=nitr0yukkuri&fix=true&time=176___"
                                 alt="GitHub Planet Card - nitr0yukkuri"
+                                width={800}
+                                height={400}
+                                loading="lazy"
+                                decoding="async"
                                 className="w-full rounded-2xl border border-white/10 shadow-2xl relative z-10 hover:border-cyan-500/50 transition-colors duration-500"
                             />
                             <p className="text-center text-xs text-gray-500 font-mono mt-4">
