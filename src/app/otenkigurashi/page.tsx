@@ -93,7 +93,7 @@ export default function OtenkiGurashiPage() {
         router.push('/');
     };
 
-    let bgGradient = "from-[#aee1f9] to-[#e0f4fc]"; // Default (Clear / Night)
+    let bgGradient = "from-[#aee1f9] to-[#e0f4fc]"; // Default (Clear)
     let cardText = "text-gray-700";
 
     if (weather === 'Clouds') {
@@ -105,13 +105,16 @@ export default function OtenkiGurashiPage() {
     } else if (weather === 'Thunder') {
         bgGradient = "from-[#1a1a2e] via-[#16213e] to-[#0f3460]";
         cardText = "text-gray-200";
+    } else if (weather === 'Night') {
+        bgGradient = "from-[#030915] via-[#071428] to-[#0b1f36]";
+        cardText = "text-gray-200";
     }
 
     return (
-        <main className={`relative w-full min-h-[120dvh] ${weather !== 'Rain' ? 'bg-gradient-to-b' : ''} ${bgGradient} ${weather === 'Thunder' ? 'text-gray-200' : 'text-gray-700'} overflow-hidden font-sans pb-32 transition-colors duration-1000`}>
+        <main className={`relative w-full min-h-[120dvh] ${weather !== 'Rain' ? 'bg-gradient-to-b' : ''} ${bgGradient} ${weather === 'Thunder' || weather === 'Night' ? 'text-gray-200' : 'text-gray-700'} overflow-hidden font-sans pb-32 transition-colors duration-1000`}>
 
             {/* Background Parallax Clouds Layer (Hidden in Rain to emphasize rain, but kept in snow for blizzard feel) */}
-            <div className={`absolute inset-0 pointer-events-none overflow-hidden z-0 transition-opacity duration-1000 ${weather === 'Rain' ? 'opacity-10' : 'opacity-100'}`}>
+            <div className={`absolute inset-0 pointer-events-none overflow-hidden z-0 transition-opacity duration-1000 ${weather === 'Rain' ? 'opacity-10' : weather === 'Night' ? 'opacity-45' : 'opacity-100'}`}>
                 {/* --- 3. 奥のレイヤー（小さく、ゆっくり、薄い、左へ） --- */}
                 <CloudDecoration className="opacity-20 w-32 top-[5%] animate-cloud-scroll-left-slow" style={{ animationDelay: '-10s' }} />
                 <CloudDecoration className="opacity-30 w-40 top-[40%] animate-cloud-scroll-left-slow" style={{ animationDelay: '-40s' }} />
@@ -285,6 +288,32 @@ export default function OtenkiGurashiPage() {
                         background: 'radial-gradient(ellipse 80% 40% at 50% 10%, rgba(100,120,140,0.4), transparent)',
                     }} />
                 </div>
+            )}
+            {weather === 'Night' && (
+                <>
+                    <div className="fixed inset-0 pointer-events-none z-0">
+                        {/* 夜空の深み */}
+                        <div className="absolute inset-0" style={{
+                            background: 'radial-gradient(ellipse 75% 45% at 50% 8%, rgba(132,173,235,0.12), transparent 60%)',
+                        }} />
+
+                        {/* 右上の三日月 */}
+                        <div className="absolute right-[10%] top-[10%] w-24 h-24 md:w-32 md:h-32 rounded-full bg-[#dce8ff] opacity-90 shadow-[0_0_35px_rgba(167,196,245,0.38)]" />
+                        <div className="absolute right-[7.7%] top-[8.6%] w-24 h-24 md:w-32 md:h-32 rounded-full bg-[#081325] opacity-95" />
+
+                        {/* 小さな星 */}
+                        <div className="absolute inset-0 opacity-60" style={{
+                            backgroundImage: 'radial-gradient(circle at 12% 18%, rgba(220,235,255,0.95) 0 1px, transparent 2px), radial-gradient(circle at 24% 34%, rgba(220,235,255,0.85) 0 1px, transparent 2px), radial-gradient(circle at 41% 12%, rgba(220,235,255,0.92) 0 1px, transparent 2px), radial-gradient(circle at 62% 22%, rgba(220,235,255,0.86) 0 1px, transparent 2px), radial-gradient(circle at 76% 30%, rgba(220,235,255,0.94) 0 1px, transparent 2px), radial-gradient(circle at 88% 14%, rgba(220,235,255,0.80) 0 1px, transparent 2px)',
+                            animation: 'night-twinkle 5s ease-in-out infinite',
+                        }} />
+                    </div>
+                    <style>{`
+                        @keyframes night-twinkle {
+                            0%, 100% { opacity: 0.45; }
+                            50% { opacity: 0.9; }
+                        }
+                    `}</style>
+                </>
             )}
             {weather === 'Thunder' && (
                 <>

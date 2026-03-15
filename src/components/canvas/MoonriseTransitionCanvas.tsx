@@ -98,8 +98,8 @@ void main() {
 `;
 
 function Moon() {
-    const moonRef   = useRef<THREE.Mesh>(null);
-    const glowRef   = useRef<THREE.Mesh>(null);
+    const moonRef = useRef<THREE.Mesh>(null);
+    const glowRef = useRef<THREE.Mesh>(null);
     const glowUniforms = useMemo(() => ({ uOpacity: { value: 0 } }), []);
 
     useFrame((state) => {
