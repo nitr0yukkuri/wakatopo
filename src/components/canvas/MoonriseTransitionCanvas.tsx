@@ -104,14 +104,24 @@ function Moon() {
 
     useFrame((state) => {
         const t = state.clock.getElapsedTime();
-        const y = Math.min(-8.0 + t * 5.0, 1.6);
+        const rise = THREE.MathUtils.smoothstep(Math.min(t, 1.9), 0.0, 1.9);
+        const y = -8.0 + rise * 9.6;
+        const x = 0.5 + Math.sin(t * 0.44) * 0.22;
         const progress = Math.min(t / 1.6, 1.0);
 
-        if (moonRef.current) moonRef.current.position.y = y;
+        if (moonRef.current) {
+            moonRef.current.position.y = y;
+            moonRef.current.position.x = x;
+            moonRef.current.rotation.z = Math.sin(t * 0.56) * 0.06;
+            const pulseScale = 1.0 + Math.sin(t * 1.9) * 0.018;
+            moonRef.current.scale.set(pulseScale, pulseScale, 1.0);
+        }
         if (glowRef.current) {
             glowRef.current.position.y = y;
+            glowRef.current.position.x = x;
             const pulse = 1.0 + Math.sin(t * 1.2) * 0.05;
-            glowUniforms.uOpacity.value = progress * 0.92 * pulse;
+            const burst = 1.0 + Math.exp(-Math.pow((t - 1.2) * 2.4, 2.0)) * 0.25;
+            glowUniforms.uOpacity.value = progress * 0.92 * pulse * burst;
         }
     });
 
@@ -150,12 +160,15 @@ const starVertexShader = `
 uniform float uTime;
 attribute float twinkleSpeed;
 attribute float starSize;
+attribute float drift;
 varying float vAlpha;
 
 void main() {
-    float t = sin(uTime * twinkleSpeed + position.x * 13.7 + position.y * 9.3) * 0.4 + 0.6;
+    float t = sin(uTime * twinkleSpeed + position.x * 13.7 + position.y * 9.3) * 0.5 + 0.5;
     vAlpha = t;
     vec4 mvPos = modelViewMatrix * vec4(position, 1.0);
+    mvPos.x += sin(uTime * 0.22 + position.y * 0.18) * drift;
+    mvPos.y += cos(uTime * 0.18 + position.x * 0.12) * drift * 0.45;
     gl_PointSize = starSize * (220.0 / max(0.1, -mvPos.z));
     gl_Position = projectionMatrix * mvPos;
 }
@@ -175,20 +188,22 @@ void main() {
 
 function StarField() {
     const uniforms = useMemo(() => ({ uTime: { value: 0 } }), []);
-    const count = 280;
+    const count = 420;
 
-    const { positions, speeds, sizes } = useMemo(() => {
+    const { positions, speeds, sizes, drifts } = useMemo(() => {
         const p = new Float32Array(count * 3);
         const sp = new Float32Array(count);
         const sz = new Float32Array(count);
+        const dr = new Float32Array(count);
         for (let i = 0; i < count; i++) {
             p[i * 3] = (Math.random() - 0.5) * 52;
             p[i * 3 + 1] = (Math.random() - 0.5) * 36;
             p[i * 3 + 2] = -8 - Math.random() * 18;
             sp[i] = Math.random() * 2.5 + 0.8;
             sz[i] = Math.random() * 1.8 + 0.4;
+            dr[i] = Math.random() * 0.08 + 0.01;
         }
-        return { positions: p, speeds: sp, sizes: sz };
+        return { positions: p, speeds: sp, sizes: sz, drifts: dr };
     }, []);
 
     useFrame((state) => { uniforms.uTime.value = state.clock.getElapsedTime(); });
@@ -199,6 +214,7 @@ function StarField() {
                 <bufferAttribute attach="attributes-position" args={[positions, 3]} />
                 <bufferAttribute attach="attributes-twinkleSpeed" args={[speeds, 1]} />
                 <bufferAttribute attach="attributes-starSize" args={[sizes, 1]} />
+                <bufferAttribute attach="attributes-drift" args={[drifts, 1]} />
             </bufferGeometry>
             <shaderMaterial
                 vertexShader={starVertexShader}
@@ -209,6 +225,42 @@ function StarField() {
                 blending={THREE.AdditiveBlending}
             />
         </points>
+    );
+}
+
+function ShootingStars() {
+    const streaks = [
+        { top: '14%', delay: 0.5, duration: 2.8, width: 170 },
+        { top: '26%', delay: 1.7, duration: 3.2, width: 140 },
+        { top: '36%', delay: 2.9, duration: 2.6, width: 190 },
+    ];
+
+    return (
+        <div className="absolute inset-0 pointer-events-none z-10 overflow-hidden">
+            {streaks.map((s, i) => (
+                <motion.div
+                    key={i}
+                    className="absolute h-px"
+                    style={{
+                        top: s.top,
+                        left: '-22%',
+                        width: s.width,
+                        background: 'linear-gradient(90deg, rgba(180,210,255,0.0) 0%, rgba(210,230,255,0.95) 45%, rgba(255,255,255,0.0) 100%)',
+                        filter: 'drop-shadow(0 0 6px rgba(190,220,255,0.65))',
+                        transform: 'rotate(-22deg)',
+                    }}
+                    initial={{ x: '-20%', opacity: 0 }}
+                    animate={{ x: '150%', opacity: [0, 0.95, 0] }}
+                    transition={{
+                        duration: s.duration,
+                        ease: 'easeOut',
+                        repeat: Infinity,
+                        repeatDelay: 3.5,
+                        delay: s.delay,
+                    }}
+                />
+            ))}
+        </div>
     );
 }
 
@@ -225,6 +277,8 @@ export default function MoonriseTransitionCanvas() {
                 <StarField />
                 <Moon />
             </Canvas>
+
+            <ShootingStars />
 
             {/* 月明かりの大気グロー */}
             <motion.div
