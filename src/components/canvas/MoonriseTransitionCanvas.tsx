@@ -188,7 +188,7 @@ void main() {
 
 function StarField() {
     const uniforms = useMemo(() => ({ uTime: { value: 0 } }), []);
-    const count = 420;
+    const count = 260;
 
     const { positions, speeds, sizes, drifts } = useMemo(() => {
         const p = new Float32Array(count * 3);

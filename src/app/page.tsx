@@ -23,7 +23,7 @@ export default async function Home() {
       />
 
       {/* 3D Scene Background */}
-      <div className="fixed inset-0 z-0 opacity-80 mix-blend-screen">
+      <div className="fixed inset-0 z-0 opacity-80 mix-blend-screen pointer-events-none md:pointer-events-auto">
         <Scene />
       </div>
 
