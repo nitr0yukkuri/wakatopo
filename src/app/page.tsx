@@ -2,6 +2,8 @@ import Scene from '@/components/canvas/Scene';
 import { fetchPlanetData } from '@/lib/actions';
 import ClientInitializer from '@/components/ClientInitializer';
 import WorksList from '@/components/dom/WorksList';
+import WeatherDebugSelector from '@/components/dom/WeatherDebugSelector';
+import WeatherEffectsOverlay from '@/components/dom/WeatherEffectsOverlay';
 import Link from 'next/link';
 
 export default async function Home() {
@@ -27,6 +29,9 @@ export default async function Home() {
         <Scene />
       </div>
 
+      {/* Weather Effects Overlay */}
+      <WeatherEffectsOverlay />
+
       {/* === FIXED HUD UI === */}
       <div className="fixed inset-0 z-50 pointer-events-none p-6 md:p-8 flex flex-col justify-between text-xs font-mono tracking-widest text-gray-500">
         {/* Top Left */}
@@ -49,23 +54,26 @@ export default async function Home() {
         </div>
 
         {/* Bottom HUD Container */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end w-full gap-6 md:gap-0">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end w-full gap-6 md:gap-0 pointer-events-auto">
           {/* Bottom Left */}
-          <div className="flex flex-col gap-1 border-l border-gray-800 pl-4 w-full md:w-auto opacity-50 hover:opacity-100 md:opacity-100 transition-opacity">
-            <div className="flex gap-4">
-              <span className="w-12">LOC</span>
-              <span className="text-gray-300">OSAKA, JP</span>
+          <div className="flex flex-col gap-1 w-full md:w-auto opacity-50 hover:opacity-100 md:opacity-100 transition-opacity">
+            <div className="flex flex-col gap-1 border-l border-gray-800 pl-4">
+              <div className="flex gap-4">
+                <span className="w-12">LOC</span>
+                <span className="text-gray-300">OSAKA, JP</span>
+              </div>
+              <div className="flex gap-4">
+                <span className="w-12">WTHR</span>
+                <span className={data.weather === 'Rain' ? 'text-blue-400' : 'text-orange-400'}>
+                  {data.weather.toUpperCase()}
+                </span>
+              </div>
+              <div className="flex gap-4">
+                <span className="w-12">ACTV</span>
+                <span className="text-white">{(data.activityLevel * 100).toFixed(0)}%</span>
+              </div>
             </div>
-            <div className="flex gap-4">
-              <span className="w-12">WTHR</span>
-              <span className={data.weather === 'Rain' ? 'text-blue-400' : 'text-orange-400'}>
-                {data.weather.toUpperCase()}
-              </span>
-            </div>
-            <div className="flex gap-4">
-              <span className="w-12">ACTV</span>
-              <span className="text-white">{(data.activityLevel * 100).toFixed(0)}%</span>
-            </div>
+            <WeatherDebugSelector />
           </div>
 
           {/* Bottom Right */}
