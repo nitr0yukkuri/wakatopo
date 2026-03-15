@@ -28,14 +28,6 @@ export const metadata: Metadata = {
     description: "GitHubの活動とリアルタイム天気が連動する、インタラクティブな3Dポートフォリオ。",
     url: "https://wakatopo.vercel.app",
     siteName: "WAKATOPO",
-    images: [
-      {
-        url: "/2k_mars.jpg",
-        width: 2048,
-        height: 1024,
-        alt: "WAKATOPO planet visual",
-      },
-    ],
     locale: "ja_JP",
     type: "website",
   },
@@ -43,7 +35,6 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "WAKATOPO | Living Planet Portfolio",
     description: "GitHubの活動とリアルタイム天気が連動する、インタラクティブな3Dポートフォリオ。",
-    images: ["/2k_mars.jpg"],
   },
   icons: {
     icon: "/faviconwakato.png",

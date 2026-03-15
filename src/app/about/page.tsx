@@ -19,21 +19,21 @@ export default function AboutPage() {
                 </Link>
             </nav>
 
-            <div className="relative z-10 container mx-auto px-6 md:px-12 pt-8 pb-32 flex flex-col md:flex-row gap-12 md:gap-32 items-start justify-center min-h-[80dvh]">
+            <div className="relative z-10 container mx-auto px-6 md:px-12 pt-6 md:pt-8 pb-24 md:pb-32 flex flex-col md:flex-row gap-10 md:gap-32 items-start justify-center min-h-[80dvh]">
 
                 {/* Left Column: Identity */}
-                <div className="flex-1 max-w-lg animate-fade-in-up">
-                    <div className="mb-8">
+                <div className="flex-1 w-full max-w-lg animate-fade-in-up">
+                    <div className="mb-6 md:mb-8">
                         <span className="text-xs font-mono tracking-widest text-gray-500 block mb-4 border-l border-cyan-500 pl-4">IDENTIFICATION</span>
-                        <h1 className="text-6xl md:text-8xl font-bold tracking-tighter">
+                        <h1 className="text-5xl sm:text-6xl md:text-8xl font-bold tracking-tighter leading-none">
                             WAKATO
                         </h1>
-                        <p className="mt-4 text-xl md:text-2xl text-cyan-400 font-light tracking-wide">
+                        <p className="mt-3 md:mt-4 text-lg sm:text-xl md:text-2xl text-cyan-400 font-light tracking-wide">
                             Interactive Web Developer.
                         </p>
                     </div>
 
-                    <div className="space-y-6 text-gray-400 font-mono text-sm leading-relaxed">
+                    <div className="space-y-5 md:space-y-6 text-gray-400 font-mono text-sm leading-7 md:leading-relaxed">
                         <p>
                             デジタルな世界に「呼吸」と「体温」を吹き込むことを目指すフロントエンドエンジニア / クリエイター。
                             静的な情報の羅列ではなく、ユーザーの操作や環境と呼応する有機的なWeb体験（Interactive Web Experience）を追求しています。
@@ -42,6 +42,32 @@ export default function AboutPage() {
                             3Dグラフィックス（Three.js）や複雑なアニメーションを駆使し、
                             スクリーンの向こう側に確かな「世界」を感じさせる実装を得意としています。
                         </p>
+                    </div>
+
+                    <div className="mt-8 rounded-[1.75rem] md:rounded-3xl border border-cyan-500/20 bg-cyan-500/5 p-5 md:p-6 backdrop-blur-sm">
+                        <div className="flex flex-wrap gap-2 text-[10px] font-mono tracking-[0.2em] md:tracking-[0.24em]">
+                            <span className="rounded-full border border-cyan-400/40 bg-cyan-400/10 px-3 py-1 text-cyan-300">CLASS OF 2029</span>
+                            <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-gray-300">INTERNSHIP WELCOME</span>
+                        </div>
+                        <p className="mt-4 text-sm text-gray-300 font-mono leading-7 md:leading-relaxed">
+                            29卒です。インターンやカジュアル面談の連絡を待っています。気になったら、まずは X をフォローするかメールで声をかけてもらえると嬉しいです。
+                        </p>
+                        <div className="mt-5 flex flex-col sm:flex-row gap-3">
+                            <a
+                                href="https://x.com/0ts_st"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-full border border-cyan-400/40 bg-cyan-400/10 px-4 py-2.5 text-xs font-mono tracking-widest text-cyan-300 hover:bg-cyan-400 hover:text-black transition-colors"
+                            >
+                                FOLLOW ON X
+                            </a>
+                            <a
+                                href="mailto:nakatawakato@gmail.com"
+                                className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2.5 text-xs font-mono tracking-widest text-gray-200 hover:border-cyan-400/40 hover:text-cyan-300 transition-colors"
+                            >
+                                CONTACT
+                            </a>
+                        </div>
                     </div>
                 </div>
 

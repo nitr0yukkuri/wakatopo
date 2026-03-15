@@ -123,20 +123,20 @@ export default async function Home() {
         </section>
 
         {/* FOOTER */}
-        <footer className="py-24 px-6 md:px-20 bg-[#050505] pointer-events-auto">
-          <div className="flex flex-col md:flex-row justify-between items-end gap-12">
-            <div>
-              <h2 className="text-4xl font-bold tracking-tight mb-6 text-white">LET'S CONNECT</h2>
-              <div className="flex gap-8 font-mono text-xs text-gray-400">
-                <a href="https://github.com/nitr0yukkuri" target="_blank" rel="noopener noreferrer" className="hover:text-cyan-400 transition-colors">GITHUB</a>
-                <a href="https://x.com/0ts_st" target="_blank" rel="noopener noreferrer" className="hover:text-cyan-400 transition-colors">TWITTER</a>
-                <a href="mailto:nakatawakato@gmail.com" className="hover:text-cyan-400 transition-colors">MAIL</a>
+        <footer className="py-24 px-6 md:px-20 bg-[#050505] pointer-events-auto border-t border-white/5">
+          <div className="max-w-6xl mx-auto">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8">
+              <div>
+                <span className="text-cyan-500 text-xs font-mono tracking-[0.28em]">03 / END SIGNAL</span>
+                <p className="mt-4 text-sm md:text-base text-gray-400 leading-relaxed font-mono max-w-2xl">
+                  気になったら、左上の X か CONTACT からどうぞ。作品はおしゃれに、連絡導線はちゃんと届く場所に置いています。
+                </p>
               </div>
+              <p className="text-[10px] text-gray-700 font-mono text-left md:text-right">
+                © 2026 WAKATO. ALL RIGHTS RESERVED.<br />
+                DESIGNED IN OSAKA.
+              </p>
             </div>
-            <p className="text-[10px] text-gray-700 font-mono text-right">
-              © 2026 WAKATO. ALL RIGHTS RESERVED.<br />
-              DESIGNED IN OSAKA.
-            </p>
           </div>
         </footer>
 
