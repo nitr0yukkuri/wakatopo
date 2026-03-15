@@ -26,7 +26,11 @@ export default function RecaptchaGamePage() {
                     <span className="inline-block border border-cyan-400/30 bg-cyan-400/10 text-cyan-300 px-4 py-1.5 rounded-full text-xs font-mono tracking-widest mb-8">
                         REACT / GO / WEBSOCKET
                     </span>
-                    <h1 className="text-5xl md:text-7xl font-black tracking-tight text-white">reCAPTCHA Game</h1>
+                    <img
+                        src="/recatcha-logo.png"
+                        alt="recaptchaゲーム ロゴ"
+                        className="w-full max-w-sm md:max-w-md mx-auto"
+                    />
                     <p className="mt-6 text-lg md:text-2xl text-gray-300 leading-relaxed max-w-3xl mx-auto">
                         おなじみの画像認証をモチーフにした、新感覚のリアルタイム対戦ゲーム。
                         <br className="hidden md:block" />

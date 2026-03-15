@@ -259,7 +259,11 @@ export default function DenshouoPage() {
                     <span className="inline-block border border-teal-300/30 bg-teal-300/10 text-teal-200 px-4 py-1.5 rounded-full text-xs font-mono tracking-widest mb-8">
                         REACT / SUPABASE
                     </span>
-                    <h1 className="text-5xl md:text-7xl font-black tracking-tight text-white">でんしょうお</h1>
+                    <img
+                        src="/denshouo-logo.png"
+                        alt="でんしょうお ロゴ"
+                        className="w-full max-w-lg md:max-w-2xl mx-auto"
+                    />
                     <p className="mt-6 text-lg md:text-2xl text-gray-300 leading-relaxed max-w-3xl mx-auto">
                         つぶやくほどでもない小さな幸せを魚に乗せて流し、みんなでゆるく分かち合う SNS。
                     </p>
