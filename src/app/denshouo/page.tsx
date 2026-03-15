@@ -3,6 +3,10 @@
 import { useRouter } from 'next/navigation';
 import { useStore } from '@/store';
 import { motion } from 'framer-motion';
+import { Canvas, useFrame } from '@react-three/fiber';
+import { useMemo, useRef } from 'react';
+import * as THREE from 'three';
+import { waveVertexShader, waveFragmentShader } from '@/shaders/wave';
 
 const bubbleSpecs = [
     { left: '8%', top: '18%', size: 16, delay: 0.0, duration: 8.0 },
@@ -20,18 +24,149 @@ const fishSpecs = [
     { top: '74%', left: '24%', width: 42, delay: 2.1, duration: 14 },
 ];
 
+const bubbleVertexShader = `
+uniform float uTime;
+attribute float scale;
+attribute float speed;
+attribute float seed;
+varying float vAlpha;
+
+void main() {
+    vec3 pos = position;
+    float rise = mod(uTime * speed + seed * 16.0, 24.0) - 12.0;
+    pos.y += rise;
+    pos.x += sin(uTime * 0.65 + seed * 7.0) * 0.22;
+
+    vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
+    vAlpha = smoothstep(-22.0, -5.0, mvPosition.z) * (1.0 - smoothstep(-2.0, 2.0, mvPosition.z));
+
+    gl_PointSize = scale * (120.0 / max(0.1, -mvPosition.z));
+    gl_Position = projectionMatrix * mvPosition;
+}
+`;
+
+const bubbleFragmentShader = `
+varying float vAlpha;
+
+void main() {
+    vec2 uv = gl_PointCoord - vec2(0.5);
+    float r = length(uv);
+    if (r > 0.5) discard;
+
+    float ring = smoothstep(0.5, 0.34, r) - smoothstep(0.34, 0.2, r);
+    float core = smoothstep(0.34, 0.0, r);
+    float alpha = (ring * 0.50 + core * 0.12) * vAlpha;
+
+    vec3 col = mix(vec3(0.70, 0.94, 0.98), vec3(0.94, 1.0, 1.0), ring);
+    gl_FragColor = vec4(col, clamp(alpha, 0.0, 0.30));
+}
+`;
+
+function OceanSurface() {
+    const meshRef = useRef<THREE.Mesh>(null);
+    const uniforms = useMemo(() => ({
+        uTime: { value: 0 },
+        uColorDeep: { value: new THREE.Color('#0b3a49') },
+        uColorShallow: { value: new THREE.Color('#5acfd9') },
+    }), []);
+
+    useFrame((state) => {
+        uniforms.uTime.value = state.clock.getElapsedTime() * 0.85;
+    });
+
+    return (
+        <mesh ref={meshRef} position={[0, 0, -1]}>
+            <planeGeometry args={[100, 100]} />
+            <shaderMaterial
+                vertexShader={waveVertexShader}
+                fragmentShader={waveFragmentShader}
+                uniforms={uniforms}
+                transparent={true}
+                depthWrite={false}
+            />
+        </mesh>
+    );
+}
+
+function OceanBubbles() {
+    const count = 100;
+    const uniforms = useMemo(() => ({ uTime: { value: 0 } }), []);
+
+    const { positions, scales, speeds, seeds } = useMemo(() => {
+        const p = new Float32Array(count * 3);
+        const s = new Float32Array(count);
+        const sp = new Float32Array(count);
+        const sd = new Float32Array(count);
+
+        for (let i = 0; i < count; i++) {
+            p[i * 3] = (Math.random() - 0.5) * 20;
+            p[i * 3 + 1] = (Math.random() - 0.5) * 14;
+            p[i * 3 + 2] = -Math.random() * 12 - 1.2;
+            s[i] = Math.random() * 2.0 + 0.8;
+            sp[i] = Math.random() * 0.9 + 0.5;
+            sd[i] = Math.random();
+        }
+
+        return { positions: p, scales: s, speeds: sp, seeds: sd };
+    }, [count]);
+
+    useFrame((state) => {
+        uniforms.uTime.value = state.clock.getElapsedTime();
+    });
+
+    return (
+        <points>
+            <bufferGeometry>
+                <bufferAttribute attach="attributes-position" args={[positions, 3]} />
+                <bufferAttribute attach="attributes-scale" args={[scales, 1]} />
+                <bufferAttribute attach="attributes-speed" args={[speeds, 1]} />
+                <bufferAttribute attach="attributes-seed" args={[seeds, 1]} />
+            </bufferGeometry>
+            <shaderMaterial
+                vertexShader={bubbleVertexShader}
+                fragmentShader={bubbleFragmentShader}
+                uniforms={uniforms}
+                transparent={true}
+                depthWrite={false}
+                blending={THREE.AdditiveBlending}
+            />
+        </points>
+    );
+}
+
 function OceanBackdrop() {
     return (
         <>
             <div className="fixed inset-0 pointer-events-none z-0 bg-[#041116]" />
+
+            <div className="fixed inset-0 pointer-events-none z-1">
+                <Canvas camera={{ position: [0, 0, 0], fov: 75 }}>
+                    <color attach="background" args={['#041116']} />
+                    <OceanSurface />
+                    <OceanBubbles />
+                </Canvas>
+            </div>
+
             <div
-                className="fixed inset-0 pointer-events-none z-0"
+                className="fixed inset-0 pointer-events-none z-2"
                 style={{
-                    background: 'radial-gradient(circle at 20% 18%, rgba(120, 247, 225, 0.16) 0%, rgba(120, 247, 225, 0.03) 18%, transparent 36%), radial-gradient(circle at 78% 20%, rgba(96, 165, 250, 0.16) 0%, rgba(96, 165, 250, 0.03) 20%, transparent 38%), linear-gradient(180deg, #07212a 0%, #041116 42%, #020a0e 100%)',
+                    background: 'radial-gradient(circle at 20% 18%, rgba(120, 247, 225, 0.10) 0%, rgba(120, 247, 225, 0.02) 20%, transparent 42%), radial-gradient(circle at 78% 20%, rgba(96, 165, 250, 0.12) 0%, rgba(96, 165, 250, 0.02) 24%, transparent 46%), linear-gradient(180deg, rgba(7,33,42,0.35) 0%, rgba(4,17,22,0.28) 45%, rgba(2,10,14,0.62) 100%)',
                 }}
             />
-            <div
-                className="fixed inset-0 pointer-events-none z-0 opacity-60"
+
+            <motion.div
+                className="fixed inset-0 pointer-events-none z-2 opacity-40"
+                animate={{ opacity: [0.24, 0.46, 0.24], x: ['-3%', '2%', '-3%'] }}
+                transition={{ duration: 13, repeat: Infinity, ease: 'easeInOut' }}
+                style={{
+                    background: 'radial-gradient(ellipse 44% 26% at 18% 28%, rgba(170, 246, 255, 0.20) 0%, rgba(170, 246, 255, 0.06) 40%, rgba(170,246,255,0.0) 100%), radial-gradient(ellipse 40% 24% at 74% 36%, rgba(137, 227, 255, 0.18) 0%, rgba(137, 227, 255, 0.05) 42%, rgba(137,227,255,0.0) 100%)',
+                }}
+            />
+
+            <motion.div
+                className="fixed inset-0 pointer-events-none z-2 opacity-50"
+                animate={{ backgroundPosition: ['0px 0px', '96px -52px', '0px 0px'] }}
+                transition={{ duration: 16, repeat: Infinity, ease: 'linear' }}
                 style={{
                     background: 'repeating-linear-gradient(165deg, rgba(255,255,255,0.00) 0px, rgba(255,255,255,0.00) 34px, rgba(135, 245, 229, 0.035) 35px, rgba(135, 245, 229, 0.00) 64px)',
                 }}
@@ -40,7 +175,7 @@ function OceanBackdrop() {
             {bubbleSpecs.map((bubble, index) => (
                 <motion.div
                     key={index}
-                    className="fixed pointer-events-none z-0 rounded-full border border-white/20 bg-white/5 backdrop-blur-sm"
+                    className="fixed pointer-events-none z-2 rounded-full border border-white/20 bg-white/5 backdrop-blur-sm"
                     style={{
                         left: bubble.left,
                         top: bubble.top,
@@ -65,7 +200,7 @@ function OceanBackdrop() {
             {fishSpecs.map((fish, index) => (
                 <motion.div
                     key={index}
-                    className="fixed pointer-events-none z-0"
+                    className="fixed pointer-events-none z-2"
                     style={{ left: fish.left, top: fish.top, width: fish.width }}
                     animate={{ x: [0, 36, 0], y: [0, -10, 0], opacity: [0.10, 0.18, 0.10] }}
                     transition={{ duration: fish.duration, repeat: Infinity, ease: 'easeInOut', delay: fish.delay }}
@@ -78,7 +213,7 @@ function OceanBackdrop() {
             ))}
 
             <div
-                className="fixed inset-x-0 bottom-0 h-[32vh] pointer-events-none z-0"
+                className="fixed inset-x-0 bottom-0 h-[32vh] pointer-events-none z-2"
                 style={{
                     background: 'linear-gradient(to top, rgba(2,10,14,0.94) 0%, rgba(4,17,22,0.74) 42%, rgba(4,17,22,0) 100%)',
                 }}
