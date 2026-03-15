@@ -11,6 +11,8 @@ export default async function Home() {
     { id: '01', title: 'GitHub Planet', cat: 'THREE.JS / VISUALIZATION', desc: 'Activity-based terrain generation' },
     { id: '02', title: 'おてんきぐらし', cat: 'NEXT.JS / PWA', desc: 'Weather-sync life simulation' },
     { id: '03', title: 'ColdKeep', cat: 'AI / IOT', desc: 'Audio-based volume estimation' },
+    { id: '04', title: 'reCAPTCHA Game', cat: 'REACT / GO / WEBSOCKET', desc: '60秒以内に何回「人間」を証明できる？対戦型認証ゲーム。' },
+    { id: '05', title: 'でんしょうお', cat: 'REACT / SUPABASE', desc: '小さな幸せを魚に乗せて流す、癒しと分かち合いのSNS。' },
   ];
 
   return (

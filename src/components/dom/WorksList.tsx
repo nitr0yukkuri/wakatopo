@@ -58,6 +58,14 @@ export default function WorksList({ works }: { works: Work[] }) {
                 router.push('/coldkeep');
                 setTimeout(() => setTransitionType('none'), 1000);
             }, 2000);
+        } else if (id === '04') {
+            setActiveWork('04');
+            setTransitionType('none');
+            router.push('/recaptcha-game');
+        } else if (id === '05') {
+            setActiveWork('05');
+            setTransitionType('none');
+            router.push('/denshouo');
         } else {
             setActiveWork(activeWorkId === id ? null : id);
         }
