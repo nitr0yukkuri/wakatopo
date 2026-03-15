@@ -64,8 +64,11 @@ export default function WorksList({ works }: { works: Work[] }) {
             router.push('/recaptcha-game');
         } else if (id === '05') {
             setActiveWork('05');
-            setTransitionType('none');
-            router.push('/denshouo');
+            setTransitionType('wave');
+            setTimeout(() => {
+                router.push('/denshouo');
+                setTimeout(() => setTransitionType('none'), 900);
+            }, 1800);
         } else {
             setActiveWork(activeWorkId === id ? null : id);
         }

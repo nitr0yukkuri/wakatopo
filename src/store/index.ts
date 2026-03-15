@@ -6,11 +6,11 @@ interface AppState {
     weather: WeatherType;
     githubActivityLevel: number;
     activeWorkId: string | null;
-    transitionType: 'none' | 'warp' | 'cloud' | 'freeze' | 'rain' | 'snow' | 'sunburst' | 'flash' | 'heavy-cloud';
+    transitionType: 'none' | 'warp' | 'cloud' | 'freeze' | 'rain' | 'snow' | 'sunburst' | 'flash' | 'heavy-cloud' | 'wave';
     setWeather: (weather: WeatherType) => void;
     setActivity: (level: number) => void;
     setActiveWork: (id: string | null) => void;
-    setTransitionType: (type: 'none' | 'warp' | 'cloud' | 'freeze' | 'rain' | 'snow' | 'sunburst' | 'flash' | 'heavy-cloud') => void;
+    setTransitionType: (type: 'none' | 'warp' | 'cloud' | 'freeze' | 'rain' | 'snow' | 'sunburst' | 'flash' | 'heavy-cloud' | 'wave') => void;
 }
 
 export const useStore = create<AppState>((set) => ({

@@ -14,6 +14,7 @@ const SnowTransitionCanvas = dynamic(() => import('@/components/canvas/SnowTrans
 const HeavyCloudTransitionCanvas = dynamic(() => import('@/components/canvas/HeavyCloudTransitionCanvas'), { ssr: false });
 const ThunderTransitionCanvas = dynamic(() => import('@/components/canvas/ThunderTransitionCanvas'), { ssr: false });
 const SunburstTransitionCanvas = dynamic(() => import('@/components/canvas/SunburstTransitionCanvas'), { ssr: false });
+const WaveTransitionCanvas = dynamic(() => import('@/components/canvas/WaveTransitionCanvas'), { ssr: false });
 
 export default function GlobalTransitionOverlay() {
     const transitionType = useStore((state) => state.transitionType);
@@ -38,7 +39,7 @@ export default function GlobalTransitionOverlay() {
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.8 }}
-                    className="fixed inset-0 z-[9999] pointer-events-auto bg-[#000000]"
+                    className="fixed inset-0 z-9999 pointer-events-auto bg-[#000000]"
                 >
                     <WarpEffectCanvas />
                 </motion.div>
@@ -51,7 +52,7 @@ export default function GlobalTransitionOverlay() {
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.8 }}
-                    className="fixed inset-0 z-[9999] pointer-events-auto bg-[#000000]"
+                    className="fixed inset-0 z-9999 pointer-events-auto bg-[#000000]"
                 >
                     <CloudAscentCanvas />
                 </motion.div>
@@ -65,7 +66,7 @@ export default function GlobalTransitionOverlay() {
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.8 }}
-                    className="fixed inset-0 z-[9999] pointer-events-auto bg-transparent"
+                    className="fixed inset-0 z-9999 pointer-events-auto bg-transparent"
                 >
                     <RainTransitionCanvas />
                 </motion.div>
@@ -79,7 +80,7 @@ export default function GlobalTransitionOverlay() {
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.8 }}
-                    className="fixed inset-0 z-[9999] pointer-events-auto bg-transparent"
+                    className="fixed inset-0 z-9999 pointer-events-auto bg-transparent"
                 >
                     <SnowTransitionCanvas />
                 </motion.div>
@@ -93,7 +94,7 @@ export default function GlobalTransitionOverlay() {
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.5 }}
-                    className="fixed inset-0 z-[9999] pointer-events-auto"
+                    className="fixed inset-0 z-9999 pointer-events-auto"
                 >
                     <SunburstTransitionCanvas />
                 </motion.div>
@@ -107,7 +108,7 @@ export default function GlobalTransitionOverlay() {
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.3 }}
-                    className="fixed inset-0 z-[9999] pointer-events-auto"
+                    className="fixed inset-0 z-9999 pointer-events-auto"
                 >
                     <ThunderTransitionCanvas />
                 </motion.div>
@@ -121,9 +122,22 @@ export default function GlobalTransitionOverlay() {
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.8 }}
-                    className="fixed inset-0 z-[9999] pointer-events-auto"
+                    className="fixed inset-0 z-9999 pointer-events-auto"
                 >
                     <HeavyCloudTransitionCanvas />
+                </motion.div>
+            )}
+
+            {transitionType === 'wave' && (
+                <motion.div
+                    key="wave"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.8 }}
+                    className="fixed inset-0 z-9999 pointer-events-auto"
+                >
+                    <WaveTransitionCanvas />
                 </motion.div>
             )}
 
