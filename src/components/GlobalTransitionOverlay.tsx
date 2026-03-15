@@ -15,6 +15,7 @@ const HeavyCloudTransitionCanvas = dynamic(() => import('@/components/canvas/Hea
 const ThunderTransitionCanvas = dynamic(() => import('@/components/canvas/ThunderTransitionCanvas'), { ssr: false });
 const SunburstTransitionCanvas = dynamic(() => import('@/components/canvas/SunburstTransitionCanvas'), { ssr: false });
 const WaveTransitionCanvas = dynamic(() => import('@/components/canvas/WaveTransitionCanvas'), { ssr: false });
+const MoonriseTransitionCanvas = dynamic(() => import('@/components/canvas/MoonriseTransitionCanvas'), { ssr: false });
 
 export default function GlobalTransitionOverlay() {
     const transitionType = useStore((state) => state.transitionType);
@@ -138,6 +139,20 @@ export default function GlobalTransitionOverlay() {
                     className="fixed inset-0 z-9999 pointer-events-auto"
                 >
                     <WaveTransitionCanvas />
+                </motion.div>
+            )}
+
+            {/* Night Transition */}
+            {transitionType === 'moonrise' && (
+                <motion.div
+                    key="moonrise"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.8 }}
+                    className="fixed inset-0 z-9999 pointer-events-auto bg-[#010208]"
+                >
+                    <MoonriseTransitionCanvas />
                 </motion.div>
             )}
 

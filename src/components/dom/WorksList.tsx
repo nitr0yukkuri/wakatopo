@@ -44,7 +44,7 @@ export default function WorksList({ works }: { works: Work[] }) {
             } else if (currentWeather === 'Clear' || currentWeather === 'Morning') {
                 setTransitionType('sunburst');
             } else {
-                setTransitionType('cloud'); // Night
+                setTransitionType('moonrise'); // Night
             }
 
             setTimeout(() => {
