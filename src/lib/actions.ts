@@ -4,14 +4,14 @@ type WeatherType = 'Clear' | 'Rain' | 'Clouds' | 'Snow' | 'Night' | 'Morning' | 
 
 // Open-Meteo WMO weather code → WeatherType
 function mapWeatherCode(code: number): WeatherType {
-    if (code === 0 || code === 1)                  return 'Clear';
-    if (code === 2 || code === 3)                  return 'Clouds';
-    if (code >= 45 && code <= 48)                  return 'Clouds';
-    if (code >= 51 && code <= 67)                  return 'Rain';
-    if (code >= 71 && code <= 77)                  return 'Snow';
-    if (code >= 80 && code <= 82)                  return 'Rain';
-    if (code >= 85 && code <= 86)                  return 'Snow';
-    if (code >= 95)                                return 'Thunder';
+    if (code === 0 || code === 1) return 'Clear';
+    if (code === 2 || code === 3) return 'Clouds';
+    if (code >= 45 && code <= 48) return 'Clouds';
+    if (code >= 51 && code <= 67) return 'Rain';
+    if (code >= 71 && code <= 77) return 'Snow';
+    if (code >= 80 && code <= 82) return 'Rain';
+    if (code >= 85 && code <= 86) return 'Snow';
+    if (code >= 95) return 'Thunder';
     return 'Clear';
 }
 
