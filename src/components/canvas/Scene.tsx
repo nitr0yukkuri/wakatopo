@@ -9,7 +9,11 @@ import { Suspense } from 'react';
 export default function Scene() {
     return (
         <div className="absolute inset-0 z-0 bg-black pointer-events-none md:pointer-events-auto">
-            <Canvas camera={{ position: [0, 0, 8], fov: 35 }}>
+            <Canvas
+                camera={{ position: [0, 0, 8], fov: 35 }}
+                dpr={[1, 1.5]}
+                gl={{ antialias: false, powerPreference: 'high-performance' }}
+            >
                 <Suspense fallback={null}>
                     <color attach="background" args={['#050505']} />
 
@@ -24,7 +28,7 @@ export default function Scene() {
                     <Weather />
 
                     {/* 星の密度を調整 */}
-                    <Stars radius={100} depth={50} count={2000} factor={2} saturation={0} fade speed={0.5} />
+                    <Stars radius={100} depth={50} count={1200} factor={1.8} saturation={0} fade speed={0.4} />
 
                     <Environment preset="city" environmentIntensity={0.3} />
 
@@ -40,4 +44,4 @@ export default function Scene() {
             </Canvas>
         </div>
     );
-}
+}
