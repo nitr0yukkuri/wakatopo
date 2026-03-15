@@ -15,7 +15,9 @@ varying vec2 vUv;
 void main() {
     vec2 uv = vUv - vec2(0.5);
     float d = length(uv) * 2.0; // 0=中心, 1=端
-    float glow = exp(-d * 3.2) * uOpacity;
+    float radialMask = smoothstep(1.0, 0.82, d);
+    float glow = exp(-d * 3.2) * radialMask * uOpacity;
+    if (glow < 0.002) discard;
     gl_FragColor = vec4(0.52, 0.72, 0.96, glow * 0.55);
 }
 `;
