@@ -6,6 +6,21 @@ import * as THREE from 'three';
 import { motion } from 'framer-motion';
 
 // ==================
+// 月グロー（exp減衰・円の辺縁なし）
+// ==================
+const moonGlowFragmentShader = `
+uniform float uOpacity;
+varying vec2 vUv;
+
+void main() {
+    vec2 uv = vUv - vec2(0.5);
+    float d = length(uv) * 2.0; // 0=中心, 1=端
+    float glow = exp(-d * 3.2) * uOpacity;
+    gl_FragColor = vec4(0.52, 0.72, 0.96, glow * 0.55);
+}
+`;
+
+// ==================
 // 月（クレセントシェーダー）
 // ==================
 const moonVertexShader = `
@@ -19,62 +34,102 @@ void main() {
 const moonFragmentShader = `
 varying vec2 vUv;
 
+float random(vec2 st) {
+    return fract(sin(dot(st.xy, vec2(12.9898, 78.233))) * 43758.5453123);
+}
+float noise(vec2 st) {
+    vec2 i = floor(st); vec2 f = fract(st);
+    float a = random(i);
+    float b = random(i + vec2(1.0, 0.0));
+    float c = random(i + vec2(0.0, 1.0));
+    float d = random(i + vec2(1.0, 1.0));
+    vec2 u = f * f * (3.0 - 2.0 * f);
+    return mix(a, b, u.x) + (c - a) * u.y * (1.0 - u.x) + (d - b) * u.x * u.y;
+}
+float fbm(vec2 st) {
+    float v = 0.0; float a = 0.5;
+    for (int i = 0; i < 4; i++) { v += a * noise(st); st *= 2.1; a *= 0.5; }
+    return v;
+}
+
 void main() {
     vec2 uv = vUv - vec2(0.5);
     float d = length(uv);
-    if (d > 0.5) discard;
 
-    // 影でクレセントを表現（ずらした円の外側だけを照らす）
-    float shadowD = length(uv - vec2(0.14, 0.10));
-    float lit = smoothstep(0.22, 0.36, shadowD);
+    // 月の縁：シャープにクリップ
+    if (d > 0.490) discard;
+    float body = smoothstep(0.490, 0.484, d);
 
-    // 明るい月面色（青白い月光、縁が淡く光る）
-    float edge = smoothstep(0.5, 0.30, d);
-    vec3 moonCol = mix(vec3(0.80, 0.88, 0.98), vec3(0.97, 0.98, 1.0), edge);
+    // 三日月：影円を大きくオフセット → 右側に細い光の弧だけ残す
+    float shadowD = length(uv - vec2(0.27, 0.03));
+    // 境界を極薄くして、くっきりした昼夜境界線にする
+    float lit = smoothstep(0.455, 0.468, shadowD);
 
-    // 影側は完全に透明にする（黒にしない）
-    float alpha = smoothstep(0.5, 0.42, d) * lit;
-    gl_FragColor = vec4(moonCol, alpha);
+    // 月面テクスチャ
+    float surface = fbm(uv * 6.0 + vec2(2.3, 1.7));
+    float crater  = noise(uv * 16.0) * 0.5 + noise(uv * 38.0) * 0.25;
+    float tex = 1.0 - (surface * 0.14 + crater * 0.06);
+
+    // 照射面カラー
+    float centreBright = smoothstep(0.490, 0.0, d);
+    vec3 litColor = mix(
+        vec3(0.72, 0.82, 0.96),
+        vec3(0.97, 0.97, 1.00),
+        centreBright * 0.8
+    ) * tex;
+
+    // ターミネーター細ライン（shadowDがちょうど境界付近だけ光る極細線、リムは除去）
+    float termLine = (1.0 - smoothstep(0.0, 0.010, abs(shadowD - 0.461)));
+    litColor += vec3(0.65, 0.85, 1.00) * termLine * 0.55;
+
+    // アースシャイン：影側にごく薄い青
+    float earthshine = (1.0 - lit) * smoothstep(0.490, 0.05, d);
+    vec3 earthshineCol = vec3(0.10, 0.18, 0.40) * earthshine * 0.12;
+
+    vec3 finalColor = litColor + earthshineCol;
+
+    // 影側はほぼ透明、lit面のみ不透明
+    float alpha = body * (lit + (1.0 - lit) * 0.04);
+
+    gl_FragColor = vec4(finalColor, clamp(alpha, 0.0, 1.0));
 }
 `;
 
 function Moon() {
-    const moonRef    = useRef<THREE.Mesh>(null);
-    const glowInRef  = useRef<THREE.Mesh>(null);
-    const glowOutRef = useRef<THREE.Mesh>(null);
+    const moonRef   = useRef<THREE.Mesh>(null);
+    const glowRef   = useRef<THREE.Mesh>(null);
+    const glowUniforms = useMemo(() => ({ uOpacity: { value: 0 } }), []);
 
     useFrame((state) => {
         const t = state.clock.getElapsedTime();
-        // スクリーン下から徐々に上昇
         const y = Math.min(-8.0 + t * 5.0, 1.6);
         const progress = Math.min(t / 1.6, 1.0);
 
-        if (moonRef.current)    moonRef.current.position.y    = y;
-        if (glowInRef.current) {
-            glowInRef.current.position.y = y;
-            (glowInRef.current.material as THREE.MeshBasicMaterial).opacity = progress * 0.30;
-        }
-        if (glowOutRef.current) {
-            glowOutRef.current.position.y = y;
-            (glowOutRef.current.material as THREE.MeshBasicMaterial).opacity = progress * 0.13;
+        if (moonRef.current) moonRef.current.position.y = y;
+        if (glowRef.current) {
+            glowRef.current.position.y = y;
+            const pulse = 1.0 + Math.sin(t * 1.2) * 0.05;
+            glowUniforms.uOpacity.value = progress * 0.92 * pulse;
         }
     });
 
     return (
         <>
-            {/* 外側ハレーション */}
-            <mesh ref={glowOutRef} position={[0.5, -8, -3]}>
-                <circleGeometry args={[6.2, 64]} />
-                <meshBasicMaterial color="#6a9ed4" transparent opacity={0} blending={THREE.AdditiveBlending} depthWrite={false} />
-            </mesh>
-            {/* 内側グロー */}
-            <mesh ref={glowInRef} position={[0.5, -8, -2]}>
-                <circleGeometry args={[3.0, 64]} />
-                <meshBasicMaterial color="#a6c6ee" transparent opacity={0} blending={THREE.AdditiveBlending} depthWrite={false} />
+            {/* グロー：exp減衰で辺縁なし、月本体の後ろに置く */}
+            <mesh ref={glowRef} position={[0.5, -8, -2]}>
+                <planeGeometry args={[12.0, 12.0]} />
+                <shaderMaterial
+                    vertexShader={moonVertexShader}
+                    fragmentShader={moonGlowFragmentShader}
+                    uniforms={glowUniforms}
+                    transparent
+                    depthWrite={false}
+                    blending={THREE.AdditiveBlending}
+                />
             </mesh>
             {/* 月本体（クレセントシェーダー） */}
             <mesh ref={moonRef} position={[0.5, -8, -1]}>
-                <planeGeometry args={[3.2, 3.2]} />
+                <planeGeometry args={[3.6, 3.6]} />
                 <shaderMaterial
                     vertexShader={moonVertexShader}
                     fragmentShader={moonFragmentShader}
@@ -121,11 +176,11 @@ function StarField() {
     const count = 280;
 
     const { positions, speeds, sizes } = useMemo(() => {
-        const p  = new Float32Array(count * 3);
+        const p = new Float32Array(count * 3);
         const sp = new Float32Array(count);
         const sz = new Float32Array(count);
         for (let i = 0; i < count; i++) {
-            p[i * 3]     = (Math.random() - 0.5) * 52;
+            p[i * 3] = (Math.random() - 0.5) * 52;
             p[i * 3 + 1] = (Math.random() - 0.5) * 36;
             p[i * 3 + 2] = -8 - Math.random() * 18;
             sp[i] = Math.random() * 2.5 + 0.8;
@@ -139,9 +194,9 @@ function StarField() {
     return (
         <points>
             <bufferGeometry>
-                <bufferAttribute attach="attributes-position"    args={[positions, 3]} />
+                <bufferAttribute attach="attributes-position" args={[positions, 3]} />
                 <bufferAttribute attach="attributes-twinkleSpeed" args={[speeds, 1]} />
-                <bufferAttribute attach="attributes-starSize"    args={[sizes, 1]} />
+                <bufferAttribute attach="attributes-starSize" args={[sizes, 1]} />
             </bufferGeometry>
             <shaderMaterial
                 vertexShader={starVertexShader}
