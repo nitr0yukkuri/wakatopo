@@ -10,11 +10,11 @@ function Sun() {
     const meshRef = useRef<THREE.Mesh>(null);
     const { size } = useThree();
     const isMobile = size.width < 768;
-    const sunScale = isMobile ? 34 : 58;
+    const sunScale = isMobile ? 24 : 40;
     const uniforms = useMemo(() => ({
         uTime: { value: 0 },
-        uSunColor: { value: new THREE.Color('#ffc76b') },
-        uRayColor: { value: new THREE.Color('#ffe8a8') }
+        uSunColor: { value: new THREE.Color('#f8dfad') },
+        uRayColor: { value: new THREE.Color('#f8f1dc') }
     }), []);
 
     useFrame((state) => {
@@ -22,19 +22,17 @@ function Sun() {
         const time = state.clock.getElapsedTime();
         uniforms.uTime.value = time;
 
-        const progress = Math.min(time / 2.2, 1.0);
+        const progress = Math.min(time / 2.4, 1.0);
         const easeOut = 1.0 - Math.pow(1.0 - progress, 3.0);
-        const yPos = -24 + (easeOut * 50);
-        const xPos = Math.sin(time * 0.7) * 1.2;
-        const pulse = 1 + Math.sin(time * 1.6) * 0.04;
+        const yPos = -18 + (easeOut * 16);
+        const xPos = Math.sin(time * 0.25) * 0.35;
 
         meshRef.current.position.y = yPos;
         meshRef.current.position.x = xPos;
-        meshRef.current.scale.set(sunScale * pulse, sunScale * pulse, 1);
     });
 
     return (
-        <mesh ref={meshRef} position={[0, -20, -50]} scale={[sunScale, sunScale, 1]}>
+        <mesh ref={meshRef} position={[0, -18, -58]} scale={[sunScale, sunScale, 1]}>
             <planeGeometry args={[1, 1]} />
             <shaderMaterial
                 vertexShader={sunVertexShader}
@@ -89,8 +87,8 @@ function AscendingClouds() {
 
     const uniforms = useMemo(() => ({
         uTime: { value: 0 },
-        uBaseColor: { value: new THREE.Color('#ffffff') },
-        uOutlineColor: { value: new THREE.Color('#98adc2') }
+        uBaseColor: { value: new THREE.Color('#fdfefe') },
+        uOutlineColor: { value: new THREE.Color('#b7c7d6') }
     }), []);
 
     useFrame((state, delta) => {
@@ -167,7 +165,7 @@ function SkyFade() {
     return (
         <mesh ref={meshRef} position={[0, 0, -2]}>
             <planeGeometry args={[100, 100]} />
-            <meshBasicMaterial color="#f8f4eb" transparent opacity={0} depthWrite={false} />
+            <meshBasicMaterial color="#edf3f7" transparent opacity={0} depthWrite={false} />
         </mesh>
     );
 }
@@ -175,7 +173,7 @@ function SkyFade() {
 export default function CloudAscentCanvas() {
     return (
         <Canvas camera={{ position: [0, 0, 0], fov: 75 }} className="w-full h-full">
-            <color attach="background" args={['#bad4f4']} />
+            <color attach="background" args={['#c8d8e6']} />
 
             <Sun />
             <AscendingClouds />
