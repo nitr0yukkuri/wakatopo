@@ -1,17 +1,20 @@
 'use client'
 
 import { useRef, useMemo, useState, useEffect } from 'react';
-import { useFrame } from '@react-three/fiber';
+import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 import { useStore } from '@/store';
 
 export default function AbstractCore() {
+    const { size } = useThree();
     const meshRef = useRef<THREE.Mesh>(null);
     const innerRef = useRef<THREE.Mesh>(null);
     const particlesRef = useRef<THREE.Points>(null);
     const ring1Ref = useRef<THREE.Mesh>(null);
     const ring2Ref = useRef<THREE.Mesh>(null);
     const wireframe2Ref = useRef<THREE.Mesh>(null);
+
+    const isMobile = size.width < 768;
 
     const { githubActivityLevel, weather } = useStore();
 
@@ -221,7 +224,7 @@ export default function AbstractCore() {
     });
 
     return (
-        <group>
+        <group scale={isMobile ? 0.74 : 1}>
             {/* 当たり判定用の透明な球体（ワイヤーフレームは当たり判定が拾えないため） */}
             <mesh
                 onPointerOver={(e) => { e.stopPropagation(); setHovered(true); }}

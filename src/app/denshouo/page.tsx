@@ -244,18 +244,6 @@ export default function DenshouoPage() {
 
             <div className="relative z-10 max-w-5xl mx-auto px-6 md:px-12 pt-36 pb-24">
                 <div className="text-center mb-20">
-                    <motion.div
-                        className="mx-auto mb-10 h-28 w-28 rounded-full border border-teal-200/20 bg-white/5 backdrop-blur-xl shadow-[0_0_80px_rgba(45,212,191,0.18)] flex items-center justify-center"
-                        initial={{ opacity: 0, y: 18, scale: 0.92 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        transition={{ duration: 0.8 }}
-                    >
-                        <div className="relative h-12 w-20">
-                            <div className="absolute inset-y-1 left-0 right-3 rounded-full bg-linear-to-r from-teal-200/80 via-cyan-100/70 to-sky-100/35 shadow-[0_0_24px_rgba(165,243,252,0.25)]" />
-                            <div className="absolute right-0 top-1/2 h-0 w-0 -translate-y-1/2 border-y-12 border-y-transparent border-l-18 border-l-cyan-100/50" />
-                            <div className="absolute left-4 top-1/2 h-1.5 w-1.5 -translate-y-1/2 rounded-full bg-slate-900/55" />
-                        </div>
-                    </motion.div>
                     <span className="inline-block border border-teal-300/30 bg-teal-300/10 text-teal-200 px-4 py-1.5 rounded-full text-xs font-mono tracking-widest mb-8">
                         REACT / SUPABASE
                     </span>
@@ -266,9 +254,6 @@ export default function DenshouoPage() {
                     />
                     <p className="mt-6 text-lg md:text-2xl text-gray-300 leading-relaxed max-w-3xl mx-auto">
                         つぶやくほどでもない小さな幸せを魚に乗せて流し、みんなでゆるく分かち合う SNS。
-                    </p>
-                    <p className="mt-4 text-sm md:text-base text-teal-200/80 font-mono">
-                        2025.10.07 公開 / 2025.10.11 更新 / 技育CAMP Vol.10 優秀賞
                     </p>
                 </div>
 
