@@ -3,6 +3,7 @@ import { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 
 interface Star { x: number; y: number; r: number; base: number; phase: number; speed: number; }
+interface GlowDust { x: number; y: number; r: number; alpha: number; phase: number; speed: number; }
 
 export default function NightGlowOverlay() {
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -30,6 +31,16 @@ export default function NightGlowOverlay() {
             speed: Math.random() * 0.9 + 0.25,
         }));
 
+        // 夜光にじみ（ゆっくり漂う粒子）
+        const dusts: GlowDust[] = Array.from({ length: 60 }, () => ({
+            x: Math.random() * window.innerWidth,
+            y: Math.random() * window.innerHeight,
+            r: Math.random() * 22 + 8,
+            alpha: Math.random() * 0.05 + 0.015,
+            phase: Math.random() * Math.PI * 2,
+            speed: Math.random() * 0.35 + 0.12,
+        }));
+
         // オーロラバンドの定義
         const bands = [
             { y: 0.08, h: 0.28, r: 20, g: 60, b: 150, speed: 0.18, amp: 0.035 },
@@ -42,6 +53,13 @@ export default function NightGlowOverlay() {
             const w = canvas.width;
             const h = canvas.height;
             ctx.clearRect(0, 0, w, h);
+
+            // 背景の微小グロー
+            const bgGrad = ctx.createRadialGradient(w * 0.22, h * 0.18, 0, w * 0.22, h * 0.18, w * 0.75);
+            bgGrad.addColorStop(0, 'rgba(80,120,255,0.07)');
+            bgGrad.addColorStop(1, 'rgba(20,35,80,0)');
+            ctx.fillStyle = bgGrad;
+            ctx.fillRect(0, 0, w, h);
 
             // オーロラバンド
             for (let bi = 0; bi < bands.length; bi++) {
@@ -67,6 +85,20 @@ export default function NightGlowOverlay() {
                 }
             }
 
+            // 夜光のにじみ
+            for (const d of dusts) {
+                const a = d.alpha * (0.6 + 0.4 * (Math.sin(t * d.speed + d.phase) * 0.5 + 0.5));
+                const x = d.x + Math.sin(t * 0.07 + d.phase) * 16;
+                const y = d.y + Math.cos(t * 0.06 + d.phase) * 10;
+                const dg = ctx.createRadialGradient(x, y, 0, x, y, d.r);
+                dg.addColorStop(0, `rgba(110,160,255,${a})`);
+                dg.addColorStop(1, 'rgba(90,140,240,0)');
+                ctx.fillStyle = dg;
+                ctx.beginPath();
+                ctx.arc(x, y, d.r, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
             // 星のきらめき
             for (const s of stars) {
                 const a = (Math.sin(t * s.speed + s.phase) * 0.5 + 0.5) * s.base;
@@ -74,6 +106,19 @@ export default function NightGlowOverlay() {
                 ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
                 ctx.fillStyle = `rgba(210,225,255,${a})`;
                 ctx.fill();
+
+                // 一部の星にクロスグリントを乗せて夜光感を出す
+                if (s.r > 1.2) {
+                    const g = a * 0.35;
+                    ctx.strokeStyle = `rgba(210,230,255,${g})`;
+                    ctx.lineWidth = 0.6;
+                    ctx.beginPath();
+                    ctx.moveTo(s.x - 2.5, s.y);
+                    ctx.lineTo(s.x + 2.5, s.y);
+                    ctx.moveTo(s.x, s.y - 2.5);
+                    ctx.lineTo(s.x, s.y + 2.5);
+                    ctx.stroke();
+                }
             }
 
             raf = requestAnimationFrame(draw);
@@ -92,7 +137,12 @@ export default function NightGlowOverlay() {
             {/* 上部から深い紺色グラデーション */}
             <div
                 className="absolute inset-0"
-                style={{ background: 'linear-gradient(to bottom, rgba(1,4,22,0.45) 0%, rgba(1,6,18,0.15) 40%, transparent 70%)' }}
+                style={{ background: 'linear-gradient(to bottom, rgba(1,4,22,0.52) 0%, rgba(2,8,28,0.20) 42%, transparent 74%)' }}
+            />
+            {/* 画面縁の夜光ハロー */}
+            <div
+                className="absolute inset-0"
+                style={{ background: 'radial-gradient(ellipse 120% 80% at 50% 120%, rgba(75,110,210,0.10) 0%, rgba(25,45,120,0.04) 42%, transparent 78%)' }}
             />
             <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />
         </motion.div>
