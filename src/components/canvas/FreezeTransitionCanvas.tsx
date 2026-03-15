@@ -15,6 +15,7 @@ attribute float scale;
 attribute vec3 randomRotation;
 varying float vAlpha;
 varying vec3 vRotation;
+varying float vDepth;
 
 void main() {
     vRotation = randomRotation;
@@ -28,6 +29,7 @@ void main() {
     mvPosition.z += cos(uTime * 0.3 + phase) * 1.0 * scale;
     
     vAlpha = smoothstep(-80.0, -20.0, mvPosition.z) * (1.0 - smoothstep(-5.0, 5.0, mvPosition.z));
+    vDepth = clamp((-mvPosition.z - 3.0) / 32.0, 0.0, 1.0);
     gl_PointSize = scale * (450.0 / max(0.1, -mvPosition.z));
     gl_Position = projectionMatrix * mvPosition;
 }
@@ -36,83 +38,84 @@ void main() {
 const iceFragmentShader = `
 varying float vAlpha;
 varying vec3 vRotation;
+varying float vDepth;
 
 mat2 rotate2d(float _angle){
     return mat2(cos(_angle), -sin(_angle), sin(_angle), cos(_angle));
 }
 
-// SDF: 角丸長方形
 float roundedBox(vec2 uv, vec2 halfSize, float radius) {
     vec2 q = abs(uv) - halfSize + vec2(radius);
     return length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - radius;
 }
 
+float lineMask(vec2 uv, vec2 a, vec2 b, float width) {
+    vec2 pa = uv - a;
+    vec2 ba = b - a;
+    float h = clamp(dot(pa, ba) / dot(ba, ba), 0.0, 1.0);
+    return 1.0 - smoothstep(width, width + 0.015, length(pa - ba * h));
+}
+
 void main() {
-    // ランダムな回転
     vec2 uv = rotate2d(vRotation.z * 6.28) * (gl_PointCoord - vec2(0.5));
     
-    // ランダムなアスペクト比（正方形〜縦長）
-    float aspect = 0.75 + vRotation.x * 0.5;
-    vec2 halfSize = vec2(0.33 * aspect, 0.33);
-    float radius = 0.04; // 軽くだけ丸める（氷らしい鋭さ）
+    float aspect = 0.86 + vRotation.x * 0.28;
+    vec2 halfSize = vec2(0.32 * aspect, 0.32);
+    float radius = 0.05;
     
     float d = roundedBox(uv, halfSize, radius);
-    if (d > 0.005) discard;
+    float bevel = roundedBox(uv, halfSize * 0.82, 0.035);
+    if (d > 0.003) discard;
 
-    // ===================================================
-    // 3D風ライティング（Point Spriteのまま立体感を出す）
-    // ===================================================
-    
-    // UV を -1〜1 に正規化して「面の法線」を擬似計算
-    vec2 n2d = uv / max(halfSize, 0.001);  // -1〜+1 の範囲
+    vec2 n2d = uv / max(halfSize, 0.001);
     n2d = clamp(n2d, -1.0, 1.0);
     
-    // Z成分を球面っぽく追加して3D法線を擬似的に作る
-    float nz = sqrt(max(0.0, 1.0 - n2d.x * n2d.x * 0.5 - n2d.y * n2d.y * 0.5));
-    vec3 normal = normalize(vec3(n2d.x * 0.6, n2d.y * 0.6, nz));
+    float nz = sqrt(max(0.0, 1.0 - n2d.x * n2d.x * 0.58 - n2d.y * n2d.y * 0.58));
+    vec3 normal = normalize(vec3(n2d.x * 0.72, n2d.y * 0.72, nz));
     
-    // 光の方向（左上から斜め）
-    vec3 lightDir = normalize(vec3(-0.6, 0.8, 1.0));
-    
-    // ディフューズ（拡散光）
+    vec3 lightDir = normalize(vec3(-0.55, 0.88, 1.0));
     float diffuse = max(dot(normal, lightDir), 0.0);
     
-    // スペキュラー（鏡面光）— Blinn-Phong
     vec3 viewDir = vec3(0.0, 0.0, 1.0);
     vec3 halfVec = normalize(lightDir + viewDir);
-    float specular = pow(max(dot(normal, halfVec), 0.0), 40.0);
+    float specular = pow(max(dot(normal, halfVec), 0.0), 60.0);
+    float specularTight = pow(max(dot(normal, halfVec), 0.0), 120.0);
+
+    float edgeDist = 1.0 - smoothstep(-0.045, 0.004, d);
+    float innerBevel = 1.0 - smoothstep(-0.035, 0.018, bevel);
+    float crackA = lineMask(uv, vec2(-0.22, -0.26), vec2(0.18, 0.24), 0.011);
+    float crackB = lineMask(uv, vec2(-0.10, 0.28), vec2(0.26, -0.08), 0.008);
+    float crackC = lineMask(uv, vec2(-0.28, 0.04), vec2(0.04, 0.10), 0.006);
+    float cracks = max(crackA * 0.65, max(crackB * 0.5, crackC * 0.35));
+    float bubbles = smoothstep(0.82, 1.0, sin((uv.x + vRotation.x) * 36.0) * sin((uv.y + vRotation.y) * 31.0));
+    bubbles *= smoothstep(0.32, 0.0, length(uv - vec2(0.04, -0.03)));
+
+    vec3 iceBody = mix(vec3(0.78, 0.91, 0.99), vec3(0.58, 0.78, 0.93), length(n2d) * 0.75);
+    vec3 deepTint = mix(vec3(0.56, 0.77, 0.92), vec3(0.85, 0.95, 1.0), diffuse * 0.5 + 0.2);
     
-    // ===================================================
-    // 氷の色の構成
-    // ===================================================
+    vec3 lit = mix(iceBody, deepTint, innerBevel * 0.35);
+    lit *= 0.34 + diffuse * 0.42;
     
-    // 本体色：深い氷のシアン〜青（濁りのある氷の内部）
-    vec3 iceBody = mix(vec3(0.62, 0.84, 0.97), vec3(0.55, 0.78, 0.95), length(n2d) * 0.5);
+    lit += vec3(0.96, 0.99, 1.0) * specular * 1.2;
+    lit += vec3(1.0) * specularTight * 0.55;
     
-    // ライティング適用
-    vec3 lit = iceBody * (0.35 + diffuse * 0.5);
+    lit += vec3(0.82, 0.93, 1.0) * edgeDist * 0.34;
+    lit += vec3(0.78, 0.90, 0.98) * cracks * 0.22;
+    lit += vec3(0.98, 0.99, 1.0) * bubbles * 0.12;
     
-    // スペキュラーハイライト（白い光）
-    lit += vec3(0.95, 0.98, 1.0) * specular * 1.5;
+    float baseTrans = mix(0.06, 0.13, vDepth);
+    float edgeSolid = edgeDist * 0.20;
+    float innerSolid = innerBevel * 0.08;
+    float crackSolid = cracks * 0.10;
+    float specContrib = specular * 0.12 + specularTight * 0.10;
+    float finalAlpha = (baseTrans + edgeSolid + innerSolid + crackSolid + specContrib) * vAlpha;
     
-    // エッジの霜（全反射）
-    float edgeDist = 1.0 - smoothstep(-0.06, 0.005, d);
-    lit += vec3(0.85, 0.95, 1.0) * edgeDist * 0.5;
-    
-    // ===================================================
-    // 透明度：中心はスケスケ、エッジと面は見え方に差をつける
-    // ===================================================
-    float baseTrans = 0.22;                                // 中心の透明度
-    float edgeSolid = edgeDist * 0.45;                    // エッジで少し不透明に
-    float specContrib = specular * 0.4;                   // ハイライト部分は白く
-    float finalAlpha = (baseTrans + edgeSolid + specContrib) * vAlpha;
-    
-    gl_FragColor = vec4(lit, clamp(finalAlpha, 0.0, 0.92));
+    gl_FragColor = vec4(lit, clamp(finalAlpha, 0.0, 0.46));
 }
 `;
 
 function IceChunkParticles() {
-    const count = 600; // 少なくして一個一個を大きく見せる
+    const count = 420;
     const meshRef = useRef<THREE.Points>(null);
     const uniforms = useMemo(() => ({ uTime: { value: 0 } }), []);
 
@@ -124,7 +127,7 @@ function IceChunkParticles() {
             p[i * 3] = (Math.random() - 0.5) * 100;
             p[i * 3 + 1] = (Math.random() - 0.5) * 100;
             p[i * 3 + 2] = (Math.random() - 0.5) * 80 - 20;
-            s[i] = Math.random() * 6.0 + 3.0; // 大きく
+            s[i] = Math.random() * 7.5 + 4.0;
             r[i * 3] = Math.random();
             r[i * 3 + 1] = Math.random();
             r[i * 3 + 2] = Math.random() * Math.PI * 2;
@@ -136,7 +139,7 @@ function IceChunkParticles() {
         if (!meshRef.current) return;
         uniforms.uTime.value = state.clock.getElapsedTime();
         const t = state.clock.getElapsedTime();
-        const speed = t < 1.0 ? 0.03 : 0.03 + (t - 1.0) * 0.04;
+        const speed = t < 1.0 ? 0.025 : 0.025 + (t - 1.0) * 0.032;
         meshRef.current.position.z += speed;
     });
 
@@ -153,6 +156,7 @@ function IceChunkParticles() {
                 uniforms={uniforms}
                 transparent={true}
                 depthWrite={false}
+                depthTest={true}
                 blending={THREE.NormalBlending}
             />
         </points>
@@ -214,7 +218,7 @@ export default function FreezeTransitionCanvas() {
 
     return (
         <div className="w-full h-full pointer-events-none relative overflow-hidden"
-            style={{ background: 'linear-gradient(to bottom, #020b16 0%, #051a30 50%, #020b16 100%)' }}>
+            style={{ background: 'linear-gradient(to bottom, #01060c 0%, #07192a 48%, #01060c 100%)' }}>
 
             {/* Phase1: 氷の結晶パーティクル / Phase2: フリーズシェーダー */}
             <Canvas camera={{ position: [0, 0, 10], fov: 65 }}>
@@ -228,9 +232,10 @@ export default function FreezeTransitionCanvas() {
                 {showFlash && (
                     <motion.div
                         key="ice-flash"
-                        className="absolute inset-0 bg-white pointer-events-none"
+                        className="absolute inset-0 pointer-events-none"
+                        style={{ background: 'radial-gradient(circle at 50% 45%, rgba(255,255,255,0.92) 0%, rgba(214,240,255,0.70) 30%, rgba(170,220,255,0.22) 62%, rgba(255,255,255,0.0) 100%)' }}
                         initial={{ opacity: 0 }}
-                        animate={{ opacity: [0, 0.95, 0.6] }}
+                        animate={{ opacity: [0, 0.9, 0.38] }}
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.5, ease: 'easeOut' }}
                     />
@@ -239,7 +244,7 @@ export default function FreezeTransitionCanvas() {
 
             {/* 氷の霜（エッジに薄い水色のビネット） */}
             <div className="absolute inset-0 pointer-events-none" style={{
-                background: 'radial-gradient(ellipse 100% 100% at 50% 50%, transparent 40%, rgba(100,200,255,0.12) 80%, rgba(150,220,255,0.35) 100%)',
+                background: 'radial-gradient(ellipse 100% 100% at 50% 50%, transparent 34%, rgba(132,205,255,0.08) 72%, rgba(180,232,255,0.22) 100%)',
             }} />
         </div>
     );

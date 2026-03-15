@@ -26,6 +26,7 @@ void main() {
 
 const particleFragmentShader = `
 varying float vAlpha;
+
 void main() {
     float dist = length(gl_PointCoord - vec2(0.5));
     if (dist > 0.5) discard;
@@ -90,10 +91,22 @@ export default function ColdKeepPage() {
     };
 
     return (
-        <main className="relative w-full min-h-[100dvh] bg-gradient-to-b from-[#020b16] via-[#081b33] to-[#020b16] text-white overflow-x-hidden font-sans selection:bg-cyan-200 selection:text-[#020b16]">
+        <main className="relative w-full min-h-dvh bg-[#01060c] text-white overflow-x-hidden font-sans selection:bg-cyan-200 selection:text-[#020b16]">
+
+            <div
+                className="fixed inset-0 pointer-events-none z-0"
+                style={{ background: 'linear-gradient(to bottom, #01060c 0%, #07192a 48%, #01060c 100%)' }}
+            />
+
+            <div
+                className="fixed inset-0 pointer-events-none z-0"
+                style={{
+                    background: 'radial-gradient(circle at 50% 22%, rgba(210,238,255,0.18) 0%, rgba(120,190,235,0.08) 24%, rgba(255,255,255,0.0) 56%), radial-gradient(ellipse 100% 100% at 50% 50%, transparent 34%, rgba(132,205,255,0.07) 72%, rgba(180,232,255,0.18) 100%)',
+                }}
+            />
 
             {/* 3D Snow Background */}
-            <div className="fixed inset-0 pointer-events-none z-0">
+            <div className="fixed inset-0 pointer-events-none z-1">
                 <Canvas camera={{ position: [0, 0, 10], fov: 60 }}>
                     <SnowParticles />
                 </Canvas>

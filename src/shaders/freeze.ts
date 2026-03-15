@@ -43,18 +43,34 @@ float fbm(in vec2 st) {
     return value;
 }
 
+float crystalLine(vec2 uv, vec2 a, vec2 b, float width) {
+    vec2 pa = uv - a;
+    vec2 ba = b - a;
+    float h = clamp(dot(pa, ba) / dot(ba, ba), 0.0, 1.0);
+    return 1.0 - smoothstep(width, width + 0.01, length(pa - ba * h));
+}
+
 void main() {
     vec2 st = vUv;
     float distFromCenter = distance(st, vec2(0.5)) * 2.0; 
     float freezeProgress = uTime * 1.5;
     float frostPattern = fbm(st * 15.0);
     float frostPatternLarge = fbm(st * 3.0);
-    float detail = (frostPattern * 0.7 + frostPatternLarge * 0.3);
-    float threshold = freezeProgress - (1.0 - distFromCenter * 0.5) - detail * 0.4;
-    float frozenAlpha = 1.0 - smoothstep(0.0, 0.3, -threshold);
-    vec3 mixColor = mix(uColor2, uColor1, distFromCenter * 0.5 + detail * 0.2);
-    float glow = 1.0 - smoothstep(0.0, 0.1, abs(threshold));
-    float alpha = max(frozenAlpha, glow * 1.2);
-    gl_FragColor = vec4(mixColor + glow * uColor2, alpha);
+    float detail = (frostPattern * 0.68 + frostPatternLarge * 0.32);
+    float threshold = freezeProgress - (1.0 - distFromCenter * 0.52) - detail * 0.38;
+    float frozenMask = 1.0 - smoothstep(-0.08, 0.26, -threshold);
+    float crystalA = crystalLine(st, vec2(0.18, 0.82), vec2(0.45, 0.46), 0.004);
+    float crystalB = crystalLine(st, vec2(0.72, 0.20), vec2(0.48, 0.54), 0.003);
+    float crystalC = crystalLine(st, vec2(0.12, 0.52), vec2(0.34, 0.58), 0.0025);
+    float crystals = max(crystalA * 0.55, max(crystalB * 0.46, crystalC * 0.34));
+    float cloudyCore = smoothstep(0.22, 0.92, frostPatternLarge) * (1.0 - smoothstep(0.0, 0.7, distFromCenter));
+    vec3 baseIce = mix(uColor2, vec3(0.72, 0.88, 0.98), detail * 0.55);
+    vec3 depthTint = mix(baseIce, uColor1, distFromCenter * 0.42 + detail * 0.16);
+    vec3 color = mix(baseIce, depthTint, frozenMask * 0.65);
+    color += vec3(0.90, 0.97, 1.0) * crystals * frozenMask * 0.42;
+    color += vec3(0.82, 0.92, 1.0) * cloudyCore * frozenMask * 0.18;
+    float glow = 1.0 - smoothstep(0.0, 0.085, abs(threshold));
+    float alpha = frozenMask * 0.34 + glow * 0.16 + crystals * frozenMask * 0.08;
+    gl_FragColor = vec4(color + glow * uColor2 * 0.35, clamp(alpha, 0.0, 0.5));
 }
 `;
