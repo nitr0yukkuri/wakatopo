@@ -66,7 +66,7 @@ export default function GlobalTransitionOverlay() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    transition={{ duration: 0.8 }}
+                    transition={{ duration: 1.2 }}
                     className="fixed inset-0 z-9999 pointer-events-auto bg-transparent"
                 >
                     <RainTransitionCanvas />
@@ -80,7 +80,7 @@ export default function GlobalTransitionOverlay() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    transition={{ duration: 0.8 }}
+                    transition={{ duration: 1.2 }}
                     className="fixed inset-0 z-9999 pointer-events-auto bg-transparent"
                 >
                     <SnowTransitionCanvas />
@@ -94,7 +94,7 @@ export default function GlobalTransitionOverlay() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    transition={{ duration: 0.5 }}
+                    transition={{ duration: 1.2 }}
                     className="fixed inset-0 z-9999 pointer-events-auto"
                 >
                     <SunburstTransitionCanvas />
@@ -108,7 +108,7 @@ export default function GlobalTransitionOverlay() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    transition={{ duration: 0.3 }}
+                    transition={{ duration: 1.2 }}
                     className="fixed inset-0 z-9999 pointer-events-auto"
                 >
                     <ThunderTransitionCanvas />
@@ -149,7 +149,7 @@ export default function GlobalTransitionOverlay() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    transition={{ duration: 0.8 }}
+                    transition={{ duration: 1.2 }}
                     className="fixed inset-0 z-9999 pointer-events-auto bg-[#010208]"
                 >
                     <MoonriseTransitionCanvas />

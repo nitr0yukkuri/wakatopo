@@ -230,9 +230,8 @@ function StarField() {
 
 function ShootingStars() {
     const streaks = [
-        { top: '14%', delay: 0.5, duration: 2.8, width: 170 },
-        { top: '26%', delay: 1.7, duration: 3.2, width: 140 },
-        { top: '36%', delay: 2.9, duration: 2.6, width: 190 },
+        { top: '16%', delay: 0.7, duration: 4.4, width: 220 },
+        { top: '30%', delay: 2.2, duration: 4.8, width: 180 },
     ];
 
     return (
@@ -245,17 +244,17 @@ function ShootingStars() {
                         top: s.top,
                         left: '-22%',
                         width: s.width,
-                        background: 'linear-gradient(90deg, rgba(180,210,255,0.0) 0%, rgba(210,230,255,0.95) 45%, rgba(255,255,255,0.0) 100%)',
-                        filter: 'drop-shadow(0 0 6px rgba(190,220,255,0.65))',
+                        background: 'linear-gradient(90deg, rgba(168,198,255,0.0) 0%, rgba(198,220,255,0.38) 44%, rgba(240,246,255,0.0) 100%)',
+                        filter: 'blur(0.6px) drop-shadow(0 0 8px rgba(180,210,255,0.22))',
                         transform: 'rotate(-22deg)',
                     }}
                     initial={{ x: '-20%', opacity: 0 }}
-                    animate={{ x: '150%', opacity: [0, 0.95, 0] }}
+                    animate={{ x: '150%', opacity: [0, 0.42, 0] }}
                     transition={{
                         duration: s.duration,
                         ease: 'easeOut',
                         repeat: Infinity,
-                        repeatDelay: 3.5,
+                        repeatDelay: 4.5,
                         delay: s.delay,
                     }}
                 />
@@ -271,7 +270,7 @@ export default function MoonriseTransitionCanvas() {
     return (
         <div
             className="w-full h-full pointer-events-none relative overflow-hidden"
-            style={{ background: 'linear-gradient(to bottom, #010208 0%, #01060f 55%, #040e1a 100%)' }}
+            style={{ background: 'linear-gradient(180deg, #02040b 0%, #07111d 48%, #102030 100%)' }}
         >
             <Canvas camera={{ position: [0, 0, 10], fov: 60 }}>
                 <StarField />
@@ -284,10 +283,22 @@ export default function MoonriseTransitionCanvas() {
             <motion.div
                 className="absolute inset-0 pointer-events-none"
                 initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 2.0, ease: 'easeIn' }}
+                animate={{ opacity: [0.04, 0.16, 0.14] }}
+                transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
                 style={{
-                    background: 'radial-gradient(ellipse 70% 50% at 53% 54%, rgba(120,180,240,0.08) 0%, rgba(70,120,210,0.03) 45%, transparent 72%)',
+                    background: 'radial-gradient(ellipse 74% 54% at 58% 56%, rgba(128,180,242,0.11) 0%, rgba(72,118,206,0.04) 44%, transparent 74%)',
+                }}
+            />
+
+            <motion.div
+                className="absolute inset-0 pointer-events-none"
+                initial={{ opacity: 0, x: 40 }}
+                animate={{ opacity: [0, 0.16, 0.12], x: [40, 6, 0] }}
+                transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+                style={{
+                    background: 'linear-gradient(108deg, rgba(176,206,255,0.0) 6%, rgba(176,206,255,0.12) 28%, rgba(176,206,255,0.04) 44%, rgba(176,206,255,0.0) 66%)',
+                    transform: 'rotate(-14deg)',
+                    filter: 'blur(10px)',
                 }}
             />
         </div>

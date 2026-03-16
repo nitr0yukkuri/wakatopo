@@ -2,91 +2,109 @@
 
 import { motion } from 'framer-motion';
 
-// 晴れの遷移: 温かい陽光が放射状に広がって白熱する
-// CSS+Framer Motion only
+// 晴れの遷移: 下から昇る太陽と斜めの層状ゴッドレイ
 
 export default function SunburstTransitionCanvas() {
-    const rays = Array.from({ length: 20 }, (_, i) => i);
-
     return (
         <div
             className="w-full h-full overflow-hidden relative flex items-center justify-center"
-            style={{ background: 'linear-gradient(180deg, #8fd7ff 0%, #fff7dc 48%, #fffef6 100%)' }}
+            style={{ background: 'linear-gradient(180deg, #82cbf6 0%, #dff2ff 42%, #fff3d8 74%, #ffefcf 100%)' }}
         >
-            {/* 柔らかいオーラ層 */}
+            {/* 空気の露出変化（白フラッシュではなく空気の明度で見せる） */}
             <motion.div
                 className="absolute inset-0 pointer-events-none"
                 style={{
-                    background: 'radial-gradient(ellipse 55% 40% at 50% 46%, rgba(255,214,132,0.38) 0%, rgba(255,214,132,0.12) 45%, rgba(255,214,132,0.0) 78%)',
+                    background: 'radial-gradient(ellipse 100% 72% at 76% 18%, rgba(255,234,190,0.32) 0%, rgba(255,226,176,0.15) 44%, rgba(255,226,176,0) 78%)',
                 }}
                 initial={{ opacity: 0 }}
-                animate={{ opacity: [0.18, 0.42, 0.28] }}
-                transition={{ duration: 1.8, ease: 'easeInOut' }}
+                animate={{ opacity: [0.08, 0.28, 0.2] }}
+                transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
             />
 
-            {/* 放射状の光線 */}
-            <div className="absolute inset-0 flex items-center justify-center">
-                {rays.map((i) => (
-                    <motion.div
-                        key={i}
-                        className="absolute pointer-events-none origin-bottom"
-                        style={{
-                            width: '2px',
-                            height: '72vh',
-                            background: 'linear-gradient(to top, rgba(255,231,165,0.82), rgba(255,207,115,0.34), transparent)',
-                            bottom: '50%',
-                            left: '50%',
-                            marginLeft: '-1px',
-                            rotate: `${(360 / 20) * i}deg`,
-                            filter: 'blur(1.5px)',
-                        }}
-                        initial={{ scaleY: 0.2, opacity: 0 }}
-                        animate={{ scaleY: [0.45, 1.02, 0.88], opacity: [0, 0.58, 0.34] }}
-                        transition={{ duration: 1.25, delay: i * 0.03, ease: 'easeOut' }}
-                    />
-                ))}
-            </div>
+            {/* 層状の斜めゴッドレイ */}
+            <motion.div
+                className="absolute pointer-events-none"
+                style={{
+                    right: '-30%',
+                    top: '-42%',
+                    width: '190%',
+                    height: '190%',
+                    transform: 'rotate(-24deg)',
+                    background: 'linear-gradient(104deg, rgba(255,247,220,0.7) 0%, rgba(255,236,194,0.36) 24%, rgba(255,220,162,0.15) 46%, rgba(255,210,156,0.0) 74%)',
+                    filter: 'blur(1.5px)',
+                    mixBlendMode: 'screen',
+                }}
+                initial={{ opacity: 0, x: 70, y: -40 }}
+                animate={{ opacity: [0, 0.74, 0.56], x: [70, 10, 0], y: [-40, -10, 0] }}
+                transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+            />
 
-            {/* 太陽の中心（輝く円） */}
+            <motion.div
+                className="absolute pointer-events-none"
+                style={{
+                    right: '-32%',
+                    top: '-40%',
+                    width: '180%',
+                    height: '180%',
+                    transform: 'rotate(-24deg)',
+                    background: 'linear-gradient(105deg, rgba(255,251,236,0.52) 0%, rgba(255,241,210,0.24) 22%, rgba(255,224,170,0.08) 44%, rgba(255,214,165,0.0) 68%)',
+                    filter: 'blur(7px)',
+                    mixBlendMode: 'screen',
+                }}
+                initial={{ opacity: 0, x: 40, y: -26 }}
+                animate={{ opacity: [0, 0.52, 0.4], x: [40, 8, 0], y: [-26, -8, 0] }}
+                transition={{ duration: 1.2, delay: 0.05, ease: [0.22, 1, 0.36, 1] }}
+            />
+
+            <motion.div
+                className="absolute pointer-events-none"
+                style={{
+                    right: '-28%',
+                    top: '-36%',
+                    width: '160%',
+                    height: '170%',
+                    transform: 'rotate(-24deg)',
+                    background: 'linear-gradient(102deg, rgba(255,255,246,0.48) 0%, rgba(255,247,224,0.22) 20%, rgba(255,232,186,0.06) 40%, rgba(255,220,180,0.0) 62%)',
+                    filter: 'blur(14px)',
+                    mixBlendMode: 'screen',
+                }}
+                initial={{ opacity: 0, x: 26, y: -12 }}
+                animate={{ opacity: [0, 0.44, 0.32], x: [26, 5, 0], y: [-12, -4, 0] }}
+                transition={{ duration: 1.2, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+            />
+
+            {/* 下から昇る太陽本体 */}
             <motion.div
                 className="absolute rounded-full pointer-events-none"
                 style={{
-                    width: '96px',
-                    height: '96px',
-                    background: 'radial-gradient(circle, #fffdf7 18%, #ffe8a8 48%, #ffc96f 72%, rgba(255,200,0,0) 100%)',
-                    boxShadow: '0 0 52px 20px rgba(255,222,132,0.42), 0 0 130px 84px rgba(255,196,98,0.18)',
+                    right: '11%',
+                    bottom: '-22%',
+                    width: '130px',
+                    height: '130px',
+                    background: 'radial-gradient(circle, #fffef8 0%, #fff3ce 34%, #ffd98e 62%, #ffbf6d 82%, rgba(255,188,110,0) 100%)',
+                    boxShadow: '0 0 76px 28px rgba(255,228,158,0.45), 0 0 176px 108px rgba(255,202,110,0.24)',
                 }}
-                initial={{ scale: 0.4, opacity: 0 }}
-                animate={{ scale: [0.6, 1.06, 1], opacity: [0, 0.9, 1] }}
-                transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1] }}
+                initial={{ y: 180, scale: 0.85, opacity: 0.2 }}
+                animate={{ y: [180, 48, 0], scale: [0.88, 1.06, 1.02], opacity: [0.28, 0.94, 0.98] }}
+                transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
             />
 
             <motion.div
-                className="absolute rounded-full pointer-events-none border border-amber-100/50"
-                style={{ width: '152px', height: '152px' }}
-                initial={{ scale: 0.7, opacity: 0 }}
-                animate={{ scale: [0.9, 1.08, 1.14], opacity: [0, 0.26, 0] }}
-                transition={{ duration: 1.4, ease: 'easeOut' }}
+                className="absolute rounded-full pointer-events-none border border-amber-100/45"
+                style={{ right: '8.8%', bottom: '-24%', width: '176px', height: '176px' }}
+                initial={{ y: 190, scale: 0.72, opacity: 0 }}
+                animate={{ y: [190, 54, 0], scale: [0.72, 1.05, 1.12], opacity: [0, 0.28, 0] }}
+                transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
             />
 
-            {/* 全体の輝きオーバーレイ */}
+            {/* 露出の余韻 */}
             <motion.div
                 className="absolute inset-0 pointer-events-none"
-                style={{ background: 'white' }}
+                style={{ background: 'linear-gradient(180deg, rgba(255,246,220,0.0) 0%, rgba(255,239,206,0.07) 54%, rgba(255,233,196,0.16) 100%)' }}
                 initial={{ opacity: 0 }}
-                animate={{ opacity: [0, 0.08, 0.16, 0.34, 0.52] }}
-                transition={{ duration: 2, ease: 'easeInOut' }}
+                animate={{ opacity: [0.0, 0.24, 0.2] }}
+                transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
             />
-
-            {/* 中央テキスト */}
-            <motion.div
-                className="absolute inset-0 flex items-end justify-center pb-16"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: [0, 1, 0] }}
-                transition={{ delay: 0.3, duration: 1.5, ease: 'easeInOut' }}
-            >
-                <p className="text-amber-600/60 font-mono text-xs tracking-widest uppercase">Sunny</p>
-            </motion.div>
         </div>
     );
 }
