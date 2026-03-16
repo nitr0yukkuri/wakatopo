@@ -81,21 +81,21 @@ export default function WorksList({ works }: { works: Work[] }) {
                     <div
                         key={work.id}
                         onClick={() => handleWorkClick(work.id)}
-                        className="group relative border-t border-white/10 py-8 md:py-12 flex flex-col md:flex-row md:items-baseline justify-between transition-colors hover:bg-white/5 cursor-pointer"
+                        className="group relative border-t border-white/10 py-8 md:py-10 grid grid-cols-[3.25rem_minmax(0,1fr)] lg:grid-cols-[4rem_minmax(0,1fr)_minmax(19rem,22rem)] gap-y-3 gap-x-4 lg:gap-x-8 transition-colors hover:bg-white/5 cursor-pointer"
                     >
-                        <span className="font-mono text-xs text-gray-600 mb-2 md:mb-0 w-16 group-hover:text-cyan-400 transition-colors">
+                        <span className="font-mono text-xs text-gray-600 group-hover:text-cyan-400 transition-colors lg:pt-3">
                             {work.id}
                         </span>
 
-                        <h3 className="text-2xl sm:text-3xl md:text-5xl font-bold text-gray-300 group-hover:text-white transition-colors flex-1 break-keep">
+                        <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-[1.08] text-gray-300 group-hover:text-white transition-colors break-keep lg:pr-4">
                             {work.title}
                         </h3>
 
-                        <div className="mt-4 md:mt-0 md:text-right">
-                            <div className="text-[10px] font-mono text-cyan-500/80 mb-1 tracking-wider uppercase">
+                        <div className="col-start-2 lg:col-start-3 lg:pt-3">
+                            <div className="text-[10px] font-mono text-cyan-500/80 mb-2 tracking-wider uppercase">
                                 {work.cat}
                             </div>
-                            <div className="text-sm text-gray-500 group-hover:text-gray-400">
+                            <div className="text-sm leading-relaxed text-gray-500 group-hover:text-gray-400">
                                 {work.desc}
                             </div>
                         </div>

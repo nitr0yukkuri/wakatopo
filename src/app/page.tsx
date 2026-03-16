@@ -102,14 +102,11 @@ export default async function Home() {
         {/* PHILOSOPHY */}
         <section className="py-32 px-6 md:px-20 max-w-4xl mx-auto pointer-events-auto">
           <span className="text-cyan-500 text-xs font-mono mb-8 block">01 / CONCEPT</span>
-          <p className="text-2xl md:text-4xl font-light leading-snug text-gray-200">
-            Webサイトを<br />
-            「静的な情報の羅列」から<br />
-            <span className="text-white font-normal border-b border-cyan-500/50">「呼吸する惑星」</span>へ。
+          <p className="max-w-3xl text-2xl md:text-4xl font-light leading-[1.35] text-gray-200 text-balance">
+            Webサイトを「静的な情報の羅列」から <span className="text-white font-normal border-b border-cyan-500/50">「呼吸する惑星」</span>へ。
           </p>
-          <p className="mt-8 text-sm text-gray-500 leading-relaxed max-w-xl font-mono">
-            GitHubの活動が地形を作り、現実の天気が空気を変える。<br />
-            エンジニアとしての生存記録を有機的なデジタルアートへ昇華させる実験。
+          <p className="mt-8 text-sm text-gray-500 leading-relaxed max-w-2xl font-mono text-pretty">
+            GitHubの活動が地形を作り、現実の天気が空気を変える。エンジニアとしての生存記録を有機的なデジタルアートへ昇華させる実験。
           </p>
         </section>
 
@@ -127,9 +124,11 @@ export default async function Home() {
           <div className="max-w-5xl mx-auto">
             <span className="text-cyan-500 text-xs font-mono mb-12 block">03 / WHAT I CAN DO</span>
 
-            <div className="grid md:grid-cols-2 gap-12 md:gap-20">
+            <div className="relative grid md:grid-cols-2 gap-8 md:gap-12">
+              <div className="hidden md:block pointer-events-none absolute left-1/2 top-1 -translate-x-1/2 h-[92%] w-px bg-gradient-to-b from-transparent via-cyan-500/25 to-transparent" />
+
               {/* Left: Tech Stack */}
-              <div>
+              <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 md:p-7">
                 <h3 className="text-sm font-mono tracking-widest text-gray-400 mb-6 border-l border-cyan-500 pl-4">TECH STACK</h3>
                 <div className="space-y-4 font-mono text-xs">
                   {([
@@ -151,7 +150,7 @@ export default async function Home() {
               </div>
 
               {/* Right: What you can ask + Awards */}
-              <div>
+              <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 md:p-7">
                 <h3 className="text-sm font-mono tracking-widest text-gray-400 mb-6 border-l border-cyan-500 pl-4">WHAT YOU CAN ASK</h3>
                 <ul className="space-y-3 font-mono text-sm text-gray-300">
                   {[
@@ -161,9 +160,9 @@ export default async function Home() {
                     'フロントからバックエンドまで一気通貫での開発',
                     'IoT × AI を組み合わせたプロトタイプ・PoC開発',
                   ].map((item, i) => (
-                    <li key={i} className="flex gap-3 items-start">
-                      <span className="text-cyan-500 shrink-0">→</span>
-                      <span>{item}</span>
+                    <li key={i} className="grid grid-cols-[auto_1fr] gap-3 items-start rounded-lg px-2 py-1.5 hover:bg-white/5 transition-colors">
+                      <span className="text-cyan-500 leading-6">→</span>
+                      <span className="leading-relaxed">{item}</span>
                     </li>
                   ))}
                 </ul>

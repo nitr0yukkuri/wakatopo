@@ -37,28 +37,28 @@ export default function SunraysCanvas() {
             const h = canvas.height;
             ctx.clearRect(0, 0, w, h);
 
-            // 光源 (右上外): 朝の低めの光で広めに入射
-            const sx = w * 0.86;
-            const sy = -h * 0.10;
-            const rayCount = 18;
+            // 光源 (右上外): 穏やかな朝日として斜めに入射
+            const sx = w * 0.88;
+            const sy = -h * 0.14;
+            const rayCount = 22;
 
             for (let i = 0; i < rayCount; i++) {
-                const base = Math.PI * 0.57 + (i / rayCount) * Math.PI * 0.62;
-                const angle = base + Math.sin(t * 0.28 + i * 0.65) * 0.015;
-                const hw = 0.019 + Math.sin(t * 0.45 + i * 1.1) * 0.006;
-                const len = h * 3.0;
+                const base = Math.PI * 0.55 + (i / rayCount) * Math.PI * 0.66;
+                const angle = base + Math.sin(t * 0.21 + i * 0.58) * 0.012;
+                const hw = 0.014 + Math.sin(t * 0.37 + i * 1.08) * 0.004;
+                const len = h * 3.2;
 
                 const x1 = sx + Math.cos(angle - hw) * len;
                 const y1 = sy + Math.sin(angle - hw) * len;
                 const x2 = sx + Math.cos(angle + hw) * len;
                 const y2 = sy + Math.sin(angle + hw) * len;
 
-                const a = 0.013 + Math.abs(Math.sin(t * 0.38 + i * 0.85)) * 0.010;
+                const a = 0.010 + Math.abs(Math.sin(t * 0.33 + i * 0.78)) * 0.008;
 
                 const grad = ctx.createRadialGradient(sx, sy, 0, sx, sy, len * 0.75);
-                grad.addColorStop(0, `rgba(255,236,180,${a * 2.6})`);
-                grad.addColorStop(0.25, `rgba(255,218,145,${a * 1.7})`);
-                grad.addColorStop(0.6, `rgba(255,190,120,${a * 0.8})`);
+                grad.addColorStop(0, `rgba(255,242,195,${a * 2.3})`);
+                grad.addColorStop(0.25, `rgba(255,221,156,${a * 1.6})`);
+                grad.addColorStop(0.6, `rgba(255,192,126,${a * 0.75})`);
                 grad.addColorStop(1, 'rgba(255,168,120,0)');
 
                 ctx.beginPath();
@@ -73,14 +73,14 @@ export default function SunraysCanvas() {
             // ダストパーティクル
             for (const p of particles) {
                 p.x += p.vx + Math.sin(t * 0.55 + p.phase) * 0.1;
-                p.y += p.vy;
+                p.y += p.vy * 0.85;
                 p.life += 0.0035;
                 if (p.life > 1) { p.life = 0; p.y = canvas.height + 5; p.x = Math.random() * canvas.width; }
                 if (p.y < -5) { p.y = canvas.height + 5; }
-                const a = Math.sin(p.life * Math.PI) * 0.48;
+                const a = Math.sin(p.life * Math.PI) * 0.42;
                 ctx.beginPath();
                 ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(255,242,205,${a * 0.9})`;
+                ctx.fillStyle = `rgba(255,244,216,${a * 0.82})`;
                 ctx.fill();
             }
 
@@ -101,6 +101,12 @@ export default function SunraysCanvas() {
             <div
                 className="absolute inset-0"
                 style={{ background: 'radial-gradient(ellipse 62% 50% at 86% -10%, rgba(255,228,172,0.18) 0%, rgba(255,205,150,0.08) 38%, transparent 72%)' }}
+            />
+            <motion.div
+                className="absolute inset-0"
+                style={{ background: 'radial-gradient(ellipse 56% 44% at 86% -14%, rgba(255,236,188,0.16) 0%, rgba(255,214,160,0.06) 44%, transparent 76%)' }}
+                animate={{ opacity: [0.55, 0.92, 0.64] }}
+                transition={{ duration: 6.4, repeat: Infinity, ease: 'easeInOut' }}
             />
             <div
                 className="absolute inset-0"
