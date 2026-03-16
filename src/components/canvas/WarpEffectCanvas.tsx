@@ -86,26 +86,26 @@ export default function WarpEffectCanvas() {
                     const pullX = (50 - sx) * 0.42;
                     const pullY = (50 - sy) * 0.42;
                     return (
-                <motion.div
-                    key={`${star.x}-${star.y}`}
-                    className="absolute rounded-full pointer-events-none"
-                    style={{
-                        left: star.x,
-                        top: star.y,
-                        width: `${star.s}px`,
-                        height: `${star.s}px`,
-                        background: 'rgba(226,236,255,0.9)',
-                        boxShadow: `0 0 ${star.s * 4}px rgba(156,190,248,0.34)`,
-                    }}
-                    initial={{ opacity: 0, scale: 0.85, x: 0, y: 0 }}
-                    animate={{
-                        opacity: [0, 0.58, 0.52, 0.18],
-                        scale: [0.82, 1.0, 1.12, 0.68],
-                        x: ['0%', `${pullX * 0.45}%`, `${pullX * 0.9}%`, `${pullX * 1.28}%`],
-                        y: ['0%', `${pullY * 0.45}%`, `${pullY * 0.9}%`, `${pullY * 1.28}%`],
-                    }}
-                    transition={{ duration: 1.35, delay: 0.04 + star.d, ease: [0.22, 1, 0.36, 1] }}
-                />
+                        <motion.div
+                            key={`${star.x}-${star.y}`}
+                            className="absolute rounded-full pointer-events-none"
+                            style={{
+                                left: star.x,
+                                top: star.y,
+                                width: `${star.s}px`,
+                                height: `${star.s}px`,
+                                background: 'rgba(226,236,255,0.9)',
+                                boxShadow: `0 0 ${star.s * 4}px rgba(156,190,248,0.34)`,
+                            }}
+                            initial={{ opacity: 0, scale: 0.85, x: 0, y: 0 }}
+                            animate={{
+                                opacity: [0, 0.58, 0.52, 0.18],
+                                scale: [0.82, 1.0, 1.12, 0.68],
+                                x: ['0%', `${pullX * 0.45}%`, `${pullX * 0.9}%`, `${pullX * 1.28}%`],
+                                y: ['0%', `${pullY * 0.45}%`, `${pullY * 0.9}%`, `${pullY * 1.28}%`],
+                            }}
+                            transition={{ duration: 1.35, delay: 0.04 + star.d, ease: [0.22, 1, 0.36, 1] }}
+                        />
                     );
                 })()
             ))}
