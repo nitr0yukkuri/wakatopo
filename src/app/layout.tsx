@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import GlobalTransitionOverlay from "@/components/GlobalTransitionOverlay";
 import PwaRegister from "@/components/PwaRegister";
+import SoundDirector from "@/components/SoundDirector";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -58,6 +59,7 @@ export default function RootLayout({
         suppressHydrationWarning
       >
         <PwaRegister />
+        <SoundDirector />
         <GlobalTransitionOverlay />
         {children}
       </body>
