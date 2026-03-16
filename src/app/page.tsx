@@ -12,7 +12,7 @@ export default async function Home() {
   const works = [
     { id: '01', title: 'GitHub Planet', cat: 'THREE.JS / VISUALIZATION', desc: 'GitHubのコミット数が、そのままリアルタイムで惑星の地形になる。コードを書くたびに地形が隆起する3Dビジュアライザー。' },
     { id: '02', title: 'おてんきぐらし', cat: 'NEXT.JS / PWA', desc: '今いる場所の天気が、アプリの世界に自動で反映される生活シミュレーション。雨の日は画面も雨が降る。' },
-    { id: '03', title: 'ColdKeep', cat: 'AI / IOT', desc: '冷凍庫に入れた食品を、音だけでAIが識別・管理するIoTシステム。カメラ不要で冷凍庫の中身を自動トラッキング。' },
+    { id: '03', title: 'ColdKeep', cat: 'AI / IOT', desc: 'スマホのマイクで水筒の音を解析し、氷の有無・残量・温度を推定するAIアシスタント。' },
     { id: '04', title: 'reCAPTCHA\u00A0Game', cat: 'REACT / GO / WEBSOCKET', desc: '60秒以内に何回「人間」を証明できる？対戦型認証ゲーム。' },
     { id: '05', title: 'でんしょうお', cat: 'REACT / SUPABASE', desc: '小さな幸せを魚に乗せて流す、癒しと分かち合いのSNS。' },
   ];
@@ -42,7 +42,6 @@ export default async function Home() {
             </h1>
           </Link>
           <p className="opacity-70 pointer-events-none">INTERACTIVE WEB EXPERIENCE</p>
-          <span className="inline-block mt-1 text-[10px] font-mono tracking-widest text-cyan-500/70 border border-cyan-500/30 px-2 py-0.5 rounded-full pointer-events-none">29卒 / INTERN WELCOME</span>
         </div>
 
         {/* Top Right */}
@@ -209,7 +208,7 @@ export default async function Home() {
                     CONTACT
                   </a>
                   <a
-                    href="https://github.com/nitr0-yukkuri"
+                    href="https://github.com/nitr0yukkuri"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-mono tracking-widest text-gray-200 hover:border-cyan-400/40 hover:text-cyan-300 transition-colors"
