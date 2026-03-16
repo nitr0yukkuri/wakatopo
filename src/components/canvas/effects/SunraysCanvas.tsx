@@ -37,38 +37,28 @@ export default function SunraysCanvas() {
             const h = canvas.height;
             ctx.clearRect(0, 0, w, h);
 
-            // 光源 (右上外): 穏やかな朝日として斜めに入射
-            const sx = w * 0.88;
-            const sy = -h * 0.14;
-            const rayCount = 22;
+            // 右上の太陽本体
+            const sunX = w * 0.88;
+            const sunY = h * 0.08;
+            const sunR = Math.max(34, Math.min(w, h) * 0.055);
 
-            for (let i = 0; i < rayCount; i++) {
-                const base = Math.PI * 0.55 + (i / rayCount) * Math.PI * 0.66;
-                const angle = base + Math.sin(t * 0.21 + i * 0.58) * 0.012;
-                const hw = 0.014 + Math.sin(t * 0.37 + i * 1.08) * 0.004;
-                const len = h * 3.2;
+            const sunAura = ctx.createRadialGradient(sunX, sunY, sunR * 0.2, sunX, sunY, sunR * 2.4);
+            sunAura.addColorStop(0, 'rgba(255,238,188,0.32)');
+            sunAura.addColorStop(0.5, 'rgba(255,214,146,0.16)');
+            sunAura.addColorStop(1, 'rgba(255,190,132,0)');
+            ctx.beginPath();
+            ctx.arc(sunX, sunY, sunR * 2.4, 0, Math.PI * 2);
+            ctx.fillStyle = sunAura;
+            ctx.fill();
 
-                const x1 = sx + Math.cos(angle - hw) * len;
-                const y1 = sy + Math.sin(angle - hw) * len;
-                const x2 = sx + Math.cos(angle + hw) * len;
-                const y2 = sy + Math.sin(angle + hw) * len;
-
-                const a = 0.010 + Math.abs(Math.sin(t * 0.33 + i * 0.78)) * 0.008;
-
-                const grad = ctx.createRadialGradient(sx, sy, 0, sx, sy, len * 0.75);
-                grad.addColorStop(0, `rgba(255,242,195,${a * 2.3})`);
-                grad.addColorStop(0.25, `rgba(255,221,156,${a * 1.6})`);
-                grad.addColorStop(0.6, `rgba(255,192,126,${a * 0.75})`);
-                grad.addColorStop(1, 'rgba(255,168,120,0)');
-
-                ctx.beginPath();
-                ctx.moveTo(sx, sy);
-                ctx.lineTo(x1, y1);
-                ctx.lineTo(x2, y2);
-                ctx.closePath();
-                ctx.fillStyle = grad;
-                ctx.fill();
-            }
+            const sunBody = ctx.createRadialGradient(sunX - sunR * 0.2, sunY - sunR * 0.2, sunR * 0.18, sunX, sunY, sunR);
+            sunBody.addColorStop(0, 'rgba(255,252,236,0.98)');
+            sunBody.addColorStop(0.45, 'rgba(255,236,180,0.98)');
+            sunBody.addColorStop(1, 'rgba(255,198,116,0.95)');
+            ctx.beginPath();
+            ctx.arc(sunX, sunY, sunR, 0, Math.PI * 2);
+            ctx.fillStyle = sunBody;
+            ctx.fill();
 
             // ダストパーティクル
             for (const p of particles) {
