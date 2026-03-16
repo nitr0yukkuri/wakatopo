@@ -174,7 +174,7 @@ export default async function Home() {
                     <li><span className="text-yellow-400">★ 最優秀賞</span> — 技育CAMP Vol.19 / うめきたTechBase</li>
                     <li><span className="text-yellow-400">★ 優秀賞</span> — 技育CAMP Vol.10, Vol.14</li>
                     <li><span className="text-orange-400">◆ 決勝進出</span> — ヒーローズ・リーグ 2025</li>
-                    <li><span className="text-cyan-300">企業賞</span> — 技育博 Vol.6（ウイングアーク１ｓｔ）</li>
+                    <li><span className="text-cyan-300">◆ 企業賞</span> — 技育博 Vol.6（ウイングアーク１ｓｔ）</li>
                   </ul>
                 </div>
               </div>

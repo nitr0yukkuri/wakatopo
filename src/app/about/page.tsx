@@ -237,7 +237,7 @@ export default function AboutPage() {
                             <li className="flex flex-col md:flex-row gap-2 md:gap-8 hover:bg-white/5 p-4 -ml-4 rounded-lg transition-colors">
                                 <span className="text-gray-500 min-w-[3rem]">02/01</span>
                                 <div className="flex-1">
-                                    <span className="text-cyan-300 block font-bold tracking-wider">企業賞 (ウイングアーク１ｓｔ)</span>
+                                    <span className="text-cyan-300 block font-bold tracking-wider">◆ 企業賞 (ウイングアーク１ｓｔ)</span>
                                     <span className="text-gray-400">技育博 Vol.6</span> <span className="text-white ml-2">「GitHub Planet」</span>
                                 </div>
                             </li>
