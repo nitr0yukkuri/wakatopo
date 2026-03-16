@@ -113,8 +113,8 @@ export default function OtenkiGurashiPage() {
     return (
         <main className={`relative w-full min-h-[120dvh] ${weather !== 'Rain' ? 'bg-gradient-to-b' : ''} ${bgGradient} ${weather === 'Thunder' || weather === 'Night' ? 'text-gray-200' : 'text-gray-700'} overflow-hidden font-sans pb-32 transition-colors duration-1000`}>
 
-            {/* Background Parallax Clouds Layer (Hidden in Rain to emphasize rain, but kept in snow for blizzard feel) */}
-            <div className={`absolute inset-0 pointer-events-none overflow-hidden z-0 transition-opacity duration-1000 ${weather === 'Rain' ? 'opacity-10' : weather === 'Night' ? 'opacity-45' : 'opacity-100'}`}>
+            {/* Background Parallax Clouds Layer */}
+            <div className={`absolute inset-0 pointer-events-none overflow-hidden z-0 transition-opacity duration-1000 ${weather === 'Rain' ? 'opacity-8' : weather === 'Thunder' ? 'opacity-35' : weather === 'Snow' ? 'opacity-70' : weather === 'Clouds' ? 'opacity-100' : weather === 'Night' ? 'opacity-45' : 'opacity-30'}`}>
                 {/* --- 3. 奥のレイヤー（小さく、ゆっくり、薄い、左へ） --- */}
                 <CloudDecoration className="opacity-20 w-32 top-[5%] animate-cloud-scroll-left-slow" style={{ animationDelay: '-10s' }} />
                 <CloudDecoration className="opacity-30 w-40 top-[40%] animate-cloud-scroll-left-slow" style={{ animationDelay: '-40s' }} />
@@ -187,7 +187,7 @@ export default function OtenkiGurashiPage() {
                                 >
                                     <h3 className="text-[#ffb03a] font-bold text-lg mb-3">☀ リアルタイム天気連動</h3>
                                     <p className="text-gray-600 text-sm leading-relaxed font-medium">
-                                        あなたのいる場所の「今」が、キャラクターの世界に直接反映されます。大阪で雨が降ればゲームの中も雨が降り、夜になればキャラクターも眠りにつきます。
+                                        あなたのいる場所の「今」が、キャラクターの世界に直接反映されます。雨は雨粒、雷はフラッシュ、雪は降雪モーションとして画面に現れ、夜になればキャラクターも眠りにつきます。
                                     </p>
                                 </div>
                                 <div
@@ -261,10 +261,46 @@ export default function OtenkiGurashiPage() {
             </div>
 
             {/* Additional Screen Effects based on Weather */}
+            {(weather === 'Clear' || weather === 'Morning') && (
+                <>
+                    <div className="fixed inset-0 pointer-events-none z-0">
+                        <div
+                            className="absolute right-[8%] top-[9%] w-24 h-24 md:w-32 md:h-32 rounded-full"
+                            style={{
+                                background: 'radial-gradient(circle at 35% 35%, rgba(255,245,180,0.96) 0%, rgba(255,213,112,0.92) 38%, rgba(255,170,58,0.92) 100%)',
+                                boxShadow: '0 0 45px rgba(255,205,110,0.55), 0 0 110px rgba(255,187,82,0.35)',
+                                animation: 'sun-soft-pulse 4.6s ease-in-out infinite',
+                            }}
+                        />
+                        <div
+                            className="absolute right-[3%] top-[2%] w-44 h-44 md:w-64 md:h-64 rounded-full"
+                            style={{
+                                background: 'radial-gradient(circle, rgba(255,220,150,0.36) 0%, rgba(255,220,150,0.08) 42%, rgba(255,220,150,0.0) 74%)',
+                                animation: 'sun-aura-spin 16s linear infinite',
+                            }}
+                        />
+                    </div>
+                    <style>{`
+                        @keyframes sun-soft-pulse {
+                            0%, 100% { transform: scale(1); opacity: 0.94; }
+                            50% { transform: scale(1.05); opacity: 1; }
+                        }
+                        @keyframes sun-aura-spin {
+                            from { transform: rotate(0deg); }
+                            to { transform: rotate(360deg); }
+                        }
+                    `}</style>
+                </>
+            )}
             {weather === 'Rain' && (
-                <div className="fixed inset-0 pointer-events-none z-0">
-                    <RainParticles />
-                </div>
+                <>
+                    <div className="fixed inset-0 pointer-events-none z-0">
+                        <RainParticles />
+                    </div>
+                    <div className="fixed inset-0 pointer-events-none z-0 opacity-45" style={{
+                        background: 'linear-gradient(180deg, rgba(52,95,145,0.24) 0%, rgba(67,123,188,0.18) 35%, rgba(18,52,90,0.24) 100%)',
+                    }} />
+                </>
             )}
             {weather === 'Snow' && (
                 <div className="fixed inset-0 pointer-events-none z-0 opacity-70">
@@ -274,10 +310,19 @@ export default function OtenkiGurashiPage() {
                         backgroundSize: '80px 80px',
                         animation: 'snowfall 8s linear infinite',
                     }} />
+                    <div className="w-full h-full absolute inset-0" style={{
+                        backgroundImage: 'radial-gradient(circle at 50% 50%, rgba(255,255,255,0.9) 0 1.5px, transparent 2px)',
+                        backgroundSize: '120px 120px',
+                        animation: 'snowfall-slow 13s linear infinite',
+                    }} />
                     <style>{`
                         @keyframes snowfall {
                             from { background-position: 0 -80px; }
                             to { background-position: 40px 80px; }
+                        }
+                        @keyframes snowfall-slow {
+                            from { background-position: 0 -120px; }
+                            to { background-position: -36px 120px; }
                         }
                     `}</style>
                 </div>
@@ -323,10 +368,29 @@ export default function OtenkiGurashiPage() {
                         backgroundSize: '4px 60px',
                         animation: 'thunder-rain 0.25s linear infinite',
                     }} />
+                    <div className="fixed inset-0 pointer-events-none z-0" style={{
+                        background: 'radial-gradient(ellipse 50% 28% at 52% 18%, rgba(170,195,255,0.18), rgba(170,195,255,0.0) 72%)',
+                    }} />
+                    <div className="fixed inset-0 pointer-events-none z-0" style={{
+                        backgroundImage: 'linear-gradient(108deg, transparent 0%, transparent 46%, rgba(230,240,255,0.9) 48%, rgba(200,220,255,0.0) 52%, transparent 54%), linear-gradient(79deg, transparent 0%, transparent 62%, rgba(230,240,255,0.65) 64%, rgba(200,220,255,0.0) 67%, transparent 70%)',
+                        opacity: 0,
+                        animation: 'thunder-bolt 4.8s infinite',
+                    }} />
+                    <div className="fixed inset-0 pointer-events-none z-0 bg-[#dbe9ff]" style={{ opacity: 0, animation: 'thunder-flash 4.8s infinite' }} />
                     <style>{`
                         @keyframes thunder-rain {
                             from { background-position: 0 0; }
                             to { background-position: 4px 60px; }
+                        }
+                        @keyframes thunder-flash {
+                            0%, 39%, 42%, 100% { opacity: 0; }
+                            40% { opacity: 0.16; }
+                            41% { opacity: 0.05; }
+                        }
+                        @keyframes thunder-bolt {
+                            0%, 39%, 42%, 100% { opacity: 0; }
+                            40% { opacity: 0.52; }
+                            41% { opacity: 0.15; }
                         }
                     `}</style>
                 </>

@@ -10,8 +10,8 @@ export default async function Home() {
   const data = await fetchPlanetData();
 
   const works = [
-    { id: '01', title: 'GitHub Planet', cat: 'THREE.JS / VISUALIZATION', desc: 'GitHubのコミット数が、そのままリアルタイムで惑星の地形になる。コードを書くたびに地形が隆起する3Dビジュアライザー。' },
-    { id: '02', title: 'おてんきぐらし', cat: 'NEXT.JS / PWA', desc: '今いる場所の天気が、アプリの世界に自動で反映される生活シミュレーション。雨の日は画面も雨が降る。' },
+    { id: '01', title: 'GitHub\u00A0Planet', cat: 'THREE.JS / VISUALIZATION', desc: 'GitHubのコミット数が、そのままリアルタイムで惑星の地形になる。コードを書くたびに地形が隆起する3Dビジュアライザー。' },
+    { id: '02', title: 'おてんきぐらし', cat: 'NEXT.JS / PWA', desc: '今いる場所の天気が、アプリの世界に自動で反映される生活シミュレーション。雨は雨粒、雷はフラッシュ、雪は降雪モーションとして表現される。' },
     { id: '03', title: 'ColdKeep', cat: 'AI / IOT', desc: 'スマホのマイクで水筒の音を解析し、氷の有無・残量・温度を推定するAIアシスタント。' },
     { id: '04', title: 'reCAPTCHA\u00A0Game', cat: 'REACT / GO / WEBSOCKET', desc: '60秒以内に何回「人間」を証明できる？対戦型認証ゲーム。' },
     { id: '05', title: 'でんしょうお', cat: 'REACT / SUPABASE', desc: '小さな幸せを魚に乗せて流す、癒しと分かち合いのSNS。' },
