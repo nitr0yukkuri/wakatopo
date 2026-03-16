@@ -76,11 +76,6 @@ export default async function Home() {
             <WeatherDebugSelector />
           </div>
 
-          {/* Bottom Right */}
-          <div className="hidden sm:flex text-right flex-col items-end gap-2">
-            <span>SCROLL TO EXPLORE</span>
-            <div className="w-[1px] h-8 bg-gray-600"></div>
-          </div>
         </div>
       </div>
 
