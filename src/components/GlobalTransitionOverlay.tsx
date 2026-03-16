@@ -39,7 +39,7 @@ export default function GlobalTransitionOverlay() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    transition={{ duration: 0.8 }}
+                    transition={{ duration: 1.35 }}
                     className="fixed inset-0 z-9999 pointer-events-auto bg-[#000000]"
                 >
                     <WarpEffectCanvas />

@@ -1,120 +1,219 @@
 'use client'
 
-import { useRef, useMemo } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
-import * as THREE from 'three';
-
-function GentleWarpStars() {
-    const count = 2000;
-    const linesRef = useRef<THREE.LineSegments>(null);
-
-    // 最初は点として配置し、徐々に線として伸びる
-    const { positions, randoms } = useMemo(() => {
-        const pos = new Float32Array(count * 6);
-        const rnd = new Float32Array(count);
-
-        for (let i = 0; i < count; i++) {
-            // 空間の中心は少し空けつつ、外側に広がるように分布
-            const r = 4 + Math.pow(Math.random(), 1.5) * 60;
-            const theta = Math.random() * Math.PI * 2;
-            const x = Math.cos(theta) * r;
-            const y = Math.sin(theta) * r;
-            const z = -20 - Math.random() * 80;
-
-            pos[i * 6] = x;
-            pos[i * 6 + 1] = y;
-            pos[i * 6 + 2] = z;
-
-            // 尾も最初は同位置（点）
-            pos[i * 6 + 3] = x;
-            pos[i * 6 + 4] = y;
-            pos[i * 6 + 5] = z;
-
-            rnd[i] = Math.random();
-        }
-        return { positions: pos, randoms: rnd };
-    }, []);
-
-    useFrame((state, delta) => {
-        if (!linesRef.current) return;
-        const posAttribute = linesRef.current.geometry.attributes.position;
-        const pos = posAttribute.array as Float32Array;
-
-        const time = state.clock.getElapsedTime();
-
-        // --- 非常にリッチで滑らかなイージング (目に優しいカーブ) ---
-        // 最初はゆっくり動き出し、流れるように加速するInOutExpo的な動き
-        const progress = Math.min(time / 2.0, 1.0);
-        const ease = progress === 0 ? 0 : progress === 1 ? 1 : progress < 0.5 ? Math.pow(2, 20 * progress - 10) / 2 : (2 - Math.pow(2, -20 * progress + 10)) / 2;
-
-        const speed = 0.5 + ease * 30.0;
-        const tailLength = ease * 35.0; // 尾の長さも徐々に伸びる
-
-        for (let i = 0; i < count; i++) {
-            // 進行
-            pos[i * 6 + 2] += speed + randoms[i] * ease * 5.0;
-            // 尾の追従（Z軸後方に引っ張る）
-            pos[i * 6 + 5] = pos[i * 6 + 2] - (tailLength + randoms[i] * tailLength * 0.5);
-
-            // カメラを通り過ぎたら奥へ静かにリセット
-            if (pos[i * 6 + 2] > 10) {
-                const z = -80 - Math.random() * 40;
-                pos[i * 6 + 2] = z;
-                pos[i * 6 + 5] = z;
-
-                const r = 4 + Math.pow(Math.random(), 1.5) * 60;
-                const theta = Math.random() * Math.PI * 2;
-                pos[i * 6] = Math.cos(theta) * r;
-                pos[i * 6 + 1] = Math.sin(theta) * r;
-                pos[i * 6 + 3] = pos[i * 6];
-                pos[i * 6 + 4] = pos[i * 6 + 1];
-            }
-        }
-        posAttribute.needsUpdate = true;
-
-        // 優雅に全体を回転させる
-        linesRef.current.rotation.z += delta * (0.05 + ease * 0.1);
-    });
-
-    return (
-        <lineSegments ref={linesRef}>
-            <bufferGeometry>
-                <bufferAttribute attach="attributes-position" args={[positions, 3]} />
-            </bufferGeometry>
-            {/* 色は淡いシアン。不透明度を抑えて目に優しく、滑らかにブレンド */}
-            <lineBasicMaterial color="#a8efff" transparent opacity={0.25} blending={THREE.AdditiveBlending} depthWrite={false} />
-        </lineSegments>
-    );
-}
-
-// 画面全体を柔らかく覆うフォグと光のオーラ（目に優しいフェードアウト用）
-function AmbientGlow() {
-    const meshRef = useRef<THREE.Mesh>(null);
-    useFrame((state) => {
-        if (!meshRef.current) return;
-        const time = state.clock.getElapsedTime();
-        const progress = Math.min(time / 2.0, 1.0);
-        // 遷移の最後に画面全体が優しくフェードホワイトアウト/ブルーアウトするように
-        const ease = Math.pow(progress, 3);
-        const material = meshRef.current.material as THREE.MeshBasicMaterial;
-        material.opacity = ease * 0.9;
-    });
-
-    return (
-        <mesh ref={meshRef} position={[0, 0, -5]}>
-            <planeGeometry args={[100, 100]} />
-            <meshBasicMaterial color="#001830" transparent opacity={0} depthWrite={false} blending={THREE.AdditiveBlending} />
-        </mesh>
-    );
-}
+import { motion } from 'framer-motion';
 
 export default function WarpEffectCanvas() {
+    const stars = [
+        { x: '7%', y: '12%', s: 1.8, d: 0.0 },
+        { x: '14%', y: '68%', s: 1.6, d: 0.06 },
+        { x: '21%', y: '28%', s: 1.2, d: 0.12 },
+        { x: '29%', y: '82%', s: 1.7, d: 0.08 },
+        { x: '36%', y: '16%', s: 1.4, d: 0.14 },
+        { x: '44%', y: '58%', s: 2.0, d: 0.03 },
+        { x: '52%', y: '34%', s: 1.3, d: 0.16 },
+        { x: '61%', y: '74%', s: 1.8, d: 0.1 },
+        { x: '68%', y: '22%', s: 1.4, d: 0.18 },
+        { x: '77%', y: '52%', s: 2.2, d: 0.04 },
+        { x: '84%', y: '30%', s: 1.2, d: 0.2 },
+        { x: '92%', y: '64%', s: 1.9, d: 0.07 },
+    ];
+
+    const comets = [
+        { top: '22%', delay: 0.16, width: 220, rotate: -18 },
+        { top: '63%', delay: 0.28, width: 180, rotate: -14 },
+    ];
+
     return (
-        <Canvas camera={{ position: [0, 0, 0], fov: 75 }} className="w-full h-full">
-            <color attach="background" args={['#000000']} />
-            <fog attach="fog" args={['#000000', 5, 80]} />
-            <GentleWarpStars />
-            <AmbientGlow />
-        </Canvas>
+        <div className="relative w-full h-full overflow-hidden">
+            <motion.div
+                className="absolute inset-0"
+                style={{ background: 'radial-gradient(ellipse 122% 92% at 50% 50%, #0b1428 0%, #060b19 56%, #020306 100%)' }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: [0, 1, 1] }}
+                transition={{ duration: 1.2, times: [0, 0.14, 1], ease: [0.22, 1, 0.36, 1] }}
+            />
+
+            <motion.div
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                    background: 'radial-gradient(ellipse 66% 48% at 50% 52%, rgba(86,128,210,0.2) 0%, rgba(42,72,138,0.1) 40%, rgba(10,18,34,0.0) 76%)',
+                }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: [0.02, 0.18, 0.14] }}
+                transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+            />
+
+            <motion.div
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                    background: 'radial-gradient(ellipse 78% 56% at 42% 46%, rgba(136,110,242,0.16) 0%, rgba(86,94,224,0.08) 36%, rgba(22,22,66,0.0) 72%)',
+                    mixBlendMode: 'screen',
+                    filter: 'blur(12px)',
+                }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: [0, 0.18, 0.1], x: ['-2%', '0%', '1%'], y: ['1%', '0%', '-1%'] }}
+                transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+            />
+
+            <motion.div
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                    background: 'radial-gradient(ellipse 72% 52% at 58% 58%, rgba(108,206,224,0.12) 0%, rgba(64,140,196,0.05) 38%, rgba(10,20,34,0.0) 76%)',
+                    mixBlendMode: 'screen',
+                    filter: 'blur(10px)',
+                }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: [0, 0.14, 0.08], x: ['2%', '0%', '-1%'], y: ['-1%', '0%', '1%'] }}
+                transition={{ duration: 1.2, delay: 0.04, ease: [0.22, 1, 0.36, 1] }}
+            />
+
+            <motion.div
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                    background: 'conic-gradient(from 210deg at 50% 50%, rgba(122,92,226,0.0) 0deg, rgba(122,92,226,0.1) 66deg, rgba(86,178,232,0.07) 140deg, rgba(122,92,226,0.0) 240deg, rgba(122,92,226,0.0) 360deg)',
+                    mixBlendMode: 'screen',
+                    filter: 'blur(24px)',
+                }}
+                initial={{ opacity: 0, rotate: -6, scale: 1.02 }}
+                animate={{ opacity: [0, 0.16, 0.08], rotate: [-6, 4, 12], scale: [1.02, 1.0, 0.98] }}
+                transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+            />
+
+            {stars.map((star, idx) => (
+                (() => {
+                    const sx = parseFloat(star.x);
+                    const sy = parseFloat(star.y);
+                    const pullX = (50 - sx) * 0.42;
+                    const pullY = (50 - sy) * 0.42;
+                    return (
+                <motion.div
+                    key={`${star.x}-${star.y}`}
+                    className="absolute rounded-full pointer-events-none"
+                    style={{
+                        left: star.x,
+                        top: star.y,
+                        width: `${star.s}px`,
+                        height: `${star.s}px`,
+                        background: 'rgba(226,236,255,0.9)',
+                        boxShadow: `0 0 ${star.s * 4}px rgba(156,190,248,0.34)`,
+                    }}
+                    initial={{ opacity: 0, scale: 0.85, x: 0, y: 0 }}
+                    animate={{
+                        opacity: [0, 0.58, 0.52, 0.18],
+                        scale: [0.82, 1.0, 1.12, 0.68],
+                        x: ['0%', `${pullX * 0.45}%`, `${pullX * 0.9}%`, `${pullX * 1.28}%`],
+                        y: ['0%', `${pullY * 0.45}%`, `${pullY * 0.9}%`, `${pullY * 1.28}%`],
+                    }}
+                    transition={{ duration: 1.35, delay: 0.04 + star.d, ease: [0.22, 1, 0.36, 1] }}
+                />
+                    );
+                })()
+            ))}
+
+            {comets.map((comet, idx) => (
+                <motion.div
+                    key={`comet-${comet.top}`}
+                    className="absolute h-px pointer-events-none"
+                    style={{
+                        top: comet.top,
+                        left: '-26%',
+                        width: `${comet.width}px`,
+                        background: 'linear-gradient(90deg, rgba(170,206,255,0.0) 0%, rgba(198,220,255,0.44) 42%, rgba(238,246,255,0.0) 100%)',
+                        transform: `rotate(${comet.rotate}deg)`,
+                        filter: 'blur(0.6px) drop-shadow(0 0 8px rgba(146,186,255,0.28))',
+                    }}
+                    initial={{ x: '-10%', opacity: 0 }}
+                    animate={{ x: '148%', opacity: [0, 0.54, 0] }}
+                    transition={{ duration: 0.9, delay: comet.delay + idx * 0.05, ease: [0.22, 1, 0.36, 1] }}
+                />
+            ))}
+
+            <motion.div
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                    background: 'radial-gradient(ellipse 132% 100% at 50% 56%, rgba(0,0,0,0.0) 24%, rgba(0,0,0,0.24) 62%, rgba(0,0,0,0.56) 100%)',
+                }}
+                initial={{ opacity: 0.18 }}
+                animate={{ opacity: [0.18, 0.3, 0.28] }}
+                transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+            />
+
+            <motion.div
+                className="absolute pointer-events-none rounded-full"
+                style={{
+                    left: '50%',
+                    top: '50%',
+                    width: '230px',
+                    height: '230px',
+                    marginLeft: '-115px',
+                    marginTop: '-115px',
+                    border: '1px solid rgba(176,198,246,0.22)',
+                    boxShadow: '0 0 34px rgba(86,126,214,0.22), inset 0 0 24px rgba(108,162,236,0.12)',
+                }}
+                initial={{ opacity: 0, scale: 1.08 }}
+                animate={{ opacity: [0, 0.34, 0.16], scale: [1.08, 0.9, 0.82], rotate: [0, 18, 34] }}
+                transition={{ duration: 1.35, ease: [0.22, 1, 0.36, 1] }}
+            />
+
+            <motion.div
+                className="absolute pointer-events-none rounded-full"
+                style={{
+                    left: '50%',
+                    top: '50%',
+                    width: '300px',
+                    height: '300px',
+                    marginLeft: '-150px',
+                    marginTop: '-150px',
+                    border: '1px solid rgba(130,168,236,0.12)',
+                    boxShadow: 'inset 0 0 30px rgba(94,130,208,0.08)',
+                }}
+                initial={{ opacity: 0, scale: 1.14, rotate: -12 }}
+                animate={{ opacity: [0, 0.24, 0.08], scale: [1.14, 0.98, 0.84], rotate: [-12, 10, 28] }}
+                transition={{ duration: 1.35, ease: [0.22, 1, 0.36, 1] }}
+            />
+
+            <motion.div
+                className="absolute pointer-events-none rounded-full"
+                style={{
+                    left: '50%',
+                    top: '50%',
+                    width: '120px',
+                    height: '120px',
+                    marginLeft: '-60px',
+                    marginTop: '-60px',
+                    background: 'radial-gradient(circle, rgba(210,232,255,0.34) 0%, rgba(126,170,244,0.14) 44%, rgba(38,60,112,0.0) 100%)',
+                    filter: 'blur(2px)',
+                }}
+                initial={{ opacity: 0, scale: 1.16 }}
+                animate={{ opacity: [0, 0.5, 0.08], scale: [1.22, 0.8, 0.62] }}
+                transition={{ duration: 1.35, ease: [0.22, 1, 0.36, 1] }}
+            />
+
+            <motion.div
+                className="absolute pointer-events-none rounded-full"
+                style={{
+                    left: '50%',
+                    top: '50%',
+                    width: '40px',
+                    height: '40px',
+                    marginLeft: '-20px',
+                    marginTop: '-20px',
+                    background: 'radial-gradient(circle, rgba(228,242,255,0.86) 0%, rgba(156,194,252,0.36) 52%, rgba(70,108,182,0.0) 100%)',
+                }}
+                initial={{ opacity: 0, scale: 1.8 }}
+                animate={{ opacity: [0, 0.9, 0.0], scale: [1.8, 0.8, 0.12] }}
+                transition={{ duration: 1.35, ease: [0.22, 1, 0.36, 1] }}
+            />
+
+            <motion.div
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                    background: 'linear-gradient(180deg, rgba(10,16,30,0.0) 0%, rgba(20,28,58,0.08) 40%, rgba(16,24,46,0.16) 100%)',
+                }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: [0, 0.2, 0.14] }}
+                transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+            />
+        </div>
     );
 }
