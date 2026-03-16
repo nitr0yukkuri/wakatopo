@@ -134,6 +134,10 @@ export default function NightGlowOverlay() {
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             transition={{ duration: 2.5 }}
         >
+            {/* Moon */}
+            <div className="absolute right-[8%] top-[10%] w-20 h-20 md:w-28 md:h-28 rounded-full bg-[#dce8ff] opacity-90 shadow-[0_0_35px_rgba(167,196,245,0.38)]" />
+            <div className="absolute right-[6.4%] top-[8.8%] w-20 h-20 md:w-28 md:h-28 rounded-full bg-[#0a152a] opacity-95" />
+
             {/* 上部から深い紺色グラデーション */}
             <div
                 className="absolute inset-0"
