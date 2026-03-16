@@ -10,9 +10,9 @@ export default async function Home() {
   const data = await fetchPlanetData();
 
   const works = [
-    { id: '01', title: 'GitHub Planet', cat: 'THREE.JS / VISUALIZATION', desc: 'Activity-based terrain generation' },
-    { id: '02', title: 'おてんきぐらし', cat: 'NEXT.JS / PWA', desc: 'Weather-sync life simulation' },
-    { id: '03', title: 'ColdKeep', cat: 'AI / IOT', desc: 'Audio-based volume estimation' },
+    { id: '01', title: 'GitHub Planet', cat: 'THREE.JS / VISUALIZATION', desc: 'GitHubのコミット数が、そのままリアルタイムで惑星の地形になる。コードを書くたびに地形が隆起する3Dビジュアライザー。' },
+    { id: '02', title: 'おてんきぐらし', cat: 'NEXT.JS / PWA', desc: '今いる場所の天気が、アプリの世界に自動で反映される生活シミュレーション。雨の日は画面も雨が降る。' },
+    { id: '03', title: 'ColdKeep', cat: 'AI / IOT', desc: '冷凍庫に入れた食品を、音だけでAIが識別・管理するIoTシステム。カメラ不要で冷凍庫の中身を自動トラッキング。' },
     { id: '04', title: 'reCAPTCHA\u00A0Game', cat: 'REACT / GO / WEBSOCKET', desc: '60秒以内に何回「人間」を証明できる？対戦型認証ゲーム。' },
     { id: '05', title: 'でんしょうお', cat: 'REACT / SUPABASE', desc: '小さな幸せを魚に乗せて流す、癒しと分かち合いのSNS。' },
   ];
@@ -42,6 +42,7 @@ export default async function Home() {
             </h1>
           </Link>
           <p className="opacity-70 pointer-events-none">INTERACTIVE WEB EXPERIENCE</p>
+          <span className="inline-block mt-1 text-[10px] font-mono tracking-widest text-cyan-500/70 border border-cyan-500/30 px-2 py-0.5 rounded-full pointer-events-none">29卒 / INTERN WELCOME</span>
         </div>
 
         {/* Top Right */}
@@ -122,15 +123,100 @@ export default async function Home() {
           </div>
         </section>
 
+        {/* SKILLS & CAN DO */}
+        <section className="py-24 px-6 md:px-20 pointer-events-auto">
+          <div className="max-w-5xl mx-auto">
+            <span className="text-cyan-500 text-xs font-mono mb-12 block">03 / WHAT I CAN DO</span>
+
+            <div className="grid md:grid-cols-2 gap-12 md:gap-20">
+              {/* Left: Tech Stack */}
+              <div>
+                <h3 className="text-sm font-mono tracking-widest text-gray-400 mb-6 border-l border-cyan-500 pl-4">TECH STACK</h3>
+                <div className="space-y-4 font-mono text-xs">
+                  {([
+                    { label: 'Frontend', items: ['Next.js', 'React', 'TypeScript', 'Tailwind CSS'] },
+                    { label: '3D / Creative', items: ['Three.js', 'WebGL', 'GLSL', 'Framer Motion'] },
+                    { label: 'Backend', items: ['Node.js', 'Go', 'PostgreSQL', 'Supabase'] },
+                    { label: 'Other', items: ['WebSocket', 'Docker', 'PWA', 'Figma'] },
+                  ] as { label: string; items: string[] }[]).map(({ label, items }) => (
+                    <div key={label} className="flex gap-4 items-start">
+                      <span className="text-gray-600 w-24 shrink-0 pt-0.5">{label}</span>
+                      <div className="flex flex-wrap gap-1.5">
+                        {items.map(item => (
+                          <span key={item} className="border border-white/10 bg-white/5 px-2 py-0.5 rounded text-gray-300">{item}</span>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Right: What you can ask + Awards */}
+              <div>
+                <h3 className="text-sm font-mono tracking-widest text-gray-400 mb-6 border-l border-cyan-500 pl-4">WHAT YOU CAN ASK</h3>
+                <ul className="space-y-3 font-mono text-sm text-gray-300">
+                  {[
+                    'インタラクティブなLPやコーポレートサイト制作',
+                    '3D・アニメーション表現を活用した没入感のあるUI開発',
+                    'リアルタイム通信を使ったゲームやツール開発',
+                    'フロントからバックエンドまで一気通貫での開発',
+                    'IoT × AI を組み合わせたプロトタイプ・PoC開発',
+                  ].map((item, i) => (
+                    <li key={i} className="flex gap-3 items-start">
+                      <span className="text-cyan-500 shrink-0">→</span>
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                <div className="mt-8 pt-8 border-t border-white/5">
+                  <h3 className="text-xs font-mono tracking-widest text-gray-600 mb-4">AWARDS</h3>
+                  <ul className="space-y-2 font-mono text-xs text-gray-400">
+                    <li><span className="text-yellow-400">★ 最優秀賞</span> — 技育CAMP Vol.19 / うめきたTechBase</li>
+                    <li><span className="text-yellow-400">★ 優秀賞</span> — 技育CAMP Vol.10, Vol.14</li>
+                    <li><span className="text-orange-400">◆ 決勝進出</span> — ヒーローズ・リーグ 2025</li>
+                    <li><span className="text-cyan-300">企業賞</span> — 技育博 Vol.6（ウイングアーク１ｓｔ）</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* FOOTER */}
         <footer className="py-24 px-6 md:px-20 bg-[#050505] pointer-events-auto border-t border-white/5">
           <div className="max-w-6xl mx-auto">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8">
               <div>
-                <span className="text-cyan-500 text-xs font-mono tracking-[0.28em]">03 / END SIGNAL</span>
-                <p className="mt-4 text-sm md:text-base text-gray-400 leading-relaxed font-mono max-w-2xl">
-                  気になったら、左上の X か CONTACT からどうぞ。作品はおしゃれに、連絡導線はちゃんと届く場所に置いています。
+                <span className="text-cyan-500 text-xs font-mono tracking-[0.28em]">04 / END SIGNAL</span>
+                <p className="mt-4 text-sm md:text-base text-gray-400 leading-relaxed font-mono max-w-xl">
+                  フロントエンド中心に、デザインからバックエンド連携まで一人で完結できます。<br />
+                  29卒・インターン・カジュアル面談、どこからでも歓迎です。
                 </p>
+                <div className="mt-6 flex flex-wrap gap-3">
+                  <a
+                    href="https://x.com/0ts_st"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 rounded-full border border-cyan-400/40 bg-cyan-400/10 px-4 py-2 text-xs font-mono tracking-widest text-cyan-300 hover:bg-cyan-400 hover:text-black transition-colors"
+                  >
+                    X / Twitter
+                  </a>
+                  <a
+                    href="mailto:nakatawakato@gmail.com"
+                    className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-mono tracking-widest text-gray-200 hover:border-cyan-400/40 hover:text-cyan-300 transition-colors"
+                  >
+                    CONTACT
+                  </a>
+                  <a
+                    href="https://github.com/nitr0-yukkuri"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-mono tracking-widest text-gray-200 hover:border-cyan-400/40 hover:text-cyan-300 transition-colors"
+                  >
+                    GitHub
+                  </a>
+                </div>
               </div>
               <p className="text-[10px] text-gray-700 font-mono text-left md:text-right">
                 © 2026 WAKATO. ALL RIGHTS RESERVED.<br />
