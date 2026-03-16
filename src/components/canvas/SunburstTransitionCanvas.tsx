@@ -14,11 +14,11 @@ export default function SunburstTransitionCanvas() {
             <motion.div
                 className="absolute inset-0 pointer-events-none"
                 style={{
-                    background: 'radial-gradient(ellipse 100% 72% at 76% 18%, rgba(255,234,190,0.32) 0%, rgba(255,226,176,0.15) 44%, rgba(255,226,176,0) 78%)',
+                    background: 'radial-gradient(ellipse 100% 72% at 76% 18%, rgba(255,234,190,0.28) 0%, rgba(255,226,176,0.12) 44%, rgba(255,226,176,0) 78%)',
                 }}
                 initial={{ opacity: 0 }}
-                animate={{ opacity: [0.08, 0.28, 0.2] }}
-                transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+                animate={{ opacity: [0.08, 0.24, 0.18] }}
+                transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
             />
 
             {/* 層状の斜めゴッドレイ */}
@@ -35,8 +35,8 @@ export default function SunburstTransitionCanvas() {
                     mixBlendMode: 'screen',
                 }}
                 initial={{ opacity: 0, x: 70, y: -40 }}
-                animate={{ opacity: [0, 0.74, 0.56], x: [70, 10, 0], y: [-40, -10, 0] }}
-                transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+                animate={{ opacity: [0, 0.68, 0.52], x: [70, 8, 0], y: [-40, -8, 0] }}
+                transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
             />
 
             <motion.div
@@ -52,8 +52,8 @@ export default function SunburstTransitionCanvas() {
                     mixBlendMode: 'screen',
                 }}
                 initial={{ opacity: 0, x: 40, y: -26 }}
-                animate={{ opacity: [0, 0.52, 0.4], x: [40, 8, 0], y: [-26, -8, 0] }}
-                transition={{ duration: 1.2, delay: 0.05, ease: [0.22, 1, 0.36, 1] }}
+                animate={{ opacity: [0, 0.48, 0.36], x: [40, 7, 0], y: [-26, -7, 0] }}
+                transition={{ duration: 0.9, delay: 0.03, ease: [0.22, 1, 0.36, 1] }}
             />
 
             <motion.div
@@ -69,8 +69,8 @@ export default function SunburstTransitionCanvas() {
                     mixBlendMode: 'screen',
                 }}
                 initial={{ opacity: 0, x: 26, y: -12 }}
-                animate={{ opacity: [0, 0.44, 0.32], x: [26, 5, 0], y: [-12, -4, 0] }}
-                transition={{ duration: 1.2, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+                animate={{ opacity: [0, 0.4, 0.28], x: [26, 4, 0], y: [-12, -3, 0] }}
+                transition={{ duration: 0.9, delay: 0.06, ease: [0.22, 1, 0.36, 1] }}
             />
 
             {/* 下から昇る太陽本体 */}
@@ -85,16 +85,16 @@ export default function SunburstTransitionCanvas() {
                     boxShadow: '0 0 76px 28px rgba(255,228,158,0.45), 0 0 176px 108px rgba(255,202,110,0.24)',
                 }}
                 initial={{ y: 180, scale: 0.85, opacity: 0.2 }}
-                animate={{ y: [180, 48, 0], scale: [0.88, 1.06, 1.02], opacity: [0.28, 0.94, 0.98] }}
-                transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+                animate={{ y: [180, 42, 0], scale: [0.9, 1.05, 1.02], opacity: [0.28, 0.9, 0.96] }}
+                transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
             />
 
             <motion.div
                 className="absolute rounded-full pointer-events-none border border-amber-100/45"
                 style={{ right: '8.8%', bottom: '-24%', width: '176px', height: '176px' }}
                 initial={{ y: 190, scale: 0.72, opacity: 0 }}
-                animate={{ y: [190, 54, 0], scale: [0.72, 1.05, 1.12], opacity: [0, 0.28, 0] }}
-                transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+                animate={{ y: [190, 50, 0], scale: [0.72, 1.04, 1.1], opacity: [0, 0.24, 0] }}
+                transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
             />
 
             {/* 露出の余韻 */}
@@ -102,8 +102,8 @@ export default function SunburstTransitionCanvas() {
                 className="absolute inset-0 pointer-events-none"
                 style={{ background: 'linear-gradient(180deg, rgba(255,246,220,0.0) 0%, rgba(255,239,206,0.07) 54%, rgba(255,233,196,0.16) 100%)' }}
                 initial={{ opacity: 0 }}
-                animate={{ opacity: [0.0, 0.24, 0.2] }}
-                transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+                animate={{ opacity: [0.0, 0.2, 0.16] }}
+                transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
             />
         </div>
     );
