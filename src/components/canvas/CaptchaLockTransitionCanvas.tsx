@@ -150,6 +150,27 @@ export default function CaptchaLockTransitionCanvas() {
                     </motion.div>
                 </motion.div>
             </div>
+
+            <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: [0, 0, 1] }}
+                transition={{ duration: 0.72, delay: 1.18, ease: 'easeOut' }}
+                className="pointer-events-none absolute inset-0 flex items-center justify-center bg-[radial-gradient(circle_at_center,rgba(10,24,45,0.7),rgba(2,6,12,0.96))]"
+            >
+                <motion.div
+                    initial={{ opacity: 0, scale: 1.06, y: 10 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    transition={{ duration: 0.55, delay: 1.24, ease: 'easeOut' }}
+                    className="flex flex-col items-center justify-center gap-5"
+                >
+                    <div className="flex h-24 w-24 items-center justify-center rounded-full border-2 border-emerald-300/80 bg-emerald-300/15 text-5xl font-black text-emerald-200 shadow-[0_0_45px_rgba(74,222,128,0.45)] md:h-28 md:w-28 md:text-6xl">
+                        ✓
+                    </div>
+                    <div className="rounded-full border border-cyan-300/40 bg-cyan-300/10 px-5 py-2 text-[11px] font-mono tracking-[0.2em] text-cyan-100/90">
+                        SUCCESS - ENTERING MATCH
+                    </div>
+                </motion.div>
+            </motion.div>
         </div>
     );
 }
