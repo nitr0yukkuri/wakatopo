@@ -165,14 +165,14 @@ export default function RecaptchaGamePage() {
                         <div className="rounded-xl border border-white/10 bg-black/20 p-5">
                             <h3 className="text-sm font-bold text-cyan-100">BACKEND</h3>
                             <pre className="mt-3 whitespace-pre-wrap text-xs text-cyan-100/90 font-mono">cd backend
-go mod download
-go run main.go</pre>
+                                go mod download
+                                go run main.go</pre>
                         </div>
                         <div className="rounded-xl border border-white/10 bg-black/20 p-5">
                             <h3 className="text-sm font-bold text-cyan-100">FRONTEND</h3>
                             <pre className="mt-3 whitespace-pre-wrap text-xs text-cyan-100/90 font-mono">cd frontend
-npm install
-npm run dev</pre>
+                                npm install
+                                npm run dev</pre>
                         </div>
                     </div>
                 </section>
