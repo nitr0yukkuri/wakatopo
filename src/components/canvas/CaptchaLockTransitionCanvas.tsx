@@ -4,6 +4,20 @@ import { motion } from 'framer-motion';
 
 const GRID_CELLS = Array.from({ length: 9 }, (_, i) => i);
 const HUD_BARS = [28, 47, 63, 78, 41, 85, 56];
+const SELECT_SEQUENCE = [0, 3, 7] as const;
+const SELECTED_CELLS = new Set<number>(SELECT_SEQUENCE);
+const TARGET_LABEL = 'TRAFFIC LIGHT';
+const TILE_IMAGES = [
+    'https://raw.githubusercontent.com/nitr0yukkuri/recaptchgame/main/frontend/public/images/shingouki1.jpg',
+    'https://raw.githubusercontent.com/nitr0yukkuri/recaptchgame/main/frontend/public/images/car2.jpg',
+    'https://raw.githubusercontent.com/nitr0yukkuri/recaptchgame/main/frontend/public/images/kaidan1.jpg',
+    'https://raw.githubusercontent.com/nitr0yukkuri/recaptchgame/main/frontend/public/images/shingouki3.jpg',
+    'https://raw.githubusercontent.com/nitr0yukkuri/recaptchgame/main/frontend/public/images/shoukasen1.jpg',
+    'https://raw.githubusercontent.com/nitr0yukkuri/recaptchgame/main/frontend/public/images/car4.jpg',
+    'https://raw.githubusercontent.com/nitr0yukkuri/recaptchgame/main/frontend/public/images/kaidan2.jpg',
+    'https://raw.githubusercontent.com/nitr0yukkuri/recaptchgame/main/frontend/public/images/shingouki4.jpg',
+    'https://raw.githubusercontent.com/nitr0yukkuri/recaptchgame/main/frontend/public/images/shoukasen2.jpg',
+];
 
 export default function CaptchaLockTransitionCanvas() {
     return (
@@ -43,15 +57,62 @@ export default function CaptchaLockTransitionCanvas() {
                         </span>
                     </div>
 
+                    <div className="mb-3 overflow-hidden rounded-md border border-[#4285f4]/45 bg-[#4285f4] text-white">
+                        <div className="px-3 pt-2 pb-1 text-[10px] font-mono tracking-[0.18em] text-blue-100/95">Select all images with</div>
+                        <div className="px-3 pb-2 text-lg font-black tracking-wide md:text-xl">{TARGET_LABEL}</div>
+                    </div>
+
                     <div className="mb-5 grid grid-cols-3 gap-2">
-                        {GRID_CELLS.map((cell) => (
-                            <motion.div
-                                key={cell}
-                                className="aspect-square rounded-md border border-cyan-100/15 bg-gradient-to-br from-slate-900/80 via-slate-800/45 to-slate-950/90"
-                                animate={{ opacity: [0.4, 0.95, 0.45] }}
-                                transition={{ duration: 0.6, repeat: Infinity, delay: cell * 0.045 }}
-                            />
-                        ))}
+                        {GRID_CELLS.map((cell) => {
+                            const selected = SELECTED_CELLS.has(cell);
+                            const selectionOrder = SELECT_SEQUENCE.indexOf(cell as (typeof SELECT_SEQUENCE)[number]);
+                            return (
+                                <motion.div
+                                    key={cell}
+                                    className="relative aspect-square overflow-hidden rounded-md border border-cyan-100/20 bg-slate-900/70"
+                                    initial={{ opacity: 0.45, scale: 0.94 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    transition={{ duration: 0.22, delay: 0.06 + cell * 0.03 }}
+                                >
+                                    <img
+                                        src={TILE_IMAGES[cell]}
+                                        alt="captcha tile"
+                                        className="h-full w-full object-cover"
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/45" />
+
+                                    {selected && (
+                                        <motion.div
+                                            initial={{ opacity: 0, scale: 0.45 }}
+                                            animate={{ opacity: 1, scale: 1 }}
+                                            transition={{ delay: 0.44 + Math.max(selectionOrder, 0) * 0.14, duration: 0.2, ease: 'easeOut' }}
+                                            className="absolute left-1.5 top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-sky-400 text-[12px] font-black text-white shadow-[0_0_16px_rgba(56,189,248,0.6)]"
+                                        >
+                                            ✓
+                                        </motion.div>
+                                    )}
+
+                                    <motion.div
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: selected ? [0, 0.25, 0] : 0 }}
+                                        transition={{ delay: 0.45 + Math.max(selectionOrder, 0) * 0.14, duration: 0.32 }}
+                                        className="pointer-events-none absolute inset-0 bg-cyan-200"
+                                    />
+                                </motion.div>
+                            );
+                        })}
+                    </div>
+
+                    <div className="mb-4 flex items-center justify-between rounded-md border border-[#3367d6]/50 bg-[#0c1d38]/80 px-3 py-2">
+                        <span className="text-[11px] font-mono tracking-[0.14em] text-cyan-100/90">I&apos;m not a robot</span>
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.5 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ delay: 0.85, duration: 0.2 }}
+                            className="flex h-5 w-5 items-center justify-center rounded-sm border border-cyan-200/60 bg-cyan-300/15"
+                        >
+                            <span className="text-[12px] font-black text-cyan-100">✓</span>
+                        </motion.div>
                     </div>
 
                     <div className="mb-4 flex items-center gap-3 rounded-lg border border-sky-200/20 bg-black/30 p-3">
@@ -77,6 +138,16 @@ export default function CaptchaLockTransitionCanvas() {
                             </div>
                         ))}
                     </div>
+
+                    <motion.div
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: [0, 1, 1], y: [8, 0, 0] }}
+                        transition={{ duration: 0.5, delay: 0.95 }}
+                        className="mt-4 flex items-center justify-between rounded-lg border border-emerald-300/35 bg-emerald-300/10 px-3 py-2 text-[11px] font-mono tracking-[0.18em] text-emerald-100"
+                    >
+                        <span>HUMAN VERIFIED</span>
+                        <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-emerald-300 text-[12px] font-black text-[#04210f]">✓</span>
+                    </motion.div>
                 </motion.div>
             </div>
         </div>
