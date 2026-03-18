@@ -60,8 +60,11 @@ export default function WorksList({ works }: { works: Work[] }) {
             }, 2000);
         } else if (id === '04') {
             setActiveWork('04');
-            setTransitionType('none');
-            router.push('/recaptcha-game');
+            setTransitionType('captcha-lock');
+            setTimeout(() => {
+                router.push('/recaptcha-game');
+                setTimeout(() => setTransitionType('none'), 900);
+            }, 1650);
         } else if (id === '05') {
             setActiveWork('05');
             setTransitionType('wave');

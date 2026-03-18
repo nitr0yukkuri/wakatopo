@@ -14,7 +14,8 @@ type TransitionType =
     | 'flash'
     | 'heavy-cloud'
     | 'wave'
-    | 'moonrise';
+    | 'moonrise'
+    | 'captcha-lock';
 
 const MUTE_KEY = 'lp-audio-muted';
 
@@ -271,6 +272,12 @@ export default function SoundDirector() {
             case 'cloud':
                 playSweep(261.63, 174.61, 0.3, 'triangle', 0.075);
                 playTone(220.0, 0.16, 0.036, 'sine', 0.08);
+                break;
+            case 'captcha-lock':
+                playTone(523.25, 0.08, 0.05, 'triangle');
+                playTone(659.25, 0.08, 0.05, 'triangle', 0.1);
+                playTone(783.99, 0.12, 0.06, 'sine', 0.2);
+                playNoiseBurst(0.07, 0.015, 0.1, 2400);
                 break;
             case 'none':
             default:

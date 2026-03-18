@@ -16,6 +16,7 @@ const ThunderTransitionCanvas = dynamic(() => import('@/components/canvas/Thunde
 const SunburstTransitionCanvas = dynamic(() => import('@/components/canvas/SunburstTransitionCanvas'), { ssr: false });
 const WaveTransitionCanvas = dynamic(() => import('@/components/canvas/WaveTransitionCanvas'), { ssr: false });
 const MoonriseTransitionCanvas = dynamic(() => import('@/components/canvas/MoonriseTransitionCanvas'), { ssr: false });
+const CaptchaLockTransitionCanvas = dynamic(() => import('@/components/canvas/CaptchaLockTransitionCanvas'), { ssr: false });
 
 export default function GlobalTransitionOverlay() {
     const transitionType = useStore((state) => state.transitionType);
@@ -168,6 +169,19 @@ export default function GlobalTransitionOverlay() {
                     </div>
                 )}
             </div>
+
+            {transitionType === 'captcha-lock' && (
+                <motion.div
+                    key="captcha-lock"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 1.1 }}
+                    className="fixed inset-0 z-9999 pointer-events-auto bg-[#02040b]"
+                >
+                    <CaptchaLockTransitionCanvas />
+                </motion.div>
+            )}
         </AnimatePresence>
     );
 }
