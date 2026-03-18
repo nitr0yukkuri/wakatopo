@@ -107,7 +107,7 @@ export default function SoundDirector() {
 
             const ctx = new Ctx();
             const master = ctx.createGain();
-            master.gain.value = 0.1;
+            master.gain.value = 0.22;
             master.connect(ctx.destination);
 
             audioContextRef.current = ctx;
@@ -228,46 +228,49 @@ export default function SoundDirector() {
     const playTransitionSfx = (type: TransitionType) => {
         switch (type) {
             case 'warp':
-                playSweep(120, 980, 0.36, 'sawtooth', 0.22);
-                playTone(246.94, 0.28, 0.08, 'triangle', 0.05);
-                playTone(369.99, 0.24, 0.07, 'sine', 0.11);
+                playSweep(146.83, 587.33, 0.34, 'triangle', 0.14);
+                playTone(220.0, 0.24, 0.065, 'triangle', 0.04);
+                playTone(293.66, 0.2, 0.055, 'sine', 0.1);
                 break;
             case 'flash':
-                playNoiseBurst(0.15, 0.09, 0.0, 1400);
-                playSweep(1200, 120, 0.2, 'square', 0.14);
+                playNoiseBurst(0.12, 0.06, 0.0, 1700);
+                playSweep(392.0, 82.41, 0.24, 'triangle', 0.1);
+                playTone(123.47, 0.18, 0.045, 'sine', 0.06);
                 break;
             case 'rain':
-                playNoiseBurst(0.19, 0.04, 0.0, 2200);
-                playTone(293.66, 0.16, 0.07, 'triangle', 0.02);
-                playTone(246.94, 0.2, 0.06, 'sine', 0.1);
+                playNoiseBurst(0.17, 0.032, 0.0, 2300);
+                playTone(138.59, 0.18, 0.052, 'triangle', 0.02);
+                playTone(116.54, 0.2, 0.046, 'sine', 0.1);
                 break;
             case 'snow':
-                playTone(659.25, 0.23, 0.08, 'sine');
-                playTone(880.0, 0.22, 0.05, 'triangle', 0.06);
+                playTone(392.0, 0.22, 0.062, 'sine');
+                playTone(523.25, 0.2, 0.046, 'triangle', 0.06);
                 break;
             case 'heavy-cloud':
-                playSweep(170, 72, 0.48, 'triangle', 0.16);
-                playNoiseBurst(0.12, 0.025, 0.1, 900);
+                playSweep(220.0, 110.0, 0.44, 'triangle', 0.105);
+                playTone(146.83, 0.2, 0.04, 'sine', 0.08);
+                playNoiseBurst(0.1, 0.016, 0.11, 950);
                 break;
             case 'sunburst':
-                playTone(392.0, 0.18, 0.09, 'triangle');
-                playTone(523.25, 0.2, 0.085, 'triangle', 0.08);
-                playTone(783.99, 0.2, 0.07, 'sine', 0.14);
+                playTone(220.0, 0.19, 0.072, 'triangle');
+                playTone(293.66, 0.2, 0.066, 'triangle', 0.07);
+                playTone(349.23, 0.19, 0.054, 'sine', 0.13);
                 break;
             case 'moonrise':
-                playTone(311.13, 0.3, 0.06, 'sine');
-                playTone(466.16, 0.28, 0.05, 'triangle', 0.1);
+                playTone(196.0, 0.28, 0.05, 'sine');
+                playTone(246.94, 0.26, 0.044, 'triangle', 0.1);
                 break;
             case 'freeze':
-                playTone(880.0, 0.16, 0.065, 'triangle');
-                playTone(1318.51, 0.22, 0.052, 'sine', 0.08);
+                playTone(523.25, 0.15, 0.052, 'triangle');
+                playTone(784.0, 0.2, 0.044, 'sine', 0.08);
                 break;
             case 'wave':
-                playSweep(210, 460, 0.25, 'sine', 0.1);
-                playSweep(460, 220, 0.31, 'sine', 0.08);
+                playSweep(220.0, 349.23, 0.24, 'sine', 0.075);
+                playSweep(349.23, 246.94, 0.3, 'sine', 0.062);
                 break;
             case 'cloud':
-                playSweep(300, 210, 0.28, 'triangle', 0.1);
+                playSweep(261.63, 174.61, 0.3, 'triangle', 0.075);
+                playTone(220.0, 0.16, 0.036, 'sine', 0.08);
                 break;
             case 'none':
             default:
