@@ -22,19 +22,19 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://wakatopo.vercel.app"),
-  title: "WAKATOPO | Living Planet Portfolio",
+  title: "WAKATO | Living Planet Portfolio",
   description: "GitHubの活動とリアルタイム天気が連動する、インタラクティブな3Dポートフォリオ。",
   openGraph: {
-    title: "WAKATOPO | Living Planet Portfolio",
+    title: "WAKATO | Living Planet Portfolio",
     description: "GitHubの活動とリアルタイム天気が連動する、インタラクティブな3Dポートフォリオ。",
     url: "https://wakatopo.vercel.app",
-    siteName: "WAKATOPO",
+    siteName: "WAKATO",
     locale: "ja_JP",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "WAKATOPO | Living Planet Portfolio",
+    title: "WAKATO | Living Planet Portfolio",
     description: "GitHubの活動とリアルタイム天気が連動する、インタラクティブな3Dポートフォリオ。",
   },
   icons: {
