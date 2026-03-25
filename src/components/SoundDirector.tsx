@@ -170,7 +170,7 @@ export default function SoundDirector() {
             outputCompressor.attack.value = 0.01;
             outputCompressor.release.value = 0.22;
 
-            master.gain.value = 0.5;
+            master.gain.value = 1.1;
             master.connect(outputCompressor);
             outputCompressor.connect(ctx.destination);
 
