@@ -20,6 +20,7 @@ type TransitionType =
     | 'captcha-lock';
 
 const MUTE_KEY = 'lp-audio-muted';
+const OUTPUT_BOOST = 2.4;
 
 export default function SoundDirector() {
     const pathname = usePathname();
@@ -30,6 +31,9 @@ export default function SoundDirector() {
     const audioContextRef = useRef<AudioContext | null>(null);
     const masterGainRef = useRef<GainNode | null>(null);
     const outputLowpassRef = useRef<BiquadFilterNode | null>(null);
+    const outputConvolverRef = useRef<ConvolverNode | null>(null);
+    const outputDryGainRef = useRef<GainNode | null>(null);
+    const outputWetGainRef = useRef<GainNode | null>(null);
     const outputCompressorRef = useRef<DynamicsCompressorNode | null>(null);
     const bgmTimerRef = useRef<number | null>(null);
     const previousTransitionRef = useRef<TransitionType>('none');
@@ -49,6 +53,22 @@ export default function SoundDirector() {
     const ensureAudioGraph = async () => {
         if (typeof window === 'undefined') return false;
 
+        const createImpulseResponse = (ctx: AudioContext, seconds = 2.8, decay = 2.6) => {
+            const length = Math.max(1, Math.floor(ctx.sampleRate * seconds));
+            const impulse = ctx.createBuffer(2, length, ctx.sampleRate);
+
+            for (let channel = 0; channel < 2; channel += 1) {
+                const data = impulse.getChannelData(channel);
+                for (let i = 0; i < length; i += 1) {
+                    const t = i / length;
+                    const env = Math.pow(1 - t, decay);
+                    data[i] = (Math.random() * 2 - 1) * env;
+                }
+            }
+
+            return impulse;
+        };
+
         if (!audioContextRef.current) {
             const Ctx = window.AudioContext || (window as typeof window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
             if (!Ctx) return false;
@@ -56,27 +76,45 @@ export default function SoundDirector() {
             const ctx = new Ctx();
             const master = ctx.createGain();
             const outputLowpass = ctx.createBiquadFilter();
+            const outputConvolver = ctx.createConvolver();
+            const outputDryGain = ctx.createGain();
+            const outputWetGain = ctx.createGain();
             const outputCompressor = ctx.createDynamicsCompressor();
 
             // Heavy lo-fi shaping: narrow highs and soft dynamics.
             outputLowpass.type = 'lowpass';
-            outputLowpass.frequency.value = 1850;
-            outputLowpass.Q.value = 0.8;
+            outputLowpass.frequency.value = 1050;
+            outputLowpass.Q.value = 1.1;
 
-            outputCompressor.threshold.value = -30;
-            outputCompressor.knee.value = 28;
-            outputCompressor.ratio.value = 2.5;
-            outputCompressor.attack.value = 0.02;
-            outputCompressor.release.value = 0.32;
+            outputConvolver.buffer = createImpulseResponse(ctx);
 
-            master.gain.value = 1.1;
+            outputDryGain.gain.value = 0.58;
+            outputWetGain.gain.value = 0.95;
+
+            outputCompressor.threshold.value = -34;
+            outputCompressor.knee.value = 30;
+            outputCompressor.ratio.value = 1.9;
+            outputCompressor.attack.value = 0.05;
+            outputCompressor.release.value = 0.52;
+
+            master.gain.value = 1.5;
             master.connect(outputLowpass);
-            outputLowpass.connect(outputCompressor);
+
+            outputLowpass.connect(outputDryGain);
+            outputDryGain.connect(outputCompressor);
+
+            outputLowpass.connect(outputConvolver);
+            outputConvolver.connect(outputWetGain);
+            outputWetGain.connect(outputCompressor);
+
             outputCompressor.connect(ctx.destination);
 
             audioContextRef.current = ctx;
             masterGainRef.current = master;
             outputLowpassRef.current = outputLowpass;
+            outputConvolverRef.current = outputConvolver;
+            outputDryGainRef.current = outputDryGain;
+            outputWetGainRef.current = outputWetGain;
             outputCompressorRef.current = outputCompressor;
         }
 
@@ -103,16 +141,17 @@ export default function SoundDirector() {
         const osc = ctx.createOscillator();
         const filter = ctx.createBiquadFilter();
         const gain = ctx.createGain();
+        const boostedVolume = Math.min(Math.max(volume * OUTPUT_BOOST, 0.0001), 1.2);
 
         osc.type = type;
         osc.frequency.setValueAtTime(Math.max(freq, 24), ctx.currentTime + at);
 
         filter.type = filterType;
-        filter.frequency.setValueAtTime(Math.min(Math.max(freq * 4, 120), 6200), ctx.currentTime + at);
+        filter.frequency.setValueAtTime(Math.min(Math.max(freq * 1.85, 70), 1900), ctx.currentTime + at);
         filter.Q.value = q;
 
         gain.gain.setValueAtTime(0.0001, ctx.currentTime + at);
-        gain.gain.exponentialRampToValueAtTime(volume, ctx.currentTime + at + 0.015);
+        gain.gain.exponentialRampToValueAtTime(boostedVolume, ctx.currentTime + at + 0.045);
         gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + at + duration);
 
         osc.connect(filter);
@@ -143,6 +182,7 @@ export default function SoundDirector() {
         const source = ctx.createBufferSource();
         const hp = ctx.createBiquadFilter();
         const gain = ctx.createGain();
+        const boostedVolume = Math.min(Math.max(volume * OUTPUT_BOOST, 0.0001), 1.2);
 
         source.buffer = buffer;
 
@@ -150,7 +190,7 @@ export default function SoundDirector() {
         hp.frequency.setValueAtTime(highpass, ctx.currentTime + at);
 
         gain.gain.setValueAtTime(0.0001, ctx.currentTime + at);
-        gain.gain.exponentialRampToValueAtTime(volume, ctx.currentTime + at + 0.01);
+        gain.gain.exponentialRampToValueAtTime(boostedVolume, ctx.currentTime + at + 0.01);
         gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + at + duration);
 
         source.connect(hp);
@@ -236,9 +276,10 @@ export default function SoundDirector() {
                 playTone(349.23, 0.28, 0.016, 'triangle', 0.38);
                 break;
             case 'wave':
-                playTone(196.0, 0.3, 0.018, 'sine');
-                playTone(246.94, 0.28, 0.017, 'triangle', 0.18);
-                playTone(293.66, 0.28, 0.016, 'sine', 0.38);
+                // Denshouo: gentle traditional storytelling motif.
+                playTone(146.83, 0.34, 0.02, 'triangle');
+                playTone(196.0, 0.3, 0.018, 'sine', 0.2);
+                playTone(246.94, 0.28, 0.016, 'triangle', 0.42);
                 break;
             case 'cloud':
                 playTone(220.0, 0.28, 0.018, 'triangle', 0.0);
@@ -268,17 +309,19 @@ export default function SoundDirector() {
             if (isMutedRef.current) return;
             const index = bgmStepRef.current % profile.notes.length;
             const base = profile.notes[index];
-            const sway = 1 + Math.sin(bgmStepRef.current * 0.7) * 0.018;
+            const sway = 1 + Math.sin(bgmStepRef.current * 0.63) * 0.08;
+            const deepBed = base * 0.5;
             const top = base * profile.highRatio;
             const pulse = base * profile.pulseRatio;
 
-            playTone(base * sway, 2.1, 0.022, profile.waveform);
-            playTone(top * sway, 1.1, 0.009, 'sine', 0.16);
-            playTone(pulse, 0.24, 0.008, 'triangle', 0.34);
-            playTone(base * profile.accentRatio, 0.22, profile.accentVolume, profile.accentWaveform, profile.accentAt);
+            playTone(base * sway, 2.9, 0.028, profile.waveform);
+            playTone(deepBed, 2.4, 0.014, 'sine', 0.08);
+            playTone(top * sway, 1.6, 0.007, 'sine', 0.34);
+            playTone(pulse, 0.36, 0.01, 'triangle', 0.62);
+            playTone(base * profile.accentRatio, 0.28, profile.accentVolume, profile.accentWaveform, profile.accentAt);
 
             if (weather === 'Rain' || weather === 'Clouds') {
-                playNoiseBurst(0.05, 0.0016, 0.44, 1800);
+                playNoiseBurst(0.1, 0.0026, 0.72, 1400);
             }
 
             bgmStepRef.current += 1;
@@ -354,6 +397,9 @@ export default function SoundDirector() {
             audioContextRef.current = null;
             masterGainRef.current = null;
             outputLowpassRef.current = null;
+            outputConvolverRef.current = null;
+            outputDryGainRef.current = null;
+            outputWetGainRef.current = null;
             outputCompressorRef.current = null;
         };
     }, []);

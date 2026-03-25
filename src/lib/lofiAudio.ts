@@ -16,69 +16,69 @@ const clamp = (value: number, min: number, max: number) => Math.min(max, Math.ma
 
 export const getLofiBgmProfile = (weather: WeatherType, activity: number, activeWorkId: string | null): LofiBgmProfile => {
     const level = clamp(activity, 0, 1);
-    const tempoOffset = (1 - level) * 320;
+    const tempoOffset = (1 - level) * 560;
 
     // Original lo-fi motifs inspired by bright/chill mood, not copied from any specific song.
     switch (activeWorkId) {
         case '01':
             return {
-                notes: [196.0, 246.94, 293.66, 246.94],
-                highRatio: 1.5,
-                pulseRatio: 1.25,
-                waveform: 'triangle',
+                notes: [98.0, 110.0, 146.83, 130.81],
+                highRatio: 1.25,
+                pulseRatio: 1.12,
+                waveform: 'sine',
                 accentWaveform: 'sine',
-                accentRatio: 1.5,
-                accentVolume: 0.013,
-                accentAt: 0.28,
-                tickMs: 2980 + tempoOffset,
+                accentRatio: 1.25,
+                accentVolume: 0.01,
+                accentAt: 0.42,
+                tickMs: 4980 + tempoOffset,
             };
         case '02':
             return {
-                notes: [220.0, 261.63, 329.63, 392.0],
-                highRatio: 1.5,
-                pulseRatio: 1.25,
+                notes: [110.0, 130.81, 164.81, 146.83],
+                highRatio: 1.25,
+                pulseRatio: 1.1,
                 waveform: 'sine',
                 accentWaveform: 'triangle',
                 accentRatio: 1.25,
-                accentVolume: 0.014,
-                accentAt: 0.34,
-                tickMs: 3120 + tempoOffset,
+                accentVolume: 0.011,
+                accentAt: 0.46,
+                tickMs: 5260 + tempoOffset,
             };
         case '03':
             return {
-                notes: [174.61, 220.0, 261.63, 329.63],
-                highRatio: 1.5,
-                pulseRatio: 1.2,
+                notes: [92.5, 116.54, 138.59, 123.47],
+                highRatio: 1.25,
+                pulseRatio: 1.15,
                 waveform: 'triangle',
                 accentWaveform: 'sine',
-                accentRatio: 2,
-                accentVolume: 0.012,
-                accentAt: 0.36,
-                tickMs: 3060 + tempoOffset,
+                accentRatio: 1.5,
+                accentVolume: 0.009,
+                accentAt: 0.44,
+                tickMs: 5180 + tempoOffset,
             };
         case '04':
             return {
-                notes: [196.0, 246.94, 277.18, 329.63],
-                highRatio: 1.5,
-                pulseRatio: 1.33,
+                notes: [103.83, 123.47, 155.56, 138.59],
+                highRatio: 1.25,
+                pulseRatio: 1.15,
                 waveform: 'triangle',
                 accentWaveform: 'triangle',
-                accentRatio: 1.5,
-                accentVolume: 0.013,
-                accentAt: 0.3,
-                tickMs: 2860 + tempoOffset,
+                accentRatio: 1.25,
+                accentVolume: 0.01,
+                accentAt: 0.4,
+                tickMs: 4820 + tempoOffset,
             };
         case '05':
             return {
-                notes: [164.81, 196.0, 246.94, 293.66],
-                highRatio: 1.5,
-                pulseRatio: 1.2,
-                waveform: 'sine',
+                notes: [82.41, 98.0, 123.47, 110.0],
+                highRatio: 1.25,
+                pulseRatio: 1.1,
+                waveform: 'triangle',
                 accentWaveform: 'triangle',
                 accentRatio: 1.5,
-                accentVolume: 0.012,
-                accentAt: 0.36,
-                tickMs: 3200 + tempoOffset,
+                accentVolume: 0.011,
+                accentAt: 0.5,
+                tickMs: 5480 + tempoOffset,
             };
         default:
             break;
@@ -87,77 +87,77 @@ export const getLofiBgmProfile = (weather: WeatherType, activity: number, active
     switch (weather) {
         case 'Night':
             return {
-                notes: [164.81, 196.0, 246.94, 220.0],
-                highRatio: 1.5,
-                pulseRatio: 1.2,
+                notes: [87.31, 103.83, 130.81, 116.54],
+                highRatio: 1.25,
+                pulseRatio: 1.1,
                 waveform: 'sine',
                 accentWaveform: 'sine',
                 accentRatio: 1.25,
-                accentVolume: 0.011,
-                accentAt: 0.38,
-                tickMs: 3180 + tempoOffset,
+                accentVolume: 0.009,
+                accentAt: 0.5,
+                tickMs: 5560 + tempoOffset,
             };
         case 'Rain':
             return {
-                notes: [174.61, 220.0, 261.63, 220.0],
-                highRatio: 1.5,
-                pulseRatio: 1.2,
+                notes: [92.5, 110.0, 138.59, 123.47],
+                highRatio: 1.25,
+                pulseRatio: 1.1,
                 waveform: 'triangle',
                 accentWaveform: 'sine',
                 accentRatio: 1.25,
-                accentVolume: 0.011,
-                accentAt: 0.36,
-                tickMs: 3060 + tempoOffset,
+                accentVolume: 0.009,
+                accentAt: 0.46,
+                tickMs: 5280 + tempoOffset,
             };
         case 'Clouds':
             return {
-                notes: [196.0, 220.0, 261.63, 220.0],
-                highRatio: 1.5,
-                pulseRatio: 1.2,
+                notes: [98.0, 110.0, 130.81, 116.54],
+                highRatio: 1.25,
+                pulseRatio: 1.1,
                 waveform: 'triangle',
                 accentWaveform: 'triangle',
                 accentRatio: 1.25,
-                accentVolume: 0.011,
-                accentAt: 0.34,
-                tickMs: 2980 + tempoOffset,
+                accentVolume: 0.009,
+                accentAt: 0.44,
+                tickMs: 5160 + tempoOffset,
             };
         case 'Snow':
             return {
-                notes: [196.0, 246.94, 293.66, 261.63],
-                highRatio: 1.5,
-                pulseRatio: 1.2,
+                notes: [103.83, 123.47, 146.83, 130.81],
+                highRatio: 1.25,
+                pulseRatio: 1.1,
                 waveform: 'sine',
                 accentWaveform: 'sine',
                 accentRatio: 1.25,
-                accentVolume: 0.011,
-                accentAt: 0.36,
-                tickMs: 3020 + tempoOffset,
+                accentVolume: 0.009,
+                accentAt: 0.46,
+                tickMs: 5220 + tempoOffset,
             };
         case 'Thunder':
             return {
-                notes: [146.83, 174.61, 220.0, 196.0],
-                highRatio: 1.5,
-                pulseRatio: 1.2,
+                notes: [77.78, 92.5, 116.54, 103.83],
+                highRatio: 1.25,
+                pulseRatio: 1.1,
                 waveform: 'triangle',
                 accentWaveform: 'triangle',
                 accentRatio: 1.25,
-                accentVolume: 0.012,
-                accentAt: 0.34,
-                tickMs: 3120 + tempoOffset,
+                accentVolume: 0.009,
+                accentAt: 0.44,
+                tickMs: 5380 + tempoOffset,
             };
         case 'Clear':
         case 'Morning':
         default:
             return {
-                notes: [196.0, 246.94, 293.66, 246.94],
-                highRatio: 1.5,
-                pulseRatio: 1.2,
+                notes: [110.0, 130.81, 164.81, 146.83],
+                highRatio: 1.25,
+                pulseRatio: 1.1,
                 waveform: 'triangle',
                 accentWaveform: 'sine',
                 accentRatio: 1.25,
-                accentVolume: 0.011,
-                accentAt: 0.34,
-                tickMs: 2920 + tempoOffset,
+                accentVolume: 0.009,
+                accentAt: 0.44,
+                tickMs: 5060 + tempoOffset,
             };
     }
 };
