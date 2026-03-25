@@ -93,6 +93,7 @@ export default function SoundDirector() {
     const githubActivityLevel = useStore((state) => state.githubActivityLevel);
     const audioContextRef = useRef<AudioContext | null>(null);
     const masterGainRef = useRef<GainNode | null>(null);
+    const outputCompressorRef = useRef<DynamicsCompressorNode | null>(null);
     const bgmTimerRef = useRef<number | null>(null);
     const previousTransitionRef = useRef<TransitionType>('none');
     const isMutedRef = useRef(false);
@@ -108,11 +109,22 @@ export default function SoundDirector() {
 
             const ctx = new Ctx();
             const master = ctx.createGain();
-            master.gain.value = 0.22;
-            master.connect(ctx.destination);
+            const outputCompressor = ctx.createDynamicsCompressor();
+
+            // Keep transients controlled and raise perceived loudness on speakers.
+            outputCompressor.threshold.value = -28;
+            outputCompressor.knee.value = 24;
+            outputCompressor.ratio.value = 3;
+            outputCompressor.attack.value = 0.01;
+            outputCompressor.release.value = 0.22;
+
+            master.gain.value = 0.5;
+            master.connect(outputCompressor);
+            outputCompressor.connect(ctx.destination);
 
             audioContextRef.current = ctx;
             masterGainRef.current = master;
+            outputCompressorRef.current = outputCompressor;
         }
 
         if (audioContextRef.current.state === 'suspended') {
@@ -379,6 +391,7 @@ export default function SoundDirector() {
 
             audioContextRef.current = null;
             masterGainRef.current = null;
+            outputCompressorRef.current = null;
         };
     }, []);
 
