@@ -48,11 +48,31 @@ export default function SnowCanvas() {
 
         // レイヤー毎の drift 量を保持するため、flakeIndexからdrif値へのマップ
         const driftMap: number[] = [];
+        const flakeCanvases: HTMLCanvasElement[] = [];
         let fi = 0;
         for (const l of layers) {
             for (let i = 0; i < l.count; i++) {
                 driftMap[fi++] = l.drift;
             }
+        }
+
+        // プレレンダリングしてパフォーマンスを最適化 (createRadialGradientを毎フレーム呼ばない)
+        for (let i = 0; i < flakes.length; i++) {
+            const f = flakes[i];
+            const fc = document.createElement('canvas');
+            const rOffset = Math.ceil(f.r);
+            fc.width = rOffset * 2;
+            fc.height = rOffset * 2;
+            const fctx = fc.getContext('2d')!;
+            const grad = fctx.createRadialGradient(rOffset, rOffset, 0, rOffset, rOffset, f.r);
+            grad.addColorStop(0, `rgba(225,238,255,${f.alpha})`);
+            grad.addColorStop(0.6, `rgba(210,228,255,${f.alpha * 0.45})`);
+            grad.addColorStop(1, 'rgba(200,220,255,0)');
+            fctx.fillStyle = grad;
+            fctx.beginPath();
+            fctx.arc(rOffset, rOffset, f.r, 0, Math.PI * 2);
+            fctx.fill();
+            flakeCanvases.push(fc);
         }
 
         function draw() {
@@ -72,15 +92,8 @@ export default function SnowCanvas() {
                 if (f.x > w + 6) f.x = -6;
                 if (f.x < -6) f.x = w + 6;
 
-                const grad = ctx.createRadialGradient(f.x, f.y, 0, f.x, f.y, f.r);
-                grad.addColorStop(0, `rgba(225,238,255,${f.alpha})`);
-                grad.addColorStop(0.6, `rgba(210,228,255,${f.alpha * 0.45})`);
-                grad.addColorStop(1, 'rgba(200,220,255,0)');
-
-                ctx.beginPath();
-                ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
-                ctx.fillStyle = grad;
-                ctx.fill();
+                const rOffset = Math.ceil(f.r);
+                ctx.drawImage(flakeCanvases[i], f.x - rOffset, f.y - rOffset);
             }
 
             raf = requestAnimationFrame(draw);

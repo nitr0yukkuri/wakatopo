@@ -13,6 +13,7 @@ export default function Scene() {
                 camera={{ position: [0, 0, 8], fov: 35 }}
                 dpr={[1, 1.5]}
                 gl={{ antialias: false, powerPreference: 'high-performance' }}
+                performance={{ min: 0.5 }}
             >
                 <Suspense fallback={null}>
                     <color attach="background" args={['#050505']} />
