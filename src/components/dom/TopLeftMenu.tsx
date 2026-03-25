@@ -6,10 +6,10 @@ import { useEffect, useRef, useState } from 'react';
 const MENU_COMMANDS = [
     { href: '/about', label: 'ABOUT', hint: 'PROFILE' },
     { href: '/github-planet', label: 'GITHUB PLANET', hint: 'WORK 01' },
-    { href: '/otenkigurashi', label: 'OTENKIGURASHI', hint: 'WORK 02' },
+    { href: '/otenkigurashi', label: 'おてんきぐらし', hint: 'WORK 02' },
     { href: '/coldkeep', label: 'COLDKEEP', hint: 'WORK 03' },
     { href: '/recaptcha-game', label: 'RECAPTCHA GAME', hint: 'WORK 04' },
-    { href: '/denshouo', label: 'DENSHOUO', hint: 'WORK 05' },
+    { href: '/denshouo', label: 'でんしょうお', hint: 'WORK 05' },
 ];
 
 export default function TopLeftMenu() {
@@ -51,8 +51,11 @@ export default function TopLeftMenu() {
                 <span className="text-white font-bold text-sm tracking-widest group-hover:text-cyan-300 transition-colors">
                     WAKATO <span className="text-cyan-500 group-hover:text-white transition-colors">//</span> PORTFOLIO
                 </span>
-                <span className="rounded border border-cyan-400/35 px-1.5 py-0.5 text-[10px] tracking-[0.2em] text-cyan-200/90">
-                    {open ? 'CLOSE' : 'OPEN'}
+                <span
+                    aria-hidden="true"
+                    className="inline-flex h-4 w-4 items-center justify-center rounded border border-cyan-400/35 text-cyan-200/90 transition-colors group-hover:border-cyan-300"
+                >
+                    <span className={`h-1.5 w-1.5 rounded-full bg-cyan-300 transition-all ${open ? 'scale-100 opacity-100' : 'scale-75 opacity-70'}`} />
                 </span>
             </button>
 
