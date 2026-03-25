@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useStore, WeatherType } from '@/store';
+import { usePathname } from 'next/navigation';
+import { getLofiBgmProfile } from '@/lib/lofiAudio';
 
 type TransitionType =
     | 'none'
@@ -19,138 +21,30 @@ type TransitionType =
 
 const MUTE_KEY = 'lp-audio-muted';
 
-type BgmProfile = {
-    notes: number[];
-    highRatio: number;
-    pulseRatio: number;
-    waveform: OscillatorType;
-    tickMs: number;
-};
-
-const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
-
-const getBgmProfile = (weather: WeatherType, activity: number, activeWorkId: string | null): BgmProfile => {
-    const level = clamp(activity, 0, 1);
-    const tempoOffset = (1 - level) * 240;
-
-    // Prioritize per-work motifs after entering each project page.
-    switch (activeWorkId) {
-        case '01':
-            // GitHub Planet: cosmic and uplifting.
-            return {
-                notes: [73.42, 98.0, 146.83, 196.0],
-                highRatio: 2,
-                pulseRatio: 1.5,
-                waveform: 'sine',
-                tickMs: 1700 + tempoOffset,
-            };
-        case '02':
-            // Otenkigurashi: gentle weather ambience.
-            return {
-                notes: [164.81, 196.0, 220.0, 246.94],
-                highRatio: 1.5,
-                pulseRatio: 1.25,
-                waveform: 'triangle',
-                tickMs: 1860 + tempoOffset,
-            };
-        case '03':
-            // Coldkeep: geometric and mysterious.
-            return {
-                notes: [92.5, 138.59, 207.65, 155.56],
-                highRatio: 2,
-                pulseRatio: 1.4,
-                waveform: 'sawtooth',
-                tickMs: 1780 + tempoOffset,
-            };
-        case '04':
-            // reCAPTCHA game: arcadey loop.
-            return {
-                notes: [220.0, 277.18, 329.63, 440.0],
-                highRatio: 2,
-                pulseRatio: 2,
-                waveform: 'square',
-                tickMs: 1320 + tempoOffset,
-            };
-        case '05':
-            // Denshouo: soft and airy.
-            return {
-                notes: [146.83, 174.61, 196.0, 220.0],
-                highRatio: 1.5,
-                pulseRatio: 1.33,
-                waveform: 'sine',
-                tickMs: 1920 + tempoOffset,
-            };
-        default:
-            break;
-    }
-
-    switch (weather) {
-        case 'Night':
-            return {
-                notes: [98.0, 123.47, 146.83, 130.81],
-                highRatio: 2,
-                pulseRatio: 1.5,
-                waveform: 'sine',
-                tickMs: 2100 + tempoOffset,
-            };
-        case 'Rain':
-            return {
-                notes: [103.83, 123.47, 138.59, 116.54],
-                highRatio: 2,
-                pulseRatio: 1.33,
-                waveform: 'triangle',
-                tickMs: 1820 + tempoOffset,
-            };
-        case 'Clouds':
-            return {
-                notes: [110.0, 130.81, 146.83, 123.47],
-                highRatio: 2,
-                pulseRatio: 1.25,
-                waveform: 'triangle',
-                tickMs: 1760 + tempoOffset,
-            };
-        case 'Snow':
-            return {
-                notes: [130.81, 174.61, 196.0, 164.81],
-                highRatio: 2,
-                pulseRatio: 1.5,
-                waveform: 'sine',
-                tickMs: 1650 + tempoOffset,
-            };
-        case 'Thunder':
-            return {
-                notes: [82.41, 98.0, 123.47, 92.5],
-                highRatio: 2,
-                pulseRatio: 1.2,
-                waveform: 'sawtooth',
-                tickMs: 1960 + tempoOffset,
-            };
-        case 'Clear':
-        case 'Morning':
-        default:
-            return {
-                notes: [110.0, 146.83, 174.61, 130.81],
-                highRatio: 2,
-                pulseRatio: 1.5,
-                waveform: 'triangle',
-                tickMs: 1580 + tempoOffset,
-            };
-    }
-};
-
 export default function SoundDirector() {
+    const pathname = usePathname();
     const transitionType = useStore((state) => state.transitionType);
     const weather = useStore((state) => state.weather);
     const githubActivityLevel = useStore((state) => state.githubActivityLevel);
     const activeWorkId = useStore((state) => state.activeWorkId);
     const audioContextRef = useRef<AudioContext | null>(null);
     const masterGainRef = useRef<GainNode | null>(null);
+    const outputLowpassRef = useRef<BiquadFilterNode | null>(null);
     const outputCompressorRef = useRef<DynamicsCompressorNode | null>(null);
     const bgmTimerRef = useRef<number | null>(null);
     const previousTransitionRef = useRef<TransitionType>('none');
     const isMutedRef = useRef(false);
     const bgmStepRef = useRef(0);
     const [isMuted, setIsMuted] = useState(false);
+
+    const resolvedWorkId = (() => {
+        if (pathname === '/github-planet') return '01';
+        if (pathname === '/otenkigurashi') return '02';
+        if (pathname === '/coldkeep') return '03';
+        if (pathname === '/recaptcha-game') return '04';
+        if (pathname === '/denshouo') return '05';
+        return activeWorkId;
+    })();
 
     const ensureAudioGraph = async () => {
         if (typeof window === 'undefined') return false;
@@ -161,21 +55,28 @@ export default function SoundDirector() {
 
             const ctx = new Ctx();
             const master = ctx.createGain();
+            const outputLowpass = ctx.createBiquadFilter();
             const outputCompressor = ctx.createDynamicsCompressor();
 
-            // Keep transients controlled and raise perceived loudness on speakers.
-            outputCompressor.threshold.value = -28;
-            outputCompressor.knee.value = 24;
-            outputCompressor.ratio.value = 3;
-            outputCompressor.attack.value = 0.01;
-            outputCompressor.release.value = 0.22;
+            // Heavy lo-fi shaping: narrow highs and soft dynamics.
+            outputLowpass.type = 'lowpass';
+            outputLowpass.frequency.value = 1850;
+            outputLowpass.Q.value = 0.8;
+
+            outputCompressor.threshold.value = -30;
+            outputCompressor.knee.value = 28;
+            outputCompressor.ratio.value = 2.5;
+            outputCompressor.attack.value = 0.02;
+            outputCompressor.release.value = 0.32;
 
             master.gain.value = 1.1;
-            master.connect(outputCompressor);
+            master.connect(outputLowpass);
+            outputLowpass.connect(outputCompressor);
             outputCompressor.connect(ctx.destination);
 
             audioContextRef.current = ctx;
             masterGainRef.current = master;
+            outputLowpassRef.current = outputLowpass;
             outputCompressorRef.current = outputCompressor;
         }
 
@@ -293,68 +194,63 @@ export default function SoundDirector() {
     const playTransitionSfx = (type: TransitionType) => {
         switch (type) {
             case 'warp':
-                // GitHub Planet: space-like launch + sparkling overtones.
-                playSweep(98.0, 739.99, 0.52, 'sine', 0.13);
-                playTone(196.0, 0.28, 0.05, 'triangle', 0.02);
-                playTone(493.88, 0.22, 0.042, 'sine', 0.18);
-                playTone(659.25, 0.18, 0.03, 'sine', 0.29);
+                // Gentle bright jingle.
+                playTone(261.63, 0.24, 0.024, 'triangle', 0.0);
+                playTone(329.63, 0.24, 0.022, 'sine', 0.16);
+                playTone(392.0, 0.26, 0.02, 'sine', 0.32);
                 break;
             case 'flash':
                 // Otenkigurashi (thunder route): soft weather chime, not harsh.
-                playNoiseBurst(0.08, 0.02, 0.0, 2100);
-                playTone(293.66, 0.16, 0.045, 'sine', 0.0);
-                playTone(349.23, 0.2, 0.038, 'triangle', 0.07);
-                playTone(261.63, 0.22, 0.032, 'sine', 0.16);
+                playTone(329.63, 0.24, 0.022, 'triangle', 0.0);
+                playTone(392.0, 0.24, 0.02, 'sine', 0.16);
+                playTone(523.25, 0.26, 0.018, 'sine', 0.32);
                 break;
             case 'rain':
-                playNoiseBurst(0.14, 0.018, 0.0, 2600);
-                playTone(220.0, 0.16, 0.034, 'sine', 0.02);
-                playTone(246.94, 0.18, 0.03, 'triangle', 0.09);
+                playTone(293.66, 0.24, 0.022, 'triangle', 0.0);
+                playTone(369.99, 0.24, 0.02, 'sine', 0.16);
+                playTone(440.0, 0.24, 0.018, 'sine', 0.32);
                 break;
             case 'snow':
-                playTone(329.63, 0.22, 0.04, 'sine');
-                playTone(392.0, 0.18, 0.032, 'triangle', 0.08);
-                playTone(493.88, 0.16, 0.026, 'sine', 0.15);
+                playTone(329.63, 0.26, 0.022, 'sine');
+                playTone(392.0, 0.24, 0.02, 'triangle', 0.16);
+                playTone(493.88, 0.24, 0.018, 'sine', 0.34);
                 break;
             case 'heavy-cloud':
-                playSweep(246.94, 196.0, 0.34, 'sine', 0.05);
-                playTone(220.0, 0.2, 0.034, 'triangle', 0.05);
-                playNoiseBurst(0.1, 0.01, 0.09, 1600);
+                playTone(246.94, 0.26, 0.02, 'triangle', 0.0);
+                playTone(311.13, 0.24, 0.018, 'sine', 0.16);
+                playTone(392.0, 0.24, 0.017, 'sine', 0.34);
                 break;
             case 'sunburst':
-                playTone(261.63, 0.16, 0.042, 'sine');
-                playTone(329.63, 0.18, 0.036, 'triangle', 0.07);
-                playTone(392.0, 0.16, 0.03, 'sine', 0.13);
+                playTone(349.23, 0.24, 0.022, 'triangle');
+                playTone(440.0, 0.24, 0.02, 'sine', 0.16);
+                playTone(523.25, 0.26, 0.018, 'sine', 0.34);
                 break;
             case 'moonrise':
-                playTone(174.61, 0.3, 0.032, 'sine');
-                playTone(220.0, 0.26, 0.028, 'triangle', 0.09);
-                playTone(261.63, 0.2, 0.024, 'sine', 0.17);
+                playTone(261.63, 0.3, 0.02, 'sine');
+                playTone(329.63, 0.28, 0.018, 'triangle', 0.18);
+                playTone(392.0, 0.28, 0.016, 'sine', 0.38);
                 break;
             case 'freeze':
-                // Coldkeep: geometric / mysterious metallic interval stack.
-                playTone(233.08, 0.26, 0.055, 'triangle');
-                playTone(329.63, 0.24, 0.046, 'sine', 0.06);
-                playTone(466.16, 0.22, 0.04, 'triangle', 0.13);
-                playNoiseBurst(0.06, 0.008, 0.16, 3000);
+                playTone(220.0, 0.3, 0.02, 'triangle');
+                playTone(293.66, 0.28, 0.018, 'sine', 0.18);
+                playTone(349.23, 0.28, 0.016, 'triangle', 0.38);
                 break;
             case 'wave':
-                // Denshouo: gentle airy movement.
-                playSweep(196.0, 246.94, 0.3, 'sine', 0.05);
-                playSweep(246.94, 220.0, 0.34, 'sine', 0.042);
-                playTone(293.66, 0.18, 0.026, 'triangle', 0.12);
+                playTone(196.0, 0.3, 0.018, 'sine');
+                playTone(246.94, 0.28, 0.017, 'triangle', 0.18);
+                playTone(293.66, 0.28, 0.016, 'sine', 0.38);
                 break;
             case 'cloud':
-                playSweep(293.66, 220.0, 0.28, 'sine', 0.044);
-                playTone(246.94, 0.18, 0.028, 'triangle', 0.09);
+                playTone(220.0, 0.28, 0.018, 'triangle', 0.0);
+                playTone(293.66, 0.26, 0.017, 'sine', 0.18);
+                playTone(329.63, 0.26, 0.016, 'sine', 0.38);
                 break;
             case 'captcha-lock':
-                // reCAPTCHA game: arcade-style confirmation + level-up blip.
-                playTone(523.25, 0.07, 0.07, 'square');
-                playTone(659.25, 0.07, 0.07, 'square', 0.08);
-                playTone(783.99, 0.09, 0.08, 'square', 0.16);
-                playTone(987.77, 0.12, 0.06, 'triangle', 0.24);
-                playNoiseBurst(0.05, 0.01, 0.12, 2800);
+                // Soft game-clear jingle.
+                playTone(329.63, 0.18, 0.034, 'triangle');
+                playTone(392.0, 0.18, 0.03, 'triangle', 0.14);
+                playTone(493.88, 0.2, 0.026, 'sine', 0.3);
+                playTone(659.25, 0.24, 0.022, 'sine', 0.48);
                 break;
             case 'none':
             default:
@@ -365,7 +261,7 @@ export default function SoundDirector() {
     const startBgm = () => {
         if (bgmTimerRef.current !== null) return;
 
-        const profile = getBgmProfile(weather, githubActivityLevel, activeWorkId);
+        const profile = getLofiBgmProfile(weather, githubActivityLevel, resolvedWorkId);
         bgmStepRef.current = 0;
 
         const tick = () => {
@@ -376,12 +272,13 @@ export default function SoundDirector() {
             const top = base * profile.highRatio;
             const pulse = base * profile.pulseRatio;
 
-            playTone(base * sway, 1.65, 0.028, profile.waveform);
-            playTone(top * sway, 0.86, 0.013, 'sine', 0.04);
-            playTone(pulse, 0.22, 0.01, 'triangle', 0.18);
+            playTone(base * sway, 2.1, 0.022, profile.waveform);
+            playTone(top * sway, 1.1, 0.009, 'sine', 0.16);
+            playTone(pulse, 0.24, 0.008, 'triangle', 0.34);
+            playTone(base * profile.accentRatio, 0.22, profile.accentVolume, profile.accentWaveform, profile.accentAt);
 
             if (weather === 'Rain' || weather === 'Clouds') {
-                playNoiseBurst(0.08, 0.007, 0.24, 1800);
+                playNoiseBurst(0.05, 0.0016, 0.44, 1800);
             }
 
             bgmStepRef.current += 1;
@@ -456,6 +353,7 @@ export default function SoundDirector() {
 
             audioContextRef.current = null;
             masterGainRef.current = null;
+            outputLowpassRef.current = null;
             outputCompressorRef.current = null;
         };
     }, []);
@@ -480,7 +378,7 @@ export default function SoundDirector() {
 
         stopBgm();
         startBgm();
-    }, [weather, githubActivityLevel, activeWorkId]);
+    }, [weather, githubActivityLevel, activeWorkId, pathname]);
 
     return (
         <div className="fixed bottom-6 right-6 z-70 pointer-events-auto">
