@@ -26,8 +26,8 @@ export default function WeatherDebugSelector() {
                         key={w}
                         onClick={() => setWeather(w)}
                         className={`text-[10px] font-mono tracking-wider px-1.5 py-0.5 border rounded-sm transition-all ${weather === w
-                                ? `${COLOR[w]} bg-white/10`
-                                : 'text-gray-600 border-gray-700 hover:text-gray-400 hover:border-gray-500'
+                            ? `${COLOR[w]} bg-white/10`
+                            : 'text-gray-600 border-gray-700 hover:text-gray-400 hover:border-gray-500'
                             }`}
                     >
                         {w.toUpperCase()}
