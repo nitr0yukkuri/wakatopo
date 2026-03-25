@@ -117,6 +117,17 @@ export default function AbstractCore() {
     // インタラクション時の滑らかな補間用のRef
     const interactionValues = useRef({ hoverLevel: 0, activeLevel: 0 });
     const hitPointRef = useRef<THREE.Vector3 | null>(null);
+    const blendedVisualRef = useRef({
+        meshOpacity: CORE_VISUALS[weather].meshOpacity,
+        wireOpacity: CORE_VISUALS[weather].wireOpacity,
+        innerOpacity: CORE_VISUALS[weather].innerOpacity,
+        ringPulse: CORE_VISUALS[weather].ringPulse,
+        orbitTilt: CORE_VISUALS[weather].orbitTilt,
+        particleSize: CORE_VISUALS[weather].particleSize,
+    });
+    const blendedBaseColorRef = useRef(new THREE.Color(CORE_VISUALS[weather].baseColor));
+    const blendedHoverColorRef = useRef(new THREE.Color(CORE_VISUALS[weather].hoverColor));
+    const blendedActiveColorRef = useRef(new THREE.Color(CORE_VISUALS[weather].activeColor));
 
     // カーソル制御とグローバルなPointerUp監視
     useEffect(() => {
@@ -180,11 +191,24 @@ export default function AbstractCore() {
         interactionValues.current.activeLevel = THREE.MathUtils.lerp(interactionValues.current.activeLevel, active ? 1 : 0, 0.15);
 
         const { hoverLevel, activeLevel } = interactionValues.current;
+        const weatherBlend = 1 - Math.exp(-delta * 3.2);
+        blendedBaseColorRef.current.lerp(baseColorHolo, weatherBlend);
+        blendedHoverColorRef.current.lerp(hoverColor, weatherBlend);
+        blendedActiveColorRef.current.lerp(activeColor, weatherBlend);
+
+        blendedVisualRef.current.meshOpacity = THREE.MathUtils.lerp(blendedVisualRef.current.meshOpacity, visual.meshOpacity, weatherBlend);
+        blendedVisualRef.current.wireOpacity = THREE.MathUtils.lerp(blendedVisualRef.current.wireOpacity, visual.wireOpacity, weatherBlend);
+        blendedVisualRef.current.innerOpacity = THREE.MathUtils.lerp(blendedVisualRef.current.innerOpacity, visual.innerOpacity, weatherBlend);
+        blendedVisualRef.current.ringPulse = THREE.MathUtils.lerp(blendedVisualRef.current.ringPulse, visual.ringPulse, weatherBlend);
+        blendedVisualRef.current.orbitTilt = THREE.MathUtils.lerp(blendedVisualRef.current.orbitTilt, visual.orbitTilt, weatherBlend);
+        blendedVisualRef.current.particleSize = THREE.MathUtils.lerp(blendedVisualRef.current.particleSize, visual.particleSize, weatherBlend);
+
+        const blendedVisual = blendedVisualRef.current;
 
         // メイン色 (reuse temp color to avoid allocation)
-        _tempColor.copy(baseColorHolo)
-            .lerp(hoverColor, hoverLevel)
-            .lerp(activeColor, activeLevel);
+        _tempColor.copy(blendedBaseColorRef.current)
+            .lerp(blendedHoverColorRef.current, hoverLevel)
+            .lerp(blendedActiveColorRef.current, activeLevel);
         const currentColor = _tempColor;
 
         // 1. 中心ワイヤーフレームのアニメーション
@@ -195,12 +219,12 @@ export default function AbstractCore() {
             meshRef.current.rotation.y += rotSpeedY * delta;
             meshRef.current.rotation.x += rotSpeedX * delta;
 
-            const scale = 1.0 + activeLevel * 0.05 + Math.sin(time * (2.2 + visual.ringPulse)) * 0.02 * (1 + activeLevel);
+            const scale = 1.0 + activeLevel * 0.05 + Math.sin(time * (2.2 + blendedVisual.ringPulse)) * 0.02 * (1 + activeLevel);
             meshRef.current.scale.set(scale, scale, scale);
 
             const mat = meshRef.current.material as THREE.MeshBasicMaterial;
             mat.color.lerp(currentColor, 0.2);
-            mat.opacity = THREE.MathUtils.lerp(visual.meshOpacity, visual.meshOpacity + 0.18, hoverLevel + activeLevel);
+            mat.opacity = THREE.MathUtils.lerp(blendedVisual.meshOpacity, blendedVisual.meshOpacity + 0.18, hoverLevel + activeLevel);
         }
 
         // 2. 内側の複雑な幾何学（逆回転・高密度）
@@ -208,31 +232,31 @@ export default function AbstractCore() {
             wireframe2Ref.current.rotation.y -= (0.07 + hoverLevel * 0.5 + activeLevel * 2.0) * delta;
             wireframe2Ref.current.rotation.z += (0.04 + activeLevel * 1.0) * delta;
 
-            const wfScale = 0.9 + visual.ringPulse * 0.05 + Math.sin(time * (1.3 + visual.ringPulse)) * 0.01;
+            const wfScale = 0.9 + blendedVisual.ringPulse * 0.05 + Math.sin(time * (1.3 + blendedVisual.ringPulse)) * 0.01;
             wireframe2Ref.current.scale.set(wfScale, wfScale, wfScale);
 
             const mat = wireframe2Ref.current.material as THREE.MeshBasicMaterial;
             mat.color.lerp(currentColor, 0.2);
-            mat.opacity = THREE.MathUtils.lerp(visual.wireOpacity, visual.wireOpacity + 0.14, hoverLevel + activeLevel);
+            mat.opacity = THREE.MathUtils.lerp(blendedVisual.wireOpacity, blendedVisual.wireOpacity + 0.14, hoverLevel + activeLevel);
         }
 
         // 3. インナーコア（パルス光）
         if (innerRef.current) {
-            const innerScale = 0.84 + Math.sin(time * (4.0 + visual.ringPulse)) * 0.035 + activeLevel * 0.15;
+            const innerScale = 0.84 + Math.sin(time * (4.0 + blendedVisual.ringPulse)) * 0.035 + activeLevel * 0.15;
             innerRef.current.scale.set(innerScale, innerScale, innerScale);
             const mat = innerRef.current.material as THREE.MeshBasicMaterial;
             mat.color.lerp(currentColor, 0.2);
-            mat.opacity = THREE.MathUtils.lerp(visual.innerOpacity, visual.innerOpacity + 0.2, hoverLevel + activeLevel * 0.5);
+            mat.opacity = THREE.MathUtils.lerp(blendedVisual.innerOpacity, blendedVisual.innerOpacity + 0.2, hoverLevel + activeLevel * 0.5);
         }
 
         // 4, 5. 外側のデータリング（細い円環）
         if (ring1Ref.current && ring2Ref.current) {
-            ring1Ref.current.rotation.z += (0.18 + visual.ringPulse * 0.14 + activeLevel * 1.0) * delta;
-            ring2Ref.current.rotation.z -= (0.14 + visual.ringPulse * 0.1 + hoverLevel * 0.5 + activeLevel * 1.5) * delta;
+            ring1Ref.current.rotation.z += (0.18 + blendedVisual.ringPulse * 0.14 + activeLevel * 1.0) * delta;
+            ring2Ref.current.rotation.z -= (0.14 + blendedVisual.ringPulse * 0.1 + hoverLevel * 0.5 + activeLevel * 1.5) * delta;
 
             // クリック時にリングが展開するような挙動
-            const r1Scale = 1.0 + visual.ringPulse * 0.03 + hoverLevel * 0.02 + activeLevel * 0.1;
-            const r2Scale = 1.0 + visual.ringPulse * 0.05 + hoverLevel * 0.05 + activeLevel * 0.2;
+            const r1Scale = 1.0 + blendedVisual.ringPulse * 0.03 + hoverLevel * 0.02 + activeLevel * 0.1;
+            const r2Scale = 1.0 + blendedVisual.ringPulse * 0.05 + hoverLevel * 0.05 + activeLevel * 0.2;
 
             ring1Ref.current.scale.lerp(_tempVec3A.set(r1Scale, r1Scale, r1Scale), 0.1);
             ring2Ref.current.scale.lerp(_tempVec3B.set(r2Scale, r2Scale, r2Scale), 0.1);
@@ -247,7 +271,7 @@ export default function AbstractCore() {
             particlesRef.current.rotation.y += (0.05 + hoverLevel * 0.2 + activeLevel * 1.0) * delta;
 
             // リング全体を少し傾けてかっこよく見せる
-            particlesRef.current.rotation.x = THREE.MathUtils.lerp(particlesRef.current.rotation.x, Math.PI * visual.orbitTilt + hoverLevel * 0.04 - activeLevel * 0.04, 0.05);
+            particlesRef.current.rotation.x = THREE.MathUtils.lerp(particlesRef.current.rotation.x, Math.PI * blendedVisual.orbitTilt + hoverLevel * 0.04 - activeLevel * 0.04, 0.05);
             particlesRef.current.rotation.z = THREE.MathUtils.lerp(particlesRef.current.rotation.z, -Math.PI * 0.05 + activeLevel * 0.2, 0.05);
 
             // マウスの正確な3Dワールド交差座標をローカル座標に変換 (reuse vector)
@@ -278,7 +302,7 @@ export default function AbstractCore() {
                 let mouseRepelY = 0;
                 let mouseRepelZ = 0;
 
-                if (mouseLocal) {
+                if (mouseLocal && activeLevel > 0.02) {
                     const dx = x - mouseLocal.x;
                     const dy = y - mouseLocal.y;
                     const dz = z - mouseLocal.z;
@@ -286,7 +310,7 @@ export default function AbstractCore() {
 
                     // 影響範囲を広げる（半径 2.0 -> 距離の2乗 4.0）
                     if (distToMouseSq < 4.0) {
-                        const distToMouse = Math.sqrt(distToMouseSq);
+                        const distToMouse = Math.max(Math.sqrt(distToMouseSq), 0.0001);
                         // 中心に近いほど指数関数的に強く弾く
                         const force = Math.pow(2.0 - distToMouse, 2) * 0.15;
                         mouseRepelX = (dx / distToMouse) * force;
@@ -314,7 +338,7 @@ export default function AbstractCore() {
 
             const pMat = particlesRef.current.material as THREE.PointsMaterial;
             pMat.color.lerp(currentColor, 0.24);
-            pMat.size = THREE.MathUtils.lerp(visual.particleSize, visual.particleSize + 0.02, activeLevel);
+            pMat.size = THREE.MathUtils.lerp(blendedVisual.particleSize, blendedVisual.particleSize + 0.02, activeLevel);
         }
     });
 

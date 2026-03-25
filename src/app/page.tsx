@@ -4,7 +4,7 @@ import ClientInitializer from '@/components/ClientInitializer';
 import WorksList from '@/components/dom/WorksList';
 import WeatherDebugSelector from '@/components/dom/WeatherDebugSelector';
 import WeatherEffectsOverlay from '@/components/dom/WeatherEffectsOverlay';
-import Link from 'next/link';
+import TopLeftMenu from '../components/dom/TopLeftMenu';
 
 export default async function Home() {
   const data = await fetchPlanetData();
@@ -35,14 +35,7 @@ export default async function Home() {
       {/* === FIXED HUD UI === */}
       <div className="fixed inset-0 z-50 pointer-events-none p-6 md:p-8 flex flex-col justify-between text-xs font-mono tracking-widest text-gray-500">
         {/* Top Left */}
-        <div className="flex flex-col gap-2 pointer-events-auto">
-          <Link href="/about" className="group block">
-            <h1 className="text-white font-bold text-sm tracking-widest group-hover:text-cyan-400 transition-colors cursor-pointer">
-              WAKATO <span className="text-cyan-500 group-hover:text-white transition-colors">//</span> PORTFOLIO
-            </h1>
-          </Link>
-          <p className="opacity-70 pointer-events-none">INTERACTIVE WEB EXPERIENCE</p>
-        </div>
+        <TopLeftMenu />
 
         {/* Top Right */}
         <div className="absolute top-6 right-6 md:top-8 md:right-8 text-right flex flex-col gap-1">
