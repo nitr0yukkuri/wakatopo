@@ -139,7 +139,7 @@ export default function GitHubPlanetPage() {
                         </div>
                     </div>
 
-                    <div className="mt-20 pt-10 border-t border-white/10 flex flex-col sm:flex-row items-center justify-center gap-6">
+                    <div className="mt-16 pt-10 border-t border-white/10 flex flex-col sm:flex-row items-center justify-center gap-4">
                         <a
                             href="https://github.com/nitr0yukkuri/githubplanet"
                             target="_blank"
@@ -152,7 +152,7 @@ export default function GitHubPlanetPage() {
 
                         <button
                             onClick={handleReturn}
-                            className="text-gray-500 font-mono text-sm hover:text-white transition-colors underline underline-offset-4"
+                            className="inline-flex items-center justify-center rounded-full border border-white/20 bg-white/5 px-8 py-4 font-mono text-sm text-gray-300 transition-colors hover:bg-white/10 hover:text-white"
                         >
                             {copy.returnToOrbit}
                         </button>

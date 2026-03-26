@@ -237,10 +237,10 @@ export default async function Home({
                 <div className="mt-8 pt-8 border-t border-white/5">
                   <h3 className="text-xs font-mono tracking-widest text-gray-600 mb-4">AWARDS</h3>
                   <ul className="space-y-2 font-mono text-xs text-gray-400">
-                    <li><span className="text-yellow-400">★ 最優秀賞</span> — 技育CAMP Vol.19 / うめきたTechBase</li>
-                    <li><span className="text-yellow-400">★ 優秀賞</span> — 技育CAMP Vol.10, Vol.14</li>
-                    <li><span className="text-orange-400">◆ 決勝進出</span> — ヒーローズ・リーグ 2025</li>
-                    <li><span className="text-cyan-300">◆ 企業賞</span> — 技育博 Vol.6（ウイングアーク１ｓｔ）</li>
+                    <li><span className="text-yellow-400">★ {lang === 'en' ? 'Grand Prize' : '最優秀賞'}</span> — {lang === 'en' ? 'GeekCamp Vol.19 / Umeda TechBase' : '技育CAMP Vol.19 / うめきたTechBase'}</li>
+                    <li><span className="text-yellow-400">★ {lang === 'en' ? 'Excellence Award' : '優秀賞'}</span> — {lang === 'en' ? 'GeekCamp Vol.10, Vol.14' : '技育CAMP Vol.10, Vol.14'}</li>
+                    <li><span className="text-orange-400">◆ {lang === 'en' ? 'Finalist' : '決勝進出'}</span> — {lang === 'en' ? 'Heroes League 2025' : 'ヒーローズ・リーグ 2025'}</li>
+                    <li><span className="text-cyan-300">◆ {lang === 'en' ? 'Corporate Award' : '企業賞'}</span> — {lang === 'en' ? 'Geek Expo Vol.6 (WingArc 1st)' : '技育博 Vol.6（ウイングアーク１ｓｔ）'}</li>
                   </ul>
                 </div>
               </div>
