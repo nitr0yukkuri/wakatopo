@@ -83,7 +83,7 @@ export default function RecaptchaGamePage() {
             <div className="relative z-10 mx-auto max-w-6xl px-5 pt-28 pb-20 md:px-10 md:pt-36 md:pb-24">
                 <section className="relative overflow-hidden rounded-3xl border border-cyan-300/25 bg-gradient-to-br from-[#071427]/95 via-[#091831]/92 to-[#071225]/95 p-6 shadow-[0_24px_80px_rgba(4,13,26,0.7)] md:p-10">
                     <div className="pointer-events-none absolute inset-0 opacity-30 [background:linear-gradient(135deg,transparent_0%,transparent_48%,rgba(34,211,238,0.16)_50%,transparent_52%,transparent_100%)]" />
-                    <div className="relative grid gap-8 md:grid-cols-[1.2fr_0.8fr] md:gap-10">
+                    <div className="relative">
                         <div>
                             <span className="inline-flex items-center gap-2 rounded-full border border-cyan-300/40 bg-cyan-400/10 px-4 py-1.5 text-[10px] font-mono tracking-[0.22em] text-cyan-200">
                                 REACT / GO / WEBSOCKET
@@ -98,39 +98,6 @@ export default function RecaptchaGamePage() {
                                 <span className="rounded-full border border-white/20 bg-white/5 px-3 py-1 text-[10px] font-mono tracking-[0.2em] text-white/80">PVP / CPU</span>
                                 <span className="rounded-full border border-white/20 bg-white/5 px-3 py-1 text-[10px] font-mono tracking-[0.2em] text-white/80">COMBO SYSTEM</span>
                                 <span className="rounded-full border border-white/20 bg-white/5 px-3 py-1 text-[10px] font-mono tracking-[0.2em] text-white/80">JAMMING FX</span>
-                            </div>
-                        </div>
-
-                        <div className="rounded-2xl border border-cyan-300/25 bg-[#030917]/75 p-5 backdrop-blur-xl">
-                            <p className="text-[10px] font-mono tracking-[0.22em] text-cyan-300/80">COMBAT HUD</p>
-                            <div className="mt-4 space-y-4">
-                                <div>
-                                    <div className="mb-1 flex justify-between text-[10px] font-mono tracking-[0.2em] text-cyan-100/75">
-                                        <span>PLAYER ACCURACY</span>
-                                        <span>93%</span>
-                                    </div>
-                                    <div className="h-2 overflow-hidden rounded-full bg-cyan-950/70">
-                                        <div className="h-full w-[93%] bg-cyan-300" />
-                                    </div>
-                                </div>
-                                <div>
-                                    <div className="mb-1 flex justify-between text-[10px] font-mono tracking-[0.2em] text-cyan-100/75">
-                                        <span>RIVAL PRESSURE</span>
-                                        <span>78%</span>
-                                    </div>
-                                    <div className="h-2 overflow-hidden rounded-full bg-cyan-950/70">
-                                        <div className="h-full w-[78%] bg-sky-400" />
-                                    </div>
-                                </div>
-                                <div>
-                                    <div className="mb-1 flex justify-between text-[10px] font-mono tracking-[0.2em] text-cyan-100/75">
-                                        <span>JAM CHARGE</span>
-                                        <span>MAX</span>
-                                    </div>
-                                    <div className="h-2 overflow-hidden rounded-full bg-cyan-950/70">
-                                        <div className="h-full w-full bg-gradient-to-r from-cyan-300 via-sky-300 to-blue-300" />
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>

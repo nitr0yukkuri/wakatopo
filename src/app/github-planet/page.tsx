@@ -159,6 +159,16 @@ export default function GitHubPlanetPage() {
                             <span>EXPLORE REPOSITORY</span>
                             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
                         </a>
+
+                        <a
+                            href="https://githubplanet.onrender.com/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="bg-white/5 border border-white/20 text-gray-200 px-8 py-4 rounded-full font-mono text-sm hover:bg-white/10 hover:text-white transition-all duration-300 flex items-center gap-3"
+                        >
+                            <span>OPEN LIVE SITE</span>
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+                        </a>
                     </div>
                 </div>
             </div>

@@ -83,13 +83,7 @@ export default function SnowTransitionCanvas() {
                 animate={{ opacity: [0.06, 0.26, 0.18] }}
                 transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
             />
-            <motion.div
-                className="absolute inset-0 pointer-events-none"
-                style={{ background: 'linear-gradient(112deg, rgba(255,255,255,0.0) 10%, rgba(255,255,255,0.12) 28%, rgba(235,243,250,0.04) 46%, rgba(255,255,255,0.0) 66%)', transform: 'translateX(6%) rotate(-12deg)', filter: 'blur(10px)' }}
-                initial={{ opacity: 0, x: 46 }}
-                animate={{ opacity: [0, 0.3, 0.2], x: [46, 10, 0] }}
-                transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-            />
+
             <motion.div
                 className="absolute inset-0 pointer-events-none"
                 style={{ background: 'linear-gradient(180deg, rgba(116,134,150,0.16) 0%, rgba(225,235,243,0.0) 38%, rgba(255,255,255,0.18) 100%)' }}

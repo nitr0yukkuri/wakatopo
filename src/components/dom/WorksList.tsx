@@ -30,7 +30,7 @@ export default function WorksList({ works }: { works: Work[] }) {
                 router.push(withLang('/github-planet'));
                 // 次のページが表示され、オーバレイがフェードアウトする時間を確保するため少し長めに待つ
                 setTimeout(() => setTransitionType('none'), 1000);
-            }, 2000);
+            }, 1400);
         } else if (id === '02') {
             setActiveWork('02');
 
