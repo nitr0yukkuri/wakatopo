@@ -11,9 +11,9 @@ export default function Scene() {
         <div className="absolute inset-0 z-0 bg-black pointer-events-none md:pointer-events-auto">
             <Canvas
                 camera={{ position: [0, 0, 8], fov: 35 }}
-                dpr={[1, 1.5]}
+                dpr={[1, 1.25]}
                 gl={{ antialias: false, powerPreference: 'high-performance' }}
-                performance={{ min: 0.5 }}
+                performance={{ min: 0.7, debounce: 300 }}
             >
                 <Suspense fallback={null}>
                     <color attach="background" args={['#050505']} />
@@ -29,9 +29,9 @@ export default function Scene() {
                     <Weather />
 
                     {/* 星の密度を調整 */}
-                    <Stars radius={100} depth={50} count={1200} factor={1.8} saturation={0} fade speed={0.4} />
+                    <Stars radius={100} depth={50} count={640} factor={1.5} saturation={0} fade speed={0.35} />
 
-                    <Environment preset="city" environmentIntensity={0.3} />
+                    <Environment preset="city" environmentIntensity={0.18} />
 
                     {/* スクロールを妨害しないよう、手動回転(enableRotate)のみ無効化 */}
                     <OrbitControls

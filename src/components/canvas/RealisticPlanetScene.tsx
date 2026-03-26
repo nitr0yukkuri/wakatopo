@@ -11,7 +11,12 @@ export default function RealisticPlanetScene() {
     return (
         <div className="absolute inset-0 z-0 bg-black">
             {/* 少し奥に引いて全体を小さめに表示 */}
-            <Canvas camera={{ position: [0, 0, 10], fov: 42 }}>
+            <Canvas
+                camera={{ position: [0, 0, 10], fov: 42 }}
+                dpr={[1, 1.25]}
+                gl={{ antialias: false, powerPreference: 'high-performance' }}
+                performance={{ min: 0.7, debounce: 300 }}
+            >
                 <Suspense fallback={null}>
                     <color attach="background" args={['#020202']} />
                     <fog attach="fog" args={['#020202', 10, 35]} />
@@ -25,7 +30,7 @@ export default function RealisticPlanetScene() {
                     <Meteors />
 
                     {/* 無数の星屑 */}
-                    <Stars radius={100} depth={50} count={2000} factor={3} saturation={0} fade speed={1} />
+                    <Stars radius={100} depth={50} count={1000} factor={2.2} saturation={0} fade speed={0.8} />
 
                     {/* 背景光 */}
                     <Environment preset="city" environmentIntensity={0.1} />

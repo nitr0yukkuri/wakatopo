@@ -92,6 +92,8 @@ export default function Planet() {
     // インタラクション用のステート
     const [hovered, setHovered] = useState(false);
     const [active, setActive] = useState(false);
+    const stepAccumulatorRef = useRef(0);
+    const targetStep = 1 / 30;
 
     // カーソル制御
     useEffect(() => {
@@ -121,6 +123,11 @@ export default function Planet() {
 
     useFrame((state, delta) => {
         if (!meshRef.current) return;
+        stepAccumulatorRef.current += delta;
+        if (stepAccumulatorRef.current < targetStep) return;
+        const dt = stepAccumulatorRef.current;
+        stepAccumulatorRef.current = 0;
+
         const material = meshRef.current.material as THREE.ShaderMaterial;
         const time = state.clock.getElapsedTime();
 
@@ -148,7 +155,7 @@ export default function Planet() {
         // 自転のスピードを、触っているときに少し早くする（回している感）
         const baseSpeed = 0.1;
         const interactionSpeed = active ? 0.8 : (hovered ? 0.3 : 0.0);
-        meshRef.current.rotation.y += (baseSpeed + interactionSpeed) * delta;
+        meshRef.current.rotation.y += (baseSpeed + interactionSpeed) * dt;
     });
 
     return (

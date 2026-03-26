@@ -194,6 +194,8 @@ export default function Weather() {
 
     // Memoize uniforms to avoid recreating on every render
     const screenUniforms = useMemo(() => ({ uTime: { value: 0 } }), []);
+    const stepAccumulatorRef = useRef(0);
+    const targetStep = 1 / 30;
 
     // === 1. 空間の雨 (Spatial Rain) ===
     // ノスタルジックな雰囲気を出すための調整
@@ -225,16 +227,27 @@ export default function Weather() {
         return { positions: pos, velocities: vels };
     }, []);
 
-    useFrame((state) => {
+    useFrame((state, delta) => {
         if (weather !== 'Rain') return;
         const time = state.clock.getElapsedTime();
+
+        // Keep shader motion smooth even when heavy spatial updates are throttled.
+        if (screenRef.current) {
+            screenRef.current.uniforms.uTime.value = time;
+        }
+
+        stepAccumulatorRef.current += delta;
+        if (stepAccumulatorRef.current < targetStep) return;
+        const stepDelta = stepAccumulatorRef.current;
+        stepAccumulatorRef.current = 0;
 
         // A. 空間の雨のアニメーション
         if (linesRef.current) {
             const positionsAttribute = linesRef.current.geometry.attributes.position as THREE.BufferAttribute;
             const array = positionsAttribute.array as Float32Array;
             for (let i = 0; i < count; i++) {
-                const velY = velocities[i];
+                const frameScale = stepDelta * 60;
+                const velY = velocities[i] * frameScale;
                 const velX = velY * 0.4; // 速度に応じた横移動
                 const velZ = velY * 0.1; // 速度に応じた奥移動
 
@@ -264,11 +277,6 @@ export default function Weather() {
                 }
             }
             positionsAttribute.needsUpdate = true;
-        }
-
-        // B. 画面の水滴のアニメーション
-        if (screenRef.current) {
-            screenRef.current.uniforms.uTime.value = time;
         }
     });
 

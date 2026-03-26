@@ -33,7 +33,8 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL("https://wakatopo.vercel.app"),
   title: "WAKATO | Living Planet Portfolio",
-  description: "GitHubの活動とリアルタイム天気が連動する、インタラクティブな3Dポートフォリオ。",
+  description: "GitHubの活動とリアルタイム天気が連動する、インタラクティブな3Dポートフォリオ。3D・インタラクション実装を得意とするフロントエンドエンジニア。",
+  keywords: ["ポートフォリオ", "3D", "インタラクション", "フロントエンド", "GitHub", "Three.js", "React"],
   openGraph: {
     title: "WAKATO | Living Planet Portfolio",
     description: "GitHubの活動とリアルタイム天気が連動する、インタラクティブな3Dポートフォリオ。",
@@ -41,15 +42,35 @@ export const metadata: Metadata = {
     siteName: "WAKATO",
     locale: "ja_JP",
     type: "website",
+    images: [
+      {
+        url: "https://wakatopo.vercel.app/faviconwakato.png",
+        width: 512,
+        height: 512,
+        alt: "WAKATO Portfolio",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "WAKATO | Living Planet Portfolio",
     description: "GitHubの活動とリアルタイム天気が連動する、インタラクティブな3Dポートフォリオ。",
+    creator: "@nitr0yukkuri",
   },
   icons: {
     icon: "/faviconwakato.png",
-    apple: "/faviconwakato.png", // iOSのホーム画面追加用アイコン
+    apple: "/faviconwakato.png",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
 };
 
@@ -63,6 +84,28 @@ export default function RootLayout({
       <head>
         <link rel="preconnect" href="https://image.thum.io" />
         <link rel="dns-prefetch" href="https://image.thum.io" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "ProfilePage",
+              name: "WAKATO",
+              url: "https://wakatopo.vercel.app",
+              description: "GitHubの活動とリアルタイム天気が連動する、インタラクティブな3Dポートフォリオ。フロントエンドエンジニア。",
+              image: "https://wakatopo.vercel.app/faviconwakato.png",
+              mainEntity: {
+                "@type": "Person",
+                name: "WAKATO (nitr0yukkuri)",
+                url: "https://wakatopo.vercel.app",
+                image: "https://wakatopo.vercel.app/faviconwakato.png",
+                description: "3D・インタラクション実装を得意とするフロントエンドエンジニア",
+                jobTitle: "Interactive Web Developer / Creative Coder",
+                sameAs: ["https://github.com/nitr0yukkuri", "https://twitter.com/nitr0yukkuri"],
+              },
+            }),
+          }}
+        />
       </head>
       <body
         className={`${inter.variable} ${notoSansJp.variable} ${geistMono.variable} antialiased`}

@@ -1,10 +1,10 @@
-import Scene from '@/components/canvas/Scene';
 import { fetchPlanetData } from '@/lib/actions';
 import ClientInitializer from '@/components/ClientInitializer';
 import WorksList from '@/components/dom/WorksList';
 import WeatherDebugSelector from '@/components/dom/WeatherDebugSelector';
 import WeatherEffectsOverlay from '@/components/dom/WeatherEffectsOverlay';
 import TopLeftMenu from '../components/dom/TopLeftMenu';
+import SceneClient from '../components/canvas/SceneClient';
 
 type SupportedLang = 'ja' | 'en';
 
@@ -101,7 +101,7 @@ export default async function Home({
 
       {/* 3D Scene Background */}
       <div className="fixed inset-0 z-0 opacity-80 mix-blend-screen pointer-events-none md:pointer-events-auto">
-        <Scene />
+        <SceneClient />
       </div>
 
       {/* Weather Effects Overlay */}
