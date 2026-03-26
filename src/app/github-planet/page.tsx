@@ -82,15 +82,14 @@ export default function GitHubPlanetPage() {
                         {/* THE CARD */}
                         <div className="w-full relative group">
                             <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/0 via-cyan-500/20 to-purple-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000 blur-xl"></div>
-                            <img
-                                src="https://image.thum.io/get/width/800/crop/400/noanimate/wait/8/https://githubplanet.onrender.com/card.html?username=nitr0yukkuri&fix=true&time=176___"
-                                alt="GitHub Planet Card - nitr0yukkuri"
-                                width={800}
-                                height={400}
-                                loading="lazy"
-                                decoding="async"
-                                className="w-full rounded-2xl border border-white/10 shadow-2xl relative z-10 hover:border-cyan-500/50 transition-colors duration-500"
-                            />
+                            <div className="relative z-10 w-full aspect-[2/1] rounded-2xl border border-white/10 shadow-2xl overflow-hidden hover:border-cyan-500/50 transition-colors duration-500 bg-[#060b16]">
+                                <iframe
+                                    src="https://githubplanet.onrender.com/card.html?username=nitr0yukkuri&fix=true"
+                                    title="GitHub Planet Card - nitr0yukkuri"
+                                    loading="lazy"
+                                    className="w-full h-full"
+                                />
+                            </div>
                             <p className="text-center text-xs text-gray-500 font-mono mt-4">
                                 Generated Planet Card for @nitr0yukkuri
                             </p>
