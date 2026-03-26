@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from 'react';
 import TenchanCompanion from '@/components/TenchanCompanion';
 import { Canvas } from '@react-three/fiber';
 import { RainParticles } from '@/components/canvas/RainTransitionCanvas';
+import SnowCanvas from '@/components/canvas/effects/SnowCanvas';
 
 export const dynamic = 'force-dynamic';
 
@@ -180,7 +181,7 @@ export default function OtenkiGurashiPage() {
         <main className={`relative w-full min-h-[120dvh] ${weather !== 'Rain' ? 'bg-gradient-to-b' : ''} ${bgGradient} ${weather === 'Thunder' || weather === 'Night' ? 'text-gray-200' : 'text-gray-700'} overflow-hidden font-sans pb-32 transition-colors duration-1000`}>
 
             {/* Background Parallax Clouds Layer */}
-            <div className={`absolute inset-0 pointer-events-none overflow-hidden z-0 transition-opacity duration-1000 ${weather === 'Rain' ? 'opacity-8' : weather === 'Thunder' ? 'opacity-35' : weather === 'Snow' ? 'opacity-70' : weather === 'Clouds' ? 'opacity-100' : weather === 'Night' ? 'opacity-45' : 'opacity-30'}`}>
+            <div className={`absolute inset-0 pointer-events-none overflow-hidden z-0 transition-opacity duration-1000 ${weather === 'Rain' ? 'opacity-8' : weather === 'Thunder' ? 'opacity-35' : weather === 'Snow' ? 'opacity-0' : weather === 'Clouds' ? 'opacity-100' : weather === 'Night' ? 'opacity-45' : 'opacity-30'}`}>
                 {/* --- 3. 奥のレイヤー（小さく、ゆっくり、薄い、左へ） --- */}
                 <CloudDecoration className="opacity-20 w-32 top-[5%] animate-cloud-scroll-left-slow" style={{ animationDelay: '-10s' }} />
                 <CloudDecoration className="opacity-30 w-40 top-[40%] animate-cloud-scroll-left-slow" style={{ animationDelay: '-40s' }} />
@@ -368,29 +369,14 @@ export default function OtenkiGurashiPage() {
                 </>
             )}
             {weather === 'Snow' && (
-                <div className="fixed inset-0 pointer-events-none z-0 opacity-70">
-                    {/* Snow flakes as CSS dots */}
-                    <div className="w-full h-full" style={{
-                        backgroundImage: 'radial-gradient(ellipse 2px 3px at 50% 50%, rgba(255,255,255,0.85) 0%, transparent 100%)',
-                        backgroundSize: '80px 80px',
-                        animation: 'snowfall 8s linear infinite',
+                <>
+                    <div className="fixed inset-0 pointer-events-none z-20">
+                        <SnowCanvas />
+                    </div>
+                    <div className="fixed inset-0 pointer-events-none z-20" style={{
+                        background: 'linear-gradient(180deg, rgba(250,253,255,0.42) 0%, rgba(246,250,255,0.32) 45%, rgba(240,247,255,0.24) 100%)',
                     }} />
-                    <div className="w-full h-full absolute inset-0" style={{
-                        backgroundImage: 'radial-gradient(circle at 50% 50%, rgba(255,255,255,0.9) 0 1.5px, transparent 2px)',
-                        backgroundSize: '120px 120px',
-                        animation: 'snowfall-slow 13s linear infinite',
-                    }} />
-                    <style>{`
-                        @keyframes snowfall {
-                            from { background-position: 0 -80px; }
-                            to { background-position: 40px 80px; }
-                        }
-                        @keyframes snowfall-slow {
-                            from { background-position: 0 -120px; }
-                            to { background-position: -36px 120px; }
-                        }
-                    `}</style>
-                </div>
+                </>
             )}
             {weather === 'Clouds' && (
                 <div className="fixed inset-0 pointer-events-none z-0 opacity-30">
@@ -427,35 +413,15 @@ export default function OtenkiGurashiPage() {
             )}
             {weather === 'Thunder' && (
                 <>
-                    {/* 雨のライン */}
-                    <div className="fixed inset-0 pointer-events-none z-0 opacity-40" style={{
-                        backgroundImage: 'repeating-linear-gradient(175deg, transparent, transparent 2px, rgba(140,160,210,0.4) 2px, rgba(140,160,210,0.4) 4px)',
-                        backgroundSize: '4px 60px',
-                        animation: 'thunder-rain 0.25s linear infinite',
-                    }} />
                     <div className="fixed inset-0 pointer-events-none z-0" style={{
                         background: 'radial-gradient(ellipse 50% 28% at 52% 18%, rgba(170,195,255,0.18), rgba(170,195,255,0.0) 72%)',
                     }} />
-                    <div className="fixed inset-0 pointer-events-none z-0" style={{
-                        backgroundImage: 'linear-gradient(108deg, transparent 0%, transparent 46%, rgba(230,240,255,0.9) 48%, rgba(200,220,255,0.0) 52%, transparent 54%), linear-gradient(79deg, transparent 0%, transparent 62%, rgba(230,240,255,0.65) 64%, rgba(200,220,255,0.0) 67%, transparent 70%)',
-                        opacity: 0,
-                        animation: 'thunder-bolt 4.8s infinite',
-                    }} />
                     <div className="fixed inset-0 pointer-events-none z-0 bg-[#dbe9ff]" style={{ opacity: 0, animation: 'thunder-flash 4.8s infinite' }} />
                     <style>{`
-                        @keyframes thunder-rain {
-                            from { background-position: 0 0; }
-                            to { background-position: 4px 60px; }
-                        }
                         @keyframes thunder-flash {
                             0%, 39%, 42%, 100% { opacity: 0; }
                             40% { opacity: 0.16; }
                             41% { opacity: 0.05; }
-                        }
-                        @keyframes thunder-bolt {
-                            0%, 39%, 42%, 100% { opacity: 0; }
-                            40% { opacity: 0.52; }
-                            41% { opacity: 0.15; }
                         }
                     `}</style>
                 </>

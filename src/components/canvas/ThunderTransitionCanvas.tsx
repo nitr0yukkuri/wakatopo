@@ -65,22 +65,6 @@ export default function ThunderTransitionCanvas() {
                 transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
             />
 
-            <motion.div
-                className="absolute inset-0 pointer-events-none"
-                style={{ background: 'linear-gradient(104deg, rgba(198,216,255,0.0) 10%, rgba(198,216,255,0.08) 28%, rgba(190,210,255,0.035) 46%, rgba(198,216,255,0.0) 66%)', transform: 'translateX(8%) rotate(-18deg)', filter: 'blur(12px)' }}
-                initial={{ opacity: 0, x: 50 }}
-                animate={{ opacity: [0, 0.32, 0.18], x: [50, 10, 0] }}
-                transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-            />
-
-            <motion.div
-                className="absolute inset-0 pointer-events-none"
-                style={{ background: 'repeating-linear-gradient(168deg, rgba(210,220,240,0) 0 16px, rgba(176,192,218,0.11) 16px 17px, rgba(210,220,240,0) 17px 36px)', filter: 'blur(0.5px)' }}
-                initial={{ opacity: 0.12, y: '-8%' }}
-                animate={{ opacity: [0.12, 0.22, 0.14], y: ['-8%', '12%', '18%'] }}
-                transition={{ duration: 1.2, ease: 'linear' }}
-            />
-
             <LightningBolt x="18%" delay={0.22} scale={0.9} />
             <LightningBolt x="54%" delay={0.58} scale={1.12} />
             <LightningBolt x="72%" delay={0.82} scale={0.82} />
