@@ -21,6 +21,28 @@ export default function SunburstTransitionCanvas() {
                 transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
             />
 
+            {/* 遷移後の晴れ画面と同じ太陽 */}
+            <motion.div
+                className="absolute right-[8%] top-[9%] w-24 h-24 md:w-32 md:h-32 rounded-full pointer-events-none"
+                style={{
+                    background: 'radial-gradient(circle at 35% 35%, rgba(255,245,180,0.96) 0%, rgba(255,213,112,0.92) 38%, rgba(255,170,58,0.92) 100%)',
+                    boxShadow: '0 0 45px rgba(255,205,110,0.55), 0 0 110px rgba(255,187,82,0.35)',
+                }}
+                initial={{ opacity: 0, scale: 0.86 }}
+                animate={{ opacity: [0, 0.94, 1], scale: [0.86, 1.04, 1.0] }}
+                transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+            />
+
+            <motion.div
+                className="absolute right-[3%] top-[2%] w-44 h-44 md:w-64 md:h-64 rounded-full pointer-events-none"
+                style={{
+                    background: 'radial-gradient(circle, rgba(255,220,150,0.36) 0%, rgba(255,220,150,0.08) 42%, rgba(255,220,150,0.0) 74%)',
+                }}
+                initial={{ opacity: 0, rotate: -10, scale: 0.86 }}
+                animate={{ opacity: [0, 0.42, 0.3], rotate: [-10, 10, 20], scale: [0.86, 1.0, 1.03] }}
+                transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+            />
+
             {/* 層状の斜めゴッドレイ */}
             <motion.div
                 className="absolute pointer-events-none"
@@ -71,30 +93,6 @@ export default function SunburstTransitionCanvas() {
                 initial={{ opacity: 0, x: 26, y: -12 }}
                 animate={{ opacity: [0, 0.4, 0.28], x: [26, 4, 0], y: [-12, -3, 0] }}
                 transition={{ duration: 0.9, delay: 0.06, ease: [0.22, 1, 0.36, 1] }}
-            />
-
-            {/* 下から昇る太陽本体 */}
-            <motion.div
-                className="absolute rounded-full pointer-events-none"
-                style={{
-                    right: '11%',
-                    bottom: '-22%',
-                    width: '130px',
-                    height: '130px',
-                    background: 'radial-gradient(circle, #fffef8 0%, #fff3ce 34%, #ffd98e 62%, #ffbf6d 82%, rgba(255,188,110,0) 100%)',
-                    boxShadow: '0 0 76px 28px rgba(255,228,158,0.45), 0 0 176px 108px rgba(255,202,110,0.24)',
-                }}
-                initial={{ y: 180, scale: 0.85, opacity: 0.2 }}
-                animate={{ y: [180, 42, 0], scale: [0.9, 1.05, 1.02], opacity: [0.28, 0.9, 0.96] }}
-                transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-            />
-
-            <motion.div
-                className="absolute rounded-full pointer-events-none border border-amber-100/45"
-                style={{ right: '8.8%', bottom: '-24%', width: '176px', height: '176px' }}
-                initial={{ y: 190, scale: 0.72, opacity: 0 }}
-                animate={{ y: [190, 50, 0], scale: [0.72, 1.04, 1.1], opacity: [0, 0.24, 0] }}
-                transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
             />
 
             {/* 露出の余韻 */}
