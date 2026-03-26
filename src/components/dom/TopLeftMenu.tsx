@@ -3,6 +3,8 @@
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
+import { useStore } from '@/store';
 
 const MENU_COMMANDS = {
     ja: [
@@ -26,10 +28,81 @@ const MENU_COMMANDS = {
 export default function TopLeftMenu() {
     const [open, setOpen] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
+    const router = useRouter();
     const searchParams = useSearchParams();
     const lang = searchParams.get('lang') === 'en' ? 'en' : 'ja';
+    const { setActiveWork, setTransitionType } = useStore();
     const commands = MENU_COMMANDS[lang];
     const withLang = (href: string) => `${href}?lang=${lang}`;
+
+    const navigateWithTransition = (href: string) => {
+        setOpen(false);
+
+        if (href === '/github-planet') {
+            setActiveWork('01');
+            setTransitionType('warp');
+            setTimeout(() => {
+                router.push(withLang('/github-planet'));
+                setTimeout(() => setTransitionType('none'), 1000);
+            }, 1400);
+            return;
+        }
+
+        if (href === '/otenkigurashi') {
+            setActiveWork('02');
+            const currentWeather = useStore.getState().weather;
+            if (currentWeather === 'Rain') {
+                setTransitionType('rain');
+            } else if (currentWeather === 'Snow') {
+                setTransitionType('snow');
+            } else if (currentWeather === 'Thunder') {
+                setTransitionType('flash');
+            } else if (currentWeather === 'Clouds') {
+                setTransitionType('heavy-cloud');
+            } else if (currentWeather === 'Clear' || currentWeather === 'Morning') {
+                setTransitionType('sunburst');
+            } else {
+                setTransitionType('moonrise');
+            }
+            setTimeout(() => {
+                router.push(withLang('/otenkigurashi'));
+                setTimeout(() => setTransitionType('none'), 1000);
+            }, 2000);
+            return;
+        }
+
+        if (href === '/coldkeep') {
+            setActiveWork('03');
+            setTransitionType('freeze');
+            setTimeout(() => {
+                router.push(withLang('/coldkeep'));
+                setTimeout(() => setTransitionType('none'), 1000);
+            }, 2000);
+            return;
+        }
+
+        if (href === '/recaptcha-game') {
+            setActiveWork('04');
+            setTransitionType('captcha-lock');
+            setTimeout(() => {
+                router.push(withLang('/recaptcha-game'));
+                setTimeout(() => setTransitionType('none'), 900);
+            }, 1650);
+            return;
+        }
+
+        if (href === '/denshouo') {
+            setActiveWork('05');
+            setTransitionType('wave');
+            setTimeout(() => {
+                router.push(withLang('/denshouo'));
+                setTimeout(() => setTransitionType('none'), 900);
+            }, 1800);
+            return;
+        }
+
+        router.push(withLang(href));
+    };
 
     useEffect(() => {
         const onPointerDown = (event: PointerEvent) => {
@@ -92,15 +165,29 @@ export default function TopLeftMenu() {
 
                 <nav className="flex flex-col gap-1 text-xs font-mono">
                     {commands.map((command, index) => (
-                        <Link
-                            key={command.href}
-                            href={withLang(command.href)}
-                            className="grid grid-cols-[auto_1fr_auto] items-center gap-2 rounded px-2 py-1.5 text-gray-200 hover:bg-cyan-400/15 hover:text-cyan-200"
-                        >
-                            <span className="text-cyan-400/70">{String(index + 1).padStart(2, '0')}</span>
-                            <span>{command.label}</span>
-                            <span className="text-[10px] tracking-[0.16em] text-cyan-200/60">{command.hint}</span>
-                        </Link>
+                        command.href === '/about' ? (
+                            <Link
+                                key={command.href}
+                                href={withLang(command.href)}
+                                onClick={() => setOpen(false)}
+                                className="grid grid-cols-[auto_1fr_auto] items-center gap-2 rounded px-2 py-1.5 text-gray-200 hover:bg-cyan-400/15 hover:text-cyan-200"
+                            >
+                                <span className="text-cyan-400/70">{String(index + 1).padStart(2, '0')}</span>
+                                <span>{command.label}</span>
+                                <span className="text-[10px] tracking-[0.16em] text-cyan-200/60">{command.hint}</span>
+                            </Link>
+                        ) : (
+                            <button
+                                key={command.href}
+                                type="button"
+                                onClick={() => navigateWithTransition(command.href)}
+                                className="grid grid-cols-[auto_1fr_auto] items-center gap-2 rounded px-2 py-1.5 text-gray-200 hover:bg-cyan-400/15 hover:text-cyan-200 text-left"
+                            >
+                                <span className="text-cyan-400/70">{String(index + 1).padStart(2, '0')}</span>
+                                <span>{command.label}</span>
+                                <span className="text-[10px] tracking-[0.16em] text-cyan-200/60">{command.hint}</span>
+                            </button>
+                        )
                     ))}
                 </nav>
             </div>
