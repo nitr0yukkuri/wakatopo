@@ -33,17 +33,83 @@ export const getLofiBgmProfile = (weather: WeatherType, activity: number, active
                 tickMs: 4980 + tempoOffset,
             };
         case '02':
-            return {
-                notes: [110.0, 130.81, 164.81, 146.83],
-                highRatio: 1.25,
-                pulseRatio: 1.1,
-                waveform: 'sine',
-                accentWaveform: 'triangle',
-                accentRatio: 1.25,
-                accentVolume: 0.011,
-                accentAt: 0.46,
-                tickMs: 5260 + tempoOffset,
-            };
+            // Otenkigurashi: weather is the core world mechanic, so BGM also changes per weather.
+            switch (weather) {
+                case 'Rain':
+                    return {
+                        notes: [98.0, 110.0, 123.47, 116.54],
+                        highRatio: 1.18,
+                        pulseRatio: 1.05,
+                        waveform: 'sine',
+                        accentWaveform: 'sine',
+                        accentRatio: 1.12,
+                        accentVolume: 0.008,
+                        accentAt: 0.52,
+                        tickMs: 5620 + tempoOffset,
+                    };
+                case 'Clouds':
+                    return {
+                        notes: [103.83, 116.54, 130.81, 123.47],
+                        highRatio: 1.2,
+                        pulseRatio: 1.06,
+                        waveform: 'triangle',
+                        accentWaveform: 'sine',
+                        accentRatio: 1.15,
+                        accentVolume: 0.0085,
+                        accentAt: 0.5,
+                        tickMs: 5460 + tempoOffset,
+                    };
+                case 'Snow':
+                    return {
+                        notes: [123.47, 146.83, 174.61, 155.56],
+                        highRatio: 1.28,
+                        pulseRatio: 1.08,
+                        waveform: 'sine',
+                        accentWaveform: 'triangle',
+                        accentRatio: 1.24,
+                        accentVolume: 0.009,
+                        accentAt: 0.48,
+                        tickMs: 5380 + tempoOffset,
+                    };
+                case 'Thunder':
+                    return {
+                        notes: [87.31, 103.83, 116.54, 98.0],
+                        highRatio: 1.12,
+                        pulseRatio: 1.02,
+                        waveform: 'triangle',
+                        accentWaveform: 'triangle',
+                        accentRatio: 1.08,
+                        accentVolume: 0.008,
+                        accentAt: 0.42,
+                        tickMs: 5180 + tempoOffset,
+                    };
+                case 'Night':
+                    return {
+                        notes: [98.0, 116.54, 130.81, 110.0],
+                        highRatio: 1.16,
+                        pulseRatio: 1.04,
+                        waveform: 'sine',
+                        accentWaveform: 'sine',
+                        accentRatio: 1.1,
+                        accentVolume: 0.0075,
+                        accentAt: 0.54,
+                        tickMs: 5740 + tempoOffset,
+                    };
+                case 'Clear':
+                case 'Morning':
+                default:
+                    return {
+                        notes: [130.81, 164.81, 196.0, 174.61],
+                        highRatio: 1.3,
+                        pulseRatio: 1.12,
+                        waveform: 'triangle',
+                        accentWaveform: 'sine',
+                        accentRatio: 1.28,
+                        accentVolume: 0.011,
+                        accentAt: 0.44,
+                        tickMs: 5020 + tempoOffset,
+                    };
+            }
         case '03':
             return {
                 notes: [92.5, 116.54, 138.59, 123.47],
