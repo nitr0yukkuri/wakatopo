@@ -1,6 +1,8 @@
 import Link from 'next/link';
 import GeoLocationBadge from '@/components/dom/GeoLocationBadge';
 
+export const dynamic = 'force-dynamic';
+
 type SearchParams = {
     lang?: string | string[];
 };

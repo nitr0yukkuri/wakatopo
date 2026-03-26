@@ -7,6 +7,8 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import { Canvas, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
+export const dynamic = 'force-dynamic';
+
 const particleVertexShader = `
 uniform float uTime;
 attribute float scale;

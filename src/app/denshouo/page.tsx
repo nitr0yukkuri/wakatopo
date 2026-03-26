@@ -8,6 +8,8 @@ import { useMemo, useRef } from 'react';
 import * as THREE from 'three';
 import { waveVertexShader, waveFragmentShader } from '@/shaders/wave';
 
+export const dynamic = 'force-dynamic';
+
 const bubbleSpecs = [
     { left: '8%', top: '18%', size: 16, delay: 0.0, duration: 8.0 },
     { left: '18%', top: '68%', size: 10, delay: 1.2, duration: 7.2 },

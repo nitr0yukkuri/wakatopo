@@ -3,6 +3,8 @@
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useStore } from '@/store';
 
+export const dynamic = 'force-dynamic';
+
 export default function RecaptchaGamePage() {
     const router = useRouter();
     const searchParams = useSearchParams();

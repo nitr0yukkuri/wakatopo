@@ -2,10 +2,12 @@
 
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useStore } from '@/store';
-import dynamic from 'next/dynamic';
+import dynamicImport from 'next/dynamic';
+
+export const dynamic = 'force-dynamic';
 
 // Lazy load the heavy 3D scene to reduce TBT
-const RealisticPlanetScene = dynamic(() => import('@/components/canvas/RealisticPlanetScene'), { ssr: false });
+const RealisticPlanetScene = dynamicImport(() => import('@/components/canvas/RealisticPlanetScene'), { ssr: false });
 
 export default function GitHubPlanetPage() {
     const router = useRouter();

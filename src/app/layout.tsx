@@ -6,6 +6,8 @@ import PwaRegister from "@/components/PwaRegister";
 import SoundDirector from "@/components/SoundDirector";
 import LocaleSync from "@/components/LocaleSync";
 
+export const dynamic = 'force-dynamic';
+
 const inter = Inter({
   variable: "--font-latin",
   subsets: ["latin"],

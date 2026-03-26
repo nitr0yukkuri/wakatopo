@@ -1,4 +1,5 @@
 import { fetchPlanetData } from '@/lib/actions';
+import { Suspense } from 'react';
 import ClientInitializer from '@/components/ClientInitializer';
 import WorksList from '@/components/dom/WorksList';
 import WeatherDebugSelector from '@/components/dom/WeatherDebugSelector';
@@ -77,6 +78,8 @@ const copyByLang = {
   },
 } as const;
 
+export const dynamic = 'force-dynamic';
+
 export default async function Home({
   searchParams,
 }: {
@@ -110,7 +113,9 @@ export default async function Home({
       {/* === FIXED HUD UI === */}
       <div className="fixed inset-0 z-50 pointer-events-none p-6 md:p-8 flex flex-col justify-between text-xs font-mono tracking-widest text-gray-500">
         {/* Top Left */}
-        <TopLeftMenu />
+        <Suspense fallback={null}>
+          <TopLeftMenu />
+        </Suspense>
 
         {/* Top Right */}
         <div className="absolute top-6 right-6 md:top-8 md:right-8 text-right flex flex-col gap-1 pointer-events-auto">

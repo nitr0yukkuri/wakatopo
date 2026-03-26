@@ -8,6 +8,8 @@ import TenchanCompanion from '@/components/TenchanCompanion';
 import { Canvas } from '@react-three/fiber';
 import { RainParticles } from '@/components/canvas/RainTransitionCanvas';
 
+export const dynamic = 'force-dynamic';
+
 // A simple CSS cloud decoration component
 function CloudDecoration({ className, style, flip }: { className: string, style?: React.CSSProperties, flip?: boolean }) {
     return (
