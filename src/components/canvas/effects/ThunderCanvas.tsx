@@ -28,8 +28,8 @@ export default function ThunderCanvas() {
             x: Math.random() * window.innerWidth,
             y: Math.random() * window.innerHeight,
             speed: Math.random() * 7 + 10,
-            len: Math.random() * 13 + 8,
-            alpha: Math.random() * 0.22 + 0.08,
+            len: Math.random() * 8 + 6,
+            alpha: Math.random() * 0.16 + 0.06,
         }));
 
         // 稲妻
@@ -56,18 +56,18 @@ export default function ThunderCanvas() {
         function triggerLightning() {
             const segs: Seg[] = [];
             const sx = canvas.width * (0.2 + Math.random() * 0.6);
-            const ex = sx + (Math.random() - 0.5) * 130;
+            const ex = sx + (Math.random() - 0.5) * 90;
             const ey = canvas.height * (0.35 + Math.random() * 0.3);
-            genBolt(sx, 0, ex, ey, 6, 95, segs);
+            genBolt(sx, 0, ex, ey, 6, 72, segs);
             bolt = segs;
             boltTimer = 0;
 
             // フラッシュ演出
             const flash = flashRef.current;
             if (flash) {
-                flash.style.opacity = '0.30';
+                flash.style.opacity = '0.2';
                 setTimeout(() => { if (flash) flash.style.opacity = '0'; }, 65);
-                setTimeout(() => { if (flash) flash.style.opacity = '0.12'; }, 105);
+                setTimeout(() => { if (flash) flash.style.opacity = '0.08'; }, 105);
                 setTimeout(() => { if (flash) flash.style.opacity = '0'; }, 180);
             }
         }
@@ -80,7 +80,7 @@ export default function ThunderCanvas() {
             ctx.clearRect(0, 0, w, h);
 
             // 雨を描画
-            ctx.lineWidth = 0.75;
+            ctx.lineWidth = 0.5;
             for (const d of drops) {
                 d.x -= d.speed * 0.38 * dt * 60;
                 d.y += d.speed * dt * 60;
@@ -106,10 +106,10 @@ export default function ThunderCanvas() {
             if (bolt && boltTimer < BOLT_DURATION) {
                 const fade = 1 - boltTimer / BOLT_DURATION;
                 ctx.save();
-                ctx.shadowBlur = 20;
+                ctx.shadowBlur = 13;
                 ctx.shadowColor = 'rgba(180,210,255,1)';
-                ctx.strokeStyle = `rgba(215,235,255,${fade * 0.92})`;
-                ctx.lineWidth = 1.4;
+                ctx.strokeStyle = `rgba(215,235,255,${fade * 0.76})`;
+                ctx.lineWidth = 0.92;
                 for (const [x1, y1, x2, y2] of bolt) {
                     ctx.beginPath();
                     ctx.moveTo(x1, y1);
@@ -117,8 +117,8 @@ export default function ThunderCanvas() {
                     ctx.stroke();
                 }
                 // 中心に白いコアライン
-                ctx.strokeStyle = `rgba(240,248,255,${fade * 0.6})`;
-                ctx.lineWidth = 0.5;
+                ctx.strokeStyle = `rgba(240,248,255,${fade * 0.45})`;
+                ctx.lineWidth = 0.34;
                 for (const [x1, y1, x2, y2] of bolt) {
                     ctx.beginPath();
                     ctx.moveTo(x1, y1);
@@ -142,12 +142,12 @@ export default function ThunderCanvas() {
             transition={{ duration: 0.6 }}
         >
             {/* 暗い嵐のオーバーレイ */}
-            <div className="absolute inset-0 bg-[#000510]/28" />
+            <div className="absolute inset-0 bg-[#000510]/18" />
             <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />
             {/* 稲妻フラッシュ */}
             <div
                 ref={flashRef}
-                className="absolute inset-0 bg-[#90b8ff]"
+                className="absolute inset-0 bg-[#b2c7ff]"
                 style={{ opacity: 0, transition: 'opacity 0.04s' }}
             />
         </motion.div>

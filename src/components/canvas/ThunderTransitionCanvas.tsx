@@ -8,8 +8,8 @@ function LightningBolt({ x, delay, scale = 1 }: { x: string; delay: number; scal
     return (
         <motion.svg
             className="absolute top-0 pointer-events-none"
-            style={{ left: x, width: '10vw', minWidth: '34px', filter: 'drop-shadow(0 0 10px rgba(255,255,255,0.95)) drop-shadow(0 0 22px rgba(158,203,255,0.8))', transformOrigin: 'top', scale }}
-            viewBox="0 0 40 200"
+            style={{ left: x, width: '6.5vw', minWidth: '22px', height: '100vh', filter: 'drop-shadow(0 0 7px rgba(255,255,255,0.8)) drop-shadow(0 0 14px rgba(158,203,255,0.52))', transformOrigin: 'top', scale }}
+            viewBox="0 0 40 320"
             initial={{ opacity: 0, scaleY: 0.2 }}
             animate={{
                 opacity: [0, 0, 1, 0.45, 0],
@@ -22,10 +22,30 @@ function LightningBolt({ x, delay, scale = 1 }: { x: string; delay: number; scal
             }}
         >
             <polyline
-                points="25,0 10,80 22,80 5,200 30,90 18,90 35,0"
-                fill="#ffffff"
+                points="20,0 12,56 22,112 10,172 20,236 12,280 18,320"
+                fill="none"
                 stroke="#d7ebff"
-                strokeWidth="1.2"
+                strokeWidth="0.72"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+            />
+            <polyline
+                points="22,112 28,146 20,182"
+                fill="none"
+                stroke="#e7f2ff"
+                strokeWidth="0.28"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                opacity="0.72"
+            />
+            <polyline
+                points="20,236 26,266 16,300"
+                fill="none"
+                stroke="#e7f2ff"
+                strokeWidth="0.24"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                opacity="0.58"
             />
         </motion.svg>
     );
@@ -35,7 +55,7 @@ export default function ThunderTransitionCanvas() {
     return (
         <div
             className="w-full h-full overflow-hidden relative"
-            style={{ background: 'linear-gradient(180deg, #070b12 0%, #111927 42%, #223144 100%)' }}
+            style={{ background: 'linear-gradient(180deg, #070b12 0%, #0e1825 42%, #1a2839 100%)' }}
         >
             <motion.div
                 className="absolute inset-0 pointer-events-none"
@@ -47,7 +67,7 @@ export default function ThunderTransitionCanvas() {
 
             <motion.div
                 className="absolute inset-0 pointer-events-none"
-                style={{ background: 'linear-gradient(104deg, rgba(198,216,255,0.0) 10%, rgba(198,216,255,0.12) 28%, rgba(190,210,255,0.05) 46%, rgba(198,216,255,0.0) 66%)', transform: 'translateX(8%) rotate(-18deg)', filter: 'blur(12px)' }}
+                style={{ background: 'linear-gradient(104deg, rgba(198,216,255,0.0) 10%, rgba(198,216,255,0.08) 28%, rgba(190,210,255,0.035) 46%, rgba(198,216,255,0.0) 66%)', transform: 'translateX(8%) rotate(-18deg)', filter: 'blur(12px)' }}
                 initial={{ opacity: 0, x: 50 }}
                 animate={{ opacity: [0, 0.32, 0.18], x: [50, 10, 0] }}
                 transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
@@ -55,7 +75,7 @@ export default function ThunderTransitionCanvas() {
 
             <motion.div
                 className="absolute inset-0 pointer-events-none"
-                style={{ background: 'repeating-linear-gradient(168deg, rgba(210,220,240,0) 0 14px, rgba(176,192,218,0.14) 14px 16px, rgba(210,220,240,0) 16px 34px)', filter: 'blur(0.5px)' }}
+                style={{ background: 'repeating-linear-gradient(168deg, rgba(210,220,240,0) 0 16px, rgba(176,192,218,0.11) 16px 17px, rgba(210,220,240,0) 17px 36px)', filter: 'blur(0.5px)' }}
                 initial={{ opacity: 0.12, y: '-8%' }}
                 animate={{ opacity: [0.12, 0.22, 0.14], y: ['-8%', '12%', '18%'] }}
                 transition={{ duration: 1.2, ease: 'linear' }}
