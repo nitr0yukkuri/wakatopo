@@ -1,6 +1,6 @@
 'use client'
 
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useStore } from '@/store';
 import { motion } from 'framer-motion';
 import { Canvas, useFrame } from '@react-three/fiber';
@@ -224,11 +224,37 @@ function OceanBackdrop() {
 
 export default function DenshouoPage() {
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const lang = searchParams.get('lang') === 'en' ? 'en' : 'ja';
     const { setActiveWork } = useStore();
+
+    const copy = {
+        ja: {
+            returnToOrbit: 'RETURN TO ORBIT',
+            lead: 'つぶやくほどでもない小さな幸せを魚に乗せて流し、みんなでゆるく分かち合う SNS。',
+            overview: '小さな幸せをおさかなに乗せて流し、時間が経つとどこかへ泳いでいく、気軽さ重視の投稿体験を目指したアプリです。「気兼ねなく流せること」と「ちょっとした幸せを誰かと分かち合えること」を中心に設計しました。',
+            smallHappiness: '大げさな発信ではなく、日常の小さな幸せを軽く流せることを重視。時間経過で投稿が流れていくため、心理的ハードルを下げています。',
+            lightShadow: '幸せだけでなく、少しダークな感情も含めて海に流せる世界観を持たせ、単なるメモアプリではない情緒を加えました。',
+            frontend: 'React、TypeScript、Vite、Tailwind CSS を中心に構築。魚ごとのコンポーネント管理を行い、時間が足りない場面では CSS アニメーションも併用して完成度を優先しました。',
+            backend: 'ハッカソン開発での学習コストと速度を考慮し、バックエンドとデータベースを兼ねられる Supabase を採用。定期実行ジョブを使い、時間差でデータが消える仕様も実現しました。',
+            context: '2025 年の技育CAMP Vol.10 にて開発。チームメンバーは全員 1 回生で、使う技術の多くが初挑戦という状態からスタートしました。その中で、学習コストと実装速度のバランスを取りながら形にし、優秀賞を受賞したプロジェクトです。',
+        },
+        en: {
+            returnToOrbit: 'RETURN TO ORBIT',
+            lead: 'A gentle SNS where small moments of happiness are sent away on fish and shared loosely with others.',
+            overview: 'This app focuses on lightweight posting: place a small happy moment on a fish and let it swim away over time. It was designed around two ideas: being easy to post without pressure, and sharing small moments of joy with someone.',
+            smallHappiness: 'Instead of dramatic broadcasting, it emphasizes casually sharing tiny daily happiness. Posts drift away over time, which lowers the psychological barrier to posting.',
+            lightShadow: 'The world also accepts slightly darker emotions, not only happy ones, adding emotional depth beyond a simple memo app.',
+            frontend: 'Built mainly with React, TypeScript, Vite, and Tailwind CSS. We managed fish-based components and used CSS animations pragmatically where needed to maximize polish within time constraints.',
+            backend: 'Considering learning cost and development speed in a hackathon setting, we chose Supabase to cover both backend and database. Scheduled jobs were used to implement delayed data disappearance behavior.',
+            context: 'Developed at GeekCamp Vol.10 in 2025. All team members were first-year students, and many technologies were first-time challenges. We balanced learning cost with implementation speed and completed the project to an Excellence Award level.',
+        },
+    } as const;
+    const t = copy[lang];
 
     const handleReturn = () => {
         setActiveWork(null);
-        router.push('/');
+        router.push(`/?lang=${lang}`);
     };
 
     return (
@@ -238,7 +264,7 @@ export default function DenshouoPage() {
             <nav className="fixed top-0 left-0 w-full z-50 p-6 md:p-12 mix-blend-exclusion">
                 <button onClick={handleReturn} className="inline-flex items-center gap-3 text-sm font-mono tracking-widest text-[#ecfeff] hover:text-teal-200 transition-colors group">
                     <span className="w-6 h-px bg-[#ecfeff] group-hover:bg-teal-200 transition-colors" />
-                    RETURN TO ORBIT
+                    {t.returnToOrbit}
                 </button>
             </nav>
 
@@ -253,7 +279,7 @@ export default function DenshouoPage() {
                         className="w-full max-w-lg md:max-w-2xl mx-auto"
                     />
                     <p className="mt-6 text-lg md:text-2xl text-gray-300 leading-relaxed max-w-3xl mx-auto">
-                        つぶやくほどでもない小さな幸せを魚に乗せて流し、みんなでゆるく分かち合う SNS。
+                        {t.lead}
                     </p>
                 </div>
 
@@ -264,8 +290,7 @@ export default function DenshouoPage() {
                             01 / OVERVIEW
                         </h2>
                         <p className="text-gray-200 leading-relaxed text-base md:text-lg">
-                            小さな幸せをおさかなに乗せて流し、時間が経つとどこかへ泳いでいく、気軽さ重視の投稿体験を目指したアプリです。
-                            「気兼ねなく流せること」と「ちょっとした幸せを誰かと分かち合えること」を中心に設計しました。
+                            {t.overview}
                         </p>
                     </section>
 
@@ -278,13 +303,13 @@ export default function DenshouoPage() {
                             <div className="bg-black/20 border border-teal-100/10 rounded-2xl p-6">
                                 <h3 className="text-white font-bold mb-3">SMALL HAPPINESS</h3>
                                 <p className="text-gray-400 text-sm leading-relaxed">
-                                    大げさな発信ではなく、日常の小さな幸せを軽く流せることを重視。時間経過で投稿が流れていくため、心理的ハードルを下げています。
+                                    {t.smallHappiness}
                                 </p>
                             </div>
                             <div className="bg-black/20 border border-teal-100/10 rounded-2xl p-6">
                                 <h3 className="text-white font-bold mb-3">LIGHT AND SHADOW</h3>
                                 <p className="text-gray-400 text-sm leading-relaxed">
-                                    幸せだけでなく、少しダークな感情も含めて海に流せる世界観を持たせ、単なるメモアプリではない情緒を加えました。
+                                    {t.lightShadow}
                                 </p>
                             </div>
                         </div>
@@ -299,13 +324,13 @@ export default function DenshouoPage() {
                             <div className="bg-black/20 border border-teal-100/10 rounded-2xl p-6">
                                 <h3 className="text-white font-bold mb-3">FRONTEND</h3>
                                 <p className="text-gray-400 text-sm leading-relaxed">
-                                    React、TypeScript、Vite、Tailwind CSS を中心に構築。魚ごとのコンポーネント管理を行い、時間が足りない場面では CSS アニメーションも併用して完成度を優先しました。
+                                    {t.frontend}
                                 </p>
                             </div>
                             <div className="bg-black/20 border border-teal-100/10 rounded-2xl p-6">
                                 <h3 className="text-white font-bold mb-3">BACKEND / DB</h3>
                                 <p className="text-gray-400 text-sm leading-relaxed">
-                                    ハッカソン開発での学習コストと速度を考慮し、バックエンドとデータベースを兼ねられる Supabase を採用。定期実行ジョブを使い、時間差でデータが消える仕様も実現しました。
+                                    {t.backend}
                                 </p>
                             </div>
                             <div className="flex flex-wrap gap-3">
@@ -325,8 +350,7 @@ export default function DenshouoPage() {
                             04 / DEVELOPMENT CONTEXT
                         </h2>
                         <p className="text-gray-300 leading-relaxed">
-                            2025 年の技育CAMP Vol.10 にて開発。チームメンバーは全員 1 回生で、使う技術の多くが初挑戦という状態からスタートしました。
-                            その中で、学習コストと実装速度のバランスを取りながら形にし、優秀賞を受賞したプロジェクトです。
+                            {t.context}
                         </p>
                     </section>
 

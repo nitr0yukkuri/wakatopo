@@ -135,24 +135,42 @@ export function CharacterFace({
 // Ten-chan Companion Component
 type TenchanCompanionProps = {
     section: 'hero' | 'concept' | 'features' | 'tech' | 'bottom';
+    lang?: 'ja' | 'en';
     overrideDialog?: { text: string; mood: "happy" | "neutral" | "sad" | "scared" | "sleepy" | "looking" | "surprised" | "talking" } | null;
     onClick?: () => void;
 };
 
-export default function TenchanCompanion({ section, overrideDialog, onClick }: TenchanCompanionProps) {
+export default function TenchanCompanion({ section, lang = 'ja', overrideDialog, onClick }: TenchanCompanionProps) {
     // セクションに応じたデフォルトメッセージと表情を設定
     const getDialogue = () => {
+        const byLang = {
+            ja: {
+                hero: "やっほー！てんちゃんだよ！",
+                concept: '天気予報、見ないでしょ？',
+                features: '現実の天気と連動するよ！',
+                tech: 'Next.jsで作られてるんだ！',
+                bottom: 'おてんきぐらしで待ってるよ！',
+            },
+            en: {
+                hero: 'Hi! I am Ten-chan!',
+                concept: 'You do not check the forecast, right?',
+                features: 'It syncs with real-world weather!',
+                tech: 'It is built with Next.js!',
+                bottom: 'I will be waiting in Otenkigurashi!',
+            },
+        } as const;
+
         switch (section) {
             case 'hero':
-                return { text: "やっほー！てんちゃんだよ！", mood: "happy" as const };
+                return { text: byLang[lang].hero, mood: "happy" as const };
             case 'concept':
-                return { text: "天気予報、見ないでしょ？", mood: "neutral" as const };
+                return { text: byLang[lang].concept, mood: "neutral" as const };
             case 'features':
-                return { text: "現実の天気と連動するよ！", mood: "talking" as const };
+                return { text: byLang[lang].features, mood: "talking" as const };
             case 'tech':
-                return { text: "Next.jsで作られてるんだ！", mood: "surprised" as const };
+                return { text: byLang[lang].tech, mood: "surprised" as const };
             case 'bottom':
-                return { text: "おてんきぐらしで待ってるよ！", mood: "happy" as const };
+                return { text: byLang[lang].bottom, mood: "happy" as const };
             default:
                 return { text: "...", mood: "neutral" as const };
         }

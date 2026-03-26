@@ -1,7 +1,7 @@
 'use client'
 
 import { useRef, useMemo } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useStore } from '@/store';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { Canvas, useFrame } from '@react-three/fiber';
@@ -79,15 +79,45 @@ function SnowParticles() {
 
 export default function ColdKeepPage() {
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const lang = searchParams.get('lang') === 'en' ? 'en' : 'ja';
     const { setActiveWork } = useStore();
     const { scrollYProgress } = useScroll();
+
+    const copy = {
+        ja: {
+            returnToOrbit: 'RETURN TO ORBIT',
+            overview: 'スマートフォンのマイクを入力センサーとして活用し、ステンレスボトルの内部状態（氷の有無・残量・温度）を非破壊で推定する',
+            overviewTail: 'アーキテクチャ。',
+            blackbox: 'ステンレス水筒の中身は見えない。「飲んだら熱すぎた」「いつの間にかぬるい」という体験の損失が発生している。',
+            hardware: '既存のIoT水筒は専用デバイスが必須。充電の手間、高コスト、そして電子廃棄物（E-Waste）の問題が避けられない。',
+            active1: 'ユーザーがボトルを振った際、あるいは注水時の「衝突音・流体音」をスマートフォンのマイクで集音。',
+            active2: 'PCM生波形をFFTでスペクトログラム化し、TensorFlow Liteによる軽量モデルで端末内推論（氷量・水量）を実行します。',
+            active3: 'C++ JSIレイヤーで直接処理することで、超低遅延を実現。',
+            passive1: '一度内部状態を特定した後は、ニュートンの冷却法則に基づく物理モデルをバックグラウンドで実行。',
+            passive2: '外気温と時刻データから熱移動を計算し、水筒内部の温度変化を高精度にシミュレーションし続けます。',
+        },
+        en: {
+            returnToOrbit: 'RETURN TO ORBIT',
+            overview: 'A non-destructive',
+            overviewTail: 'architecture that uses a smartphone microphone as an input sensor to estimate internal bottle conditions (ice presence, remaining amount, and temperature).',
+            blackbox: 'You cannot see inside a stainless bottle. This causes experience loss, such as finding it too hot to drink or unexpectedly lukewarm.',
+            hardware: 'Existing IoT bottles require dedicated hardware. Charging friction, higher cost, and electronic waste (E-Waste) are hard to avoid.',
+            active1: 'When users shake the bottle or pour liquid, collision and fluid sounds are captured by the smartphone microphone.',
+            active2: 'Raw PCM waveforms are converted into spectrograms with FFT, then a lightweight TensorFlow Lite model performs on-device inference for ice and liquid levels.',
+            active3: 'Direct C++ JSI processing enables ultra-low latency.',
+            passive1: 'After estimating the internal state once, a physical model based on Newton\'s law of cooling runs in the background.',
+            passive2: 'Using ambient temperature and time data, it continuously simulates internal temperature changes with high accuracy.',
+        },
+    } as const;
+    const t = copy[lang];
 
     const yTransform = useTransform(scrollYProgress, [0, 1], [0, -150]);
     const opacityTransform = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
 
     const handleReturn = () => {
         setActiveWork(null);
-        router.push('/');
+        router.push(`/?lang=${lang}`);
     };
 
     return (
@@ -115,7 +145,7 @@ export default function ColdKeepPage() {
             <nav className="fixed top-0 left-0 w-full z-50 p-6 md:p-12 mix-blend-exclusion">
                 <button onClick={handleReturn} className="inline-flex items-center gap-3 text-sm font-mono tracking-widest text-[#e0f2fe] hover:text-[#bae6fd] transition-colors group">
                     <span className="w-6 h-[1px] bg-[#e0f2fe] group-hover:bg-[#bae6fd] transition-colors" />
-                    RETURN TO ORBIT
+                    {t.returnToOrbit}
                 </button>
             </nav>
 
@@ -152,7 +182,7 @@ export default function ColdKeepPage() {
                             01 / OVERVIEW
                         </h2>
                         <p className="text-xl md:text-3xl font-light leading-relaxed text-[#f0f9ff]">
-                            スマートフォンのマイクを入力センサーとして活用し、ステンレスボトルの内部状態（氷の有無・残量・温度）を非破壊で推定する <span className="font-medium text-white shadow-[#38bdf8]">Soft Sensing</span> アーキテクチャ。
+                            {t.overview} <span className="font-medium text-white shadow-[#38bdf8]">Soft Sensing</span> {t.overviewTail}
                         </p>
                     </motion.section>
 
@@ -171,13 +201,13 @@ export default function ColdKeepPage() {
                             <div>
                                 <h3 className="text-white font-bold mb-4 text-xl">Blackbox Nature</h3>
                                 <p className="text-[#e0f2fe] leading-relaxed text-sm md:text-base opacity-80">
-                                    ステンレス水筒の中身は見えない。「飲んだら熱すぎた」「いつの間にかぬるい」という体験の損失が発生している。
+                                    {t.blackbox}
                                 </p>
                             </div>
                             <div>
                                 <h3 className="text-white font-bold mb-4 text-xl">Hardware Limits</h3>
                                 <p className="text-[#e0f2fe] leading-relaxed text-sm md:text-base opacity-80">
-                                    既存のIoT水筒は専用デバイスが必須。充電の手間、高コスト、そして電子廃棄物（E-Waste）の問題が避けられない。
+                                    {t.hardware}
                                 </p>
                             </div>
                         </div>
@@ -200,9 +230,9 @@ export default function ColdKeepPage() {
                                 <h3 className="text-3xl font-bold text-white mb-2">Active Sensing</h3>
                                 <p className="text-[#38bdf8] font-mono text-sm mb-6 bg-[#0369a1]/20 inline-block px-3 py-1 rounded-full">Acoustic Analysis / DSP / Edge AI</p>
                                 <p className="text-[#e0f2fe] leading-relaxed mb-8 opacity-90">
-                                    ユーザーがボトルを振った際、あるいは注水時の「衝突音・流体音」をスマートフォンのマイクで集音。
-                                    PCM生波形をFFTでスペクトログラム化し、TensorFlow Liteによる軽量モデルで端末内推論（氷量・水量）を実行します。
-                                    C++ JSIレイヤーで直接処理することで、超低遅延を実現。
+                                    {t.active1}
+                                    {t.active2}
+                                    {t.active3}
                                 </p>
                             </div>
 
@@ -210,8 +240,8 @@ export default function ColdKeepPage() {
                                 <h3 className="text-3xl font-bold text-white mb-2">Passive Simulation</h3>
                                 <p className="text-[#38bdf8] font-mono text-sm mb-6 bg-[#0369a1]/20 inline-block px-3 py-1 rounded-full">Newton's Law of Cooling</p>
                                 <p className="text-[#e0f2fe] leading-relaxed mb-8 opacity-90">
-                                    一度内部状態を特定した後は、ニュートンの冷却法則に基づく物理モデルをバックグラウンドで実行。
-                                    外気温と時刻データから熱移動を計算し、水筒内部の温度変化を高精度にシミュレーションし続けます。
+                                    {t.passive1}
+                                    {t.passive2}
                                 </p>
                                 <div className="bg-[#020b16]/80 glass border border-[#38bdf8]/30 p-6 rounded-lg font-mono text-xs md:text-sm text-[#bae6fd] overflow-x-auto shadow-inner">
                                     <code>

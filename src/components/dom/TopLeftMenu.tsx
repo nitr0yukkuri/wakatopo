@@ -2,19 +2,34 @@
 
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 
-const MENU_COMMANDS = [
-    { href: '/about', label: 'ABOUT', hint: 'PROFILE' },
-    { href: '/github-planet', label: 'GITHUB PLANET', hint: 'WORK 01' },
-    { href: '/otenkigurashi', label: 'おてんきぐらし', hint: 'WORK 02' },
-    { href: '/coldkeep', label: 'COLDKEEP', hint: 'WORK 03' },
-    { href: '/recaptcha-game', label: 'RECAPTCHA GAME', hint: 'WORK 04' },
-    { href: '/denshouo', label: 'でんしょうお', hint: 'WORK 05' },
-];
+const MENU_COMMANDS = {
+    ja: [
+        { href: '/about', label: 'ABOUT', hint: 'PROFILE' },
+        { href: '/github-planet', label: 'GITHUB PLANET', hint: 'WORK 01' },
+        { href: '/otenkigurashi', label: 'おてんきぐらし', hint: 'WORK 02' },
+        { href: '/coldkeep', label: 'COLDKEEP', hint: 'WORK 03' },
+        { href: '/recaptcha-game', label: 'RECAPTCHA GAME', hint: 'WORK 04' },
+        { href: '/denshouo', label: 'でんしょうお', hint: 'WORK 05' },
+    ],
+    en: [
+        { href: '/about', label: 'ABOUT', hint: 'PROFILE' },
+        { href: '/github-planet', label: 'GITHUB PLANET', hint: 'WORK 01' },
+        { href: '/otenkigurashi', label: 'OTENKIGURASHI', hint: 'WORK 02' },
+        { href: '/coldkeep', label: 'COLDKEEP', hint: 'WORK 03' },
+        { href: '/recaptcha-game', label: 'RECAPTCHA GAME', hint: 'WORK 04' },
+        { href: '/denshouo', label: 'DENSHOUO', hint: 'WORK 05' },
+    ],
+} as const;
 
 export default function TopLeftMenu() {
     const [open, setOpen] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
+    const searchParams = useSearchParams();
+    const lang = searchParams.get('lang') === 'en' ? 'en' : 'ja';
+    const commands = MENU_COMMANDS[lang];
+    const withLang = (href: string) => `${href}?lang=${lang}`;
 
     useEffect(() => {
         const onPointerDown = (event: PointerEvent) => {
@@ -59,7 +74,7 @@ export default function TopLeftMenu() {
                 </span>
             </button>
 
-            <p className="opacity-70 pointer-events-none">INTERACTIVE WEB EXPERIENCE</p>
+            <p className="opacity-70 pointer-events-none">{lang === 'en' ? 'INTERACTIVE WEB EXPERIENCE' : 'INTERACTIVE WEB EXPERIENCE'}</p>
 
             <div
                 id="top-left-menu-panel"
@@ -72,14 +87,14 @@ export default function TopLeftMenu() {
 
                 <div className="mb-2 rounded border border-cyan-400/20 bg-black/30 px-2 py-1.5 font-mono text-[11px] tracking-wide text-cyan-100/90">
                     <span className="mr-2 text-cyan-400">&gt;</span>
-                    open portfolio section
+                    {lang === 'en' ? 'open portfolio section' : 'open portfolio section'}
                 </div>
 
                 <nav className="flex flex-col gap-1 text-xs font-mono">
-                    {MENU_COMMANDS.map((command, index) => (
+                    {commands.map((command, index) => (
                         <Link
                             key={command.href}
-                            href={command.href}
+                            href={withLang(command.href)}
                             className="grid grid-cols-[auto_1fr_auto] items-center gap-2 rounded px-2 py-1.5 text-gray-200 hover:bg-cyan-400/15 hover:text-cyan-200"
                         >
                             <span className="text-cyan-400/70">{String(index + 1).padStart(2, '0')}</span>

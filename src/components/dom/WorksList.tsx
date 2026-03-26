@@ -1,7 +1,7 @@
 'use client'
 
 import { useStore } from '@/store';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 
 interface Work {
@@ -14,6 +14,9 @@ interface Work {
 export default function WorksList({ works }: { works: Work[] }) {
     const { setActiveWork, activeWorkId, setTransitionType } = useStore();
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const lang = searchParams.get('lang') === 'en' ? 'en' : 'ja';
+    const withLang = (path: string) => `${path}?lang=${lang}`;
 
     useEffect(() => {
         // ... (スクロール無効化はGlobalTransitionOverlayに移動したので削除)
@@ -24,7 +27,7 @@ export default function WorksList({ works }: { works: Work[] }) {
             setActiveWork('01');
             setTransitionType('warp');
             setTimeout(() => {
-                router.push('/github-planet');
+                router.push(withLang('/github-planet'));
                 // 次のページが表示され、オーバレイがフェードアウトする時間を確保するため少し長めに待つ
                 setTimeout(() => setTransitionType('none'), 1000);
             }, 2000);
@@ -48,28 +51,28 @@ export default function WorksList({ works }: { works: Work[] }) {
             }
 
             setTimeout(() => {
-                router.push('/otenkigurashi');
+                router.push(withLang('/otenkigurashi'));
                 setTimeout(() => setTransitionType('none'), 1000);
             }, 2000);
         } else if (id === '03') {
             setActiveWork('03');
             setTransitionType('freeze');
             setTimeout(() => {
-                router.push('/coldkeep');
+                router.push(withLang('/coldkeep'));
                 setTimeout(() => setTransitionType('none'), 1000);
             }, 2000);
         } else if (id === '04') {
             setActiveWork('04');
             setTransitionType('captcha-lock');
             setTimeout(() => {
-                router.push('/recaptcha-game');
+                router.push(withLang('/recaptcha-game'));
                 setTimeout(() => setTransitionType('none'), 900);
             }, 1650);
         } else if (id === '05') {
             setActiveWork('05');
             setTransitionType('wave');
             setTimeout(() => {
-                router.push('/denshouo');
+                router.push(withLang('/denshouo'));
                 setTimeout(() => setTransitionType('none'), 900);
             }, 1800);
         } else {

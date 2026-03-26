@@ -1,6 +1,6 @@
 'use client'
 
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useStore } from '@/store';
 import dynamic from 'next/dynamic';
 
@@ -9,11 +9,37 @@ const RealisticPlanetScene = dynamic(() => import('@/components/canvas/Realistic
 
 export default function GitHubPlanetPage() {
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const lang = searchParams.get('lang') === 'en' ? 'en' : 'ja';
     const { setActiveWork } = useStore();
+
+    const t = {
+        ja: {
+            heroLead1: 'あなたのコードが、星になる。',
+            heroLead2: 'は、コミット履歴からあなただけの惑星を生成するデジタル空間です。',
+            conceptText: 'エンジニアの日々の営みである「コードを書く」という行為。それは時に孤独で無機質な作業に感じられるかもしれません。GitHub Planet は、そんな見えない努力を可視化し、宇宙空間に浮かぶ美しく有機的な「惑星」として表現するWebアプリケーションです。あなたの活動が、静かだった宇宙に新たな星を誕生させます。',
+            terrainText: 'GitHubのAPIを通じてあなたのメイン言語を解析し、惑星の地表構造（テクスチャ）とベースカラーを決定します。コントリビューション数が増えるにつれて、惑星はより鮮やかに、生命力に満ちた輝きを放つようになります。',
+            rotationText: '惑星は生きています。直近のコミット活動が活発なほど、惑星の自転速度が上昇し、よりダイナミックな動きを見せます。逆に少し開発を休んでいる時は、静かにゆっくりと自転し、休息の時間を表現します。',
+            auraText: '星の周囲には、カスタムシェーダーによって描画される美しい光のオーラが漂っています。これまでの星（Star）の獲得数や実績に応じて、惑星の周りには小さな光の粒（Starfield）が集まり、重力に引かれるように公転し始めます。',
+            meteorsText: 'Socket.IOを利用したリアルタイム通信により、同じ瞬間に世界のどこかで誰かがコミットしたとき、あなたの空に一筋の流星（Meteor）が駆け抜けます。スケールや透明度がAnime.jsによって滑らかに制御され、他のエンジニアとの緩やかな繋がりを感じさせます。',
+            returnToOrbit: 'Return to Orbit',
+        },
+        en: {
+            heroLead1: 'Your code becomes a planet.',
+            heroLead2: 'is a digital space that generates your own planet from your commit history.',
+            conceptText: 'Writing code is a daily practice for engineers, but it can sometimes feel solitary and mechanical. GitHub Planet visualizes those invisible efforts as a beautiful organic planet floating in space. Your activity gives birth to a new star in what was once a quiet universe.',
+            terrainText: 'Through the GitHub API, your primary language is analyzed to determine planetary surface texture and base color. As your contribution count grows, the planet becomes more vivid and shines with stronger vitality.',
+            rotationText: 'The planet is alive. The more active your recent commits are, the faster it rotates and the more dynamic it feels. During quieter periods, rotation slows down to express a phase of rest.',
+            auraText: 'A luminous aura rendered with custom shaders surrounds the planet. Based on your accumulated stars and achievements, tiny light particles gather around it and begin orbiting like a starfield pulled by gravity.',
+            meteorsText: 'With real-time communication via Socket.IO, whenever someone in the world commits at the same moment, a meteor streaks across your sky. Scale and opacity are smoothly controlled with Anime.js to evoke a gentle connection with other engineers.',
+            returnToOrbit: 'Return to Orbit',
+        },
+    } as const;
+    const copy = t[lang];
 
     const handleReturn = () => {
         setActiveWork(null); // ワープ状態をリセット
-        router.push('/');
+        router.push(`/?lang=${lang}`);
     };
 
     return (
@@ -36,8 +62,8 @@ export default function GitHubPlanetPage() {
 
                 <div className="bg-black/40 backdrop-blur-md border border-white/10 p-8 md:p-14 rounded-[2.5rem] w-full shadow-[0_0_80px_rgba(0,0,0,0.8)] pointer-events-auto">
                     <p className="text-xl md:text-3xl font-light text-gray-200 mb-12 leading-relaxed text-center">
-                        あなたのコードが、星になる。<br />
-                        <span className="text-cyan-400 font-medium">GitHub Planet</span> は、コミット履歴からあなただけの惑星を生成するデジタル空間です。
+                        {copy.heroLead1}<br />
+                        <span className="text-cyan-400 font-medium">GitHub Planet</span> {copy.heroLead2}
                     </p>
 
                     <div className="space-y-16">
@@ -62,9 +88,7 @@ export default function GitHubPlanetPage() {
                         <div>
                             <h2 className="text-2xl font-bold tracking-widest text-white mb-6 border-b border-white/10 pb-4">01 // THE CONCEPT</h2>
                             <p className="text-gray-400 leading-relaxed max-w-3xl">
-                                エンジニアの日々の営みである「コードを書く」という行為。それは時に孤独で無機質な作業に感じられるかもしれません。
-                                GitHub Planet は、そんな見えない努力を可視化し、宇宙空間に浮かぶ美しく有機的な「惑星」として表現するWebアプリケーションです。
-                                あなたの活動が、静かだった宇宙に新たな星を誕生させます。
+                                {copy.conceptText}
                             </p>
                         </div>
 
@@ -75,29 +99,25 @@ export default function GitHubPlanetPage() {
                                 <div className="bg-white/5 p-6 rounded-2xl border border-white/5 hover:border-cyan-500/30 transition-colors">
                                     <h3 className="text-cyan-400 font-mono text-base mb-3 font-bold">TERRAIN & COLOR</h3>
                                     <p className="text-gray-400 text-sm leading-relaxed">
-                                        GitHubのAPIを通じてあなたのメイン言語を解析し、惑星の地表構造（テクスチャ）とベースカラーを決定します。
-                                        コントリビューション数が増えるにつれて、惑星はより鮮やかに、生命力に満ちた輝きを放つようになります。
+                                        {copy.terrainText}
                                     </p>
                                 </div>
                                 <div className="bg-white/5 p-6 rounded-2xl border border-white/5 hover:border-cyan-500/30 transition-colors">
                                     <h3 className="text-cyan-400 font-mono text-base mb-3 font-bold">LIVING ROTATION</h3>
                                     <p className="text-gray-400 text-sm leading-relaxed">
-                                        惑星は生きています。直近のコミット活動が活発なほど、惑星の自転速度が上昇し、よりダイナミックな動きを見せます。
-                                        逆に少し開発を休んでいる時は、静かにゆっくりと自転し、休息の時間を表現します。
+                                        {copy.rotationText}
                                     </p>
                                 </div>
                                 <div className="bg-white/5 p-6 rounded-2xl border border-white/5 hover:border-cyan-500/30 transition-colors">
                                     <h3 className="text-cyan-400 font-mono text-base mb-3 font-bold">AURA & STARS</h3>
                                     <p className="text-gray-400 text-sm leading-relaxed">
-                                        星の周囲には、カスタムシェーダーによって描画される美しい光のオーラが漂っています。
-                                        これまでの星（Star）の獲得数や実績に応じて、惑星の周りには小さな光の粒（Starfield）が集まり、重力に引かれるように公転し始めます。
+                                        {copy.auraText}
                                     </p>
                                 </div>
                                 <div className="bg-white/5 p-6 rounded-2xl border border-white/5 hover:border-cyan-500/30 transition-colors">
                                     <h3 className="text-cyan-400 font-mono text-base mb-3 font-bold">METEORS</h3>
                                     <p className="text-gray-400 text-sm leading-relaxed">
-                                        Socket.IOを利用したリアルタイム通信により、同じ瞬間に世界のどこかで誰かがコミットしたとき、あなたの空に一筋の流星（Meteor）が駆け抜けます。
-                                        スケールや透明度がAnime.jsによって滑らかに制御され、他のエンジニアとの緩やかな繋がりを感じさせます。
+                                        {copy.meteorsText}
                                     </p>
                                 </div>
                             </div>
@@ -132,7 +152,7 @@ export default function GitHubPlanetPage() {
                             onClick={handleReturn}
                             className="text-gray-500 font-mono text-sm hover:text-white transition-colors underline underline-offset-4"
                         >
-                            Return to Orbit
+                            {copy.returnToOrbit}
                         </button>
                     </div>
                 </div>

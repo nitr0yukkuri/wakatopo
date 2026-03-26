@@ -1,6 +1,6 @@
 'use client'
 
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useStore } from '@/store';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
@@ -26,7 +26,71 @@ function CloudDecoration({ className, style, flip }: { className: string, style?
 
 export default function OtenkiGurashiPage() {
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const lang = searchParams.get('lang') === 'en' ? 'en' : 'ja';
     const { setActiveWork, weather } = useStore();
+
+    const copy = {
+        ja: {
+            react1: 'えへへ！',
+            react2: 'おさんぽ行く？',
+            react3: 'ふわああ…',
+            react4: 'なになに？',
+            react5: '今日もいいお天気！',
+            lead: '天気予報を見ないあなたの、',
+            lead2: 'いちばん優しいおまもり。',
+            lead3: 'おてんきぐらし',
+            lead4: 'は、',
+            lead5: '現実の天気と連動するシミュレーションです。',
+            conceptTitle: 'コンセプト',
+            conceptClick: 'ゲームみたいに天気を楽しめるんだ！',
+            conceptText: '天気予報の確認は面倒だけど、急な雨や気圧の変化はつらい… そんな方々のために生まれました。ゲーム性のある優しい世界を通して、面倒だった天気確認を「雨だから、ゲーム内で特別なことができるかも？」という、ポジティブな体験へと変えていきます。',
+            f1Click: '大阪で雨なら、ゲームでも雨だよ！',
+            f1Title: '☀ リアルタイム天気連動',
+            f1Text: 'あなたのいる場所の「今」が、キャラクターの世界に直接反映されます。雨は雨粒、雷はフラッシュ、雪は降雪モーションとして画面に現れ、夜になればキャラクターも眠りにつきます。',
+            f2Click: 'おさんぽで色んなアイテムを集めよう！',
+            f2Title: '🚶 おさんぽ (Walking)',
+            f2Text: 'キャラクターを「おさんぽ」に出すことができます。おさんぽ先の景色や、手に入るアイテムは天気によって変化。コレクションする楽しみが待っています。',
+            f3Click: '思い出がたくさん記録されるよ！',
+            f3Title: '✨ コレクション＆実績',
+            f3Text: 'レベルアップのようなノルマはありません。「おさんぽ」で集めたアイテムを眺める「ずかん」や、「はじめて雨の日におさんぽした」といったキャラクターとの思い出を記録する「実績」が、あなたの毎日を彩ります。',
+            techClick: 'Next.jsで作られてるよ！',
+            openApp: 'アプリをひらく',
+            viewGithub: 'GitHubをみる',
+            backHome: 'ホームにもどる',
+            logoAlt: 'OTENKI GURASHI Logo',
+        },
+        en: {
+            react1: 'Hehe!',
+            react2: 'Want to go for a walk?',
+            react3: 'Yaaawn...',
+            react4: 'What is it?',
+            react5: 'Nice weather today too!',
+            lead: 'For you who never checks the forecast,',
+            lead2: 'the kindest little charm.',
+            lead3: 'Otenkigurashi',
+            lead4: 'is',
+            lead5: 'a simulation linked to real-world weather.',
+            conceptTitle: 'CONCEPT',
+            conceptClick: 'You can enjoy weather like a game!',
+            conceptText: 'Checking weather forecasts can be a hassle, and sudden rain or pressure changes can be tough. This app was born for that. Through a gentle game-like world, it turns weather checks from a chore into a positive experience: “It is raining, maybe I can do something special in-game.”',
+            f1Click: 'If it rains in Osaka, it rains in the game too!',
+            f1Title: '☀ Real-Time Weather Sync',
+            f1Text: 'The “now” of your location is directly reflected in the character world. Rain appears as droplets, thunder as flashes, snow as falling motion, and at night the character goes to sleep.',
+            f2Click: 'Let us collect items on a walk!',
+            f2Title: '🚶 Walk Mode',
+            f2Text: 'You can send your character on a walk. Scenery and obtainable items change with the weather, giving you a fun collection loop.',
+            f3Click: 'So many memories get recorded!',
+            f3Title: '✨ Collection & Achievements',
+            f3Text: 'There are no level-up quotas. A “zukan” lets you look back at collected walk items, and achievements record memories with your character, like your first rainy-day walk.',
+            techClick: 'It is built with Next.js!',
+            openApp: 'Open App',
+            viewGithub: 'View GitHub',
+            backHome: 'Back to Home',
+            logoAlt: 'OTENKIGURASHI Logo',
+        },
+    } as const;
+    const t = copy[lang];
 
     // スクロール検知用の状態とRef
     const [activeSection, setActiveSection] = useState<'hero' | 'concept' | 'features' | 'tech' | 'bottom'>('hero');
@@ -51,11 +115,11 @@ export default function OtenkiGurashiPage() {
 
     const handleTenchanClick = () => {
         const reactions: DialogType[] = [
-            { text: "えへへ！", mood: "happy" },
-            { text: "おさんぽ行く？", mood: "looking" },
-            { text: "ふわああ…", mood: "sleepy" },
-            { text: "なになに？", mood: "surprised" },
-            { text: "今日もいいお天気！", mood: "talking" }
+            { text: t.react1, mood: "happy" },
+            { text: t.react2, mood: "looking" },
+            { text: t.react3, mood: "sleepy" },
+            { text: t.react4, mood: "surprised" },
+            { text: t.react5, mood: "talking" }
         ];
         const random = reactions[Math.floor(Math.random() * reactions.length)];
         handleInteract(random.text, random.mood);
@@ -90,7 +154,7 @@ export default function OtenkiGurashiPage() {
 
     const handleReturn = () => {
         setActiveWork(null); // ワープ状態をリセット
-        router.push('/');
+        router.push(`/?lang=${lang}`);
     };
 
     let bgGradient = "from-[#aee1f9] to-[#e0f4fc]"; // Default (Clear)
@@ -146,7 +210,7 @@ export default function OtenkiGurashiPage() {
                 <div id="hero" ref={heroRef} className="mb-8 md:mb-10 text-center scroll-mt-24 w-full flex justify-center">
                     <img
                         src="/otenkigurashi-logo.png"
-                        alt="OTENKI GURASHI Logo"
+                        alt={t.logoAlt}
                         className="w-full max-w-[16rem] md:max-w-md drop-shadow-md"
                     />
                 </div>
@@ -155,8 +219,8 @@ export default function OtenkiGurashiPage() {
                 <div className="bg-white/95 backdrop-blur-sm border-4 border-white px-6 py-10 md:p-14 rounded-[2.5rem] md:rounded-[3rem] w-full shadow-[0_20px_60px_-15px_rgba(152,173,194,0.3)]">
 
                     <p className="text-lg md:text-2xl font-bold text-gray-600 mb-10 md:mb-12 leading-relaxed text-center">
-                        天気予報を見ないあなたの、<br className="md:hidden" />いちばん優しいおまもり。<br />
-                        <span className="text-[#ffb03a] text-xl md:text-3xl inline-block mt-2 font-black">おてんきぐらし</span> は、<br className="md:hidden" />現実の天気と連動するシミュレーションです。
+                        {t.lead}<br className="md:hidden" />{t.lead2}<br />
+                        <span className="text-[#ffb03a] text-xl md:text-3xl inline-block mt-2 font-black">{t.lead3}</span> {t.lead4}<br className="md:hidden" />{t.lead5}
                     </p>
 
                     <div className="space-y-12">
@@ -164,15 +228,14 @@ export default function OtenkiGurashiPage() {
                         <section id="concept" ref={conceptRef} className="mb-32 animate-fade-in-up scroll-mt-32" style={{ animationDelay: '0.6s' }}>
                             <div className="flex items-center gap-4 mb-8">
                                 <span className="text-4xl font-bold text-[#ffb03a]">01</span>
-                                <h2 className="text-2xl font-bold tracking-widest text-[#7ab8cc]">コンセプト</h2>
+                                <h2 className="text-2xl font-bold tracking-widest text-[#7ab8cc]">{t.conceptTitle}</h2>
                             </div>
                             <div
-                                onClick={() => handleInteract("ゲームみたいに天気を楽しめるんだ！", "happy")}
+                                onClick={() => handleInteract(t.conceptClick, "happy")}
                                 className="bg-white/90 backdrop-blur-md rounded-[2.5rem] md:rounded-[3rem] p-6 md:p-12 border-4 border-white shadow-xl max-w-3xl cursor-pointer hover:border-[#ffb03a] hover:shadow-lg transition-all"
                             >
                                 <p className="text-base md:text-xl leading-relaxed text-gray-700 font-medium">
-                                    天気予報の確認は面倒だけど、急な雨や気圧の変化はつらい… そんな方々のために生まれました。
-                                    ゲーム性のある優しい世界を通して、面倒だった天気確認を「雨だから、ゲーム内で特別なことができるかも？」という、ポジティブな体験へと変えていきます。
+                                    {t.conceptText}
                                 </p>
                             </div>
                         </section>
@@ -182,30 +245,30 @@ export default function OtenkiGurashiPage() {
                             </h2>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div
-                                    onClick={() => handleInteract("大阪で雨なら、ゲームでも雨だよ！", "talking")}
+                                    onClick={() => handleInteract(t.f1Click, "talking")}
                                     className="bg-white p-8 rounded-3xl border-2 border-[#e0f4fc] shadow-sm hover:border-[#ffb03a] cursor-pointer transition-all hover:-translate-y-1"
                                 >
-                                    <h3 className="text-[#ffb03a] font-bold text-lg mb-3">☀ リアルタイム天気連動</h3>
+                                    <h3 className="text-[#ffb03a] font-bold text-lg mb-3">{t.f1Title}</h3>
                                     <p className="text-gray-600 text-sm leading-relaxed font-medium">
-                                        あなたのいる場所の「今」が、キャラクターの世界に直接反映されます。雨は雨粒、雷はフラッシュ、雪は降雪モーションとして画面に現れ、夜になればキャラクターも眠りにつきます。
+                                        {t.f1Text}
                                     </p>
                                 </div>
                                 <div
-                                    onClick={() => handleInteract("おさんぽで色んなアイテムを集めよう！", "happy")}
+                                    onClick={() => handleInteract(t.f2Click, "happy")}
                                     className="bg-white p-8 rounded-3xl border-2 border-[#e0f4fc] shadow-sm hover:border-[#ffb03a] cursor-pointer transition-all hover:-translate-y-1"
                                 >
-                                    <h3 className="text-[#ffb03a] font-bold text-lg mb-3">🚶 おさんぽ (Walking)</h3>
+                                    <h3 className="text-[#ffb03a] font-bold text-lg mb-3">{t.f2Title}</h3>
                                     <p className="text-gray-600 text-sm leading-relaxed font-medium">
-                                        キャラクターを「おさんぽ」に出すことができます。おさんぽ先の景色や、手に入るアイテムは天気によって変化。コレクションする楽しみが待っています。
+                                        {t.f2Text}
                                     </p>
                                 </div>
                                 <div
-                                    onClick={() => handleInteract("思い出がたくさん記録されるよ！", "surprised")}
+                                    onClick={() => handleInteract(t.f3Click, "surprised")}
                                     className="bg-white p-8 rounded-3xl border-2 border-[#e0f4fc] shadow-sm hover:border-[#ffb03a] cursor-pointer transition-all hover:-translate-y-1 md:col-span-2"
                                 >
-                                    <h3 className="text-[#ffb03a] font-bold text-lg mb-3">✨ コレクション＆実績</h3>
+                                    <h3 className="text-[#ffb03a] font-bold text-lg mb-3">{t.f3Title}</h3>
                                     <p className="text-gray-600 text-sm leading-relaxed font-medium">
-                                        レベルアップのようなノルマはありません。「おさんぽ」で集めたアイテムを眺める「ずかん」や、「はじめて雨の日におさんぽした」といったキャラクターとの思い出を記録する「実績」が、あなたの毎日を彩ります。
+                                        {t.f3Text}
                                     </p>
                                 </div>
                             </div>
@@ -217,7 +280,7 @@ export default function OtenkiGurashiPage() {
                                 <span className="text-[#ffb03a]">03</span> TECH STACK
                             </h2>
                             <div
-                                onClick={() => handleInteract("Next.jsで作られてるよ！", "surprised")}
+                                onClick={() => handleInteract(t.techClick, "surprised")}
                                 className="bg-white p-8 rounded-3xl border-2 border-[#e0f4fc] shadow-sm hover:border-[#ffb03a] cursor-pointer transition-all"
                             >
                                 <ul className="grid grid-cols-2 md:grid-cols-3 gap-4 font-bold text-gray-700">
@@ -239,7 +302,7 @@ export default function OtenkiGurashiPage() {
                             rel="noopener noreferrer"
                             className="bg-[#ffb03a] text-white px-8 py-4 rounded-full font-bold text-base shadow-[0_6px_0_#e69a2e] hover:translate-y-[2px] hover:shadow-[0_4px_0_#e69a2e] active:translate-y-[6px] active:shadow-none transition-all flex items-center gap-2"
                         >
-                            <span>アプリをひらく</span> ↗
+                            <span>{t.openApp}</span> ↗
                         </a>
 
                         <a
@@ -248,13 +311,13 @@ export default function OtenkiGurashiPage() {
                             rel="noopener noreferrer"
                             className="bg-white text-[#7ab8cc] border-2 border-[#e0f4fc] px-8 py-4 rounded-full font-bold text-base shadow-[0_6px_0_#d1effa] hover:translate-y-[2px] hover:border-[#7ab8cc] hover:shadow-[0_4px_0_#a0e1fa] active:translate-y-[6px] active:shadow-none transition-all flex items-center gap-2"
                         >
-                            <span>GitHubをみる</span> ↗
+                            <span>{t.viewGithub}</span> ↗
                         </a>
                     </div>
 
                     <div className="mt-12 text-center animate-fade-in-up" style={{ animationDelay: '0.8s' }}>
-                        <Link href="/" className="inline-block border-2 border-[#7ab8cc] text-[#7ab8cc] hover:bg-[#7ab8cc] hover:text-white font-bold py-4 px-12 rounded-full transition-colors">
-                            ホームにもどる
+                        <Link href={`/?lang=${lang}`} className="inline-block border-2 border-[#7ab8cc] text-[#7ab8cc] hover:bg-[#7ab8cc] hover:text-white font-bold py-4 px-12 rounded-full transition-colors">
+                            {t.backHome}
                         </Link>
                     </div>
                 </div>
@@ -398,6 +461,7 @@ export default function OtenkiGurashiPage() {
 
             {/* Ten-chan Companion */}
             <TenchanCompanion
+                lang={lang}
                 section={activeSection}
                 overrideDialog={overrideDialog}
                 onClick={handleTenchanClick}

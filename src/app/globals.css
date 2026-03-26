@@ -3,12 +3,25 @@
 :root {
   --background: #050505; /* 限りなく黒に近いグレー */
   --foreground: #eeeeee;
+  --font-base: var(--font-japanese);
+  --tracking-body: 0.01em;
+  --leading-body: 1.78;
+  --tracking-heading: 0.005em;
+  --leading-heading: 1.25;
+}
+
+html[data-lang="en"] {
+  --font-base: var(--font-latin);
+  --tracking-body: 0.002em;
+  --leading-body: 1.68;
+  --tracking-heading: -0.012em;
+  --leading-heading: 1.18;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-base);
   --font-mono: var(--font-geist-mono);
 }
 
@@ -19,9 +32,11 @@ html {
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-sans);
+  font-family: var(--font-base), system-ui, sans-serif;
   overflow-x: hidden; /* 横スクロール防止 */
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-kerning: normal;
 }
 
 /* スクロールバーを細くスタイリッシュに */
@@ -80,6 +95,43 @@ body {
   }
   .animate-cloud-scroll-left-fast {
     animation: scroll-cloud-left 60s linear infinite;
+  }
+
+  .u-wrap-anywhere {
+    overflow-wrap: anywhere;
+    word-break: normal;
+  }
+
+  .u-ellipsis-1 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .u-clamp-2 {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    overflow: hidden;
+  }
+
+  .u-clamp-3 {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    overflow: hidden;
+  }
+
+  .typo-body {
+    letter-spacing: var(--tracking-body);
+    line-height: var(--leading-body);
+  }
+
+  .typo-heading {
+    letter-spacing: var(--tracking-heading);
+    line-height: var(--leading-heading);
   }
 }
 

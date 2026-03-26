@@ -1,18 +1,28 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist_Mono, Inter, Noto_Sans_JP } from "next/font/google";
 import "./globals.css";
 import GlobalTransitionOverlay from "@/components/GlobalTransitionOverlay";
 import PwaRegister from "@/components/PwaRegister";
 import SoundDirector from "@/components/SoundDirector";
+import LocaleSync from "@/components/LocaleSync";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
+  variable: "--font-latin",
   subsets: ["latin"],
+  display: "swap",
+});
+
+const notoSansJp = Noto_Sans_JP({
+  variable: "--font-japanese",
+  subsets: ["latin"],
+  weight: ["400", "500", "700"],
+  display: "swap",
 });
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  display: "swap",
 });
 
 // PWA用にテーマカラー（ステータスバーの色）を設定
@@ -49,15 +59,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="ja" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://image.thum.io" />
         <link rel="dns-prefetch" href="https://image.thum.io" />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${inter.variable} ${notoSansJp.variable} ${geistMono.variable} antialiased`}
         suppressHydrationWarning
       >
+        <LocaleSync />
         <PwaRegister />
         <SoundDirector />
         <GlobalTransitionOverlay />

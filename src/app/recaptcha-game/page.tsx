@@ -1,15 +1,49 @@
 'use client'
 
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useStore } from '@/store';
 
 export default function RecaptchaGamePage() {
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const lang = searchParams.get('lang') === 'en' ? 'en' : 'ja';
     const { setActiveWork } = useStore();
+
+    const t = {
+        ja: {
+            returnToOrbit: 'RETURN TO ORBIT',
+            lead: 'おなじみの画像認証をモチーフにした、新感覚のリアルタイム対戦ゲーム。相手の操作を読みながら、誰より速く、誰より正確にパネルを制圧する。',
+            mission: '出題されるお題に合う画像を 9 枚のパネルから選び、確認ボタンで判定する対戦型ゲーム。CPU 戦と WebSocket によるオンライン対戦に対応し、短時間で高密度な読み合いを体験できます。',
+            feature1: 'RIVAL VIEW: 相手の選択状況を低遅延で可視化',
+            feature2: 'COMBO & JAMMING: 連続正解で妨害演出を発動',
+            feature3: 'SMOOTH UI / SOUND: Framer Motion と Tone.js の同期',
+            feature4: 'LIGHTWEIGHT STATE: Zustand による高速状態更新',
+            how1: 'ゲームモードを選択します。',
+            how2: 'お題を確認し、9 枚の画像から条件に合うものを選択します。',
+            how3: '確認ボタンを押して判定し、正解でスコア加算。',
+            how4: 'コンボを繋ぐと相手に妨害エフェクトを送信。',
+            how5: '先に Winning Score へ到達したプレイヤーが勝利。',
+        },
+        en: {
+            returnToOrbit: 'RETURN TO ORBIT',
+            lead: 'A fresh real-time competitive game inspired by familiar image verification. Read your opponent, capture panels faster, and win with precision.',
+            mission: 'A head-to-head game where you select matching images from 9 panels and verify with the confirm button. Supports both CPU matches and online multiplayer via WebSocket for dense mind games in short sessions.',
+            feature1: 'RIVAL VIEW: Visualize opponent choices with low latency',
+            feature2: 'COMBO & JAMMING: Trigger interference effects with streaks',
+            feature3: 'SMOOTH UI / SOUND: Synchronized Framer Motion and Tone.js',
+            feature4: 'LIGHTWEIGHT STATE: Fast state updates powered by Zustand',
+            how1: 'Select a game mode.',
+            how2: 'Check the prompt and choose matching images from 9 panels.',
+            how3: 'Press confirm to validate and gain score on correct answers.',
+            how4: 'Build combos to send jamming effects to your opponent.',
+            how5: 'The first player to reach Winning Score wins.',
+        },
+    } as const;
+    const copy = t[lang];
 
     const handleReturn = () => {
         setActiveWork(null);
-        router.push('/');
+        router.push(`/?lang=${lang}`);
     };
 
     return (
@@ -32,7 +66,7 @@ export default function RecaptchaGamePage() {
                         className="inline-flex items-center gap-3 text-xs md:text-sm font-mono tracking-[0.22em] text-cyan-100/90 hover:text-cyan-300 transition-colors group"
                     >
                         <span className="w-6 h-[1px] bg-cyan-100/90 group-hover:bg-cyan-300 transition-colors" />
-                        RETURN TO ORBIT
+                        {copy.returnToOrbit}
                     </button>
                     <div className="hidden md:flex items-center gap-4 text-[10px] font-mono tracking-[0.24em] text-cyan-200/70">
                         <span>MODE / MULTIPLAYER</span>
@@ -56,8 +90,7 @@ export default function RecaptchaGamePage() {
                                 RECAPTCHA GAME
                             </h1>
                             <p className="mt-4 max-w-3xl text-sm leading-relaxed text-cyan-100/80 md:text-base">
-                                おなじみの画像認証をモチーフにした、新感覚のリアルタイム対戦ゲーム。
-                                相手の操作を読みながら、誰より速く、誰より正確にパネルを制圧する。
+                                {copy.lead}
                             </p>
                             <div className="mt-6 flex flex-wrap gap-3">
                                 <span className="rounded-full border border-white/20 bg-white/5 px-3 py-1 text-[10px] font-mono tracking-[0.2em] text-white/80">PVP / CPU</span>
@@ -105,18 +138,17 @@ export default function RecaptchaGamePage() {
                     <article className="rounded-2xl border border-white/10 bg-[#050b16]/85 p-6 backdrop-blur-xl">
                         <h2 className="text-xs font-mono tracking-[0.2em] text-cyan-300">01 / MISSION</h2>
                         <p className="mt-4 text-sm leading-relaxed text-gray-200 md:text-base">
-                            出題されるお題に合う画像を 9 枚のパネルから選び、確認ボタンで判定する対戦型ゲーム。
-                            CPU 戦と WebSocket によるオンライン対戦に対応し、短時間で高密度な読み合いを体験できます。
+                            {copy.mission}
                         </p>
                     </article>
 
                     <article className="rounded-2xl border border-white/10 bg-[#050b16]/85 p-6 backdrop-blur-xl">
                         <h2 className="text-xs font-mono tracking-[0.2em] text-cyan-300">02 / CORE FEATURES</h2>
                         <ul className="mt-4 space-y-3 text-sm text-gray-300">
-                            <li>RIVAL VIEW: 相手の選択状況を低遅延で可視化</li>
-                            <li>COMBO & JAMMING: 連続正解で妨害演出を発動</li>
-                            <li>SMOOTH UI / SOUND: Framer Motion と Tone.js の同期</li>
-                            <li>LIGHTWEIGHT STATE: Zustand による高速状態更新</li>
+                            <li>{copy.feature1}</li>
+                            <li>{copy.feature2}</li>
+                            <li>{copy.feature3}</li>
+                            <li>{copy.feature4}</li>
                         </ul>
                     </article>
                 </section>
@@ -124,11 +156,11 @@ export default function RecaptchaGamePage() {
                 <section className="mt-5 rounded-2xl border border-white/10 bg-[#050b16]/85 p-6 backdrop-blur-xl md:p-8">
                     <h2 className="text-xs font-mono tracking-[0.2em] text-cyan-300">03 / HOW TO PLAY</h2>
                     <ol className="mt-4 grid gap-3 text-sm leading-relaxed text-gray-300 md:grid-cols-2">
-                        <li>ゲームモードを選択します。</li>
-                        <li>お題を確認し、9 枚の画像から条件に合うものを選択します。</li>
-                        <li>確認ボタンを押して判定し、正解でスコア加算。</li>
-                        <li>コンボを繋ぐと相手に妨害エフェクトを送信。</li>
-                        <li>先に Winning Score へ到達したプレイヤーが勝利。</li>
+                        <li>{copy.how1}</li>
+                        <li>{copy.how2}</li>
+                        <li>{copy.how3}</li>
+                        <li>{copy.how4}</li>
+                        <li>{copy.how5}</li>
                     </ol>
                 </section>
 
