@@ -49,6 +49,16 @@ export default function GitHubPlanetPage() {
             {/* 3Dのリアルな惑星背景（GitHub Planetからの移植・調整版） */}
             <RealisticPlanetScene />
 
+            <nav className="fixed top-0 left-0 w-full z-50 p-6 md:p-12">
+                <button
+                    onClick={handleReturn}
+                    className="inline-flex items-center gap-3 text-sm font-mono tracking-widest text-cyan-300 hover:text-white transition-colors group"
+                >
+                    <span className="w-6 h-px bg-cyan-300 group-hover:bg-white transition-colors" />
+                    {copy.returnToOrbit}
+                </button>
+            </nav>
+
             <div className="relative z-10 w-full max-w-5xl mx-auto px-6 pt-32 pb-16 flex flex-col items-center animate-fade-in-up pointer-events-none">
                 {/* GitHub Planet Logo */}
                 <img
@@ -149,13 +159,6 @@ export default function GitHubPlanetPage() {
                             <span>EXPLORE REPOSITORY</span>
                             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
                         </a>
-
-                        <button
-                            onClick={handleReturn}
-                            className="inline-flex items-center justify-center rounded-full border border-white/20 bg-white/5 px-8 py-4 font-mono text-sm text-gray-300 transition-colors hover:bg-white/10 hover:text-white"
-                        >
-                            {copy.returnToOrbit}
-                        </button>
                     </div>
                 </div>
             </div>

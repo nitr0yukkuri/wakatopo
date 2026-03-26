@@ -211,7 +211,7 @@ export default function RecaptchaGamePage() {
                     </div>
                 </section>
 
-                <div className="mt-8 flex items-center justify-center">
+                <div className="mt-16 pt-10 border-t border-white/10 flex items-center justify-center">
                     <a
                         href="https://recaptchgame-web.onrender.com/"
                         target="_blank"

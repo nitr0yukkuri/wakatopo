@@ -2,7 +2,6 @@
 
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useStore } from '@/store';
-import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import TenchanCompanion from '@/components/TenchanCompanion';
 import { Canvas } from '@react-three/fiber';
@@ -180,6 +179,16 @@ export default function OtenkiGurashiPage() {
     return (
         <main className={`relative w-full min-h-[120dvh] ${weather !== 'Rain' ? 'bg-gradient-to-b' : ''} ${bgGradient} ${weather === 'Thunder' || weather === 'Night' ? 'text-gray-200' : 'text-gray-700'} overflow-hidden font-sans pb-32 transition-colors duration-1000`}>
 
+            <nav className="fixed top-0 left-0 w-full z-50 p-6 md:p-10">
+                <button
+                    onClick={handleReturn}
+                    className="inline-flex items-center gap-3 text-sm font-mono tracking-widest text-[#7ab8cc] hover:text-white transition-colors group"
+                >
+                    <span className="w-6 h-px bg-[#7ab8cc] group-hover:bg-white transition-colors" />
+                    おうちにもどる
+                </button>
+            </nav>
+
             {/* Background Parallax Clouds Layer */}
             <div className={`absolute inset-0 pointer-events-none overflow-hidden z-0 transition-opacity duration-1000 ${weather === 'Rain' ? 'opacity-8' : weather === 'Thunder' ? 'opacity-35' : weather === 'Snow' ? 'opacity-0' : weather === 'Clouds' ? 'opacity-100' : weather === 'Night' ? 'opacity-45' : 'opacity-30'}`}>
                 {/* --- 3. 奥のレイヤー（小さく、ゆっくり、薄い、左へ） --- */}
@@ -298,7 +307,7 @@ export default function OtenkiGurashiPage() {
                     </div>
 
                     {/* Pop Buttons */}
-                    <div id="bottom" ref={bottomRef} className="mt-16 pt-10 border-t-2 border-[#e0f4fc] flex flex-col sm:flex-row items-center justify-center gap-6 scroll-mt-32">
+                    <div id="bottom" ref={bottomRef} className="mt-16 pt-10 border-t border-[#e0f4fc] flex flex-col sm:flex-row items-center justify-center gap-4 scroll-mt-32">
                         <a
                             href="https://otenki-gurashi.vercel.app/"
                             target="_blank"
@@ -316,12 +325,6 @@ export default function OtenkiGurashiPage() {
                         >
                             <span>{t.viewGithub}</span> ↗
                         </a>
-                    </div>
-
-                    <div className="mt-12 text-center animate-fade-in-up" style={{ animationDelay: '0.8s' }}>
-                        <Link href={`/?lang=${lang}`} className="inline-block border-2 border-[#7ab8cc] text-[#7ab8cc] hover:bg-[#7ab8cc] hover:text-white font-bold py-4 px-12 rounded-full transition-colors">
-                            {t.backHome}
-                        </Link>
                     </div>
                 </div>
             </div>

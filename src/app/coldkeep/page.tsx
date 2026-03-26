@@ -263,7 +263,7 @@ if (ice_mass > 0) {
                     </motion.section>
 
                     {/* GitHub Link */}
-                    <motion.div className="pt-16 text-center" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}>
+                    <motion.div className="mt-16 pt-10 border-t border-white/10 flex justify-center" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}>
                         <a href="https://github.com/nitr0yukkuri/coldkeep" target="_blank" rel="noopener noreferrer"
                             className="inline-block border border-[#7dd3fc] hover:bg-[#7dd3fc] hover:text-[#020b16] bg-white/5 backdrop-blur-md px-10 py-4 rounded-full text-sm font-mono tracking-widest text-[#e0f2fe] transition-all shadow-[0_0_20px_rgba(56,189,248,0.2)] hover:shadow-[0_0_30px_rgba(56,189,248,0.6)]">
                             VIEW SOURCE ON GITHUB ↗

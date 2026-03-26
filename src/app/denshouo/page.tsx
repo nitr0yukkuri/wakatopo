@@ -356,7 +356,7 @@ export default function DenshouoPage() {
                         </p>
                     </section>
 
-                    <div className="pt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
+                    <div className="mt-16 pt-10 border-t border-teal-100/10 flex flex-col sm:flex-row items-center justify-center gap-4">
                         <a
                             href="https://oikomi-front.vercel.app/"
                             target="_blank"
