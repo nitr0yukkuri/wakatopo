@@ -118,13 +118,13 @@ export default async function Home({
         </Suspense>
 
         {/* Top Right */}
-        <div className="absolute top-6 right-6 md:top-8 md:right-8 text-right flex flex-col gap-1 pointer-events-auto">
+        <div className="absolute top-20 right-4 sm:top-6 sm:right-6 md:top-8 md:right-8 text-right flex flex-col gap-1 pointer-events-auto">
           <div className="flex items-center justify-end gap-1.5 text-[10px] font-mono tracking-widest text-gray-400">
             <a href="/?lang=ja" className={lang === 'ja' ? 'text-cyan-300' : 'hover:text-gray-200 transition-colors'}>JP</a>
             <span className="text-gray-700">/</span>
             <a href="/?lang=en" className={lang === 'en' ? 'text-cyan-300' : 'hover:text-gray-200 transition-colors'}>ENG</a>
           </div>
-          <div className="flex items-center justify-end gap-2 text-cyan-400">
+          <div className="flex items-center justify-end gap-2 text-cyan-400 text-[11px] sm:text-xs">
             <span className="w-1.5 h-1.5 bg-cyan-400 rounded-none animate-pulse" />
             <span>{t.systemOnline}</span>
           </div>

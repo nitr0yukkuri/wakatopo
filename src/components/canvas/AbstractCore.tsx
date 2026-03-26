@@ -343,7 +343,7 @@ export default function AbstractCore() {
     });
 
     return (
-        <group scale={isMobile ? 0.74 : 1}>
+        <group scale={isMobile ? 0.56 : 1}>
             {/* 当たり判定用の透明な球体（ワイヤーフレームは当たり判定が拾えないため） */}
             <mesh
                 onPointerOver={(e) => { e.stopPropagation(); setHovered(true); }}
