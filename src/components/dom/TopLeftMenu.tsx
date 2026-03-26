@@ -134,9 +134,9 @@ export default function TopLeftMenu() {
                 onClick={() => setOpen((prev) => !prev)}
                 aria-expanded={open}
                 aria-controls="top-left-menu-panel"
-                className="group inline-flex w-fit items-center gap-3 rounded-md border border-cyan-400/35 bg-[#05080d]/85 px-3 py-2 text-left transition-colors hover:border-cyan-300"
+                className="group inline-flex w-fit max-w-[92vw] items-center gap-2.5 rounded-lg border border-cyan-400/35 bg-[#05080d]/90 px-3 py-2 text-left transition-colors hover:border-cyan-300 sm:gap-3 sm:px-3.5 sm:py-2.5"
             >
-                <span className="text-white font-bold text-sm tracking-widest group-hover:text-cyan-300 transition-colors">
+                <span className="text-white font-bold text-[11px] sm:text-sm tracking-[0.16em] sm:tracking-widest group-hover:text-cyan-300 transition-colors whitespace-nowrap">
                     WAKATO <span className="text-cyan-500 group-hover:text-white transition-colors">//</span> PORTFOLIO
                 </span>
                 <span
@@ -147,11 +147,11 @@ export default function TopLeftMenu() {
                 </span>
             </button>
 
-            <p className="opacity-70 pointer-events-none">{lang === 'en' ? 'INTERACTIVE WEB EXPERIENCE' : 'INTERACTIVE WEB EXPERIENCE'}</p>
+            <p className="opacity-70 pointer-events-none text-[10px] sm:text-xs tracking-[0.16em] sm:tracking-[0.2em] text-cyan-100/75">{lang === 'en' ? 'INTERACTIVE WEB EXPERIENCE' : 'INTERACTIVE WEB EXPERIENCE'}</p>
 
             <div
                 id="top-left-menu-panel"
-                className={`absolute left-0 top-full mt-2 w-[min(88vw,360px)] rounded-md border border-cyan-400/30 bg-[#060a10]/95 p-3 backdrop-blur transition-all ${open ? 'pointer-events-auto opacity-100 translate-y-0' : 'pointer-events-none opacity-0 -translate-y-1'}`}
+                className={`absolute left-0 top-full mt-2 w-[min(92vw,380px)] max-h-[72dvh] overflow-y-auto rounded-xl border border-cyan-400/30 bg-[#060a10]/95 p-3 shadow-[0_20px_45px_rgba(0,0,0,0.45)] backdrop-blur transition-all ${open ? 'pointer-events-auto opacity-100 translate-y-0' : 'pointer-events-none opacity-0 -translate-y-1'}`}
             >
                 <div className="mb-2 flex items-center justify-between text-[10px] tracking-[0.2em] text-cyan-300/80">
                     <span>COMMAND PALETTE</span>
@@ -163,29 +163,29 @@ export default function TopLeftMenu() {
                     {lang === 'en' ? 'open portfolio section' : 'open portfolio section'}
                 </div>
 
-                <nav className="flex flex-col gap-1 text-xs font-mono">
+                <nav className="flex flex-col gap-1 text-[11px] sm:text-xs font-mono">
                     {commands.map((command, index) => (
                         command.href === '/about' ? (
                             <Link
                                 key={command.href}
                                 href={withLang(command.href)}
                                 onClick={() => setOpen(false)}
-                                className="grid grid-cols-[auto_1fr_auto] items-center gap-2 rounded px-2 py-1.5 text-gray-200 hover:bg-cyan-400/15 hover:text-cyan-200"
+                                className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 rounded-lg px-2 py-2 text-gray-200 hover:bg-cyan-400/15 hover:text-cyan-200"
                             >
                                 <span className="text-cyan-400/70">{String(index + 1).padStart(2, '0')}</span>
-                                <span>{command.label}</span>
-                                <span className="text-[10px] tracking-[0.16em] text-cyan-200/60">{command.hint}</span>
+                                <span className="truncate pr-2">{command.label}</span>
+                                <span className="text-[9px] sm:text-[10px] tracking-[0.14em] sm:tracking-[0.16em] text-cyan-200/60">{command.hint}</span>
                             </Link>
                         ) : (
                             <button
                                 key={command.href}
                                 type="button"
                                 onClick={() => navigateWithTransition(command.href)}
-                                className="grid grid-cols-[auto_1fr_auto] items-center gap-2 rounded px-2 py-1.5 text-gray-200 hover:bg-cyan-400/15 hover:text-cyan-200 text-left"
+                                className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 rounded-lg px-2 py-2 text-gray-200 hover:bg-cyan-400/15 hover:text-cyan-200 text-left"
                             >
                                 <span className="text-cyan-400/70">{String(index + 1).padStart(2, '0')}</span>
-                                <span>{command.label}</span>
-                                <span className="text-[10px] tracking-[0.16em] text-cyan-200/60">{command.hint}</span>
+                                <span className="truncate pr-2">{command.label}</span>
+                                <span className="text-[9px] sm:text-[10px] tracking-[0.14em] sm:tracking-[0.16em] text-cyan-200/60">{command.hint}</span>
                             </button>
                         )
                     ))}
