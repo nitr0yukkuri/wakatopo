@@ -1,11 +1,10 @@
 import { fetchPlanetData } from '@/lib/actions';
 import { Suspense } from 'react';
 import ClientInitializer from '@/components/ClientInitializer';
+import HomeBackgroundLayers from '@/components/HomeBackgroundLayers';
 import WorksList from '@/components/dom/WorksList';
 import WeatherDebugSelector from '@/components/dom/WeatherDebugSelector';
-import WeatherEffectsOverlay from '@/components/dom/WeatherEffectsOverlay';
 import TopLeftMenu from '../components/dom/TopLeftMenu';
-import SceneClient from '../components/canvas/SceneClient';
 
 type SupportedLang = 'ja' | 'en';
 
@@ -102,13 +101,7 @@ export default async function Home({
         initialActivity={data.activityLevel}
       />
 
-      {/* 3D Scene Background */}
-      <div className="fixed inset-0 z-0 opacity-80 mix-blend-screen pointer-events-none md:pointer-events-auto">
-        <SceneClient />
-      </div>
-
-      {/* Weather Effects Overlay */}
-      <WeatherEffectsOverlay />
+      <HomeBackgroundLayers />
 
       {/* === FIXED HUD UI === */}
       <div className="fixed inset-0 z-50 pointer-events-none p-6 md:p-8 flex flex-col justify-between text-xs font-mono tracking-widest text-gray-500">

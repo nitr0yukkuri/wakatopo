@@ -3,10 +3,15 @@
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useStore } from '@/store';
 import { useEffect, useRef, useState } from 'react';
-import TenchanCompanion from '@/components/TenchanCompanion';
-import { Canvas } from '@react-three/fiber';
-import { RainParticles } from '@/components/canvas/RainTransitionCanvas';
-import SnowCanvas from '@/components/canvas/effects/SnowCanvas';
+import dynamicImport from 'next/dynamic';
+import Image from 'next/image';
+
+const TenchanCompanion = dynamicImport(() => import('@/components/TenchanCompanion'), { ssr: false });
+const RainParticles = dynamicImport(
+    () => import('@/components/canvas/RainTransitionCanvas').then((m) => m.RainParticles),
+    { ssr: false },
+);
+const SnowCanvas = dynamicImport(() => import('@/components/canvas/effects/SnowCanvas'), { ssr: false });
 
 export const dynamic = 'force-dynamic';
 
@@ -106,6 +111,7 @@ export default function OtenkiGurashiPage() {
     type DialogType = { text: string; mood: "happy" | "neutral" | "sad" | "scared" | "sleepy" | "looking" | "surprised" | "talking" };
     const [overrideDialog, setOverrideDialog] = useState<DialogType | null>(null);
     const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+    const [showHeavyEffects, setShowHeavyEffects] = useState(false);
 
     const handleInteract = (text: string, mood: DialogType['mood']) => {
         setOverrideDialog({ text, mood });
@@ -152,6 +158,24 @@ export default function OtenkiGurashiPage() {
         if (bottomRef.current) observer.observe(bottomRef.current);
 
         return () => observer.disconnect();
+    }, []);
+
+    useEffect(() => {
+        const reveal = () => {
+            setShowHeavyEffects(true);
+        };
+
+        window.addEventListener('pointerdown', reveal, { once: true, passive: true });
+        window.addEventListener('keydown', reveal, { once: true });
+        window.addEventListener('scroll', reveal, { once: true, passive: true });
+        const timer = window.setTimeout(reveal, 15000);
+
+        return () => {
+            window.removeEventListener('pointerdown', reveal);
+            window.removeEventListener('keydown', reveal);
+            window.removeEventListener('scroll', reveal);
+            window.clearTimeout(timer);
+        };
     }, []);
 
     const handleReturn = () => {
@@ -220,9 +244,13 @@ export default function OtenkiGurashiPage() {
 
                 {/* Pop Title Logo */}
                 <div id="hero" ref={heroRef} className="mb-8 md:mb-10 text-center scroll-mt-24 w-full flex justify-center">
-                    <img
+                    <Image
                         src="/otenkigurashi-logo.png"
                         alt={t.logoAlt}
+                        width={640}
+                        height={220}
+                        sizes="(max-width: 768px) 80vw, 448px"
+                        priority
                         className="w-full max-w-xs md:max-w-md drop-shadow-md"
                     />
                 </div>
@@ -361,7 +389,7 @@ export default function OtenkiGurashiPage() {
                     `}</style>
                 </>
             )}
-            {weather === 'Rain' && (
+            {showHeavyEffects && weather === 'Rain' && (
                 <>
                     <div className="fixed inset-0 pointer-events-none z-0">
                         <RainParticles />
@@ -371,7 +399,7 @@ export default function OtenkiGurashiPage() {
                     }} />
                 </>
             )}
-            {weather === 'Snow' && (
+            {showHeavyEffects && weather === 'Snow' && (
                 <>
                     <div className="fixed inset-0 pointer-events-none z-20">
                         <SnowCanvas />
@@ -431,12 +459,14 @@ export default function OtenkiGurashiPage() {
             )}
 
             {/* Ten-chan Companion */}
-            <TenchanCompanion
-                lang={lang}
-                section={activeSection}
-                overrideDialog={overrideDialog}
-                onClick={handleTenchanClick}
-            />
+            {showHeavyEffects && (
+                <TenchanCompanion
+                    lang={lang}
+                    section={activeSection}
+                    overrideDialog={overrideDialog}
+                    onClick={handleTenchanClick}
+                />
+            )}
         </main>
     );
 }

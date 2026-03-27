@@ -1,11 +1,12 @@
 'use client'
 
-import { useRef, useMemo } from 'react';
+import { useRef, useMemo, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useStore } from '@/store';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { Canvas, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
+import Image from 'next/image';
 
 export const dynamic = 'force-dynamic';
 
@@ -85,6 +86,25 @@ export default function ColdKeepPage() {
     const lang = searchParams.get('lang') === 'en' ? 'en' : 'ja';
     const { setActiveWork } = useStore();
     const { scrollYProgress } = useScroll();
+    const [showSnowBackground, setShowSnowBackground] = useState(false);
+
+    useEffect(() => {
+        const reveal = () => {
+            setShowSnowBackground(true);
+        };
+
+        window.addEventListener('pointerdown', reveal, { once: true, passive: true });
+        window.addEventListener('keydown', reveal, { once: true });
+        window.addEventListener('scroll', reveal, { once: true, passive: true });
+        const timer = window.setTimeout(reveal, 15000);
+
+        return () => {
+            window.removeEventListener('pointerdown', reveal);
+            window.removeEventListener('keydown', reveal);
+            window.removeEventListener('scroll', reveal);
+            window.clearTimeout(timer);
+        };
+    }, []);
 
     const copy = {
         ja: {
@@ -138,11 +158,13 @@ export default function ColdKeepPage() {
             />
 
             {/* 3D Snow Background */}
-            <div className="fixed inset-0 pointer-events-none z-1">
-                <Canvas camera={{ position: [0, 0, 10], fov: 60 }}>
-                    <SnowParticles />
-                </Canvas>
-            </div>
+            {showSnowBackground && (
+                <div className="fixed inset-0 pointer-events-none z-1">
+                    <Canvas camera={{ position: [0, 0, 10], fov: 60 }}>
+                        <SnowParticles />
+                    </Canvas>
+                </div>
+            )}
 
             <nav className="fixed top-0 left-0 w-full z-50 p-6 md:p-12 mix-blend-exclusion">
                 <button onClick={handleReturn} className="inline-flex items-center gap-3 text-sm font-mono tracking-widest text-[#e0f2fe] hover:text-[#bae6fd] transition-colors group">
@@ -158,9 +180,13 @@ export default function ColdKeepPage() {
                         <span className="inline-block border border-[#38bdf8]/30 backdrop-blur-md bg-white/5 text-[#7dd3fc] px-4 py-1.5 rounded-full text-xs font-mono tracking-widest mb-10 shadow-[0_0_15px_rgba(56,189,248,0.3)]">
                             STATUS: R&amp;D PHASE
                         </span>
-                        <img
+                        <Image
                             src="/coldkeep-logo.png"
                             alt="コールドキープ COLDKEEP"
+                            width={640}
+                            height={220}
+                            sizes="(max-width: 768px) 80vw, 448px"
+                            priority
                             className="w-full max-w-xs md:max-w-md mx-auto mb-6 drop-shadow-[0_0_40px_rgba(100,200,255,0.5)]"
                             style={{ mixBlendMode: 'screen' }}
                         />

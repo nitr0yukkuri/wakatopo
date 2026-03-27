@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import GeoLocationBadge from '@/components/dom/GeoLocationBadge';
 
 export const dynamic = 'force-dynamic';
@@ -90,9 +91,13 @@ export default async function AboutPage({
                 <div className="rounded-3xl border border-cyan-500/20 bg-black/35 backdrop-blur-md p-6 md:p-8">
                     <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
                         <div className="flex items-center gap-4">
-                            <img
+                            <Image
                                 src="/faviconwakato.png"
                                 alt="WAKATO icon"
+                                width={64}
+                                height={64}
+                                sizes="64px"
+                                priority
                                 className="h-16 w-16 rounded-2xl border border-cyan-400/30 bg-black/40 object-cover"
                             />
                             <div>

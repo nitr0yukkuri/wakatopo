@@ -4,9 +4,10 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useStore } from '@/store';
 import { motion } from 'framer-motion';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { useMemo, useRef } from 'react';
+import { useMemo, useRef, useEffect, useState } from 'react';
 import * as THREE from 'three';
 import { waveVertexShader, waveFragmentShader } from '@/shaders/wave';
+import Image from 'next/image';
 
 export const dynamic = 'force-dynamic';
 
@@ -229,6 +230,25 @@ export default function DenshouoPage() {
     const searchParams = useSearchParams();
     const lang = searchParams.get('lang') === 'en' ? 'en' : 'ja';
     const { setActiveWork } = useStore();
+    const [showBackdrop, setShowBackdrop] = useState(false);
+
+    useEffect(() => {
+        const reveal = () => {
+            setShowBackdrop(true);
+        };
+
+        window.addEventListener('pointerdown', reveal, { once: true, passive: true });
+        window.addEventListener('keydown', reveal, { once: true });
+        window.addEventListener('scroll', reveal, { once: true, passive: true });
+        const timer = window.setTimeout(reveal, 15000);
+
+        return () => {
+            window.removeEventListener('pointerdown', reveal);
+            window.removeEventListener('keydown', reveal);
+            window.removeEventListener('scroll', reveal);
+            window.clearTimeout(timer);
+        };
+    }, []);
 
     const copy = {
         ja: {
@@ -261,7 +281,7 @@ export default function DenshouoPage() {
 
     return (
         <main className="relative min-h-dvh bg-[radial-gradient(circle_at_top_left,rgba(56,189,248,0.10),transparent_28%),radial-gradient(circle_at_bottom,rgba(20,184,166,0.12),transparent_35%),#041116] text-white overflow-x-hidden">
-            <OceanBackdrop />
+            {showBackdrop && <OceanBackdrop />}
 
             <nav className="fixed top-0 left-0 w-full z-50 p-6 md:p-12 mix-blend-exclusion">
                 <button onClick={handleReturn} className="inline-flex items-center gap-3 text-sm font-mono tracking-widest text-[#ecfeff] hover:text-teal-200 transition-colors group">
@@ -275,9 +295,13 @@ export default function DenshouoPage() {
                     <span className="inline-block border border-teal-300/30 bg-teal-300/10 text-teal-200 px-4 py-1.5 rounded-full text-xs font-mono tracking-widest mb-8">
                         REACT / SUPABASE
                     </span>
-                    <img
+                    <Image
                         src="/denshouo-logo.png"
                         alt="でんしょうお ロゴ"
+                        width={640}
+                        height={220}
+                        sizes="(max-width: 768px) 80vw, 448px"
+                        priority
                         className="w-full max-w-xs md:max-w-md mx-auto"
                     />
                     <p className="mt-6 text-lg md:text-2xl text-gray-300 leading-relaxed max-w-3xl mx-auto">

@@ -3,6 +3,8 @@
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useStore } from '@/store';
 import dynamicImport from 'next/dynamic';
+import Image from 'next/image';
+import { useEffect, useState } from 'react';
 
 export const dynamic = 'force-dynamic';
 
@@ -14,6 +16,25 @@ export default function GitHubPlanetPage() {
     const searchParams = useSearchParams();
     const lang = searchParams.get('lang') === 'en' ? 'en' : 'ja';
     const { setActiveWork } = useStore();
+    const [showScene, setShowScene] = useState(false);
+
+    useEffect(() => {
+        const reveal = () => {
+            setShowScene(true);
+        };
+
+        window.addEventListener('pointerdown', reveal, { once: true, passive: true });
+        window.addEventListener('keydown', reveal, { once: true });
+        window.addEventListener('scroll', reveal, { once: true, passive: true });
+        const timer = window.setTimeout(reveal, 15000);
+
+        return () => {
+            window.removeEventListener('pointerdown', reveal);
+            window.removeEventListener('keydown', reveal);
+            window.removeEventListener('scroll', reveal);
+            window.clearTimeout(timer);
+        };
+    }, []);
 
     const t = {
         ja: {
@@ -47,7 +68,7 @@ export default function GitHubPlanetPage() {
     return (
         <main className="relative w-full min-h-[120dvh] bg-[#020202] text-white overflow-x-hidden">
             {/* 3Dのリアルな惑星背景（GitHub Planetからの移植・調整版） */}
-            <RealisticPlanetScene />
+            {showScene && <RealisticPlanetScene />}
 
             <nav className="fixed top-0 left-0 w-full z-50 p-6 md:p-12">
                 <button
@@ -61,13 +82,13 @@ export default function GitHubPlanetPage() {
 
             <div className="relative z-10 w-full max-w-5xl mx-auto px-6 pt-32 pb-16 flex flex-col items-center animate-fade-in-up pointer-events-none">
                 {/* GitHub Planet Logo */}
-                <img
+                <Image
                     src="/github-planet-logo.webp"
                     alt="GitHub Planet"
                     width={640}
                     height={221}
-                    fetchPriority="high"
-                    decoding="async"
+                    sizes="(max-width: 768px) 80vw, 448px"
+                    priority
                     className="w-full max-w-xs md:max-w-md mx-auto mb-4 drop-shadow-[0_0_30px_rgba(120,120,255,0.4)]"
                     style={{ mixBlendMode: 'screen' }}
                 />

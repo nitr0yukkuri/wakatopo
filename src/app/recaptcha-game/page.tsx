@@ -2,6 +2,7 @@
 
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useStore } from '@/store';
+import Image from 'next/image';
 
 export const dynamic = 'force-dynamic';
 
@@ -81,9 +82,13 @@ export default function RecaptchaGamePage() {
             </nav>
 
             <div className="relative z-10 mx-auto max-w-6xl px-5 pt-28 pb-20 md:px-10 md:pt-36 md:pb-24">
-                <img
+                <Image
                     src="/recatcha-logo.png"
                     alt="reCAPTCHA Game"
+                    width={640}
+                    height={220}
+                    sizes="(max-width: 768px) 80vw, 448px"
+                    priority
                     className="block w-full max-w-xs mx-auto mb-6 md:max-w-md"
                 />
                 <section className="relative overflow-hidden rounded-3xl border border-cyan-300/25 bg-gradient-to-br from-[#071427]/95 via-[#091831]/92 to-[#071225]/95 p-6 shadow-[0_24px_80px_rgba(4,13,26,0.7)] md:p-10">
