@@ -81,6 +81,11 @@ export default function RecaptchaGamePage() {
             </nav>
 
             <div className="relative z-10 mx-auto max-w-6xl px-5 pt-28 pb-20 md:px-10 md:pt-36 md:pb-24">
+                <img
+                    src="/recatcha-logo.png"
+                    alt="reCAPTCHA Game"
+                    className="block w-full max-w-xs mx-auto mb-6 md:max-w-md"
+                />
                 <section className="relative overflow-hidden rounded-3xl border border-cyan-300/25 bg-gradient-to-br from-[#071427]/95 via-[#091831]/92 to-[#071225]/95 p-6 shadow-[0_24px_80px_rgba(4,13,26,0.7)] md:p-10">
                     <div className="pointer-events-none absolute inset-0 opacity-30 [background:linear-gradient(135deg,transparent_0%,transparent_48%,rgba(34,211,238,0.16)_50%,transparent_52%,transparent_100%)]" />
                     <div className="relative">
@@ -88,11 +93,6 @@ export default function RecaptchaGamePage() {
                             <span className="inline-flex items-center gap-2 rounded-full border border-cyan-300/40 bg-cyan-400/10 px-4 py-1.5 text-[10px] font-mono tracking-[0.22em] text-cyan-200">
                                 REACT / GO / WEBSOCKET
                             </span>
-                            <img
-                                src="/recatcha-logo.png"
-                                alt="reCAPTCHA Game"
-                                className="block w-full max-w-xs mx-auto mb-6 md:max-w-md"
-                            />
                             <p className="mt-4 max-w-3xl text-sm leading-relaxed text-cyan-100/80 md:text-base">
                                 {copy.lead}
                             </p>
