@@ -182,9 +182,9 @@ export default function OtenkiGurashiPage() {
             <nav className="fixed top-0 left-0 w-full z-50 p-6 md:p-10">
                 <button
                     onClick={handleReturn}
-                    className="inline-flex items-center gap-3 text-sm font-mono tracking-widest text-[#7ab8cc] hover:text-white transition-colors group"
+                    className="inline-flex items-center gap-3 rounded-full border border-white/35 bg-black/35 px-4 py-2 text-sm font-mono tracking-widest text-white backdrop-blur-sm hover:bg-black/50 transition-colors group"
                 >
-                    <span className="w-6 h-px bg-[#7ab8cc] group-hover:bg-white transition-colors" />
+                    <span className="w-6 h-px bg-white/90 transition-colors" />
                     おうちにもどる
                 </button>
             </nav>
@@ -223,7 +223,7 @@ export default function OtenkiGurashiPage() {
                     <img
                         src="/otenkigurashi-logo.png"
                         alt={t.logoAlt}
-                        className="w-full max-w-[16rem] md:max-w-md drop-shadow-md"
+                        className="w-full max-w-xs md:max-w-md drop-shadow-md"
                     />
                 </div>
 

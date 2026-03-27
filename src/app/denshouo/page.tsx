@@ -278,7 +278,7 @@ export default function DenshouoPage() {
                     <img
                         src="/denshouo-logo.png"
                         alt="でんしょうお ロゴ"
-                        className="w-full max-w-lg md:max-w-2xl mx-auto"
+                        className="w-full max-w-xs md:max-w-md mx-auto"
                     />
                     <p className="mt-6 text-lg md:text-2xl text-gray-300 leading-relaxed max-w-3xl mx-auto">
                         {t.lead}

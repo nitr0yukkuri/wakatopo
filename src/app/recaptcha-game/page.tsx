@@ -91,7 +91,7 @@ export default function RecaptchaGamePage() {
                             <img
                                 src="/recatcha-logo.png"
                                 alt="reCAPTCHA Game"
-                                className="mt-4 block w-full max-w-[360px] mx-auto md:max-w-[460px]"
+                                className="block w-full max-w-xs mx-auto mb-6 md:max-w-md"
                             />
                             <p className="mt-4 max-w-3xl text-sm leading-relaxed text-cyan-100/80 md:text-base">
                                 {copy.lead}

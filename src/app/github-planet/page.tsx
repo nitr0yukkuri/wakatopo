@@ -68,7 +68,7 @@ export default function GitHubPlanetPage() {
                     height={221}
                     fetchPriority="high"
                     decoding="async"
-                    className="w-full max-w-xs md:max-w-sm mx-auto mb-4 drop-shadow-[0_0_30px_rgba(120,120,255,0.4)]"
+                    className="w-full max-w-xs md:max-w-md mx-auto mb-4 drop-shadow-[0_0_30px_rgba(120,120,255,0.4)]"
                     style={{ mixBlendMode: 'screen' }}
                 />
 

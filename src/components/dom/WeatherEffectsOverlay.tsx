@@ -2,6 +2,7 @@
 import dynamic from 'next/dynamic';
 import { AnimatePresence } from 'framer-motion';
 import { useStore } from '@/store';
+import { RainParticles } from '@/components/canvas/RainTransitionCanvas';
 
 const SunraysCanvas = dynamic(() => import('@/components/canvas/effects/SunraysCanvas'), { ssr: false });
 const CloudsOverlayCanvas = dynamic(() => import('@/components/canvas/effects/CloudsOverlayCanvas'), { ssr: false });
@@ -16,6 +17,7 @@ export default function WeatherEffectsOverlay() {
         <AnimatePresence mode="wait">
             {(weather === 'Clear' || weather === 'Morning') && <SunraysCanvas key="sunrays" />}
             {weather === 'Clouds' && <CloudsOverlayCanvas key="clouds" />}
+            {weather === 'Thunder' && <RainParticles key="thunder-rain" />}
             {weather === 'Thunder' && <ThunderCanvas key="thunder" />}
             {weather === 'Snow' && <SnowCanvas key="snow" />}
             {weather === 'Night' && <NightGlowOverlay key="night" />}
