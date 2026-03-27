@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Environment, Stars } from '@react-three/drei';
 import AbstractCore from './AbstractCore';
@@ -7,10 +8,19 @@ import Weather from './Weather';
 import { Suspense } from 'react';
 
 export default function Scene() {
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        const update = () => setIsMobile(window.innerWidth < 768);
+        update();
+        window.addEventListener('resize', update);
+        return () => window.removeEventListener('resize', update);
+    }, []);
+
     return (
         <div className="absolute inset-0 z-0 bg-black pointer-events-none md:pointer-events-auto">
             <Canvas
-                camera={{ position: [0, 0, 8], fov: 35 }}
+                camera={{ position: [0, 0, isMobile ? 9.2 : 8], fov: isMobile ? 42 : 35 }}
                 dpr={[1, 1.25]}
                 gl={{ antialias: false, powerPreference: 'high-performance' }}
                 performance={{ min: 0.7, debounce: 300 }}

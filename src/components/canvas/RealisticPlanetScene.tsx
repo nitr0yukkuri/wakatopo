@@ -1,18 +1,26 @@
 'use client'
 
-import { useRef, useMemo, Suspense } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
+import { useEffect, useState, Suspense } from 'react';
+import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Environment, Stars } from '@react-three/drei';
-import * as THREE from 'three';
 import Planet from './Planet';
 import Meteors from './Meteors';
 
 export default function RealisticPlanetScene() {
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        const update = () => setIsMobile(window.innerWidth < 768);
+        update();
+        window.addEventListener('resize', update);
+        return () => window.removeEventListener('resize', update);
+    }, []);
+
     return (
         <div className="absolute inset-0 z-0 bg-black">
             {/* 少し奥に引いて全体を小さめに表示 */}
             <Canvas
-                camera={{ position: [0, 0, 10], fov: 42 }}
+                camera={{ position: [0, 0, isMobile ? 11.4 : 10], fov: isMobile ? 48 : 42 }}
                 dpr={[1, 1.25]}
                 gl={{ antialias: false, powerPreference: 'high-performance' }}
                 performance={{ min: 0.7, debounce: 300 }}
