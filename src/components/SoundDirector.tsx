@@ -24,6 +24,7 @@ const OUTPUT_BOOST = 2.4;
 
 export default function SoundDirector() {
     const pathname = usePathname();
+    const showMuteButton = pathname === '/';
     const transitionType = useStore((state) => state.transitionType);
     const weather = useStore((state) => state.weather);
     const githubActivityLevel = useStore((state) => state.githubActivityLevel);
@@ -425,6 +426,10 @@ export default function SoundDirector() {
         stopBgm();
         startBgm();
     }, [weather, githubActivityLevel, activeWorkId, pathname]);
+
+    if (!showMuteButton) {
+        return null;
+    }
 
     return (
         <div className="fixed bottom-20 right-4 z-70 pointer-events-auto sm:bottom-6 sm:right-6">
