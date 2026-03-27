@@ -6,6 +6,8 @@ export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
 export default function Image() {
+    const logoSrc = new URL("../../public/wakato_gemini_logo.png", import.meta.url).toString();
+
     return new ImageResponse(
         (
             <div
@@ -85,92 +87,15 @@ export default function Image() {
                         zIndex: 10,
                     }}
                 >
-                    {/* タグライン */}
-                    <div
+                    <img
+                        src={logoSrc}
+                        width="860"
+                        height="473"
                         style={{
-                            fontSize: 18,
-                            fontWeight: 400,
-                            letterSpacing: "0.35em",
-                            color: "rgba(160,196,255,0.8)",
-                            textTransform: "uppercase",
-                            marginBottom: 16,
-                            display: "flex",
-                        }}
-                    >
-                        Interactive 3D Portfolio
-                    </div>
-
-                    {/* メインタイトル */}
-                    <div
-                        style={{
-                            fontSize: 110,
-                            fontWeight: 800,
-                            letterSpacing: "0.08em",
-                            background: "linear-gradient(180deg, #ffffff 0%, #a0c4ff 60%, #5b8dd9 100%)",
-                            backgroundClip: "text",
-                            color: "transparent",
-                            lineHeight: 1,
-                            display: "flex",
-                        }}
-                    >
-                        WAKATOPO
-                    </div>
-
-                    {/* サブタイトル */}
-                    <div
-                        style={{
-                            fontSize: 22,
-                            fontWeight: 300,
-                            color: "rgba(255,255,255,0.55)",
-                            letterSpacing: "0.2em",
-                            marginTop: 16,
-                            display: "flex",
-                        }}
-                    >
-                        LIVING PLANET
-                    </div>
-
-                    {/* セパレーター */}
-                    <div
-                        style={{
-                            width: 120,
-                            height: 1,
-                            background: "linear-gradient(90deg, transparent, rgba(160,196,255,0.6), transparent)",
-                            margin: "28px 0",
-                            display: "flex",
+                            objectFit: "contain",
+                            filter: "drop-shadow(0 16px 40px rgba(15, 20, 64, 0.6))",
                         }}
                     />
-
-                    {/* 説明文 */}
-                    <div
-                        style={{
-                            fontSize: 20,
-                            fontWeight: 400,
-                            color: "rgba(200,220,255,0.7)",
-                            letterSpacing: "0.04em",
-                            textAlign: "center",
-                            maxWidth: 600,
-                            lineHeight: 1.6,
-                            display: "flex",
-                        }}
-                    >
-                        GitHubの活動とリアルタイム天気が連動する
-                    </div>
-                    <div
-                        style={{
-                            fontSize: 20,
-                            fontWeight: 400,
-                            color: "rgba(200,220,255,0.7)",
-                            letterSpacing: "0.04em",
-                            textAlign: "center",
-                            maxWidth: 600,
-                            lineHeight: 1.6,
-                            marginTop: 4,
-                            display: "flex",
-                        }}
-                    >
-                        インタラクティブな3Dポートフォリオサイト
-                    </div>
                 </div>
 
                 {/* 底部のグロー */}
