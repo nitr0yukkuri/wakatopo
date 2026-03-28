@@ -190,16 +190,12 @@ export default function Weather() {
     const { weather } = useStore();
 
     const linesRef = useRef<THREE.LineSegments>(null);
-    const screenRef = useRef<THREE.ShaderMaterial>(null);
 
-    // Memoize uniforms to avoid recreating on every render
-    const screenUniforms = useMemo(() => ({ uTime: { value: 0 } }), []);
     const stepAccumulatorRef = useRef(0);
     const targetStep = 1 / 30;
 
-    // === 1. 空間の雨 (Spatial Rain) ===
-    // ノスタルジックな雰囲気を出すための調整
-    const count = 1200; // 雨の量を増やす
+    // 空間の雨
+    const count = 1200;
     const { positions, velocities } = useMemo(() => {
         const pos = new Float32Array(count * 2 * 3);
         const vels = new Float32Array(count);
@@ -208,12 +204,10 @@ export default function Weather() {
             const y = (Math.random() - 0.5) * 40;
             const z = (Math.random() - 0.5) * 60;
 
-            // 長さと風の影響（斜めに降る）
             const length = 1.5 + Math.random() * 2.5;
-            const windX = 0.4; // 風の影響(右方向) - 水滴シェーダーの角度 0.4 と完全に合わせる
-            const windZ = 0.1; // 奥方向への風
+            const windX = 0.4;
+            const windZ = 0.1;
 
-            // 軌跡は進行方向と完全に一致させる（y2が下ならx2は右）
             pos[i * 6] = x;
             pos[i * 6 + 1] = y;
             pos[i * 6 + 2] = z;
@@ -221,7 +215,6 @@ export default function Weather() {
             pos[i * 6 + 4] = y - length;
             pos[i * 6 + 5] = z + windZ * length;
 
-            // 速度差をつけて奥行きを出す
             vels[i] = 1.0 + Math.random() * 1.5;
         }
         return { positions: pos, velocities: vels };
@@ -229,34 +222,27 @@ export default function Weather() {
 
     useFrame((state, delta) => {
         if (weather !== 'Rain') return;
-        const time = state.clock.getElapsedTime();
-
-        // Keep shader motion smooth even when heavy spatial updates are throttled.
-        if (screenRef.current) {
-            screenRef.current.uniforms.uTime.value = time;
-        }
 
         stepAccumulatorRef.current += delta;
         if (stepAccumulatorRef.current < targetStep) return;
         const stepDelta = stepAccumulatorRef.current;
         stepAccumulatorRef.current = 0;
 
-        // A. 空間の雨のアニメーション
         if (linesRef.current) {
             const positionsAttribute = linesRef.current.geometry.attributes.position as THREE.BufferAttribute;
             const array = positionsAttribute.array as Float32Array;
             for (let i = 0; i < count; i++) {
                 const frameScale = stepDelta * 60;
                 const velY = velocities[i] * frameScale;
-                const velX = velY * 0.4; // 速度に応じた横移動
-                const velZ = velY * 0.1; // 速度に応じた奥移動
+                const velX = velY * 0.4;
+                const velZ = velY * 0.1;
 
-                array[i * 6 + 0] += velX; // x1
-                array[i * 6 + 1] -= velY; // y1
-                array[i * 6 + 2] += velZ; // z1
-                array[i * 6 + 3] += velX; // x2
-                array[i * 6 + 4] -= velY; // y2
-                array[i * 6 + 5] += velZ; // z2
+                array[i * 6 + 0] += velX;
+                array[i * 6 + 1] -= velY;
+                array[i * 6 + 2] += velZ;
+                array[i * 6 + 3] += velX;
+                array[i * 6 + 4] -= velY;
+                array[i * 6 + 5] += velZ;
 
                 if (array[i * 6 + 1] < -20) {
                     const resetY = 20 + Math.random() * 10;
@@ -264,7 +250,6 @@ export default function Weather() {
                     const lengthY = array[i * 6 + 1] - array[i * 6 + 4];
                     const lengthZ = array[i * 6 + 2] - array[i * 6 + 5];
 
-                    // xとzもリセットして範囲内に収める
                     const resetX = (Math.random() - 0.5) * 60;
                     const resetZ = (Math.random() - 0.5) * 60;
 
@@ -282,33 +267,18 @@ export default function Weather() {
 
     return (
         <group visible={weather === 'Rain'}>
-            {/* 1. 空間に降る雨：ノスタルジックな暖色 */}
             <lineSegments ref={linesRef}>
                 <bufferGeometry>
                     <bufferAttribute attach="attributes-position" args={[positions, 3]} />
                 </bufferGeometry>
                 <lineBasicMaterial
-                    color="#e0d8c8"
+                    color="#7f91a5"
                     transparent
-                    opacity={0.4}
-                    blending={THREE.AdditiveBlending}
+                    opacity={0.26}
+                    blending={THREE.NormalBlending}
                     depthWrite={false}
                 />
             </lineSegments>
-
-            {/* 2. 画面に張り付く水滴フィルター */}
-            <mesh frustumCulled={false}>
-                <planeGeometry args={[2, 2]} />
-                <shaderMaterial
-                    ref={screenRef}
-                    transparent
-                    vertexShader={vertexShader}
-                    fragmentShader={fragmentShader}
-                    uniforms={screenUniforms}
-                    depthTest={false}
-                    depthWrite={false}
-                />
-            </mesh>
         </group>
     );
 }
