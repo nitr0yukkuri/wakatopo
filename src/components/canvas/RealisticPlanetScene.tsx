@@ -3,6 +3,7 @@
 import { useEffect, useState, Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Environment, Stars } from '@react-three/drei';
+import { EffectComposer, Bloom } from '@react-three/postprocessing';
 import Planet from './Planet';
 import Meteors from './Meteors';
 
@@ -42,6 +43,16 @@ export default function RealisticPlanetScene() {
 
                     {/* 背景光 */}
                     <Environment preset="city" environmentIntensity={0.1} />
+
+                    {/* Bloom エフェクト: 惑星の発光をより劇的に */}
+                    <EffectComposer multisampling={8}>
+                        <Bloom
+                            intensity={1.0}
+                            luminanceThreshold={0.2}
+                            luminanceSmoothing={0.5}
+                            mipmapBlur
+                        />
+                    </EffectComposer>
 
                     {/* マウスで少しだけ視点を動かせるようにする */}
                     <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={0.5} maxPolarAngle={Math.PI / 1.5} minPolarAngle={Math.PI / 3} />

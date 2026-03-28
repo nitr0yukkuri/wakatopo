@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Environment, Stars } from '@react-three/drei';
+import { EffectComposer, Bloom } from '@react-three/postprocessing';
 import AbstractCore from './AbstractCore';
 import Weather from './Weather';
 import { Suspense } from 'react';
@@ -29,7 +30,7 @@ export default function Scene() {
                     <color attach="background" args={['#050505']} />
 
                     {/* 奥を暗黒に溶け込ませるフォグ（インポート不要） */}
-                    <fog attach="fog" args={['#050505', 5, 20]} />
+                    <fog attach="fog" args={['#050505', 3, 12]} />
 
                     <ambientLight intensity={0.1} />
                     <pointLight position={[10, 10, 10]} intensity={1.5} />
@@ -42,6 +43,16 @@ export default function Scene() {
                     <Stars radius={100} depth={50} count={640} factor={1.5} saturation={0} fade speed={0.35} />
 
                     <Environment preset="city" environmentIntensity={0.18} />
+
+                    {/* Bloom エフェクト: 発光をより劇的に */}
+                    <EffectComposer multisampling={8}>
+                        <Bloom
+                            intensity={0.8}
+                            luminanceThreshold={0.3}
+                            luminanceSmoothing={0.4}
+                            mipmapBlur
+                        />
+                    </EffectComposer>
 
                     {/* スクロールを妨害しないよう、手動回転(enableRotate)のみ無効化 */}
                     <OrbitControls
