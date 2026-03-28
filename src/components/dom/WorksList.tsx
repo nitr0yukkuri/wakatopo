@@ -93,7 +93,7 @@ export default function WorksList({ works }: { works: Work[] }) {
                             {work.id}
                         </span>
 
-                        <h3 className="text-[clamp(1.45rem,7vw,3.2rem)] font-bold leading-[1.06] text-gray-300 group-hover:text-white transition-colors break-keep lg:pr-4 tracking-tight">
+                        <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-[1.08] text-gray-300 group-hover:text-white transition-colors break-keep lg:pr-4">
                             {work.title}
                         </h3>
 
