@@ -8,8 +8,6 @@ uniform float uActivity;
 uniform float uIntro;
 uniform float uHover;
 uniform float uActive;
-uniform float uGeomDensity;
-uniform float uFacet;
 
 // Simple Perlin Noise
 vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
@@ -68,16 +66,11 @@ void main() {
   vNormal = normalize(normalMatrix * normal);
   
   // 非常に細かいノイズ（結晶のような輝き用）
-  float freq = mix(7.0, 18.0, uGeomDensity);
-  float noise = snoise(position * freq + uTime * 0.05);
-  float bands = mix(4.0, 24.0, uFacet);
-  float faceted = floor((noise * 0.5 + 0.5) * bands) / bands;
-  faceted = faceted * 2.0 - 1.0;
-  float geomNoise = mix(noise, faceted, uFacet);
+  float noise = snoise(position * 10.0 + uTime * 0.05);
   
   // ホバー時とアクティブ時でノイズの強さを変える（触ると波立つ感じ）
   float dynamicActivity = uActivity * 0.03 + uHover * 0.015 + uActive * 0.03;
-  vDisplacement = geomNoise * (0.01 + dynamicActivity + (uGeomDensity * 0.01));
+  vDisplacement = noise * (0.01 + dynamicActivity);
   
   // 触った時に少し膨らむ
   float scale = 0.8 + 0.2 * uIntro + uActive * 0.02 + uHover * 0.01;
@@ -102,9 +95,6 @@ uniform vec3 uColorB;
 uniform float uIntro;
 uniform float uHover;
 uniform float uActive;
-uniform float uEdgeBoost;
-uniform float uGridDensity;
-uniform float uSparkle;
 
 void main() {
   vec3 normal = normalize(vNormal);
@@ -112,15 +102,14 @@ void main() {
   
   // 極細のフレネル（エッジ強調）
   // ホバーやアクティブでフチの光を鋭く・太くする
-  float fresnelPower = 5.0 - (uHover * 1.5) - (uActive * 2.5) - (uEdgeBoost * 1.3);
+  float fresnelPower = 5.0 - (uHover * 1.5) - (uActive * 2.5);
   float fresnel = pow(1.0 - dot(normal, viewDir), max(1.0, fresnelPower));
   
   // 走査線グリッド（Kajita風デザイン）
   // 触るとグリッドが光る
-  float gridFreq = mix(90.0, 240.0, uGridDensity);
-  float gridThresh = 0.985 - (uHover * 0.005) - (uActive * 0.01) - (uGridDensity * 0.01);
-  float grid = step(gridThresh, fract(vUv.y * gridFreq)) * (0.2 + uHover * 0.2 + uActive * 0.5 + uGridDensity * 0.22);
-  float gridV = step(0.99 - uGridDensity * 0.01, fract(vUv.x * (gridFreq * 0.9))) * (0.1 + uHover * 0.1 + uActive * 0.3 + uGridDensity * 0.12);
+  float gridThresh = 0.98 - (uHover * 0.005) - (uActive * 0.01);
+  float grid = step(gridThresh, fract(vUv.y * 150.0)) * (0.2 + uHover * 0.2 + uActive * 0.5);
+  float gridV = step(0.99, fract(vUv.x * 150.0)) * (0.1 + uHover * 0.1 + uActive * 0.3);
   
   // 半透明のクリスタル感
   vec3 baseColor = mix(uColorA, uColorB, 0.1);
@@ -129,13 +118,11 @@ void main() {
   vec3 glowColor = mix(uColorB, vec3(1.0, 1.0, 1.0), uHover * 0.5); // ホバーで白っぽく
   glowColor = mix(glowColor, vec3(0.5, 1.0, 0.8), uActive * 0.8);      // タッチで明るいシアングリーンに
   
-  float sparkle = smoothstep(0.84, 1.0, sin((vUv.x + vUv.y + uTime * 0.12) * 34.0) * 0.5 + 0.5) * uSparkle;
-  vec3 finalColor = baseColor + (glowColor * fresnel * (2.2 + uEdgeBoost));
+  vec3 finalColor = baseColor + (glowColor * fresnel * 2.5);
   finalColor += (grid + gridV) * glowColor;
-  finalColor += glowColor * sparkle * 0.45;
   
   // 導入時のフェード
-  float alpha = (fresnel * (0.75 + uEdgeBoost * 0.3) + 0.1 + uHover * 0.2 + uActive * 0.4) * uIntro;
+  float alpha = (fresnel * 0.8 + 0.1 + uHover * 0.2 + uActive * 0.4) * uIntro;
   
   gl_FragColor = vec4(finalColor, alpha);
 }

@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Geist_Mono, Inter, Noto_Sans_JP } from "next/font/google";
+import { Geist_Mono, Outfit, Zen_Kaku_Gothic_New } from "next/font/google";
 import "./globals.css";
 import GlobalTransitionOverlay from "@/components/GlobalTransitionOverlay";
 import PwaRegister from "@/components/PwaRegister";
@@ -8,13 +8,13 @@ import LocaleSync from "@/components/LocaleSync";
 
 export const dynamic = 'force-dynamic';
 
-const inter = Inter({
+const outfit = Outfit({
   variable: "--font-latin",
   subsets: ["latin"],
   display: "swap",
 });
 
-const notoSansJp = Noto_Sans_JP({
+const zenKakuGothicNew = Zen_Kaku_Gothic_New({
   variable: "--font-japanese",
   subsets: ["latin"],
   weight: ["400", "500", "700"],
@@ -112,7 +112,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${inter.variable} ${notoSansJp.variable} ${geistMono.variable} antialiased`}
+        className={`${outfit.variable} ${zenKakuGothicNew.variable} ${geistMono.variable} antialiased`}
         suppressHydrationWarning
       >
         <LocaleSync />
