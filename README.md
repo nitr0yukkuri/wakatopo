@@ -22,7 +22,7 @@
 
 **Experience the living planet directly in your browser**
 
-👉 **https://wakatopo.vercel.app**
+👉 **wakato.tech**
 
 GitHubの活動履歴とリアルタイム天気が融合した
 **インタラクティブな3Dポートフォリオ**を実際に体験できます。
