@@ -61,7 +61,7 @@ GitHubの活動履歴とリアルタイム天気が融合した
 **湿度や温度のような情緒的レイヤー** を追加します。
 
 <div align="center">
-  <h3>GitHub Planet × Otenki Gurashi = <b>WAKATOPO</b></h3>
+  <h3>GitHub Planet × Otenki Gurashi = <b>Wakato Portfolio</b></h3>
 </div>
 
 ---
