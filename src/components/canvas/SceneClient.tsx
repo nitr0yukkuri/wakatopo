@@ -92,7 +92,6 @@ export default function SceneClient() {
                     </svg>
 
                     <div className="relative z-10 flex flex-col items-center gap-3 text-center">
-                        <span className="font-mono text-[10px] tracking-[0.34em] text-cyan-200/85">PLANET CORE INITIALIZING</span>
                         <div className="mt-1 flex items-center gap-2 font-mono text-lg tracking-[0.26em] text-cyan-100/95">
                             <span>{String(progress).padStart(3, '0')}</span>
                             <span>%</span>
