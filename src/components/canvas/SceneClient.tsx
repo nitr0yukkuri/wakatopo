@@ -63,7 +63,10 @@ export default function SceneClient() {
                     }`}
                 aria-hidden={!showLoader}
             >
-                <div className="relative flex items-center justify-center" style={{ height: ringSize, width: ringSize }}>
+                <div
+                    className="relative flex items-center justify-center"
+                    style={{ height: 'min(88vw, 88vh, 620px)', width: 'min(88vw, 88vh, 620px)' }}
+                >
                     <svg
                         viewBox={`0 0 ${ringSize} ${ringSize}`}
                         className="pointer-events-none absolute inset-0 h-full w-full"
@@ -92,23 +95,23 @@ export default function SceneClient() {
                     </svg>
 
                     <div className="relative z-10 flex flex-col items-center gap-3 text-center">
-                        <div className="mt-1 flex items-center gap-2 font-mono text-lg tracking-[0.26em] text-cyan-100/95">
+                        <div className="mt-1 flex items-center gap-2 font-mono text-base sm:text-lg tracking-[0.26em] text-cyan-100/95">
                             <span>{String(progress).padStart(3, '0')}</span>
                             <span>%</span>
                         </div>
                     </div>
                     <div className="pointer-events-none absolute -bottom-1 left-1/2 h-px w-28 -translate-x-1/2 bg-linear-to-r from-transparent via-cyan-200/70 to-transparent" />
-                    <div className="pointer-events-none absolute -bottom-4 left-1/2 h-12 -translate-x-1/2 rounded-[999px] bg-cyan-200/15 blur-2xl" style={{ width: 230 }} />
-                    <div className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-cyan-200/10" style={{ height: 560, width: 560 }} />
-                    <div className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-cyan-100/5" style={{ height: 700, width: 700 }} />
+                    <div className="pointer-events-none absolute -bottom-4 left-1/2 h-12 -translate-x-1/2 rounded-[999px] bg-cyan-200/15 blur-2xl" style={{ width: '38%' }} />
+                    <div className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-cyan-200/10" style={{ height: '90%', width: '90%' }} />
+                    <div className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-cyan-100/5" style={{ height: '112%', width: '112%' }} />
                 </div>
 
                 <div className="pointer-events-none absolute inset-0 opacity-[0.06] bg-[linear-gradient(rgba(255,255,255,0.35)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.35)_1px,transparent_1px)] bg-size-[52px_52px]" />
-                <div className="pointer-events-none absolute bottom-8 right-8 font-mono text-[10px] tracking-[0.2em] text-cyan-100/60">
+                <div className="pointer-events-none hidden sm:block absolute bottom-8 right-8 font-mono text-[10px] tracking-[0.2em] text-cyan-100/60">
                     <div className="mb-1">SYSTEM BOOTSTRAP</div>
                     <div className="h-px w-24 bg-cyan-100/30" />
                 </div>
-                <div className="pointer-events-none absolute bottom-8 left-8 font-mono text-[10px] tracking-[0.2em] text-cyan-100/60">
+                <div className="pointer-events-none hidden sm:block absolute bottom-8 left-8 font-mono text-[10px] tracking-[0.2em] text-cyan-100/60">
                     <div className="mb-1">PLANET CORE LINK</div>
                     <div className="h-px w-24 bg-cyan-100/30" />
                 </div>
