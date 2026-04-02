@@ -95,7 +95,7 @@ export default function SceneClient() {
                     </svg>
 
                     <div className="relative z-10 flex flex-col items-center gap-3 text-center">
-                        <div className="mt-1 flex items-center gap-2 font-mono text-base sm:text-lg tracking-[0.26em] text-cyan-100/95">
+                        <div className="-translate-y-4 sm:-translate-y-6 flex items-center gap-2 font-mono text-base sm:text-lg tracking-[0.26em] text-cyan-100/95">
                             <span>{String(progress).padStart(3, '0')}</span>
                             <span>%</span>
                         </div>
