@@ -4,6 +4,7 @@ import ClientInitializer from '@/components/ClientInitializer';
 import HomeBackgroundLayers from '@/components/HomeBackgroundLayers';
 import WorksList from '@/components/dom/WorksList';
 import WeatherDebugSelector from '@/components/dom/WeatherDebugSelector';
+import NomineeToast from '@/components/dom/NomineeToast';
 import TopLeftMenu from '../components/dom/TopLeftMenu';
 
 type SupportedLang = 'ja' | 'en';
@@ -17,6 +18,10 @@ const copyByLang = {
     systemOnline: 'SYSTEM ONLINE',
     target: 'TARGET: NITR0YUKKURI',
     heroTagline: 'Code breathes with the atmosphere.',
+    nomineeLabel: 'CSS WINNER 2026',
+    nomineeTitle: 'ここまで見てくれてありがとう。',
+    nomineeDesc: 'Site of the Day を本気で狙っています。よかったら一票で後押ししてくれると嬉しいです。',
+    nomineeCta: '投票して応援する',
     conceptLabel: '01 / CONCEPT',
     conceptLeadBefore: '静的な「情報の羅列」から、息づく',
     conceptLeadHighlight: '「体験」',
@@ -48,6 +53,10 @@ const copyByLang = {
     systemOnline: 'SYSTEM ONLINE',
     target: 'TARGET: NITR0YUKKURI',
     heroTagline: 'Code breathes with the atmosphere.',
+    nomineeLabel: 'CSS WINNER 2026',
+    nomineeTitle: 'Thanks for scrolling all the way down.',
+    nomineeDesc: 'I am aiming for Site of the Day. If you enjoyed it, your vote would mean a lot.',
+    nomineeCta: 'Vote on CSS Winner',
     conceptLabel: '01 / CONCEPT',
     conceptLeadBefore: 'From a static list of information to a ',
     conceptLeadHighlight: 'breathing planet',
@@ -271,10 +280,19 @@ export default async function Home({
                   </a>
                 </div>
               </div>
-              <p className="text-[10px] text-gray-700 font-mono text-left md:text-right">
-                © 2026 WAKATO. ALL RIGHTS RESERVED.<br />
-                {t.designedIn}
-              </p>
+              <div className="w-full md:w-auto md:text-right">
+                <NomineeToast
+                  href="https://www.csswinner.com/details/wakato-3d-portfolio/19159"
+                  label={t.nomineeLabel}
+                  title={t.nomineeTitle}
+                  description={t.nomineeDesc}
+                  cta={t.nomineeCta}
+                />
+                <p className="text-[10px] text-gray-700 font-mono text-left md:text-right">
+                  © 2026 WAKATO. ALL RIGHTS RESERVED.<br />
+                  {t.designedIn}
+                </p>
+              </div>
             </div>
           </div>
         </footer>
