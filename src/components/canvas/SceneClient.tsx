@@ -55,7 +55,9 @@ export default function SceneClient() {
 
     return (
         <>
-            <Scene onSceneReady={handleSceneReady} />
+            <div className={`transition-opacity duration-200 ${showLoader ? 'opacity-0' : 'opacity-100'}`}>
+                <Scene onSceneReady={handleSceneReady} />
+            </div>
             <div
                 className={`absolute inset-0 z-20 flex items-center justify-center bg-[radial-gradient(circle_at_50%_45%,rgba(22,61,84,0.2)_0%,rgba(0,0,0,0.985)_62%,rgba(0,0,0,1)_100%)] transition-opacity duration-300 ${showLoader ? 'opacity-100' : 'opacity-0 pointer-events-none'
                     }`}
