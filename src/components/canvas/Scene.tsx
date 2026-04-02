@@ -8,7 +8,7 @@ import AbstractCore from './AbstractCore';
 import Weather from './Weather';
 import { Suspense } from 'react';
 
-export default function Scene() {
+export default function Scene({ onSceneReady }: { onSceneReady?: () => void }) {
     const [isMobile, setIsMobile] = useState(false);
 
     useEffect(() => {
@@ -17,6 +17,24 @@ export default function Scene() {
         window.addEventListener('resize', update);
         return () => window.removeEventListener('resize', update);
     }, []);
+
+    useEffect(() => {
+        if (!onSceneReady) return;
+
+        // Wait two frames so the first planet frame is actually painted.
+        let raf1 = 0;
+        let raf2 = 0;
+        raf1 = window.requestAnimationFrame(() => {
+            raf2 = window.requestAnimationFrame(() => {
+                onSceneReady();
+            });
+        });
+
+        return () => {
+            if (raf1) window.cancelAnimationFrame(raf1);
+            if (raf2) window.cancelAnimationFrame(raf2);
+        };
+    }, [onSceneReady]);
 
     return (
         <div className="absolute inset-0 z-0 bg-black pointer-events-none md:pointer-events-auto">
