@@ -1,12 +1,40 @@
 'use client'
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, Environment, Stars } from '@react-three/drei';
+import { OrbitControls, Environment, Stars, useProgress } from '@react-three/drei';
 import { EffectComposer, Bloom } from '@react-three/postprocessing';
 import AbstractCore from './AbstractCore';
 import Weather from './Weather';
 import { Suspense } from 'react';
+
+function SceneReadySignal({ onReady }: { onReady?: () => void }) {
+    const { active, progress } = useProgress();
+    const firedRef = useRef(false);
+
+    useEffect(() => {
+        if (!onReady || firedRef.current) return;
+        if (active || progress < 100) return;
+
+        let raf1 = 0;
+        let raf2 = 0;
+        firedRef.current = true;
+
+        // Wait two frames so the first loaded scene frame is painted before hiding loader.
+        raf1 = window.requestAnimationFrame(() => {
+            raf2 = window.requestAnimationFrame(() => {
+                onReady();
+            });
+        });
+
+        return () => {
+            if (raf1) window.cancelAnimationFrame(raf1);
+            if (raf2) window.cancelAnimationFrame(raf2);
+        };
+    }, [active, onReady, progress]);
+
+    return null;
+}
 
 export default function Scene({ onSceneReady }: { onSceneReady?: () => void }) {
     const [isMobile, setIsMobile] = useState(false);
@@ -18,24 +46,6 @@ export default function Scene({ onSceneReady }: { onSceneReady?: () => void }) {
         return () => window.removeEventListener('resize', update);
     }, []);
 
-    useEffect(() => {
-        if (!onSceneReady) return;
-
-        // Wait two frames so the first planet frame is actually painted.
-        let raf1 = 0;
-        let raf2 = 0;
-        raf1 = window.requestAnimationFrame(() => {
-            raf2 = window.requestAnimationFrame(() => {
-                onSceneReady();
-            });
-        });
-
-        return () => {
-            if (raf1) window.cancelAnimationFrame(raf1);
-            if (raf2) window.cancelAnimationFrame(raf2);
-        };
-    }, [onSceneReady]);
-
     return (
         <div className="absolute inset-0 z-0 bg-black pointer-events-none md:pointer-events-auto">
             <Canvas
@@ -44,6 +54,7 @@ export default function Scene({ onSceneReady }: { onSceneReady?: () => void }) {
                 gl={{ antialias: false, powerPreference: 'high-performance' }}
                 performance={{ min: 0.7, debounce: 300 }}
             >
+                <SceneReadySignal onReady={onSceneReady} />
                 <Suspense fallback={null}>
                     <color attach="background" args={['#050505']} />
 
