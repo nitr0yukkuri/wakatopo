@@ -147,7 +147,7 @@ export default function TopLeftMenu() {
                 </span>
             </button>
 
-            <p className="opacity-70 pointer-events-none text-[10px] sm:text-xs tracking-[0.16em] sm:tracking-[0.2em] text-cyan-100/75">{lang === 'en' ? 'INTERACTIVE WEB EXPERIENCE' : 'INTERACTIVE WEB EXPERIENCE'}</p>
+            <p className="hidden opacity-70 pointer-events-none text-[10px] sm:text-xs tracking-[0.16em] sm:tracking-[0.2em] text-cyan-100/75">{lang === 'en' ? 'INTERACTIVE WEB EXPERIENCE' : 'INTERACTIVE WEB EXPERIENCE'}</p>
 
             <div
                 id="top-left-menu-panel"
