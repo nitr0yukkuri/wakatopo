@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Geist_Mono, Outfit, Zen_Kaku_Gothic_New } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import GlobalTransitionOverlay from "@/components/GlobalTransitionOverlay";
 import PwaRegister from "@/components/PwaRegister";
@@ -26,6 +27,9 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
   display: "swap",
 });
+
+const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
+const isGaEnabled = process.env.NODE_ENV === "production" && !!GA_MEASUREMENT_ID;
 
 // PWA用にテーマカラー（ステータスバーの色）を設定
 export const viewport: Viewport = {
@@ -115,6 +119,22 @@ export default function RootLayout({
         className={`${outfit.variable} ${zenKakuGothicNew.variable} ${geistMono.variable} antialiased`}
         suppressHydrationWarning
       >
+        {isGaEnabled && (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+              strategy="afterInteractive"
+            />
+            <Script id="ga4-init" strategy="afterInteractive">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${GA_MEASUREMENT_ID}', { page_path: window.location.pathname });
+              `}
+            </Script>
+          </>
+        )}
         <LocaleSync />
         <PwaRegister />
         <SoundDirector />

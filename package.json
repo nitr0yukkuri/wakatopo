@@ -13,6 +13,7 @@
     "gltf:optimize": "gltf-transform optimize public/models/planet.glb public/models/planet.opt.glb --compress draco --texture-compress webp --prune --simplify"
   },
   "dependencies": {
+    "@next/third-parties": "^16.2.2",
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.5.0",
     "@react-three/postprocessing": "^3.0.4",

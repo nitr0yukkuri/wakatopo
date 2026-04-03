@@ -152,6 +152,10 @@ git clone https://github.com/nitr0yukkuri/wakatopo.git
 # Install
 npm install
 
+# Env (optional: GA4)
+# .env.local を作成して設定
+# NEXT_PUBLIC_GA_MEASUREMENT_ID=G-XXXXXXXXXX
+
 # Run
 npm run dev
 ```

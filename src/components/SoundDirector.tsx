@@ -372,7 +372,6 @@ export default function SoundDirector() {
             if (!ok) return;
             if (!isMutedRef.current) {
                 startBgm();
-                playTone(659.25, 0.08, 0.05, 'triangle');
             }
         };
 
