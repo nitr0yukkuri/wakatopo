@@ -15,6 +15,7 @@ const outfit = Outfit({
   display: "swap",
 });
 
+
 const zenKakuGothicNew = Zen_Kaku_Gothic_New({
   variable: "--font-japanese",
   subsets: ["latin"],
