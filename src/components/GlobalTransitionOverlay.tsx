@@ -22,6 +22,9 @@ export default function GlobalTransitionOverlay() {
     const transitionType = useStore((state) => state.transitionType);
 
     useEffect(() => {
+        const prevOverflow = document.body.style.overflow;
+        const prevTouchAction = document.body.style.touchAction;
+
         // トランジション中はスクロールを無効化
         if (transitionType !== 'none') {
             document.body.style.overflow = 'hidden';
@@ -30,6 +33,11 @@ export default function GlobalTransitionOverlay() {
             document.body.style.overflow = '';
             document.body.style.touchAction = '';
         }
+
+        return () => {
+            document.body.style.overflow = prevOverflow;
+            document.body.style.touchAction = prevTouchAction;
+        };
     }, [transitionType]);
 
     return (
