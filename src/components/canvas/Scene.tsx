@@ -47,7 +47,7 @@ export default function Scene({ onSceneReady }: { onSceneReady?: () => void }) {
     }, []);
 
     return (
-        <div className="absolute inset-0 z-0 bg-black pointer-events-none md:pointer-events-auto">
+        <div className="absolute inset-0 z-0 bg-black pointer-events-none">
             <Canvas
                 camera={{ position: [0, 0, isMobile ? 9.2 : 8], fov: isMobile ? 42 : 35 }}
                 dpr={[1, 1.25]}
