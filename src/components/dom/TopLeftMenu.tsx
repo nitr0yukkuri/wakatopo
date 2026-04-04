@@ -144,7 +144,7 @@ export default function TopLeftMenu() {
     }, [open]);
 
     return (
-        <div ref={containerRef} className="relative flex flex-col gap-2 pointer-events-auto" style={{ touchAction: 'pan-y' }}>
+        <div ref={containerRef} className="relative flex flex-col gap-2 pointer-events-auto w-fit" style={{ touchAction: 'pan-y' }}>
             <button
                 type="button"
                 onClick={() => setOpen((prev) => !prev)}
