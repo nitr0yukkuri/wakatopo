@@ -117,6 +117,10 @@ export default function AbstractCore() {
     // インタラクション時の滑らかな補間用のRef
     const interactionValues = useRef({ hoverLevel: 0, activeLevel: 0 });
     const hitPointRef = useRef<THREE.Vector3 | null>(null);
+    const tapStartRef = useRef<{ x: number; y: number; pointerId: number } | null>(null);
+    const tapMovedRef = useRef(false);
+    const activeBurstTimerRef = useRef<number | null>(null);
+    const longPressTimerRef = useRef<number | null>(null);
     const blendedVisualRef = useRef({
         meshOpacity: CORE_VISUALS[weather].meshOpacity,
         wireOpacity: CORE_VISUALS[weather].wireOpacity,
@@ -140,8 +144,21 @@ export default function AbstractCore() {
         return () => {
             document.body.style.cursor = 'auto';
             window.removeEventListener('pointerup', handlePointerUp);
+            if (activeBurstTimerRef.current !== null) {
+                window.clearTimeout(activeBurstTimerRef.current);
+                activeBurstTimerRef.current = null;
+            }
+            if (longPressTimerRef.current !== null) {
+                window.clearTimeout(longPressTimerRef.current);
+                longPressTimerRef.current = null;
+            }
         };
     }, [hovered, active]);
+
+    const isDesktopLongPressMode = () => {
+        if (typeof window === 'undefined') return false;
+        return window.innerWidth >= 1024 && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    };
 
     // Reusable temp objects to avoid per-frame GC pressure
     const _tempColor = useMemo(() => new THREE.Color(), []);
@@ -347,10 +364,103 @@ export default function AbstractCore() {
             {/* 当たり判定用の透明な球体（ワイヤーフレームは当たり判定が拾えないため） */}
             <mesh
                 onPointerOver={(e) => { e.stopPropagation(); setHovered(true); }}
-                onPointerOut={(e) => { e.stopPropagation(); setHovered(false); setActive(false); hitPointRef.current = null; }}
-                onPointerDown={(e) => { e.stopPropagation(); setActive(true); }}
-                onPointerUp={(e) => { e.stopPropagation(); setActive(false); }}
-                onPointerMove={(e) => { e.stopPropagation(); hitPointRef.current = e.point; }}
+                onPointerOut={(e) => {
+                    e.stopPropagation();
+                    setHovered(false);
+                    setActive(false);
+                    hitPointRef.current = null;
+                    tapStartRef.current = null;
+                    tapMovedRef.current = false;
+                    if (longPressTimerRef.current !== null) {
+                        window.clearTimeout(longPressTimerRef.current);
+                        longPressTimerRef.current = null;
+                    }
+                }}
+                onPointerDown={(e) => {
+                    e.stopPropagation();
+                    tapStartRef.current = { x: e.clientX, y: e.clientY, pointerId: e.pointerId };
+                    tapMovedRef.current = false;
+
+                    if (isDesktopLongPressMode()) {
+                        if (longPressTimerRef.current !== null) {
+                            window.clearTimeout(longPressTimerRef.current);
+                        }
+                        longPressTimerRef.current = window.setTimeout(() => {
+                            if (!tapMovedRef.current) {
+                                setActive(true);
+                            }
+                            longPressTimerRef.current = null;
+                        }, 180);
+                    }
+                }}
+                onPointerUp={(e) => {
+                    e.stopPropagation();
+
+                    if (longPressTimerRef.current !== null) {
+                        window.clearTimeout(longPressTimerRef.current);
+                        longPressTimerRef.current = null;
+                    }
+
+                    if (isDesktopLongPressMode()) {
+                        tapStartRef.current = null;
+                        tapMovedRef.current = false;
+                        setActive(false);
+                        return;
+                    }
+
+                    const start = tapStartRef.current;
+                    if (!start || start.pointerId !== e.pointerId) {
+                        tapStartRef.current = null;
+                        tapMovedRef.current = false;
+                        return;
+                    }
+
+                    const dx = e.clientX - start.x;
+                    const dy = e.clientY - start.y;
+                    const moved = tapMovedRef.current || Math.hypot(dx, dy) > 12;
+
+                    tapStartRef.current = null;
+                    tapMovedRef.current = false;
+                    if (moved) {
+                        setActive(false);
+                        return;
+                    }
+
+                    setActive(true);
+                    if (activeBurstTimerRef.current !== null) {
+                        window.clearTimeout(activeBurstTimerRef.current);
+                    }
+                    activeBurstTimerRef.current = window.setTimeout(() => {
+                        setActive(false);
+                        activeBurstTimerRef.current = null;
+                    }, 260);
+                }}
+                onPointerMove={(e) => {
+                    e.stopPropagation();
+                    hitPointRef.current = e.point;
+
+                    const start = tapStartRef.current;
+                    if (!start || start.pointerId !== e.pointerId) return;
+                    const dx = e.clientX - start.x;
+                    const dy = e.clientY - start.y;
+                    if (Math.hypot(dx, dy) > 12) {
+                        tapMovedRef.current = true;
+                        if (longPressTimerRef.current !== null) {
+                            window.clearTimeout(longPressTimerRef.current);
+                            longPressTimerRef.current = null;
+                        }
+                    }
+                }}
+                onPointerCancel={(e) => {
+                    e.stopPropagation();
+                    tapStartRef.current = null;
+                    tapMovedRef.current = false;
+                    setActive(false);
+                    if (longPressTimerRef.current !== null) {
+                        window.clearTimeout(longPressTimerRef.current);
+                        longPressTimerRef.current = null;
+                    }
+                }}
             >
                 {/* 軌道上のパーティクル範囲ではなく、コア本体付近に当たり判定を絞る */}
                 <sphereGeometry args={[1.8, 32, 32]} />
