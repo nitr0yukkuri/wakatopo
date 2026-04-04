@@ -1,27 +1,55 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 
 export function RainParticles() {
     const [mounted, setMounted] = useState(false);
+    const [isLightMode, setIsLightMode] = useState(false);
 
     useEffect(() => {
         setMounted(true);
+
+        const nav = navigator as Navigator & {
+            connection?: { saveData?: boolean };
+            deviceMemory?: number;
+            standalone?: boolean;
+        };
+
+        const isStandalonePwa = window.matchMedia('(display-mode: standalone)').matches || nav.standalone === true;
+        const saveData = nav.connection?.saveData === true;
+        const lowCore = typeof nav.hardwareConcurrency === 'number' && nav.hardwareConcurrency <= 4;
+        const lowMemory = typeof nav.deviceMemory === 'number' && nav.deviceMemory <= 4;
+
+        setIsLightMode(isStandalonePwa || saveData || lowCore || lowMemory);
     }, []);
 
     if (!mounted) return null;
 
-    const drops = Array.from({ length: 110 }).map((_, i) => ({
-        id: i,
-        left: `${Math.random() * 100}%`,
-        delay: Math.random() * 1.2,
-        duration: 0.95 + Math.random() * 0.45,
-        height: 10 + Math.random() * 22,
-        opacity: 0.16 + Math.random() * 0.28,
-        drift: 26 + Math.random() * 64,
-        width: 1 + Math.random() * 1.2,
-    }));
+    const drops = useMemo(() => {
+        const count = isLightMode ? 42 : 110;
+        const baseDuration = isLightMode ? 1.05 : 0.95;
+        const maxDurationAdd = isLightMode ? 0.35 : 0.45;
+        const minHeight = isLightMode ? 9 : 10;
+        const maxHeightAdd = isLightMode ? 14 : 22;
+        const minOpacity = isLightMode ? 0.14 : 0.16;
+        const maxOpacityAdd = isLightMode ? 0.18 : 0.28;
+        const minDrift = isLightMode ? 20 : 26;
+        const maxDriftAdd = isLightMode ? 40 : 64;
+        const minWidth = isLightMode ? 0.9 : 1;
+        const maxWidthAdd = isLightMode ? 0.8 : 1.2;
+
+        return Array.from({ length: count }).map((_, i) => ({
+            id: i,
+            left: `${Math.random() * 100}%`,
+            delay: Math.random() * 1.2,
+            duration: baseDuration + Math.random() * maxDurationAdd,
+            height: minHeight + Math.random() * maxHeightAdd,
+            opacity: minOpacity + Math.random() * maxOpacityAdd,
+            drift: minDrift + Math.random() * maxDriftAdd,
+            width: minWidth + Math.random() * maxWidthAdd,
+        }));
+    }, [isLightMode]);
 
     return (
         <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
@@ -35,8 +63,9 @@ export function RainParticles() {
                         height: `${drop.height}vh`,
                         top: '-24vh',
                         background: `linear-gradient(to bottom, rgba(240,247,255,0), rgba(220,235,255,${drop.opacity}), rgba(198,219,244,0))`,
-                        filter: 'blur(0.3px)',
+                        filter: isLightMode ? 'none' : 'blur(0.3px)',
                         rotate: '10deg',
+                        willChange: 'transform, opacity',
                     }}
                     initial={{ opacity: 0, y: '-8vh', x: 0 }}
                     animate={{
