@@ -23,12 +23,18 @@ export default function GlobalTransitionOverlay() {
 
     useEffect(() => {
         const warmup = () => {
-            void import('@/components/canvas/RainTransitionCanvas');
-            void import('@/components/canvas/SnowTransitionCanvas');
-            void import('@/components/canvas/ThunderTransitionCanvas');
-            void import('@/components/canvas/HeavyCloudTransitionCanvas');
-            void import('@/components/canvas/SunburstTransitionCanvas');
-            void import('@/components/canvas/MoonriseTransitionCanvas');
+            const safeImport = (loader: () => Promise<unknown>) => {
+                void loader().catch(() => {
+                    // Ignore warmup failures; real transition loading will retry on demand.
+                });
+            };
+
+            safeImport(() => import('@/components/canvas/RainTransitionCanvas'));
+            safeImport(() => import('@/components/canvas/SnowTransitionCanvas'));
+            safeImport(() => import('@/components/canvas/ThunderTransitionCanvas'));
+            safeImport(() => import('@/components/canvas/HeavyCloudTransitionCanvas'));
+            safeImport(() => import('@/components/canvas/SunburstTransitionCanvas'));
+            safeImport(() => import('@/components/canvas/MoonriseTransitionCanvas'));
         };
 
         const w = window as typeof window & {
