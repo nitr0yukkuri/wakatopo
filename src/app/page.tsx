@@ -104,7 +104,10 @@ export default async function Home({
   const works = t.works.map((work) => ({ ...work }));
 
   return (
-    <main className="relative w-full min-h-[100dvh] text-white font-sans bg-[#050505]" style={{ touchAction: 'pan-y' }}>
+    <main
+      className="relative w-full min-h-[100dvh] text-white font-sans bg-[#050505]"
+      style={{ touchAction: 'pan-y', userSelect: 'none', WebkitUserSelect: 'none', WebkitTouchCallout: 'none' }}
+    >
       <ClientInitializer
         initialWeather={data.weather as any}
         initialActivity={data.activityLevel}
