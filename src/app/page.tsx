@@ -148,7 +148,7 @@ export default async function Home({
                 <span className="text-white">{(data.activityLevel * 100).toFixed(0)}%</span>
               </div>
             </div>
-            <div className="pointer-events-auto w-fit">
+            <div className="w-fit">
               <WeatherDebugSelector />
             </div>
           </div>
