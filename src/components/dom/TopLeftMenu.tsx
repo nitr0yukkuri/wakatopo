@@ -28,6 +28,7 @@ const MENU_COMMANDS = {
 export default function TopLeftMenu() {
     const [open, setOpen] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
+    const panelRef = useRef<HTMLDivElement>(null);
     const router = useRouter();
     const searchParams = useSearchParams();
     const lang = searchParams.get('lang') === 'en' ? 'en' : 'ja';
@@ -119,6 +120,19 @@ export default function TopLeftMenu() {
     useEffect(() => {
         const onPointerDown = (event: PointerEvent) => {
             if (!containerRef.current) return;
+
+            // In PWA, scrollbar drags can report targets outside the panel DOM.
+            // Keep the menu open when the pointer starts on the panel's scrollbar gutter.
+            if (open && panelRef.current) {
+                const rect = panelRef.current.getBoundingClientRect();
+                const isInScrollbarGutter =
+                    event.clientY >= rect.top &&
+                    event.clientY <= rect.bottom &&
+                    event.clientX >= rect.right - 18 &&
+                    event.clientX <= rect.right + 2;
+                if (isInScrollbarGutter) return;
+            }
+
             if (!containerRef.current.contains(event.target as Node)) {
                 setOpen(false);
             }
@@ -137,7 +151,7 @@ export default function TopLeftMenu() {
             window.removeEventListener('pointerdown', onPointerDown);
             window.removeEventListener('keydown', onKeyDown);
         };
-    }, []);
+    }, [open]);
 
     return (
         <div ref={containerRef} className="relative flex flex-col gap-2 pointer-events-auto">
@@ -162,6 +176,7 @@ export default function TopLeftMenu() {
             <p className="hidden opacity-70 pointer-events-none text-[10px] sm:text-xs tracking-[0.16em] sm:tracking-[0.2em] text-cyan-100/75">{lang === 'en' ? 'INTERACTIVE WEB EXPERIENCE' : 'INTERACTIVE WEB EXPERIENCE'}</p>
 
             <div
+                ref={panelRef}
                 id="top-left-menu-panel"
                 className={`absolute left-0 top-full mt-2 w-[min(92vw,380px)] max-h-[72dvh] overflow-y-auto rounded-xl border border-cyan-400/30 bg-[#060a10]/95 p-3 shadow-[0_20px_45px_rgba(0,0,0,0.45)] backdrop-blur transition-all ${open ? 'pointer-events-auto opacity-100 translate-y-0' : 'pointer-events-none opacity-0 -translate-y-1'}`}
             >
