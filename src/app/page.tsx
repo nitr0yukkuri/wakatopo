@@ -120,7 +120,7 @@ export default async function Home({
         </Suspense>
 
         {/* Top Right */}
-        <div className="absolute top-6 right-4 sm:right-6 md:right-8 text-right flex flex-col gap-1 pointer-events-auto">
+        <div className="absolute top-6 right-4 sm:right-6 md:right-8 text-right flex flex-col gap-1 pointer-events-auto" style={{ touchAction: 'pan-y' }}>
           <div className="flex items-center justify-end gap-1.5 text-[10px] font-mono tracking-widest text-gray-400">
             <a href="/?lang=ja" className={lang === 'ja' ? 'text-cyan-300' : 'hover:text-gray-200 transition-colors'}>JP</a>
             <span className="text-gray-700">/</span>
