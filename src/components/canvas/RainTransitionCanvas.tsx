@@ -24,8 +24,6 @@ export function RainParticles() {
         setIsLightMode(isStandalonePwa || saveData || lowCore || lowMemory);
     }, []);
 
-    if (!mounted) return null;
-
     const drops = useMemo(() => {
         const count = isLightMode ? 42 : 110;
         const baseDuration = isLightMode ? 1.05 : 0.95;
@@ -50,6 +48,8 @@ export function RainParticles() {
             width: minWidth + Math.random() * maxWidthAdd,
         }));
     }, [isLightMode]);
+
+    if (!mounted) return null;
 
     return (
         <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
