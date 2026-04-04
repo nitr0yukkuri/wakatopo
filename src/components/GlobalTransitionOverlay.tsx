@@ -22,6 +22,34 @@ export default function GlobalTransitionOverlay() {
     const transitionType = useStore((state) => state.transitionType);
 
     useEffect(() => {
+        const warmup = () => {
+            void import('@/components/canvas/RainTransitionCanvas');
+            void import('@/components/canvas/SnowTransitionCanvas');
+            void import('@/components/canvas/ThunderTransitionCanvas');
+            void import('@/components/canvas/HeavyCloudTransitionCanvas');
+            void import('@/components/canvas/SunburstTransitionCanvas');
+            void import('@/components/canvas/MoonriseTransitionCanvas');
+        };
+
+        const w = window as typeof window & {
+            requestIdleCallback?: (cb: () => void, options?: { timeout: number }) => number;
+            cancelIdleCallback?: (id: number) => void;
+        };
+
+        if (w.requestIdleCallback) {
+            const idleId = w.requestIdleCallback(warmup, { timeout: 1200 });
+            return () => {
+                if (w.cancelIdleCallback) {
+                    w.cancelIdleCallback(idleId);
+                }
+            };
+        }
+
+        const timer = window.setTimeout(warmup, 400);
+        return () => window.clearTimeout(timer);
+    }, []);
+
+    useEffect(() => {
         const prevOverflow = document.body.style.overflow;
         const prevTouchAction = document.body.style.touchAction;
 

@@ -35,11 +35,6 @@ export default function TopLeftMenu() {
     const { setActiveWork, setTransitionType } = useStore();
     const commands = MENU_COMMANDS[lang];
     const withLang = (href: string) => `${href}?lang=${lang}`;
-    const isStandalonePwa = () => {
-        if (typeof window === 'undefined') return false;
-        const iosStandalone = (window.navigator as Navigator & { standalone?: boolean }).standalone === true;
-        return window.matchMedia('(display-mode: standalone)').matches || iosStandalone;
-    };
 
     const navigateWithTransition = (href: string) => {
         setOpen(false);
@@ -58,12 +53,6 @@ export default function TopLeftMenu() {
             setActiveWork('02');
             const currentWeather = useStore.getState().weather;
             const otenkiHref = `/otenkigurashi?lang=${lang}&weather=${encodeURIComponent(currentWeather)}`;
-
-            if (isStandalonePwa()) {
-                setTransitionType('none');
-                router.push(otenkiHref);
-                return;
-            }
 
             if (currentWeather === 'Rain') {
                 setTransitionType('rain');

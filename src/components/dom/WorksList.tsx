@@ -17,11 +17,6 @@ export default function WorksList({ works }: { works: Work[] }) {
     const searchParams = useSearchParams();
     const lang = searchParams.get('lang') === 'en' ? 'en' : 'ja';
     const withLang = (path: string) => `${path}?lang=${lang}`;
-    const isStandalonePwa = () => {
-        if (typeof window === 'undefined') return false;
-        const iosStandalone = (window.navigator as Navigator & { standalone?: boolean }).standalone === true;
-        return window.matchMedia('(display-mode: standalone)').matches || iosStandalone;
-    };
 
     useEffect(() => {
         // ... (スクロール無効化はGlobalTransitionOverlayに移動したので削除)
@@ -40,12 +35,6 @@ export default function WorksList({ works }: { works: Work[] }) {
             setActiveWork('02');
             const currentWeather = useStore.getState().weather;
             const otenkiHref = `/otenkigurashi?lang=${lang}&weather=${encodeURIComponent(currentWeather)}`;
-
-            if (isStandalonePwa()) {
-                setTransitionType('none');
-                router.push(otenkiHref);
-                return;
-            }
 
             // 天候に応じて遷移アニメーションを分岐
             if (currentWeather === 'Rain') {
