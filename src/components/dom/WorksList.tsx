@@ -17,6 +17,11 @@ export default function WorksList({ works }: { works: Work[] }) {
     const searchParams = useSearchParams();
     const lang = searchParams.get('lang') === 'en' ? 'en' : 'ja';
     const withLang = (path: string) => `${path}?lang=${lang}`;
+    const isStandalonePwa = () => {
+        if (typeof window === 'undefined') return false;
+        const iosStandalone = (window.navigator as Navigator & { standalone?: boolean }).standalone === true;
+        return window.matchMedia('(display-mode: standalone)').matches || iosStandalone;
+    };
 
     useEffect(() => {
         // ... (スクロール無効化はGlobalTransitionOverlayに移動したので削除)
@@ -33,6 +38,12 @@ export default function WorksList({ works }: { works: Work[] }) {
             }, 1400);
         } else if (id === '02') {
             setActiveWork('02');
+
+            if (isStandalonePwa()) {
+                setTransitionType('none');
+                router.push(withLang('/otenkigurashi'));
+                return;
+            }
 
             // 天候に応じて遷移アニメーションを分岐
             const currentWeather = useStore.getState().weather;
