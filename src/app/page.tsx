@@ -131,7 +131,7 @@ export default async function Home({
         {/* Bottom HUD Container */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end w-full gap-6 md:gap-0 pointer-events-none">
           {/* Bottom Left */}
-          <div className="flex flex-col gap-1 w-full md:w-auto opacity-50 hover:opacity-100 md:opacity-100 transition-opacity pointer-events-none md:pointer-events-auto">
+          <div className="flex flex-col gap-1 w-full md:w-auto opacity-50 hover:opacity-100 md:opacity-100 transition-opacity pointer-events-none">
             <div className="flex flex-col gap-1 border-l border-gray-800 pl-4">
               <div className="flex gap-4">
                 <span className="w-12">LOC</span>
@@ -148,7 +148,9 @@ export default async function Home({
                 <span className="text-white">{(data.activityLevel * 100).toFixed(0)}%</span>
               </div>
             </div>
-            <WeatherDebugSelector />
+            <div className="pointer-events-auto">
+              <WeatherDebugSelector />
+            </div>
           </div>
 
         </div>
