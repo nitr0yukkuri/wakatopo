@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useStore } from '@/store';
+import { useStore, WeatherType } from '@/store';
 import { useEffect, useRef, useState } from 'react';
 import dynamicImport from 'next/dynamic';
 import Image from 'next/image';
@@ -35,7 +35,8 @@ export default function OtenkiGurashiPage() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const lang = searchParams.get('lang') === 'en' ? 'en' : 'ja';
-    const { setActiveWork, weather } = useStore();
+    const { setActiveWork, setWeather, weather } = useStore();
+    const weatherParam = searchParams.get('weather');
 
     const copy = {
         ja: {
@@ -132,6 +133,14 @@ export default function OtenkiGurashiPage() {
         const random = reactions[Math.floor(Math.random() * reactions.length)];
         handleInteract(random.text, random.mood);
     };
+
+    useEffect(() => {
+        const weatherByParam = weatherParam as WeatherType | null;
+        const validWeather: WeatherType[] = ['Clear', 'Rain', 'Clouds', 'Snow', 'Night', 'Morning', 'Thunder'];
+        if (weatherByParam && validWeather.includes(weatherByParam)) {
+            setWeather(weatherByParam);
+        }
+    }, [setWeather, weatherParam]);
 
     useEffect(() => {
         const observerOptions = {

@@ -38,15 +38,16 @@ export default function WorksList({ works }: { works: Work[] }) {
             }, 1400);
         } else if (id === '02') {
             setActiveWork('02');
+            const currentWeather = useStore.getState().weather;
+            const otenkiHref = `/otenkigurashi?lang=${lang}&weather=${encodeURIComponent(currentWeather)}`;
 
             if (isStandalonePwa()) {
                 setTransitionType('none');
-                router.push(withLang('/otenkigurashi'));
+                router.push(otenkiHref);
                 return;
             }
 
             // 天候に応じて遷移アニメーションを分岐
-            const currentWeather = useStore.getState().weather;
             if (currentWeather === 'Rain') {
                 setTransitionType('rain');
             } else if (currentWeather === 'Snow') {
@@ -62,7 +63,7 @@ export default function WorksList({ works }: { works: Work[] }) {
             }
 
             setTimeout(() => {
-                router.push(withLang('/otenkigurashi'));
+                router.push(otenkiHref);
                 setTimeout(() => setTransitionType('none'), 1000);
             }, 2000);
         } else if (id === '03') {

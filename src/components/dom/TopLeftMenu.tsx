@@ -56,14 +56,15 @@ export default function TopLeftMenu() {
 
         if (href === '/otenkigurashi') {
             setActiveWork('02');
+            const currentWeather = useStore.getState().weather;
+            const otenkiHref = `/otenkigurashi?lang=${lang}&weather=${encodeURIComponent(currentWeather)}`;
 
             if (isStandalonePwa()) {
                 setTransitionType('none');
-                router.push(withLang('/otenkigurashi'));
+                router.push(otenkiHref);
                 return;
             }
 
-            const currentWeather = useStore.getState().weather;
             if (currentWeather === 'Rain') {
                 setTransitionType('rain');
             } else if (currentWeather === 'Snow') {
@@ -78,7 +79,7 @@ export default function TopLeftMenu() {
                 setTransitionType('moonrise');
             }
             setTimeout(() => {
-                router.push(withLang('/otenkigurashi'));
+                router.push(otenkiHref);
                 setTimeout(() => setTransitionType('none'), 1000);
             }, 2000);
             return;
