@@ -7,6 +7,14 @@
   <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" />
 </div>
 
+
+<div align="center">
+
+  <!-- 実績（最強） -->
+  <img src="https://img.shields.io/badge/CSS_Winner-SOTD_2026-gold?style=for-the-badge&logo=trophy&logoColor=white" />
+  <img src="https://img.shields.io/badge/Award-Winner-black?style=for-the-badge&logo=star&logoColor=white" />
+
+  <br/>
 <br />
 
 <div align="center">
