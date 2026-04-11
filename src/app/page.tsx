@@ -253,7 +253,7 @@ export default async function Home({
         {/* FOOTER */}
         <footer className="py-24 px-6 md:px-20 bg-[#050505] pointer-events-auto border-t border-white/5">
           <div className="max-w-6xl mx-auto">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-start gap-8">
               <div>
                 <span className="text-cyan-500 text-xs font-mono tracking-[0.28em]">{t.endSignal}</span>
                 <p className="mt-4 text-sm md:text-base text-gray-400 leading-relaxed font-mono max-w-xl">
@@ -285,7 +285,7 @@ export default async function Home({
                   </a>
                 </div>
               </div>
-              <div className="w-full md:w-auto md:self-start md:text-right">
+              <div className="w-full md:w-auto md:text-right">
                 <NomineeToast
                   href="https://www.csswinner.com/details/wakato-3d-portfolio/19159"
                   label={t.nomineeLabel}
