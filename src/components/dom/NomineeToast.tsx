@@ -18,8 +18,8 @@ export default function NomineeToast({ href, label, title, description, cta }: N
             style={{ maxWidth: 320 }}
         >
             <span className="text-[9px] font-mono tracking-[0.18em] text-cyan-300">{label}</span>
-            <span className="mt-1 text-sm md:text-base font-medium text-gray-100">{title}</span>
-            <span className="mt-1 text-sm md:text-base font-mono leading-relaxed text-gray-400">{description}</span>
+            <span className="mt-1 text-[12px] md:text-[13px] font-medium text-gray-100">{title}</span>
+            <span className="mt-1 text-[11px] md:text-[12px] font-mono leading-relaxed text-gray-400">{description}</span>
             <span className="mt-2 inline-flex w-fit items-center rounded-full border border-cyan-400/35 bg-cyan-400/10 px-2 py-0.5 text-[9px] font-mono tracking-[0.12em] text-cyan-200">{cta}</span>
         </a>
     );
