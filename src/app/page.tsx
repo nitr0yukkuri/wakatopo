@@ -285,7 +285,7 @@ export default async function Home({
                   </a>
                 </div>
               </div>
-              <div className="w-full md:w-auto md:text-right">
+              <div className="w-full md:w-auto md:self-start md:text-right">
                 <NomineeToast
                   href="https://www.csswinner.com/details/wakato-3d-portfolio/19159"
                   label={t.nomineeLabel}
