@@ -10,7 +10,7 @@ type SearchParams = {
 
 const copyByLang = {
     ja: {
-        returnToOrbit: 'RETURN TO ORBIT',
+        returnToOrbit: 'Return to Portfolio',
         role: 'Interactive Web Developer / Creative Coder',
         internship: 'INTERNSHIP WELCOME',
         sectionCareer: '経歴',
@@ -37,7 +37,7 @@ const copyByLang = {
         sectionStrengths: '得意領域',
     },
     en: {
-        returnToOrbit: 'RETURN TO ORBIT',
+        returnToOrbit: 'Return to Portfolio',
         role: 'Interactive Web Developer / Creative Coder',
         internship: 'INTERNSHIP WELCOME',
         sectionCareer: 'CAREER',

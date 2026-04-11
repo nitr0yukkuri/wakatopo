@@ -15,7 +15,7 @@ export default function RecaptchaGamePage() {
 
     const t = {
         ja: {
-            returnToOrbit: 'RETURN TO ORBIT',
+            returnToOrbit: 'Return to Lobby',
             lead: 'おなじみの画像認証をモチーフにした、新感覚のリアルタイム対戦ゲーム。相手の操作を読みながら、誰より速く、誰より正確にパネルを制圧する。',
             mission: '出題されるお題に合う画像を 9 枚のパネルから選び、確認ボタンで判定する対戦型ゲーム。CPU 戦と WebSocket によるオンライン対戦に対応し、短時間で高密度な読み合いを体験できます。',
             feature1: 'RIVAL VIEW: 相手の選択状況を低遅延で可視化',
@@ -29,7 +29,7 @@ export default function RecaptchaGamePage() {
             how5: '先に Winning Score へ到達したプレイヤーが勝利。',
         },
         en: {
-            returnToOrbit: 'RETURN TO ORBIT',
+            returnToOrbit: 'Return to Lobby',
             lead: 'A fresh real-time competitive game inspired by familiar image verification. Read your opponent, capture panels faster, and win with precision.',
             mission: 'A head-to-head game where you select matching images from 9 panels and verify with the confirm button. Supports both CPU matches and online multiplayer via WebSocket for dense mind games in short sessions.',
             feature1: 'RIVAL VIEW: Visualize opponent choices with low latency',

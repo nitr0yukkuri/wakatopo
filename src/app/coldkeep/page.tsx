@@ -108,7 +108,7 @@ export default function ColdKeepPage() {
 
     const copy = {
         ja: {
-            returnToOrbit: 'RETURN TO ORBIT',
+            returnToOrbit: 'Return to Lab',
             overview: 'スマートフォンのマイクを入力センサーとして活用し、ステンレスボトルの内部状態（氷の有無・残量・温度）を非破壊で推定する',
             overviewTail: 'アーキテクチャ。',
             blackbox: 'ステンレス水筒の中身は見えない。「飲んだら熱すぎた」「いつの間にかぬるい」という体験の損失が発生している。',
@@ -120,7 +120,7 @@ export default function ColdKeepPage() {
             passive2: '外気温と時刻データから熱移動を計算し、水筒内部の温度変化を高精度にシミュレーションし続けます。',
         },
         en: {
-            returnToOrbit: 'RETURN TO ORBIT',
+            returnToOrbit: 'Return to Lab',
             overview: 'A non-destructive',
             overviewTail: 'architecture that uses a smartphone microphone as an input sensor to estimate internal bottle conditions (ice presence, remaining amount, and temperature).',
             blackbox: 'You cannot see inside a stainless bottle. This causes experience loss, such as finding it too hot to drink or unexpectedly lukewarm.',

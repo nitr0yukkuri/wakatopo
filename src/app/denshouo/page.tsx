@@ -263,7 +263,7 @@ export default function DenshouoPage() {
 
     const copy = {
         ja: {
-            returnToOrbit: 'RETURN TO ORBIT',
+            returnToOrbit: 'うみにもどる',
             lead: 'つぶやくほどでもない小さな幸せを魚に乗せて流し、みんなでゆるく分かち合う SNS。',
             overview: '小さな幸せをおさかなに乗せて流し、時間が経つとどこかへ泳いでいく、気軽さ重視の投稿体験を目指したアプリです。「気兼ねなく流せること」と「ちょっとした幸せを誰かと分かち合えること」を中心に設計しました。',
             smallHappiness: '大げさな発信ではなく、日常の小さな幸せを軽く流せることを重視。時間経過で投稿が流れていくため、心理的ハードルを下げています。',
@@ -273,7 +273,7 @@ export default function DenshouoPage() {
             context: '2025 年の技育CAMP Vol.10 にて開発。チームメンバーは全員 1 回生で、使う技術の多くが初挑戦という状態からスタートしました。その中で、学習コストと実装速度のバランスを取りながら形にし、優秀賞を受賞したプロジェクトです。',
         },
         en: {
-            returnToOrbit: 'RETURN TO ORBIT',
+            returnToOrbit: 'うみにもどる',
             lead: 'A gentle SNS where small moments of happiness are sent away on fish and shared loosely with others.',
             overview: 'This app focuses on lightweight posting: place a small happy moment on a fish and let it swim away over time. It was designed around two ideas: being easy to post without pressure, and sharing small moments of joy with someone.',
             smallHappiness: 'Instead of dramatic broadcasting, it emphasizes casually sharing tiny daily happiness. Posts drift away over time, which lowers the psychological barrier to posting.',
