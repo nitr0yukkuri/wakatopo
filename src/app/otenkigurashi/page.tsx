@@ -65,7 +65,7 @@ export default function OtenkiGurashiPage() {
             techClick: 'Next.jsで作られてるよ！',
             openApp: 'アプリをひらく',
             viewGithub: 'GitHubをみる',
-            backHome: '海からでる',
+            backHome: 'おうちにもどる',
             logoAlt: 'OTENKI GURASHI Logo',
         },
         en: {
@@ -94,7 +94,7 @@ export default function OtenkiGurashiPage() {
             techClick: 'It is built with Next.js!',
             openApp: 'Open App',
             viewGithub: 'View GitHub',
-            backHome: 'Exit the Sea',
+            backHome: 'Back Home',
             logoAlt: 'OTENKIGURASHI Logo',
         },
     } as const;
@@ -218,7 +218,7 @@ export default function OtenkiGurashiPage() {
                     className="inline-flex items-center gap-3 rounded-full border border-white/35 bg-black/35 px-4 py-2 text-sm font-mono tracking-widest text-white backdrop-blur-sm hover:bg-black/50 transition-colors group"
                 >
                     <span className="w-6 h-px bg-white/90 transition-colors" />
-                    おうちにもどる
+                    {t.backHome}
                 </button>
             </nav>
 
@@ -413,9 +413,6 @@ export default function OtenkiGurashiPage() {
                     <div className="fixed inset-0 pointer-events-none z-20">
                         <SnowCanvas />
                     </div>
-                    <div className="fixed inset-0 pointer-events-none z-20" style={{
-                        background: 'linear-gradient(180deg, rgba(250,253,255,0.42) 0%, rgba(246,250,255,0.32) 45%, rgba(240,247,255,0.24) 100%)',
-                    }} />
                 </>
             )}
             {weather === 'Clouds' && (
