@@ -117,7 +117,7 @@ export default async function AboutPage({
                         </div>
                     </div>
 
-                    <div className="mt-6 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 items-start gap-4 text-sm font-mono">
+                    <div className="mt-6 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 items-start gap-3 text-sm font-mono">
                         <article className="rounded-2xl border border-white/10 bg-white/5 p-4">
                             <h2 className="text-cyan-300 text-xs tracking-widest mb-3">{t.sectionCareer}</h2>
                             <p className="text-gray-300 leading-relaxed">{t.careerText}</p>
