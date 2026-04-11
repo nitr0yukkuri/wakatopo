@@ -8,6 +8,7 @@ import { useMemo, useRef, useEffect, useState } from 'react';
 import * as THREE from 'three';
 import { waveVertexShader, waveFragmentShader } from '@/shaders/wave';
 import Image from 'next/image';
+import RealtimeRipples from '@/components/canvas/effects/RealtimeRipples';
 
 export const dynamic = 'force-dynamic';
 
@@ -324,6 +325,7 @@ export default function DenshouoPage() {
     return (
         <main className="relative min-h-dvh bg-[radial-gradient(circle_at_top_left,rgba(56,189,248,0.10),transparent_28%),radial-gradient(circle_at_bottom,rgba(20,184,166,0.12),transparent_35%),#041116] text-white overflow-x-hidden">
             {showBackdrop && <OceanBackdrop />}
+            {showBackdrop && <RealtimeRipples />}
 
             <div className="pointer-events-none fixed inset-0 z-[3] opacity-55" aria-hidden="true">
                 {randomizedOverviewFishSpecs.map((fish, index) => (
