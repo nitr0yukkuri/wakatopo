@@ -8,7 +8,6 @@ import { useMemo, useRef, useEffect, useState } from 'react';
 import * as THREE from 'three';
 import { waveVertexShader, waveFragmentShader } from '@/shaders/wave';
 import Image from 'next/image';
-import RealtimeRipples from '@/components/canvas/effects/RealtimeRipples';
 
 export const dynamic = 'force-dynamic';
 
@@ -83,10 +82,55 @@ function OceanSurface() {
         uTime: { value: 0 },
         uColorDeep: { value: new THREE.Color('#0b3a49') },
         uColorShallow: { value: new THREE.Color('#5acfd9') },
+        uResolution: { value: new THREE.Vector2(1, 1) },
+        uRipples: { value: new Float32Array(30) }
     }), []);
 
-    useFrame((state) => {
+    const ripplesRef = useRef<{ x: number; y: number; time: number }[]>(
+        Array.from({ length: 10 }, () => ({ x: -1, y: -1, time: 999.0 }))
+    );
+    const rippleIdx = useRef(0);
+    const lastPos = useRef({ x: -999, y: -999 });
+
+    useEffect(() => {
+        const updateResolution = () => {
+            uniforms.uResolution.value.set(window.innerWidth, window.innerHeight);
+        };
+        updateResolution();
+        window.addEventListener('resize', updateResolution);
+
+        const addRipple = (clientX: number, clientY: number) => {
+            const x = clientX / window.innerWidth;
+            const y = 1.0 - (clientY / window.innerHeight);
+            ripplesRef.current[rippleIdx.current] = { x, y, time: 0.0 };
+            rippleIdx.current = (rippleIdx.current + 1) % 10;
+        };
+
+        const onPointerDown = (e: PointerEvent) => {
+            lastPos.current = { x: e.clientX, y: e.clientY };
+            addRipple(e.clientX, e.clientY);
+        };
+
+        window.addEventListener('pointerdown', onPointerDown, { passive: true });
+
+        return () => {
+            window.removeEventListener('resize', updateResolution);
+            window.removeEventListener('pointerdown', onPointerDown);
+        };
+    }, []);
+
+    useFrame((state, delta) => {
         uniforms.uTime.value = state.clock.getElapsedTime() * 0.85;
+
+        const flatRipples = uniforms.uRipples.value;
+        for (let i = 0; i < 10; i++) {
+            const r = ripplesRef.current[i];
+            r.time += delta;
+            
+            flatRipples[i * 3 + 0] = r.x;
+            flatRipples[i * 3 + 1] = r.y;
+            flatRipples[i * 3 + 2] = r.time;
+        }
     });
 
     return (
@@ -325,7 +369,6 @@ export default function DenshouoPage() {
     return (
         <main className="relative min-h-dvh bg-[radial-gradient(circle_at_top_left,rgba(56,189,248,0.10),transparent_28%),radial-gradient(circle_at_bottom,rgba(20,184,166,0.12),transparent_35%),#041116] text-white overflow-x-hidden">
             {showBackdrop && <OceanBackdrop />}
-            {showBackdrop && <RealtimeRipples />}
 
             <div className="pointer-events-none fixed inset-0 z-[3] opacity-55" aria-hidden="true">
                 {randomizedOverviewFishSpecs.map((fish, index) => (

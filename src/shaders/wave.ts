@@ -10,6 +10,8 @@ export const waveFragmentShader = `
 uniform float uTime;
 uniform vec3 uColorDeep;
 uniform vec3 uColorShallow;
+uniform vec2 uResolution;
+uniform vec3 uRipples[10];
 varying vec2 vUv;
 
 // 2D Random
@@ -58,7 +60,33 @@ void main() {
         sin(st.y * 7.5 + t * 3.2) * 0.022,
         cos(st.x * 8.5 - t * 2.4) * 0.018
     );
-    vec2 uv = st + flow;
+    
+    vec2 totalDistortion = vec2(0.0);
+    float aspect = uResolution.x / max(1.0, uResolution.y);
+
+    for (int i = 0; i < 10; i++) {
+        float rTime = uRipples[i].z;
+        if (rTime > 0.0 && rTime < 4.0) {
+            vec2 d = st - uRipples[i].xy;
+            d.x *= aspect; // Adjust for aspect ratio
+            float dist = length(d);
+            
+            float ringRadius = rTime * 0.15; // Speed of expansion
+            float radialDist = dist - ringRadius;
+            
+            // Create a wave that expands out
+            float ringWave = sin(radialDist * 40.0) * exp(-dist * 8.0) * exp(-rTime * 1.0);
+            
+            // Only affect a narrow expanding band
+            float activeArea = smoothstep(0.12, 0.0, abs(radialDist));
+            float intensity = ringWave * activeArea;
+            
+            d.x /= aspect; // back to uv space
+            totalDistortion += d * intensity * 0.6;
+        }
+    }
+
+    vec2 uv = st + flow + totalDistortion;
 
     // Depth gradient (top: light, bottom: deep)
     float depth = smoothstep(0.0, 1.0, uv.y);
@@ -78,9 +106,9 @@ void main() {
     ocean += vec3(0.74, 0.94, 0.96) * caustic * 0.18;
 
     // Vignette for underwater immersion
-    vec2 d = uv - vec2(0.5);
-    d.x *= 1.15;
-    float vignette = smoothstep(0.95, 0.22, length(d));
+    vec2 vignetteD = st - vec2(0.5);
+    vignetteD.x *= 1.15;
+    float vignette = smoothstep(0.95, 0.22, length(vignetteD));
     ocean *= vignette + 0.08;
 
     // Transition fill timing: quick but smooth
@@ -90,3 +118,4 @@ void main() {
     gl_FragColor = vec4(ocean, alpha);
 }
 `;
+
