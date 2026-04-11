@@ -27,6 +27,13 @@ const fishSpecs = [
     { top: '74%', left: '24%', width: 42, delay: 2.1, duration: 14 },
 ];
 
+const overviewFishSpecs = [
+    { top: '16%', start: '-18%', width: 84, delay: 0.0, duration: 18, direction: 1, color: '#f6c16d' },
+    { top: '46%', start: '108%', width: 92, delay: 1.4, duration: 22, direction: -1, color: '#b9d0e6' },
+    { top: '72%', start: '-22%', width: 100, delay: 2.1, duration: 20, direction: 1, color: '#cf4b53' },
+    { top: '34%', start: '112%', width: 76, delay: 0.9, duration: 16, direction: -1, color: '#f7a38d' },
+];
+
 const bubbleVertexShader = `
 uniform float uTime;
 attribute float scale;
@@ -310,12 +317,40 @@ export default function DenshouoPage() {
                 </div>
 
                 <div className="space-y-10">
-                    <section className="bg-white/4.5 border border-teal-100/10 rounded-4xl p-8 md:p-12 backdrop-blur-xl shadow-[0_20px_80px_rgba(2,18,25,0.55)]">
-                        <h2 className="text-xs font-mono tracking-widest text-teal-200 mb-6 flex items-center gap-4">
+                    <section className="relative overflow-hidden bg-white/4.5 border border-teal-100/10 rounded-4xl p-8 md:p-12 backdrop-blur-xl shadow-[0_20px_80px_rgba(2,18,25,0.55)]">
+                        <div className="pointer-events-none absolute inset-0 opacity-45" aria-hidden="true">
+                            {overviewFishSpecs.map((fish, index) => (
+                                <motion.div
+                                    key={`overview-fish-${index}`}
+                                    className="absolute"
+                                    style={{ top: fish.top, left: fish.start, width: fish.width }}
+                                    animate={{
+                                        x: fish.direction === 1 ? [0, 1500] : [0, -1500],
+                                        y: [0, -6, 0, 6, 0],
+                                        opacity: [0, 0.2, 0.2, 0],
+                                    }}
+                                    transition={{
+                                        duration: fish.duration,
+                                        repeat: Infinity,
+                                        ease: 'linear',
+                                        delay: fish.delay,
+                                    }}
+                                >
+                                    <svg viewBox="0 0 160 100" className="h-auto w-full" fill="none" style={{ transform: fish.direction === 1 ? 'scaleX(1)' : 'scaleX(-1)' }}>
+                                        <ellipse cx="74" cy="50" rx="48" ry="18" fill={fish.color} />
+                                        <path d="M28 50L2 36V64L28 50Z" fill="rgba(255,255,255,0.30)" />
+                                        <circle cx="92" cy="45" r="3.8" fill="rgba(0,0,0,0.55)" />
+                                        <path d="M103 40C110 34 120 34 127 38" stroke="rgba(255,255,255,0.45)" strokeWidth="3" strokeLinecap="round" />
+                                    </svg>
+                                </motion.div>
+                            ))}
+                        </div>
+
+                        <h2 className="relative z-10 text-xs font-mono tracking-widest text-teal-200 mb-6 flex items-center gap-4">
                             <span className="w-12 h-px bg-teal-300" />
                             01 / OVERVIEW
                         </h2>
-                        <p className="text-gray-200 leading-relaxed text-base md:text-lg">
+                        <p className="relative z-10 text-gray-200 leading-relaxed text-base md:text-lg">
                             {t.overview}
                         </p>
                     </section>
