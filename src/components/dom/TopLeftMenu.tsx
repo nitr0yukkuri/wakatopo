@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
-import { useStore } from '@/store';
+import { useStore, type WeatherType } from '@/store';
 
 const MENU_COMMANDS = {
     ja: [
@@ -27,12 +27,19 @@ const MENU_COMMANDS = {
 
 export default function TopLeftMenu() {
     const [open, setOpen] = useState(false);
+    const [cliOpen, setCliOpen] = useState(false);
+    const [cliInput, setCliInput] = useState('');
+    const [cliHistory, setCliHistory] = useState<Array<{ tone: 'info' | 'ok' | 'error'; text: string }>>([
+        { tone: 'info', text: 'Type "help" to list commands.' },
+    ]);
     const containerRef = useRef<HTMLDivElement>(null);
     const panelRef = useRef<HTMLDivElement>(null);
+    const cliRef = useRef<HTMLDivElement>(null);
+    const cliInputRef = useRef<HTMLInputElement>(null);
     const router = useRouter();
     const searchParams = useSearchParams();
     const lang = searchParams.get('lang') === 'en' ? 'en' : 'ja';
-    const { setActiveWork, setTransitionType } = useStore();
+    const { setActiveWork, setTransitionType, setWeather } = useStore();
     const commands = MENU_COMMANDS[lang];
     const withLang = (href: string) => `${href}?lang=${lang}`;
 
@@ -126,11 +133,16 @@ export default function TopLeftMenu() {
             if (!containerRef.current.contains(event.target as Node)) {
                 setOpen(false);
             }
+
+            if (cliOpen && cliRef.current && !cliRef.current.contains(event.target as Node)) {
+                setCliOpen(false);
+            }
         };
 
         const onKeyDown = (event: KeyboardEvent) => {
             if (event.key === 'Escape') {
                 setOpen(false);
+                setCliOpen(false);
             }
         };
 
@@ -141,7 +153,59 @@ export default function TopLeftMenu() {
             window.removeEventListener('pointerdown', onPointerDown);
             window.removeEventListener('keydown', onKeyDown);
         };
-    }, [open]);
+    }, [open, cliOpen]);
+
+    useEffect(() => {
+        if (cliOpen) {
+            cliInputRef.current?.focus();
+        }
+    }, [cliOpen]);
+
+    const appendHistory = (entry: { tone: 'info' | 'ok' | 'error'; text: string }) => {
+        setCliHistory((prev) => [...prev, entry].slice(-8));
+    };
+
+    const handleCliCommand = (rawInput: string) => {
+        const command = rawInput.trim();
+        if (!command) return;
+
+        appendHistory({ tone: 'info', text: `$ ${command}` });
+
+        if (command.toLowerCase() === 'help') {
+            appendHistory({ tone: 'info', text: 'Available: sudo make rain|snow|clear|thunder|night, help, exit' });
+            return;
+        }
+
+        if (command.toLowerCase() === 'exit') {
+            appendHistory({ tone: 'info', text: 'Session closed.' });
+            setCliOpen(false);
+            return;
+        }
+
+        const sudoMatch = command.match(/^sudo\s+make\s+([a-z-]+)$/i);
+        if (sudoMatch) {
+            const weatherToken = sudoMatch[1].toLowerCase();
+            const weatherMap: Record<string, WeatherType> = {
+                rain: 'Rain',
+                snow: 'Snow',
+                clear: 'Clear',
+                thunder: 'Thunder',
+                night: 'Night',
+            };
+
+            const nextWeather = weatherMap[weatherToken];
+            if (!nextWeather) {
+                appendHistory({ tone: 'error', text: `make: *** No rule to make target '${weatherToken}'.  Stop.` });
+                return;
+            }
+
+            setWeather(nextWeather);
+            appendHistory({ tone: 'ok', text: `[ok] weather switched to ${nextWeather.toUpperCase()}` });
+            return;
+        }
+
+        appendHistory({ tone: 'error', text: `command not found: ${command}` });
+    };
 
     return (
         <div ref={containerRef} className="relative flex flex-col gap-2 pointer-events-auto w-fit" style={{ touchAction: 'pan-y' }}>
@@ -163,7 +227,54 @@ export default function TopLeftMenu() {
                 </span>
             </button>
 
-            <p className="hidden opacity-70 pointer-events-none text-[10px] sm:text-xs tracking-[0.16em] sm:tracking-[0.2em] text-cyan-100/75">{lang === 'en' ? 'INTERACTIVE WEB EXPERIENCE' : 'INTERACTIVE WEB EXPERIENCE'}</p>
+            <button
+                type="button"
+                onClick={() => setCliOpen((prev) => !prev)}
+                className="inline-flex w-fit items-center gap-2 rounded-md border border-cyan-400/35 bg-[#04090f]/90 px-2.5 py-1.5 text-left text-[10px] sm:text-xs tracking-[0.16em] sm:tracking-[0.2em] text-cyan-100 hover:border-cyan-300 hover:text-cyan-200 transition-colors"
+                aria-label="Open local shell"
+            >
+                <span className="h-1.5 w-1.5 rounded-full bg-cyan-300 shadow-[0_0_8px_#22d3ee]" />
+                SYSTEM ONLINE / CLI
+            </button>
+
+            <div
+                ref={cliRef}
+                className={`absolute left-0 top-full mt-14 w-[min(94vw,420px)] rounded-xl border border-cyan-400/30 bg-[#03060b]/95 p-3 shadow-[0_20px_45px_rgba(0,0,0,0.55)] backdrop-blur transition-all ${cliOpen ? 'pointer-events-auto opacity-100 translate-y-0' : 'pointer-events-none opacity-0 -translate-y-1'}`}
+            >
+                <div className="mb-2 flex items-center justify-between text-[10px] tracking-[0.2em] text-cyan-300/80">
+                    <span>LOCAL SHELL</span>
+                    <span className="rounded border border-cyan-400/30 px-1.5 py-0.5 text-[9px] text-cyan-200/70">ESC / EXIT</span>
+                </div>
+
+                <div className="mb-2 h-36 overflow-y-auto rounded border border-cyan-400/20 bg-black/35 px-2 py-2 font-mono text-[11px] leading-relaxed">
+                    {cliHistory.map((line, index) => (
+                        <p
+                            key={`${line.text}-${index}`}
+                            className={line.tone === 'error' ? 'text-rose-400' : line.tone === 'ok' ? 'text-cyan-300' : 'text-cyan-100/90'}
+                        >
+                            {line.text}
+                        </p>
+                    ))}
+                </div>
+
+                <form
+                    onSubmit={(event) => {
+                        event.preventDefault();
+                        handleCliCommand(cliInput);
+                        setCliInput('');
+                    }}
+                    className="flex items-center gap-2 rounded border border-cyan-400/25 bg-black/40 px-2 py-1.5"
+                >
+                    <span className="font-mono text-[11px] text-cyan-400">$</span>
+                    <input
+                        ref={cliInputRef}
+                        value={cliInput}
+                        onChange={(event) => setCliInput(event.target.value)}
+                        placeholder="sudo make rain"
+                        className="w-full bg-transparent font-mono text-[11px] text-cyan-100 outline-none placeholder:text-cyan-200/35"
+                    />
+                </form>
+            </div>
 
             <div
                 ref={panelRef}
