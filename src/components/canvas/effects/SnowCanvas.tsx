@@ -16,19 +16,24 @@ export default function SnowCanvas() {
         const ctx = canvas.getContext('2d')!;
         let raf: number;
         let t = 0;
+        let dpr = Math.max(1, window.devicePixelRatio || 1);
 
         const resize = () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+            dpr = Math.max(1, window.devicePixelRatio || 1);
+            canvas.width = Math.floor(window.innerWidth * dpr);
+            canvas.height = Math.floor(window.innerHeight * dpr);
+            canvas.style.width = '100%';
+            canvas.style.height = '100%';
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         };
         resize();
         window.addEventListener('resize', resize);
 
         // 3レイヤー: 遠景(小・薄)・中景・近景(大・濃)
         const layers = [
-            { count: 80, rMin: 0.8, rMax: 1.8, vyMin: 0.3, vyMax: 0.9, alphaMax: 0.35, drift: 0.22 },
-            { count: 60, rMin: 1.5, rMax: 3.0, vyMin: 0.7, vyMax: 1.6, alphaMax: 0.55, drift: 0.30 },
-            { count: 30, rMin: 2.5, rMax: 4.5, vyMin: 1.2, vyMax: 2.2, alphaMax: 0.70, drift: 0.35 },
+            { count: 70, rMin: 1.0, rMax: 2.0, vyMin: 0.35, vyMax: 1.0, alphaMax: 0.30, drift: 0.18 },
+            { count: 50, rMin: 1.6, rMax: 3.0, vyMin: 0.8, vyMax: 1.8, alphaMax: 0.42, drift: 0.24 },
+            { count: 26, rMin: 2.2, rMax: 4.0, vyMin: 1.2, vyMax: 2.3, alphaMax: 0.55, drift: 0.30 },
         ];
 
         const flakes: Flake[] = [];
@@ -61,14 +66,11 @@ export default function SnowCanvas() {
             const f = flakes[i];
             const fc = document.createElement('canvas');
             const rOffset = Math.ceil(f.r);
-            fc.width = rOffset * 2;
-            fc.height = rOffset * 2;
+            fc.width = Math.ceil(rOffset * 2 * dpr);
+            fc.height = Math.ceil(rOffset * 2 * dpr);
             const fctx = fc.getContext('2d')!;
-            const grad = fctx.createRadialGradient(rOffset, rOffset, 0, rOffset, rOffset, f.r);
-            grad.addColorStop(0, `rgba(225,238,255,${f.alpha})`);
-            grad.addColorStop(0.6, `rgba(210,228,255,${f.alpha * 0.45})`);
-            grad.addColorStop(1, 'rgba(200,220,255,0)');
-            fctx.fillStyle = grad;
+            fctx.scale(dpr, dpr);
+            fctx.fillStyle = `rgba(255,255,255,${f.alpha})`;
             fctx.beginPath();
             fctx.arc(rOffset, rOffset, f.r, 0, Math.PI * 2);
             fctx.fill();
@@ -77,8 +79,8 @@ export default function SnowCanvas() {
 
         function draw() {
             t += 0.012;
-            const w = canvas.width;
-            const h = canvas.height;
+            const w = window.innerWidth;
+            const h = window.innerHeight;
             ctx.clearRect(0, 0, w, h);
 
             for (let i = 0; i < flakes.length; i++) {
@@ -110,11 +112,6 @@ export default function SnowCanvas() {
             transition={{ duration: 2 }}
         >
             <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />
-            {/* わずかに冷たい青みがかったオーバーレイ */}
-            <div
-                className="absolute inset-0"
-                style={{ background: 'rgba(190,210,240,0.025)' }}
-            />
         </motion.div>
     );
 }

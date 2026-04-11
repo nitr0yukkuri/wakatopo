@@ -200,7 +200,7 @@ export default function OtenkiGurashiPage() {
     } else if (weather === 'Rain') {
         bgGradient = "from-[#60a5fa] to-[#bfdbfe] bg-gradient-to-t"; // Original Rain Gradient
     } else if (weather === 'Snow') {
-        bgGradient = "from-[#dbeeff] via-[#eef5fc] to-[#f4fbfc]";
+        bgGradient = "bg-[#eef7fd]";
     } else if (weather === 'Thunder') {
         bgGradient = "from-[#1a1a2e] via-[#16213e] to-[#0f3460]";
         cardText = "text-gray-200";
@@ -210,7 +210,7 @@ export default function OtenkiGurashiPage() {
     }
 
     return (
-        <main className={`relative w-full min-h-[120dvh] ${weather !== 'Rain' ? 'bg-gradient-to-b' : ''} ${bgGradient} ${weather === 'Thunder' || weather === 'Night' ? 'text-gray-200' : 'text-gray-700'} overflow-hidden font-sans pb-32 transition-colors duration-1000`}>
+        <main className={`relative w-full min-h-[120dvh] ${weather !== 'Rain' && weather !== 'Snow' ? 'bg-gradient-to-b' : ''} ${bgGradient} ${weather === 'Thunder' || weather === 'Night' ? 'text-gray-200' : 'text-gray-700'} overflow-hidden font-sans pb-32 transition-colors duration-1000`}>
 
             <nav className="fixed top-0 left-0 w-full z-50 p-6 md:p-10">
                 <button
@@ -265,7 +265,7 @@ export default function OtenkiGurashiPage() {
                 </div>
 
                 {/* Fluffy White Content Card */}
-                <div className="bg-white/95 backdrop-blur-sm border-4 border-white px-6 py-10 md:p-14 rounded-[2.5rem] md:rounded-[3rem] w-full shadow-[0_20px_60px_-15px_rgba(152,173,194,0.3)]">
+                <div className={`${weather === 'Snow' ? 'bg-white/92' : 'bg-white/95'} ${weather === 'Snow' ? '' : 'backdrop-blur-sm'} border-4 ${weather === 'Snow' ? 'border-transparent' : 'border-white'} px-6 py-10 md:p-14 rounded-[2.5rem] md:rounded-[3rem] w-full ${weather === 'Snow' ? 'shadow-none' : 'shadow-[0_20px_60px_-15px_rgba(152,173,194,0.3)]'}`}>
 
                     <p className="text-lg md:text-2xl font-bold text-gray-600 mb-10 md:mb-12 leading-relaxed text-center">
                         {t.lead}<br className="md:hidden" />{t.lead2}<br />
@@ -408,7 +408,7 @@ export default function OtenkiGurashiPage() {
                     }} />
                 </>
             )}
-            {showHeavyEffects && weather === 'Snow' && (
+            {weather === 'Snow' && (
                 <>
                     <div className="fixed inset-0 pointer-events-none z-20">
                         <SnowCanvas />
