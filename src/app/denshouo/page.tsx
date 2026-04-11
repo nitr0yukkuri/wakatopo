@@ -35,6 +35,7 @@ const overviewFishSpecs = [
     { width: 88, duration: 24, src: '/マグロ.png', alt: 'tuna' },
     { width: 94, duration: 26, src: '/チョウチンアンコウ.png', alt: 'anglerfish' },
     { width: 98, duration: 28, src: '/ラブカ.png', alt: 'frilled shark' },
+    { width: 102, duration: 27, src: '/シュモクザメ.png', alt: 'hammerhead shark' },
 ];
 
 const bubbleVertexShader = `
@@ -283,11 +284,26 @@ export default function DenshouoPage() {
         },
     } as const;
     const t = copy[lang];
-    const randomizedOverviewFishSpecs = useMemo(
-        () =>
+    const [randomizedOverviewFishSpecs, setRandomizedOverviewFishSpecs] = useState(() =>
+        overviewFishSpecs.map((fish, index) => {
+            const fromLeft = index % 2 === 0;
+            const isDeepSeaFish = fish.src === '/チョウチンアンコウ.png' || fish.src === '/ラブカ.png' || fish.src === '/シュモクザメ.png';
+            const top = isDeepSeaFish ? 70 + (index % 3) * 7 : 14 + (index % 6) * 11;
+            return {
+                ...fish,
+                top: `${top.toFixed(1)}%`,
+                start: fromLeft ? '-24%' : '112%',
+                direction: fromLeft ? 1 : -1,
+                delay: index * 0.25,
+            };
+        })
+    );
+
+    useEffect(() => {
+        setRandomizedOverviewFishSpecs(
             overviewFishSpecs.map((fish) => {
                 const fromLeft = Math.random() < 0.5;
-                const isDeepSeaFish = fish.src === '/チョウチンアンコウ.png' || fish.src === '/ラブカ.png';
+                const isDeepSeaFish = fish.src === '/チョウチンアンコウ.png' || fish.src === '/ラブカ.png' || fish.src === '/シュモクザメ.png';
                 const top = isDeepSeaFish ? 66 + Math.random() * 26 : 8 + Math.random() * 76;
                 return {
                     ...fish,
@@ -296,9 +312,9 @@ export default function DenshouoPage() {
                     direction: fromLeft ? 1 : -1,
                     delay: Math.random() * 3,
                 };
-            }),
-        []
-    );
+            })
+        );
+    }, []);
 
     const handleReturn = () => {
         setActiveWork(null);
