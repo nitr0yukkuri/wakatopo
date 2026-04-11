@@ -28,14 +28,14 @@ const fishSpecs = [
 ];
 
 const overviewFishSpecs = [
-    { width: 84, duration: 18, src: '/カクレクマノミ.png', alt: 'clownfish' },
-    { width: 92, duration: 22, src: '/マンボウ.png', alt: 'ocean sunfish' },
-    { width: 100, duration: 20, src: '/サヨリ.png', alt: 'needlefish' },
-    { width: 76, duration: 16, src: '/めだか.png', alt: 'medaka' },
-    { width: 88, duration: 24, src: '/マグロ.png', alt: 'tuna' },
-    { width: 94, duration: 26, src: '/チョウチンアンコウ.png', alt: 'anglerfish' },
-    { width: 98, duration: 28, src: '/ラブカ.png', alt: 'frilled shark' },
-    { width: 102, duration: 27, src: '/シュモクザメ.png', alt: 'hammerhead shark' },
+    { width: 84, duration: 18, src: '/clownfish.png', alt: 'clownfish' },
+    { width: 92, duration: 22, src: '/ocean-sunfish.png', alt: 'ocean sunfish' },
+    { width: 100, duration: 20, src: '/needlefish.png', alt: 'needlefish' },
+    { width: 76, duration: 16, src: '/medaka.png', alt: 'medaka' },
+    { width: 88, duration: 24, src: '/tuna.png', alt: 'tuna' },
+    { width: 94, duration: 26, src: '/anglerfish.png', alt: 'anglerfish' },
+    { width: 98, duration: 28, src: '/frilled-shark.png', alt: 'frilled shark' },
+    { width: 102, duration: 27, src: '/hammerhead-shark.png', alt: 'hammerhead shark' },
 ];
 
 const bubbleVertexShader = `
@@ -287,7 +287,7 @@ export default function DenshouoPage() {
     const [randomizedOverviewFishSpecs, setRandomizedOverviewFishSpecs] = useState(() =>
         overviewFishSpecs.map((fish, index) => {
             const fromLeft = index % 2 === 0;
-            const isDeepSeaFish = fish.src === '/チョウチンアンコウ.png' || fish.src === '/ラブカ.png' || fish.src === '/シュモクザメ.png';
+            const isDeepSeaFish = fish.src === '/anglerfish.png' || fish.src === '/frilled-shark.png' || fish.src === '/hammerhead-shark.png';
             const top = isDeepSeaFish ? 70 + (index % 3) * 7 : 14 + (index % 6) * 11;
             return {
                 ...fish,
@@ -303,7 +303,7 @@ export default function DenshouoPage() {
         setRandomizedOverviewFishSpecs(
             overviewFishSpecs.map((fish) => {
                 const fromLeft = Math.random() < 0.5;
-                const isDeepSeaFish = fish.src === '/チョウチンアンコウ.png' || fish.src === '/ラブカ.png' || fish.src === '/シュモクザメ.png';
+                const isDeepSeaFish = fish.src === '/anglerfish.png' || fish.src === '/frilled-shark.png' || fish.src === '/hammerhead-shark.png';
                 const top = isDeepSeaFish ? 66 + Math.random() * 26 : 8 + Math.random() * 76;
                 return {
                     ...fish,
