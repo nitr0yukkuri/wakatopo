@@ -411,7 +411,7 @@ export default function OtenkiGurashiPage() {
             {weather === 'Snow' && (
                 <>
                     <div className="fixed inset-0 pointer-events-none z-20">
-                        <SnowCanvas />
+                        <SnowCanvas density={1.45} />
                     </div>
                 </>
             )}

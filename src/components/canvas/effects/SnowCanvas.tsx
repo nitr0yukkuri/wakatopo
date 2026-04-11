@@ -8,7 +8,7 @@ interface Flake {
     r: number; alpha: number; phase: number;
 }
 
-export default function SnowCanvas() {
+export default function SnowCanvas({ density = 1 }: { density?: number }) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
 
     useEffect(() => {
@@ -31,10 +31,10 @@ export default function SnowCanvas() {
 
         // 3レイヤー: 遠景(小・薄)・中景・近景(大・濃)
         const layers = [
-            { count: 130, rMin: 1.0, rMax: 2.0, vyMin: 0.35, vyMax: 1.0, alphaMax: 0.30, drift: 0.18 },
-            { count: 95, rMin: 1.6, rMax: 3.0, vyMin: 0.8, vyMax: 1.8, alphaMax: 0.42, drift: 0.24 },
-            { count: 55, rMin: 2.2, rMax: 4.0, vyMin: 1.2, vyMax: 2.3, alphaMax: 0.55, drift: 0.30 },
-        ];
+            { count: 60, rMin: 1.0, rMax: 2.0, vyMin: 0.35, vyMax: 1.0, alphaMax: 0.30, drift: 0.18 },
+            { count: 40, rMin: 1.6, rMax: 3.0, vyMin: 0.8, vyMax: 1.8, alphaMax: 0.42, drift: 0.24 },
+            { count: 25, rMin: 2.2, rMax: 4.0, vyMin: 1.2, vyMax: 2.3, alphaMax: 0.55, drift: 0.30 },
+        ].map((layer) => ({ ...layer, count: Math.max(1, Math.round(layer.count * density)) }));
 
         const flakes: Flake[] = [];
         for (const l of layers) {
@@ -103,7 +103,7 @@ export default function SnowCanvas() {
         draw();
 
         return () => { cancelAnimationFrame(raf); window.removeEventListener('resize', resize); };
-    }, []);
+    }, [density]);
 
     return (
         <motion.div

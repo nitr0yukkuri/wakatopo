@@ -19,7 +19,7 @@ export default function WeatherEffectsOverlay() {
             {weather === 'Clouds' && <CloudsOverlayCanvas key="clouds" />}
             {weather === 'Thunder' && <RainParticles key="thunder-rain" />}
             {weather === 'Thunder' && <ThunderCanvas key="thunder" />}
-            {weather === 'Snow' && <SnowCanvas key="snow" />}
+            {weather === 'Snow' && <SnowCanvas key="snow" density={0.72} />}
             {weather === 'Night' && <NightGlowOverlay key="night" />}
         </AnimatePresence>
     );
