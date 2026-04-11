@@ -65,7 +65,7 @@ export default function OtenkiGurashiPage() {
             techClick: 'Next.jsで作られてるよ！',
             openApp: 'アプリをひらく',
             viewGithub: 'GitHubをみる',
-            backHome: 'ホームにもどる',
+            backHome: '海からでる',
             logoAlt: 'OTENKI GURASHI Logo',
         },
         en: {
@@ -94,7 +94,7 @@ export default function OtenkiGurashiPage() {
             techClick: 'It is built with Next.js!',
             openApp: 'Open App',
             viewGithub: 'View GitHub',
-            backHome: 'Back to Home',
+            backHome: 'Exit the Sea',
             logoAlt: 'OTENKIGURASHI Logo',
         },
     } as const;
