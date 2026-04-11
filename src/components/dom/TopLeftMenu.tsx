@@ -211,7 +211,13 @@ export default function TopLeftMenu() {
         <div ref={containerRef} className="relative flex flex-col gap-2 pointer-events-auto w-fit" style={{ touchAction: 'pan-y' }}>
             <button
                 type="button"
-                onClick={() => setOpen((prev) => !prev)}
+                onClick={() => {
+                    setOpen((prev) => {
+                        const next = !prev;
+                        if (next) setCliOpen(false);
+                        return next;
+                    });
+                }}
                 aria-expanded={open}
                 aria-controls="top-left-menu-panel"
                 className="group inline-flex w-fit max-w-[92vw] items-center gap-2.5 rounded-lg border border-cyan-400/35 bg-[#05080d]/90 px-3 py-2 text-left transition-colors hover:border-cyan-300 sm:gap-3 sm:px-3.5 sm:py-2.5"
@@ -229,7 +235,13 @@ export default function TopLeftMenu() {
 
             <button
                 type="button"
-                onClick={() => setCliOpen((prev) => !prev)}
+                onClick={() => {
+                    setCliOpen((prev) => {
+                        const next = !prev;
+                        if (next) setOpen(false);
+                        return next;
+                    });
+                }}
                 className="inline-flex w-fit items-center gap-2 rounded-md border border-cyan-400/35 bg-[#04090f]/90 px-2.5 py-1.5 text-left text-[10px] sm:text-xs tracking-[0.16em] sm:tracking-[0.2em] text-cyan-100 hover:border-cyan-300 hover:text-cyan-200 transition-colors"
                 aria-label="Open local shell"
             >
