@@ -38,8 +38,8 @@ const copyByLang = {
       'IoT × AI を組み合わせたプロトタイプ・PoC開発',
     ],
     endSignal: '04 / END SIGNAL',
-    footerText1: 'フロントエンド中心に、デザインからバックエンド連携まで一人で完結できます。',
-    footerText2: '29卒・インターン・カジュアル面談、どこからでも歓迎です。',
+    footerText1: 'ECCコンピュータ専門学校 在学（29卒）。フロントエンドを軸に3D/インタラクション実装を継続中。',
+    footerText2: 'UIの体験設計と見た目の作り込みを得意にしつつ、志望はバックエンド寄り。API設計やデータ設計まで責任を持てる開発者を目指しています。',
     designedIn: 'DESIGNED IN OSAKA.',
     works: [
       { id: '01', title: 'GitHub Planet', cat: 'THREE.JS / VISUALIZATION', desc: 'GitHubのコミット数を惑星として可視化する3Dビジュアライザー。' },
