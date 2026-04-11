@@ -31,9 +31,9 @@ export default function SnowCanvas() {
 
         // 3レイヤー: 遠景(小・薄)・中景・近景(大・濃)
         const layers = [
-            { count: 70, rMin: 1.0, rMax: 2.0, vyMin: 0.35, vyMax: 1.0, alphaMax: 0.30, drift: 0.18 },
-            { count: 50, rMin: 1.6, rMax: 3.0, vyMin: 0.8, vyMax: 1.8, alphaMax: 0.42, drift: 0.24 },
-            { count: 26, rMin: 2.2, rMax: 4.0, vyMin: 1.2, vyMax: 2.3, alphaMax: 0.55, drift: 0.30 },
+            { count: 130, rMin: 1.0, rMax: 2.0, vyMin: 0.35, vyMax: 1.0, alphaMax: 0.30, drift: 0.18 },
+            { count: 95, rMin: 1.6, rMax: 3.0, vyMin: 0.8, vyMax: 1.8, alphaMax: 0.42, drift: 0.24 },
+            { count: 55, rMin: 2.2, rMax: 4.0, vyMin: 1.2, vyMax: 2.3, alphaMax: 0.55, drift: 0.30 },
         ];
 
         const flakes: Flake[] = [];
