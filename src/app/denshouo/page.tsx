@@ -288,7 +288,7 @@ export default function DenshouoPage() {
         overviewFishSpecs.map((fish, index) => {
             const fromLeft = index % 2 === 0;
             const isDeepSeaFish = fish.src === '/anglerfish.png' || fish.src === '/frilled-shark.png' || fish.src === '/hammerhead-shark.png';
-            const top = isDeepSeaFish ? 70 + (index % 3) * 7 : 14 + (index % 6) * 11;
+            const top = isDeepSeaFish ? 70 + (index % 3) * 6 : 10 + (index % 6) * 8;
             return {
                 ...fish,
                 top: `${top.toFixed(1)}%`,
@@ -304,7 +304,7 @@ export default function DenshouoPage() {
             overviewFishSpecs.map((fish) => {
                 const fromLeft = Math.random() < 0.5;
                 const isDeepSeaFish = fish.src === '/anglerfish.png' || fish.src === '/frilled-shark.png' || fish.src === '/hammerhead-shark.png';
-                const top = isDeepSeaFish ? 66 + Math.random() * 26 : 8 + Math.random() * 76;
+                const top = isDeepSeaFish ? 70 + Math.random() * 20 : 8 + Math.random() * 44;
                 return {
                     ...fish,
                     top: `${top.toFixed(1)}%`,
