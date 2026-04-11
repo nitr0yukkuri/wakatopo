@@ -17,6 +17,7 @@ const copyByLang = {
         careerText: 'ECCコンピュータ専門学校 在学（29卒）。フロントエンドを軸に3D/インタラクション実装を継続中。UIの体験設計と見た目の作り込みを得意にしつつ、志望はバックエンド寄りで、API設計やデータ設計まで責任を持てる開発者を目指しています。',
         sectionAchievements: '実績',
         achievements: [
+            '2025',
             '技育CAMP Vol.10 優秀賞 でんしょうお',
             '技育CAMP Vol.12 努力賞 きじょバト',
             'うめきたTechBase 最優秀賞 グルメイカー',
@@ -43,6 +44,7 @@ const copyByLang = {
         careerText: 'I am currently studying at ECC Computer College (Class of 2029), focusing on frontend development with continuous 3D and interaction implementation. While my strength is designing polished UI experiences and visual quality, my long-term direction is backend-oriented, aiming to take full responsibility from API design to data modeling.',
         sectionAchievements: 'ACHIEVEMENTS',
         achievements: [
+            '2025',
             'GeekCamp Vol.10 Excellence Award - Denshouo',
             'GeekCamp Vol.12 Effort Award - Kijobato',
             'Umeda TechBase Grand Prize - Gurumeiker',
