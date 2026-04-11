@@ -28,11 +28,13 @@ const fishSpecs = [
 ];
 
 const overviewFishSpecs = [
-    { top: '16%', start: '-18%', width: 84, delay: 0.0, duration: 18, direction: 1, src: '/カクレクマノミ.png', alt: 'clownfish' },
-    { top: '46%', start: '108%', width: 92, delay: 1.4, duration: 22, direction: -1, src: '/マンボウ.png', alt: 'ocean sunfish' },
-    { top: '72%', start: '-22%', width: 100, delay: 2.1, duration: 20, direction: 1, src: '/サヨリ.png', alt: 'needlefish' },
-    { top: '34%', start: '112%', width: 76, delay: 0.9, duration: 16, direction: -1, src: '/めだか.png', alt: 'medaka' },
-    { top: '58%', start: '-24%', width: 88, delay: 2.8, duration: 24, direction: 1, src: '/マグロ.png', alt: 'tuna' },
+    { width: 84, duration: 18, src: '/カクレクマノミ.png', alt: 'clownfish' },
+    { width: 92, duration: 22, src: '/マンボウ.png', alt: 'ocean sunfish' },
+    { width: 100, duration: 20, src: '/サヨリ.png', alt: 'needlefish' },
+    { width: 76, duration: 16, src: '/めだか.png', alt: 'medaka' },
+    { width: 88, duration: 24, src: '/マグロ.png', alt: 'tuna' },
+    { width: 94, duration: 26, src: '/チョウチンアンコウ.png', alt: 'anglerfish' },
+    { width: 98, duration: 28, src: '/ラブカ.png', alt: 'frilled shark' },
 ];
 
 const bubbleVertexShader = `
@@ -281,6 +283,22 @@ export default function DenshouoPage() {
         },
     } as const;
     const t = copy[lang];
+    const randomizedOverviewFishSpecs = useMemo(
+        () =>
+            overviewFishSpecs.map((fish) => {
+                const fromLeft = Math.random() < 0.5;
+                const isDeepSeaFish = fish.src === '/チョウチンアンコウ.png' || fish.src === '/ラブカ.png';
+                const top = isDeepSeaFish ? 66 + Math.random() * 26 : 8 + Math.random() * 76;
+                return {
+                    ...fish,
+                    top: `${top.toFixed(1)}%`,
+                    start: fromLeft ? '-24%' : '112%',
+                    direction: fromLeft ? 1 : -1,
+                    delay: Math.random() * 3,
+                };
+            }),
+        []
+    );
 
     const handleReturn = () => {
         setActiveWork(null);
@@ -292,7 +310,7 @@ export default function DenshouoPage() {
             {showBackdrop && <OceanBackdrop />}
 
             <div className="pointer-events-none fixed inset-0 z-[3] opacity-55" aria-hidden="true">
-                {overviewFishSpecs.map((fish, index) => (
+                {randomizedOverviewFishSpecs.map((fish, index) => (
                     <motion.div
                         key={`overview-fish-${index}`}
                         className="fixed"
