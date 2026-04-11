@@ -20,7 +20,7 @@ const copyByLang = {
     heroTagline: 'Code breathes with the atmosphere.',
     nomineeLabel: 'CSS WINNER 2026',
     nomineeTitle: 'ここまで見てくれてありがとう。',
-    nomineeDesc: 'Site of the Day を本気で狙っています。よかったら一票で後押ししてくれると嬉しいです。',
+    nomineeDesc: 'Site of the Day を取れたので、次は Site of the Month を目指しています。よかったら一票で後押ししてくれると嬉しいです。',
     nomineeCta: '投票して応援する',
     conceptLabel: '01 / CONCEPT',
     conceptLeadBefore: '静的な「情報の羅列」から、息づく',
