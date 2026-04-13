@@ -22,11 +22,12 @@ export const startOtenkiBgm = async (weather: WeatherType) => {
     
     // Initialize components if not already
     if (!initialized) {
-        // Output mixer
-        vol = new Tone.Volume(-15).toDestination(); // Prevent it from being too loud
+        // Output mixer & Limiter to prevent clipping
+        vol = new Tone.Volume(-6).toDestination(); 
+        const limiter = new Tone.Limiter(-2).connect(vol);
         
         // Lofi Effects
-        crusher = new Tone.BitCrusher({ bits: 8 });
+        crusher = new Tone.BitCrusher({ bits: 12 });
         filter = new Tone.Filter({ frequency: 1800, type: 'lowpass', rolloff: -24 });
         vibrato = new Tone.Vibrato({ frequency: 2, depth: 0.15 }); // tape wow & flutter
         delay = new Tone.FeedbackDelay("4n.", 0.3);
@@ -47,12 +48,12 @@ export const startOtenkiBgm = async (weather: WeatherType) => {
         
         // Vinyl/Tape noise
         noiseGenerator = new Tone.Noise('pink');
-        noiseGenerator.volume.value = -28; // Very subtle
+        noiseGenerator.volume.value = -35; // Very subtle
         
         // FX Routing
-        lofiSynth.chain(vibrato, crusher, delay, filter, vol);
-        arpSynth.chain(vibrato, delay, filter, vol); // No bitcrush for arps to keep them slightly cleaner
-        noiseGenerator.chain(filter, vol);
+        lofiSynth.chain(vibrato, crusher, delay, filter, limiter);
+        arpSynth.chain(vibrato, delay, filter, limiter); // No bitcrush for arps to keep them slightly cleaner
+        noiseGenerator.chain(filter, limiter);
         
         initialized = true;
     }
@@ -61,7 +62,7 @@ export const startOtenkiBgm = async (weather: WeatherType) => {
     Tone.Transport.bpm.value = 75; 
     let chords: string[][] = [];
     let arpPattern: number[] = [];
-    let lofiVolume = -15;
+    let lofiVolume = -6;
 
     switch (weather) {
         case 'Rain':
@@ -87,7 +88,7 @@ export const startOtenkiBgm = async (weather: WeatherType) => {
             arpPattern = []; // No arps, just dark chords
             Tone.Transport.bpm.value = 60;
             filter!.frequency.value = 800; // Very muted
-            lofiVolume = -12; // Compensate for low frequency
+            lofiVolume = -4; // Compensate for low frequency
             break;
         case 'Night':
             chords = [['D3', 'F3', 'A3', 'C4'], ['Bb2', 'D3', 'F3', 'A3', 'C4']]; // Dm7, Bbmaj9
@@ -114,8 +115,8 @@ export const startOtenkiBgm = async (weather: WeatherType) => {
     loop = new Tone.Loop((time) => {
         const chord = chords[step % chords.length];
         
-        // Slightly randomize velocity
-        const velocity = 0.5 + Math.random() * 0.2;
+        // Slightly randomize velocity, keeping it low to prevent clipping
+        const velocity = 0.15 + Math.random() * 0.08;
         lofiSynth?.triggerAttackRelease(chord, '2n', time, velocity);
         
         step++;
@@ -133,7 +134,7 @@ export const startOtenkiBgm = async (weather: WeatherType) => {
                 if (tryNote) {
                     // Transpose up an octave for bells
                     const transposed = Tone.Frequency(tryNote).transpose(12).toNote();
-                    arpSynth?.triggerAttackRelease(transposed, '16n', time, 0.3);
+                    arpSynth?.triggerAttackRelease(transposed, '16n', time, 0.12);
                 }
             }
         }
