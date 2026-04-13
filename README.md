@@ -145,7 +145,7 @@ Open: http://localhost:3000
 
 <div align="center">
 
-Built with 💻 ☕ 🌧️  
+Built with 
 by nitr0yukkuri  
 
 "This portfolio is a living organism."
