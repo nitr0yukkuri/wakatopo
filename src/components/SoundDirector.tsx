@@ -303,6 +303,14 @@ export default function SoundDirector() {
     const startBgm = () => {
         if (bgmTimerRef.current !== null) return;
 
+        if (resolvedWorkId === '02') {
+            import('@/lib/otenkiToneBgm').then(({ startOtenkiBgm }) => {
+                void startOtenkiBgm(weather);
+            });
+            bgmTimerRef.current = -1;
+            return;
+        }
+
         const profile = getLofiBgmProfile(weather, githubActivityLevel, resolvedWorkId);
         bgmStepRef.current = 0;
 
@@ -334,7 +342,13 @@ export default function SoundDirector() {
 
     const stopBgm = () => {
         if (bgmTimerRef.current !== null) {
-            window.clearInterval(bgmTimerRef.current);
+            if (bgmTimerRef.current === -1) {
+                import('@/lib/otenkiToneBgm').then(({ stopOtenkiBgm }) => {
+                    stopOtenkiBgm();
+                });
+            } else {
+                window.clearInterval(bgmTimerRef.current);
+            }
             bgmTimerRef.current = null;
         }
     };
