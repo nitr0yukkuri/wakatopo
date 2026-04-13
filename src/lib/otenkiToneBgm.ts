@@ -106,12 +106,12 @@ export const startOtenkiBgm = async (weather: WeatherType) => {
         
         // --- 5. Noises ---
         vinylNoise = new Tone.Noise('pink');
-        vinylNoise.volume.value = -35; 
+        vinylNoise.volume.value = -42; // Subliminal vinyl texture (much softer)
 
         rainNoise = new Tone.Noise('brown');
         const rainFilter = new Tone.Filter({ frequency: 600, type: 'lowpass' });
         rainNoise.chain(rainFilter, limiter); // Route rain directly to limiter
-        rainNoise.volume.value = -16; 
+        rainNoise.volume.value = -28; // Gentle rain ambience
         
         // FX Routing - Create a clean Master Lofi Bus to prevent recursive feedback loops!
         // 🔥 FIX: Tone.js BitCrusher uses a WaveShaperNode that hard-clips amplitudes > 1.0.
@@ -132,11 +132,13 @@ export const startOtenkiBgm = async (weather: WeatherType) => {
         // Keep noises out of the crusher/delay path to keep them clean
         vinylNoise.connect(filter); // filter is already connected to limiter
         
-        // Prevent internal digital clipping by keeping source synths natively under 0dB. 
-        hatSynth.volume.value = -18;
-        snareSynth.volume.value = -12;
-        kickSynth.volume.value = -4; 
-        bassSynth.volume.value = -2; 
+        // 🔥 FIX: Thoroughly balanced Lofi Mix Levels
+        lofiSynth.volume.value = -6;   // Muffle the aggressive chord output
+        arpSynth.volume.value = -6;    // Sweet floating melody
+        kickSynth.volume.value = -6;   // Punchy but not overloading
+        bassSynth.volume.value = -8;   // Deep, warm sub bass
+        snareSynth.volume.value = -16; // Soft, relaxed snare
+        hatSynth.volume.value = -22;   // Gentle tape-like hi-hats 
 
         // 🔥 FIX: Prevent multiple-tab OS clipping by suspending audio context when tab is hidden
         document.addEventListener("visibilitychange", () => {
@@ -156,7 +158,7 @@ export const startOtenkiBgm = async (weather: WeatherType) => {
     Tone.Transport.bpm.value = 72; // Classic Lofi Hip Hop tempo (70-80)
     let chords: string[][] = [];
     let arpPattern: number[] = [];
-    let lofiVolume = 0;
+    let lofiVolume = -14; // Global master volume - lowered for a comfortable web BGM experience
 
     // Define jazzy, beautiful lofi chord progressions
     switch (weather) {
@@ -203,7 +205,7 @@ export const startOtenkiBgm = async (weather: WeatherType) => {
             arpPattern = []; // No arps
             Tone.Transport.bpm.value = 64;
             filter!.frequency.value = 1000; // Dark
-            lofiVolume = 2; // Boost slightly for dark track
+            lofiVolume = -12; // Boost slightly relative to default -14 for dark track
             break;
         case 'Night':
             chords = [
