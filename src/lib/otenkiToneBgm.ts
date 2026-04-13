@@ -142,11 +142,14 @@ export const startOtenkiBgm = async (weather: WeatherType) => {
 
         // 🔥 FIX: Prevent multiple-tab OS clipping by suspending audio context when tab is hidden
         document.addEventListener("visibilitychange", () => {
+            const rawCtx = Tone.getContext().rawContext as any;
             if (document.hidden) {
-                void (Tone.context as any).suspend();
+                if (rawCtx && typeof rawCtx.suspend === 'function') {
+                    void rawCtx.suspend();
+                }
             } else {
-                if (isPlaying) {
-                    void (Tone.context as any).resume();
+                if (isPlaying && rawCtx && typeof rawCtx.resume === 'function') {
+                    void rawCtx.resume();
                 }
             }
         });
