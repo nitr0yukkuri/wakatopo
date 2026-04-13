@@ -311,6 +311,13 @@ export default function SoundDirector() {
             return;
         }
 
+        // Home screen Tone.js rain/thunder effect
+        if (pathname === '/' && (weather === 'Rain' || weather === 'Thunder')) {
+            import('@/lib/homeRainTone').then(({ startHomeRain }) => {
+                void startHomeRain(weather);
+            });
+        }
+
         const profile = getLofiBgmProfile(weather, githubActivityLevel, resolvedWorkId);
         bgmStepRef.current = 0;
 
@@ -330,7 +337,9 @@ export default function SoundDirector() {
             playTone(base * profile.accentRatio, 0.28, profile.accentVolume, profile.accentWaveform, profile.accentAt);
 
             if (weather === 'Rain' || weather === 'Clouds') {
-                playNoiseBurst(0.1, 0.0026, 0.72, 1400);
+                if (!(pathname === '/' && weather === 'Rain')) {
+                    playNoiseBurst(0.1, 0.0026, 0.72, 1400);
+                }
             }
 
             bgmStepRef.current += 1;
@@ -341,6 +350,10 @@ export default function SoundDirector() {
     };
 
     const stopBgm = () => {
+        import('@/lib/homeRainTone').then(({ stopHomeRain }) => {
+            stopHomeRain();
+        }).catch(() => {});
+
         if (bgmTimerRef.current !== null) {
             if (bgmTimerRef.current === -1) {
                 import('@/lib/otenkiToneBgm').then(({ stopOtenkiBgm }) => {
