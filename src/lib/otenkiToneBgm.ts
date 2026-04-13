@@ -3,136 +3,276 @@ import type { WeatherType } from '@/store';
 
 let initialized = false;
 let isPlaying = false;
+
+// Instruments
 let lofiSynth: Tone.PolySynth | null = null;
 let arpSynth: Tone.PolySynth | null = null;
-let noiseGenerator: Tone.Noise | null = null;
-let loop: Tone.Loop | null = null;
-let arpLoop: Tone.Loop | null = null;
+let kickSynth: Tone.MembraneSynth | null = null;
+let snareSynth: Tone.NoiseSynth | null = null;
+let hatSynth: Tone.MetalSynth | null = null;
+let bassSynth: Tone.Synth | null = null;
 
+// Noises
+let vinylNoise: Tone.Noise | null = null;
+let rainNoise: Tone.Noise | null = null;
+
+// Loops
+let chordLoop: Tone.Loop | null = null;
+let arpLoop: Tone.Loop | null = null;
+let drumLoop: Tone.Loop | null = null;
+
+// FX
 let crusher: Tone.BitCrusher | null = null;
 let filter: Tone.Filter | null = null;
 let vibrato: Tone.Vibrato | null = null;
-let vol: Tone.Volume | null = null;
 let delay: Tone.FeedbackDelay | null = null;
+let vol: Tone.Volume | null = null;
+let limiter: Tone.Limiter | null = null;
+let drumMix: Tone.Gain | null = null;
 
 export const startOtenkiBgm = async (weather: WeatherType) => {
     await Tone.start();
     Tone.Transport.stop();
-    Tone.Transport.cancel();
+    Tone.Transport.cancel(); // Clears transport events
+    
+    // 🔥 FIX: Clean up old loops to absolutely prevent multiple playing loops (which multiplies audio and causes severe clipping!)
+    if (drumLoop) { drumLoop.dispose(); drumLoop = null; }
+    if (chordLoop) { chordLoop.dispose(); chordLoop = null; }
+    if (arpLoop) { arpLoop.dispose(); arpLoop = null; }
     
     // Initialize components if not already
     if (!initialized) {
-        // Output mixer & Limiter to prevent clipping
-        vol = new Tone.Volume(-6).toDestination(); 
-        const limiter = new Tone.Limiter(-2).connect(vol);
+        // Output mixer & Limiter to prevent clipping. 
+        // We boost final volume here safely after safely reducing synth outputs.
+        vol = new Tone.Volume(0).toDestination(); 
+        limiter = new Tone.Limiter(-1).connect(vol);
         
         // Lofi Effects
         crusher = new Tone.BitCrusher({ bits: 12 });
+        // Hip-hop lowpass to muffle everything slightly
         filter = new Tone.Filter({ frequency: 1800, type: 'lowpass', rolloff: -24 });
-        vibrato = new Tone.Vibrato({ frequency: 2, depth: 0.15 }); // tape wow & flutter
-        delay = new Tone.FeedbackDelay("4n.", 0.3);
+        vibrato = new Tone.Vibrato({ frequency: 1.5, depth: 0.15 }); 
+        delay = new Tone.FeedbackDelay("4n.", 0.25);
         
-        // Main synth (chords)
+        // --- 1. Chords ---
         lofiSynth = new Tone.PolySynth(Tone.Synth, {
             oscillator: { type: 'triangle' },
-            envelope: { attack: 0.1, decay: 1.2, sustain: 0.3, release: 3 }
+            envelope: { attack: 0.05, decay: 1.2, sustain: 0.4, release: 2 }
         });
         
-        // Arpeggios/Melody synth (bells/electric piano ish)
+        // --- 2. Melody / Arp ---
         arpSynth = new Tone.PolySynth(Tone.FMSynth, {
-            harmonicity: 2,
-            modulationIndex: 1.5,
+            harmonicity: 2.5,
+            modulationIndex: 1.2,
             oscillator: { type: 'sine' },
-            envelope: { attack: 0.02, decay: 0.5, sustain: 0.1, release: 2 }
+            envelope: { attack: 0.01, decay: 0.4, sustain: 0.1, release: 2 }
+        });
+
+        // --- 3. Drums (Lofi Hip Hop Boom-Bap) ---
+        kickSynth = new Tone.MembraneSynth({
+            pitchDecay: 0.05,
+            octaves: 4,
+            oscillator: { type: 'sine' },
+            envelope: { attack: 0.001, decay: 0.4, sustain: 0.01, release: 1 }
         });
         
-        // Vinyl/Tape noise
-        noiseGenerator = new Tone.Noise('pink');
-        noiseGenerator.volume.value = -35; // Very subtle
+        snareSynth = new Tone.NoiseSynth({
+            noise: { type: 'white' },
+            envelope: { attack: 0.001, decay: 0.2, sustain: 0, release: 0.2 }
+        });
         
-        // FX Routing
-        lofiSynth.chain(vibrato, crusher, delay, filter, limiter);
-        arpSynth.chain(vibrato, delay, filter, limiter); // No bitcrush for arps to keep them slightly cleaner
-        noiseGenerator.chain(filter, limiter);
+        hatSynth = new Tone.MetalSynth({
+            envelope: { attack: 0.001, decay: 0.1, release: 0.01 },
+            harmonicity: 5.1,
+            modulationIndex: 32,
+            resonance: 4000,
+            octaves: 1.5
+        });
+        hatSynth.frequency.value = 300;
+
+        // --- 4. Sub Bass ---
+        bassSynth = new Tone.Synth({
+            oscillator: { type: 'sine' },
+            envelope: { attack: 0.05, decay: 0.3, sustain: 0.8, release: 1 }
+        });
         
+        // --- 5. Noises ---
+        vinylNoise = new Tone.Noise('pink');
+        vinylNoise.volume.value = -35; 
+
+        rainNoise = new Tone.Noise('brown');
+        const rainFilter = new Tone.Filter({ frequency: 600, type: 'lowpass' });
+        rainNoise.chain(rainFilter, limiter); // Route rain directly to limiter
+        rainNoise.volume.value = -16; 
+        
+        // FX Routing - Create a clean Master Lofi Bus to prevent recursive feedback loops!
+        const masterLofiMix = new Tone.Gain(1);
+        masterLofiMix.chain(vibrato, crusher, delay, filter, limiter);
+
+        kickSynth.connect(masterLofiMix);
+        snareSynth.connect(masterLofiMix);
+        hatSynth.connect(masterLofiMix);
+        
+        bassSynth.connect(masterLofiMix);
+        lofiSynth.connect(masterLofiMix);
+        arpSynth.connect(masterLofiMix);
+
+        // Keep noises out of the crusher/delay path to keep them clean
+        vinylNoise.connect(filter); // filter is already connected to limiter
+        
+        // Prevent internal digital clipping by keeping source synths natively under 0dB. 
+        hatSynth.volume.value = -18;
+        snareSynth.volume.value = -12;
+        kickSynth.volume.value = -4; 
+        bassSynth.volume.value = -2; 
+
+        // 🔥 FIX: Prevent multiple-tab OS clipping by suspending audio context when tab is hidden
+        document.addEventListener("visibilitychange", () => {
+            if (document.hidden) {
+                void (Tone.context as any).suspend();
+            } else {
+                if (isPlaying) {
+                    void (Tone.context as any).resume();
+                }
+            }
+        });
+
         initialized = true;
     }
     
     // Default config
-    Tone.Transport.bpm.value = 75; 
+    Tone.Transport.bpm.value = 72; // Classic Lofi Hip Hop tempo (70-80)
     let chords: string[][] = [];
     let arpPattern: number[] = [];
-    let lofiVolume = -6;
+    let lofiVolume = 0;
 
+    // Define jazzy, beautiful lofi chord progressions
     switch (weather) {
         case 'Rain':
-            chords = [['G3', 'Bb3', 'D4', 'F4'], ['C3', 'Eb3', 'G3', 'Bb3']]; // Fm9, Cm7
-            arpPattern = [0, 2, 3];
+            chords = [
+                ['F3', 'Ab3', 'C4', 'Eb4', 'G4'],   // Fm9
+                ['C3', 'Eb3', 'G3', 'Bb3', 'D4'],   // Cm9
+                ['Db3', 'F3', 'Ab3', 'C4', 'Eb4'],  // Dbmaj9
+                ['C3', 'E3', 'G3', 'Bb3', 'Db4']    // C7b9
+            ];
+            arpPattern = [0, 2, 4];
             Tone.Transport.bpm.value = 68;
-            filter!.frequency.value = 1000; // More muffled for rain
+            filter!.frequency.value = 1200; // Muffled
             break;
         case 'Clouds':
-            chords = [['A3', 'C4', 'E4', 'G4'], ['F3', 'A3', 'C4', 'E4']]; // Am7, Fmaj7
-            arpPattern = [0, 3, 1, 3];
+            chords = [
+                ['E3', 'G3', 'B3', 'D4', 'Gb4'],    // Em9
+                ['A2', 'C3', 'E3', 'G3', 'B3'],     // Am9
+                ['D3', 'Gb3', 'A3', 'C4', 'E4'],    // D9
+                ['G2', 'B2', 'D3', 'Gb3', 'A3']     // Gmaj9
+            ];
+            arpPattern = [0, 3, 1, 4];
             Tone.Transport.bpm.value = 72;
-            filter!.frequency.value = 1200;
+            filter!.frequency.value = 1400;
             break;
         case 'Snow':
-            chords = [['E3', 'G3', 'B3', 'D4'], ['C3', 'E3', 'G3', 'B3'], ['A2', 'C3', 'E3', 'G3']]; // Em7, Cmaj7, Am7
-            arpPattern = [0, 3, 2];
+            chords = [
+                ['C3', 'E3', 'G3', 'B3', 'D4'],     // Cmaj9
+                ['A2', 'C3', 'E3', 'G3', 'B3'],     // Am9
+                ['F2', 'A2', 'C3', 'E3', 'G3'],     // Fmaj9
+                ['G2', 'B2', 'F3', 'A3', 'C4']      // G13
+            ];
+            arpPattern = [0, 4, 2];
             Tone.Transport.bpm.value = 65;
-            filter!.frequency.value = 1500;
+            filter!.frequency.value = 1600;
             break;
         case 'Thunder':
-            chords = [['E2', 'G2', 'B2', 'D3'], ['C2', 'E2', 'G2', 'B2']]; // Darker, lower
-            arpPattern = []; // No arps, just dark chords
-            Tone.Transport.bpm.value = 60;
-            filter!.frequency.value = 800; // Very muted
-            lofiVolume = -4; // Compensate for low frequency
+            chords = [
+                ['Eb3', 'Gb3', 'Bb3', 'Db4', 'F4'], // Ebm9
+                ['Db3', 'F3', 'Ab3', 'C4', 'Eb4'],  // Dbmaj9
+                ['B2', 'Eb3', 'Gb3', 'Bb3', 'Db4'], // Bmaj9
+                ['Bb2', 'D3', 'F3', 'Ab3', 'B3']    // Bb7b9
+            ];
+            arpPattern = []; // No arps
+            Tone.Transport.bpm.value = 64;
+            filter!.frequency.value = 1000; // Dark
+            lofiVolume = 2; // Boost slightly for dark track
             break;
         case 'Night':
-            chords = [['D3', 'F3', 'A3', 'C4'], ['Bb2', 'D3', 'F3', 'A3', 'C4']]; // Dm7, Bbmaj9
-            arpPattern = [0, 1, 3, 2];
-            Tone.Transport.bpm.value = 64;
-            filter!.frequency.value = 1400;
+            chords = [
+                ['D3', 'F3', 'A3', 'C4', 'E4'],     // Dm9
+                ['G2', 'B2', 'F3', 'A3', 'C4'],     // G13
+                ['C3', 'E3', 'G3', 'B3', 'D4'],     // Cmaj9
+                ['A2', 'C3', 'E3', 'G3', 'B3']      // Am9
+            ];
+            arpPattern = [0, 4, 3, 2];
+            Tone.Transport.bpm.value = 65;
+            filter!.frequency.value = 1300;
             break;
         case 'Clear':
         case 'Morning':
         default:
-            chords = [['C4', 'E4', 'G4', 'B4'], ['A3', 'C4', 'E4', 'G4'], ['F3', 'A3', 'C4', 'E4']]; // Cmaj7, Am7, Fmaj7
-            arpPattern = [0, 2, 1];
-            Tone.Transport.bpm.value = 80;
-            filter!.frequency.value = 2000; // Brighter
+            chords = [
+                ['Eb3', 'G3', 'Bb3', 'D4', 'F4'],   // Ebmaj9
+                ['C3', 'Eb3', 'G3', 'Bb3', 'D4'],   // Cm9
+                ['F3', 'Ab3', 'C4', 'Eb4', 'G4'],   // Fm9
+                ['Bb2', 'D3', 'Ab3', 'C4', 'Eb4']   // Bb13
+            ];
+            arpPattern = [0, 4, 1];
+            Tone.Transport.bpm.value = 75;
+            filter!.frequency.value = 2200; // Bright
             break;
     }
     
     vol!.volume.value = lofiVolume;
 
-    // Build the Generative Loops
-    let step = 0;
-    
-    // 1. Chords
-    loop = new Tone.Loop((time) => {
-        const chord = chords[step % chords.length];
+    // --- Core Boom-bap Beat ---
+    let beatStep = 0;
+    drumLoop = new Tone.Loop((time) => {
+        // Kick: On beats 1 (0) and 2.5 (10)
+        if (beatStep === 0 || beatStep === 10) {
+            kickSynth?.triggerAttackRelease('C1', '8n', time, 0.8);
+        }
         
-        // Slightly randomize velocity, keeping it low to prevent clipping
-        const velocity = 0.15 + Math.random() * 0.08;
+        // Snare: On beats 2 (4) and 4 (12)
+        if (beatStep === 4 || beatStep === 12) {
+            snareSynth?.triggerAttackRelease('16n', time, 0.5);
+        }
+        
+        // Hat: 8th notes (0,2,4,6...) with swing
+        if (beatStep % 2 === 0) {
+            const delayTime = (beatStep % 4 === 2) ? 0.05 : 0;
+            const velocity = 0.4 + Math.random() * 0.3; 
+            hatSynth?.triggerAttackRelease('32n', time + delayTime, velocity);
+        }
+        
+        beatStep = (beatStep + 1) % 16;
+    }, '16n');
+
+
+    // --- Generative Chords & Bass ---
+    let barStep = 0;
+    chordLoop = new Tone.Loop((time) => {
+        const chord = chords[barStep % chords.length];
+        
+        const velocity = 0.15 + Math.random() * 0.05;
         lofiSynth?.triggerAttackRelease(chord, '2n', time, velocity);
         
-        step++;
+        const rootNote = chord[0];
+        const bassNote = Tone.Frequency(rootNote).transpose(-12).toNote();
+        
+        bassSynth?.triggerAttackRelease(bassNote, '4n', time, 0.7);
+        if (Math.random() > 0.5) {
+            bassSynth?.triggerAttackRelease(bassNote, '8n', time + Tone.Time('4n.').toSeconds(), 0.5);
+        }
+
+        barStep++;
     }, '1m');
 
-    // 2. Playful Arpeggios (like water drops / wind chimes)
+    // --- Playful Bell Arpeggios ---
     let arpStep = 0;
     arpLoop = new Tone.Loop((time) => {
         if (arpPattern.length > 0) {
-            const currentChord = chords[step % chords.length]; 
-            // Randomly skip notes to make it feel sporadic/lofi generative
-            if (Math.random() > 0.3) {
+            const currentChord = chords[barStep % chords.length]; 
+            if (Math.random() > 0.6) {
                 const noteIndex = arpPattern[arpStep % arpPattern.length];
                 const tryNote = currentChord[noteIndex % currentChord.length];
                 if (tryNote) {
-                    // Transpose up an octave for bells
                     const transposed = Tone.Frequency(tryNote).transpose(12).toNote();
                     arpSynth?.triggerAttackRelease(transposed, '16n', time, 0.12);
                 }
@@ -141,8 +281,18 @@ export const startOtenkiBgm = async (weather: WeatherType) => {
         arpStep++;
     }, '8n');
 
-    noiseGenerator?.start();
-    loop.start(0);
+    // Start playback
+    vinylNoise?.start();
+    
+    // Rain weather mutes the internal track rain noise
+    if (weather !== 'Rain') {
+        rainNoise?.start();
+    } else {
+        rainNoise?.stop();
+    }
+
+    drumLoop.start(0);
+    chordLoop.start(0);
     arpLoop.start(0);
     
     Tone.Transport.start();
@@ -153,10 +303,18 @@ export const stopOtenkiBgm = () => {
     if (isPlaying) {
         Tone.Transport.stop();
         Tone.Transport.cancel();
-        noiseGenerator?.stop();
-        // Cut synths from ringing out immediately
+        vinylNoise?.stop();
+        rainNoise?.stop();
+        
         lofiSynth?.releaseAll();
         arpSynth?.releaseAll();
+        kickSynth?.triggerRelease();
+        bassSynth?.triggerRelease();
+        
+        if (drumLoop) { drumLoop.dispose(); drumLoop = null; }
+        if (chordLoop) { chordLoop.dispose(); chordLoop = null; }
+        if (arpLoop) { arpLoop.dispose(); arpLoop = null; }
+
         isPlaying = false;
     }
 };
