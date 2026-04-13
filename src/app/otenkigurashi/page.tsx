@@ -418,7 +418,7 @@ export default function OtenkiGurashiPage() {
             {weather === 'Clouds' && (
                 <div className="fixed inset-0 pointer-events-none z-0 opacity-30">
                     <div className="w-full h-full" style={{
-                        background: 'radial-gradient(ellipse 80% 40% at 50% 10%, rgba(100,120,140,0.4), transparent)',
+                        background: 'radial-gradient(ellipse 80% 40% at 50% 10%, rgba(100,120,140,0.4), rgba(100,120,140,0))',
                     }} />
                 </div>
             )}

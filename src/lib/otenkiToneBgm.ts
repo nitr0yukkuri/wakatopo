@@ -35,6 +35,14 @@ export const startOtenkiBgm = async (weather: WeatherType) => {
     Tone.Transport.stop();
     Tone.Transport.cancel(); // Clears transport events
     
+    // 🔥 FIX: Release any currently playing synths IMMEDIATELY!
+    // If a user clicks weather icons while a chord is playing, the transport stops but the note 
+    // sustains forever, creating a deafening continuous drone on earphones!
+    lofiSynth?.releaseAll();
+    arpSynth?.releaseAll();
+    kickSynth?.triggerRelease();
+    bassSynth?.triggerRelease();
+    
     // 🔥 FIX: Clean up old loops to absolutely prevent multiple playing loops (which multiplies audio and causes severe clipping!)
     if (drumLoop) { drumLoop.dispose(); drumLoop = null; }
     if (chordLoop) { chordLoop.dispose(); chordLoop = null; }
@@ -106,8 +114,12 @@ export const startOtenkiBgm = async (weather: WeatherType) => {
         rainNoise.volume.value = -16; 
         
         // FX Routing - Create a clean Master Lofi Bus to prevent recursive feedback loops!
+        // 🔥 FIX: Tone.js BitCrusher uses a WaveShaperNode that hard-clips amplitudes > 1.0.
+        // We add a pre-limiter to gracefully compress the combined synths before they hit the crusher.
+        // This permanently eliminates the screeching digital distortion noise you hear on earphones.
+        const preLimiter = new Tone.Limiter(-1);
         const masterLofiMix = new Tone.Gain(1);
-        masterLofiMix.chain(vibrato, crusher, delay, filter, limiter);
+        masterLofiMix.chain(preLimiter, vibrato, crusher, delay, filter, limiter);
 
         kickSynth.connect(masterLofiMix);
         snareSynth.connect(masterLofiMix);
@@ -281,14 +293,14 @@ export const startOtenkiBgm = async (weather: WeatherType) => {
         arpStep++;
     }, '8n');
 
-    // Start playback
+    // Start playback (ensure we stop first so Tone.Noise doesn't layer instances if clicked rapidly)
+    vinylNoise?.stop();
     vinylNoise?.start();
     
     // Rain weather mutes the internal track rain noise
+    rainNoise?.stop();
     if (weather !== 'Rain') {
         rainNoise?.start();
-    } else {
-        rainNoise?.stop();
     }
 
     drumLoop.start(0);

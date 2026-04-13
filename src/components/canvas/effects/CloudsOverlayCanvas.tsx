@@ -79,7 +79,9 @@ export default function CloudsOverlayCanvas() {
                 const grad = ctx.createRadialGradient(b.x, b.y, 0, b.x, b.y, b.r);
                 grad.addColorStop(0, `rgba(190,200,215,${a})`);
                 grad.addColorStop(0.45, `rgba(170,185,205,${a * 0.55})`);
-                grad.addColorStop(1, 'rgba(150,165,190,0)');
+                // FIX: Fading RGB to a darker color while alpha approaches 0 creates "dirty ringing" (pre-multiplied alpha Mach bands).
+                // Keep the exact same mid-RGB (170,185,205) for the edge stop to allow pure clean alpha fade.
+                grad.addColorStop(1, 'rgba(170,185,205,0)');
 
                 ctx.beginPath();
                 ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
@@ -124,7 +126,7 @@ export default function CloudsOverlayCanvas() {
             {/* 上部にうっすら霞 */}
             <div
                 className="absolute inset-0"
-                style={{ background: 'linear-gradient(to bottom, rgba(120,140,170,0.12) 0%, rgba(115,138,170,0.05) 35%, transparent 60%)' }}
+                style={{ background: 'linear-gradient(to bottom, rgba(120,140,170,0.12) 0%, rgba(115,138,170,0.05) 35%, rgba(115,138,170,0) 60%)' }}
             />
         </motion.div>
     );
