@@ -6,6 +6,9 @@ type Counter = {
     oscillatorStarts: number;
     noiseStarts: number;
     audioContexts: number;
+    compressorNodes: number;
+    gainOverOneRequests: number;
+    maxGainRequested: number;
 };
 
 const readCounter = async (page: Page) => {
@@ -14,7 +17,14 @@ const readCounter = async (page: Page) => {
             __lpAudioCounter?: Counter;
         }).__lpAudioCounter;
 
-        return c ?? { oscillatorStarts: 0, noiseStarts: 0, audioContexts: 0 };
+        return c ?? {
+            oscillatorStarts: 0,
+            noiseStarts: 0,
+            audioContexts: 0,
+            compressorNodes: 0,
+            gainOverOneRequests: 0,
+            maxGainRequested: 0,
+        };
     });
 };
 
@@ -30,6 +40,9 @@ test.beforeEach(async ({ page }) => {
             oscillatorStarts: 0,
             noiseStarts: 0,
             audioContexts: 0,
+            compressorNodes: 0,
+            gainOverOneRequests: 0,
+            maxGainRequested: 0,
         };
 
         const WrappedAudioContext = class extends originalAudioContext {
@@ -56,6 +69,47 @@ test.beforeEach(async ({ page }) => {
                     return originalStart(...startArgs);
                 }) as AudioBufferSourceNode['start'];
                 return source;
+            }
+
+            createGain(...args: Parameters<AudioContext['createGain']>) {
+                const gainNode = super.createGain(...args);
+                const gainParam = gainNode.gain;
+
+                const capture = (value: number) => {
+                    if (!Number.isFinite(value)) return;
+                    if (value > counter.maxGainRequested) {
+                        counter.maxGainRequested = value;
+                    }
+                    if (value > 1) {
+                        counter.gainOverOneRequests += 1;
+                    }
+                };
+
+                const originalSetValueAtTime = gainParam.setValueAtTime.bind(gainParam);
+                gainParam.setValueAtTime = ((value: number, startTime: number) => {
+                    capture(value);
+                    return originalSetValueAtTime(value, startTime);
+                }) as AudioParam['setValueAtTime'];
+
+                const originalLinearRampToValueAtTime = gainParam.linearRampToValueAtTime.bind(gainParam);
+                gainParam.linearRampToValueAtTime = ((value: number, endTime: number) => {
+                    capture(value);
+                    return originalLinearRampToValueAtTime(value, endTime);
+                }) as AudioParam['linearRampToValueAtTime'];
+
+                const originalExponentialRampToValueAtTime = gainParam.exponentialRampToValueAtTime.bind(gainParam);
+                gainParam.exponentialRampToValueAtTime = ((value: number, endTime: number) => {
+                    capture(value);
+                    return originalExponentialRampToValueAtTime(value, endTime);
+                }) as AudioParam['exponentialRampToValueAtTime'];
+
+                return gainNode;
+            }
+
+            createDynamicsCompressor(...args: Parameters<AudioContext['createDynamicsCompressor']>) {
+                const node = super.createDynamicsCompressor(...args);
+                counter.compressorNodes += 1;
+                return node;
             }
         };
 
@@ -162,6 +216,8 @@ test('mute 時は遷移を起こしても新規の効果音トリガーが増え
 
     // 先にミュートに切り替え
     await page.getByRole('button', { name: 'Disable sound' }).click();
+    await expect(page.getByRole('button', { name: 'Enable sound' })).toBeVisible();
+    await page.waitForTimeout(160);
 
     const before = await readCounter(page);
 
@@ -171,4 +227,26 @@ test('mute 時は遷移を起こしても新規の効果音トリガーが増え
     const after = await readCounter(page);
     expect(after.oscillatorStarts - before.oscillatorStarts).toBe(0);
     expect(after.noiseStarts - before.noiseStarts).toBe(0);
+});
+
+test('音割れ対策: 過大ゲイン要求がなく、出力コンプレッサーが使われる', async ({ page }) => {
+    await page.goto('/');
+    await unlockAudioByKeyboard(page);
+
+    await expectAudioIncreaseAfterAction(
+        page,
+        () => clickWork(page, 'GitHub Planet'),
+        'anti-clipping sanity transition',
+    );
+
+    await expect
+        .poll(async () => {
+            const c = await readCounter(page);
+            return c.compressorNodes;
+        }, { message: '音量ピーク抑制のため DynamicsCompressorNode が生成されること' })
+        .toBeGreaterThan(0);
+
+    const after = await readCounter(page);
+    expect(after.gainOverOneRequests).toBe(0);
+    expect(after.maxGainRequested).toBeLessThanOrEqual(1);
 });
