@@ -31,6 +31,159 @@ function CloudDecoration({ className, style, flip }: { className: string, style?
     );
 }
 
+// ── Animated cloud cursor ─────────────────────────────────────────────────
+// Uses the same quadratic-curve path as CloudDecoration (viewBox 0 0 200 100).
+// Bobs gently when hovering, squishes/leans when moving fast.
+function CloudCursor() {
+    const canvasRef = useRef<HTMLCanvasElement>(null);
+    const stateRef  = useRef({
+        x:    -300, y:    -300,
+        rawX: -300, rawY: -300,
+        vx: 0, vy: 0,
+        bobPhase: 0,
+        squishX: 1.0, squishY: 1.0,
+        lean: 0,
+        raf:  0,
+    });
+
+    // ── Mouse tracking ───────────────────────────────────────────────────
+    useEffect(() => {
+        if (!window.matchMedia('(pointer: fine)').matches) return;
+        const s = stateRef.current;
+        const onMove = (e: PointerEvent) => {
+            if (e.pointerType !== 'mouse') return;
+            s.rawX = e.clientX;
+            s.rawY = e.clientY;
+        };
+        window.addEventListener('pointermove', onMove, { passive: true });
+        return () => window.removeEventListener('pointermove', onMove);
+    }, []);
+
+    // ── Canvas animation loop ───────────────────────────────────────────
+    useEffect(() => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        if (!window.matchMedia('(pointer: fine)').matches) return;
+        const s = stateRef.current;
+
+        const resize = () => {
+            canvas.width  = window.innerWidth  * window.devicePixelRatio;
+            canvas.height = window.innerHeight * window.devicePixelRatio;
+            canvas.style.width  = `${window.innerWidth}px`;
+            canvas.style.height = `${window.innerHeight}px`;
+        };
+        resize();
+        window.addEventListener('resize', resize);
+
+        const ctx = canvas.getContext('2d')!;
+        const dpr = window.devicePixelRatio;
+
+        // ── Cloud drawing ────────────────────────────────────────────────
+        // Same quadratic-curve path as <CloudDecoration> SVG (viewBox 0 0 200 100).
+        // k = 0.30 → cloud is ~45px wide, ~21px tall (slightly smaller than before).
+        const drawCloud = (squishX: number, squishY: number, lean: number, bobY: number) => {
+            const k  = 0.30;
+            const CX = 95 * k;   // horizontal cloud center in path coords
+            const CY = 52 * k;   // vertical   cloud center in path coords
+
+            ctx.save();
+            ctx.translate(0, bobY);
+            ctx.scale(squishX, squishY);
+            ctx.rotate(lean);
+            ctx.translate(-CX, -CY);
+
+            // Soft drop shadow
+            ctx.shadowBlur    = 10;
+            ctx.shadowOffsetY = 3;
+            ctx.shadowColor   = 'rgba(120,160,200,0.28)';
+
+            // Cloud outline path (identical to CloudDecoration SVG)
+            ctx.beginPath();
+            ctx.moveTo(50*k, 80*k);
+            ctx.quadraticCurveTo(20*k, 80*k, 20*k, 55*k);
+            ctx.quadraticCurveTo(20*k, 30*k, 50*k, 30*k);
+            ctx.quadraticCurveTo(60*k, 10*k, 90*k, 10*k);
+            ctx.quadraticCurveTo(120*k, 10*k, 130*k, 30*k);
+            ctx.quadraticCurveTo(170*k, 30*k, 170*k, 55*k);
+            ctx.quadraticCurveTo(170*k, 80*k, 140*k, 80*k);
+            ctx.closePath();
+
+            // Fill: white→light-blue gradient (top to bottom)
+            const grad = ctx.createLinearGradient(20*k, 10*k, 20*k, 80*k);
+            grad.addColorStop(0, 'rgba(255,255,255,0.98)');
+            grad.addColorStop(1, 'rgba(230,243,252,0.96)');
+            ctx.fillStyle = grad;
+            ctx.fill();
+
+            // Stroke: same #98adc2 blue-gray as CloudDecoration border
+            ctx.shadowBlur    = 0;
+            ctx.shadowOffsetY = 0;
+            ctx.strokeStyle   = '#98adc2';
+            ctx.lineWidth     = 3 * k;
+            ctx.stroke();
+
+            ctx.restore();
+        };
+
+        // ── Animation loop ──────────────────────────────────────────────────
+        let last = performance.now();
+        const LERP_POS  = 0.18;   // how quickly cursor follows raw position
+        const VEL_DECAY = 0.88;   // velocity smoothing
+
+        const loop = (now: number) => {
+            s.raf = requestAnimationFrame(loop);
+            const dt = Math.min((now - last) / 16.67, 4); // normalised to 60 fps
+            last = now;
+
+            // Smooth position toward raw mouse
+            const prevX = s.x, prevY = s.y;
+            s.x += (s.rawX - s.x) * LERP_POS * dt;
+            s.y += (s.rawY - s.y) * LERP_POS * dt;
+
+            // Velocity (exponential moving average)
+            s.vx = s.vx * VEL_DECAY + (s.x - prevX) * (1 - VEL_DECAY);
+            s.vy = s.vy * VEL_DECAY + (s.y - prevY) * (1 - VEL_DECAY);
+            const speed = Math.hypot(s.vx, s.vy);
+
+            // Bob: gentle when hovering (large amp), quieter when moving fast
+            s.bobPhase += 0.038 * dt;
+            const bobAmp = Math.max(1.2, 4.5 - speed * 0.5);
+            const bobY   = Math.sin(s.bobPhase * 1.6) * bobAmp;
+
+            // Squish: cloud stretches horizontally like a puff of wind
+            const tSqX = 1 + Math.min(speed * 0.013, 0.22);
+            const tSqY = 1 / tSqX; // preserve area
+            s.squishX += (tSqX - s.squishX) * 0.14 * dt;
+            s.squishY += (tSqY - s.squishY) * 0.14 * dt;
+
+            // Lean: subtle tilt toward movement direction (max ±13°)
+            const tLean = Math.max(-0.23, Math.min(0.23, s.vx * 0.055));
+            s.lean += (tLean - s.lean) * 0.10 * dt;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.save();
+            ctx.scale(dpr, dpr);
+            ctx.translate(s.x, s.y);
+            drawCloud(s.squishX, s.squishY, s.lean, bobY);
+            ctx.restore();
+        };
+
+        s.raf = requestAnimationFrame(loop);
+        return () => {
+            cancelAnimationFrame(s.raf);
+            window.removeEventListener('resize', resize);
+        };
+    }, []);
+
+    return (
+        <canvas
+            ref={canvasRef}
+            className="fixed inset-0 z-[9999] pointer-events-none"
+            aria-hidden="true"
+        />
+    );
+}
+
 export default function OtenkiGurashiPage() {
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -113,6 +266,9 @@ export default function OtenkiGurashiPage() {
     const [overrideDialog, setOverrideDialog] = useState<DialogType | null>(null);
     const timeoutRef = useRef<NodeJS.Timeout | null>(null);
     const [showHeavyEffects, setShowHeavyEffects] = useState(false);
+    // Hide native cursor on fine-pointer (mouse) devices — CloudCursor replaces it
+    const [isFinePointer, setIsFinePointer] = useState(false);
+    useEffect(() => { setIsFinePointer(window.matchMedia('(pointer: fine)').matches); }, []);
 
     const handleInteract = (text: string, mood: DialogType['mood']) => {
         setOverrideDialog({ text, mood });
@@ -210,7 +366,9 @@ export default function OtenkiGurashiPage() {
     }
 
     return (
-        <main className={`relative w-full min-h-[120dvh] ${weather !== 'Rain' && weather !== 'Snow' ? 'bg-gradient-to-b' : ''} ${bgGradient} ${weather === 'Thunder' || weather === 'Night' ? 'text-gray-200' : 'text-gray-700'} overflow-hidden font-sans pb-32 transition-colors duration-1000`}>
+        <>
+        <CloudCursor />
+        <main className={`relative w-full min-h-[120dvh] ${weather !== 'Rain' && weather !== 'Snow' ? 'bg-gradient-to-b' : ''} ${bgGradient} ${weather === 'Thunder' || weather === 'Night' ? 'text-gray-200' : 'text-gray-700'} overflow-hidden font-sans pb-32 transition-colors duration-1000`} style={{ cursor: isFinePointer ? 'none' : 'auto' }}>
 
             <nav className="fixed top-0 left-0 w-full z-50 p-6 md:p-10">
                 <button
@@ -474,5 +632,6 @@ export default function OtenkiGurashiPage() {
                 />
             )}
         </main>
+        </>
     );
 }
