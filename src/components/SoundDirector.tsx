@@ -353,7 +353,7 @@ export default function SoundDirector() {
     const stopBgm = () => {
         import('@/lib/homeRainTone').then(({ stopHomeRain }) => {
             stopHomeRain();
-        }).catch(() => {});
+        }).catch(() => { });
 
         if (bgmTimerRef.current !== null) {
             if (bgmTimerRef.current === -1) {

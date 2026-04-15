@@ -4,7 +4,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useStore } from '@/store';
 import { motion } from 'framer-motion';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { useMemo, useRef, useEffect, useState } from 'react';
+import { useMemo, useRef, useEffect, useState, useCallback } from 'react';
 import * as THREE from 'three';
 import { waveVertexShader, waveFragmentShader } from '@/shaders/wave';
 import Image from 'next/image';
@@ -38,39 +38,273 @@ const overviewFishSpecs = [
     { width: 102, duration: 27, src: '/hammerhead-shark.png', alt: 'hammerhead shark' },
 ];
 
-// ── Fish cursor (pointing left, hotspot = mouth tip at 1,16) ─────────────────
-const makeFishCursorUrl = (svg: string) =>
-    `url("data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}") 1 16, auto`;
+// ── Animated swimming fish cursor ─────────────────────────────────────────────
+// Draws a procedurally animated fish on a canvas overlay.
+// The fish body bends with a travelling sine wave, tail fans,
+// and the whole fish rotates toward the velocity vector.
+function FishCursor() {
+    const canvasRef = useRef<HTMLCanvasElement>(null);
+    const stateRef  = useRef({
+        // current display position (smoothed toward raw)
+        x: -200, y: -200,
+        // raw mouse position
+        rawX: -200, rawY: -200,
+        // velocity (pixels/frame, exponential moving average)
+        vx: 0, vy: 0,
+        // current display angle (radians)
+        angle: 0,
+        // swim phase (drives sine wave)
+        phase: 0,
+        // mouth open (click)
+        mouthOpen: false,
+        // is fine pointer
+        fine: false,
+        // raf id
+        raf: 0,
+    });
 
-// Default: mouth closed (smooth ellipse)
-const fishDefaultSvg = `
-<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none">
-  <path d="M23 16 L30 9 L30 23 Z" fill="#C46200" stroke="#0d0d0d" stroke-width="1" stroke-linejoin="round"/>
-  <ellipse cx="12" cy="16" rx="11" ry="8.5" fill="#FF8C1A" stroke="#0d0d0d" stroke-width="1.3"/>
-  <rect x="9" y="7.5" width="3" height="17" rx="1.5" fill="white" opacity="0.88"/>
-  <rect x="15" y="9" width="2" height="14" rx="1" fill="white" opacity="0.78"/>
-  <circle cx="4" cy="14.5" r="2.2" fill="#111"/>
-  <circle cx="3.3" cy="13.8" r="0.7" fill="white"/>
-</svg>
-`;
+    useEffect(() =>
+    {
+        const s = stateRef.current;
+        s.fine = window.matchMedia('(pointer: fine)').matches;
+        if (!s.fine) return;
 
-// Active (clicked): mouth open — dark triangle cut into the left side
-const fishActiveSvg = `
-<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none">
-  <path d="M23 16 L30 9 L30 23 Z" fill="#C46200" stroke="#0d0d0d" stroke-width="1" stroke-linejoin="round"/>
-  <ellipse cx="12" cy="16" rx="11" ry="8.5" fill="#FF8C1A" stroke="#0d0d0d" stroke-width="1.3"/>
-  <path d="M 1 16 L 5.5 12.5 L 5.5 19.5 Z" fill="#1a0500" stroke="#0d0d0d" stroke-width="0.9" stroke-linejoin="round"/>
-  <rect x="9" y="7.5" width="3" height="17" rx="1.5" fill="white" opacity="0.88"/>
-  <rect x="15" y="9" width="2" height="14" rx="1" fill="white" opacity="0.78"/>
-  <circle cx="5" cy="13.5" r="2.2" fill="#111"/>
-  <circle cx="4.3" cy="12.8" r="0.7" fill="white"/>
-</svg>
-`;
+        const onMove = (e: PointerEvent) => {
+            if (e.pointerType !== 'mouse') return;
+            s.rawX = e.clientX;
+            s.rawY = e.clientY;
+        };
+        const onDown = (e: PointerEvent) => {
+            if (e.pointerType !== 'mouse') return;
+            s.mouthOpen = true;
+        };
+        const onUp = (e: PointerEvent) => {
+            if (e.pointerType !== 'mouse') return;
+            s.mouthOpen = false;
+        };
+        window.addEventListener('pointermove',   onMove,  { passive: true });
+        window.addEventListener('pointerdown',   onDown,  { passive: true });
+        window.addEventListener('pointerup',     onUp,    { passive: true });
+        window.addEventListener('pointercancel', onUp,    { passive: true });
+        return () => {
+            window.removeEventListener('pointermove',   onMove);
+            window.removeEventListener('pointerdown',   onDown);
+            window.removeEventListener('pointerup',     onUp);
+            window.removeEventListener('pointercancel', onUp);
+        };
+    }, []);
 
-const fishCursors = {
-    default: makeFishCursorUrl(fishDefaultSvg),
-    active:  makeFishCursorUrl(fishActiveSvg),
-} as const;
+    useEffect(() => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        const s = stateRef.current;
+        if (!window.matchMedia('(pointer: fine)').matches) return;
+
+        const resize = () => {
+            canvas.width  = window.innerWidth  * window.devicePixelRatio;
+            canvas.height = window.innerHeight * window.devicePixelRatio;
+            canvas.style.width  = `${window.innerWidth}px`;
+            canvas.style.height = `${window.innerHeight}px`;
+        };
+        resize();
+        window.addEventListener('resize', resize);
+
+        const ctx = canvas.getContext('2d')!;
+        const dpr = window.devicePixelRatio;
+
+        // ── Drawing helpers ──────────────────────────────────────────────────
+        const drawFish = (t: number, mouthOpen: boolean) => {
+            // Fish is drawn pointing RIGHT in local space (mouth at right).
+            // We rotate the canvas so it faces the velocity direction.
+            // ALL coords are in logical pixels; we apply dpr via scale.
+
+            const SCALE = 1.5;   // apparent size multiplier
+            const S     = SCALE;
+
+            const swingAmp   = Math.max(0.18, Math.min(0.9, Math.hypot(s.vx, s.vy) * 0.04)); // amplitude scales with speed
+            const tailSwing  = Math.sin(t * 7.0 + s.phase) * swingAmp;   // tail oscillation
+            const bodyBend   = Math.sin(t * 7.0 + s.phase + 0.8) * swingAmp * 0.35; // body
+
+            ctx.save();
+
+            // ── Tail (drawn first, behind body) ───────
+            // Tail root is at local x=−11*S, spans outward to x=−22*S
+            const tailAngle  = tailSwing * 1.4;         // total fan angle
+            const tailLength = 13 * S;
+            const tailRoot   = -11 * S;
+
+            ctx.save();
+            ctx.rotate(bodyBend * 0.6);  // body bend affects tail root
+            ctx.beginPath();
+            ctx.moveTo(tailRoot, 0);
+            ctx.lineTo(
+                tailRoot - Math.cos(tailAngle + 0.5) * tailLength,
+                 Math.sin(tailAngle + 0.5) * tailLength * 1.15
+            );
+            ctx.lineTo(
+                tailRoot - Math.cos(tailAngle - 0.5) * tailLength,
+                 Math.sin(tailAngle - 0.5) * tailLength * 1.15
+            );
+            ctx.closePath();
+            const tailGrad = ctx.createLinearGradient(tailRoot, 0, tailRoot - tailLength, 0);
+            tailGrad.addColorStop(0, 'rgba(180,80,0,0.95)');
+            tailGrad.addColorStop(1, 'rgba(140,55,0,0.6)');
+            ctx.fillStyle = tailGrad;
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(20,8,0,0.7)';
+            ctx.lineWidth = 0.9;
+            ctx.stroke();
+            ctx.restore();
+
+            // ── Body (ellipse, slightly bent) ─────────
+            ctx.save();
+            ctx.rotate(bodyBend);          // tilt whole body
+            const bx = 0, by = 0;
+            const rx = 13 * S, ry = 8 * S;
+
+            // Body gradient: orange → warm highlight
+            const bodyGrad = ctx.createRadialGradient(-2*S, -3*S, 1, bx, by, rx);
+            bodyGrad.addColorStop(0, '#FFB347');
+            bodyGrad.addColorStop(0.55, '#FF8C1A');
+            bodyGrad.addColorStop(1, '#C46200');
+            ctx.beginPath();
+            ctx.ellipse(bx, by, rx, ry, 0, 0, Math.PI * 2);
+            ctx.fillStyle = bodyGrad;
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(13,5,0,0.75)';
+            ctx.lineWidth = 1.3;
+            ctx.stroke();
+
+            // ── Stripes ───────────────────────────────
+            ctx.save();
+            ctx.clip(); // clip stripes inside body ellipse
+            ctx.beginPath(); ctx.ellipse(bx, by, rx, ry, 0, 0, Math.PI * 2);
+            ctx.clip();
+
+            // Stripe 1 (wide, near center)
+            ctx.fillStyle = 'rgba(255,255,255,0.82)';
+            ctx.beginPath();
+            ctx.ellipse(-1*S, by, 1.6*S, ry * 0.92, 0, 0, Math.PI * 2);
+            ctx.fill();
+            // Stripe 2 (narrower)
+            ctx.fillStyle = 'rgba(255,255,255,0.68)';
+            ctx.beginPath();
+            ctx.ellipse(5*S, by, 1.1*S, ry * 0.87, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+
+            // ── Eye ───────────────────────────────────
+            const eyeX = 9 * S;
+            const eyeY = -2.5 * S;
+            ctx.beginPath();
+            ctx.arc(eyeX, eyeY, 2.6 * S, 0, Math.PI * 2);
+            ctx.fillStyle = '#111';
+            ctx.fill();
+            // Catch-light
+            ctx.beginPath();
+            ctx.arc(eyeX + 0.7*S, eyeY - 0.7*S, 0.8*S, 0, Math.PI * 2);
+            ctx.fillStyle = 'white';
+            ctx.fill();
+
+            // ── Mouth ─────────────────────────────────
+            const mouthX = 13 * S;
+            const mouthY = 1.5 * S;
+            if (mouthOpen) {
+                ctx.beginPath();
+                ctx.moveTo(mouthX, mouthY);
+                ctx.lineTo(mouthX - 5*S,  mouthY - 4*S);
+                ctx.lineTo(mouthX - 5*S,  mouthY + 4*S);
+                ctx.closePath();
+                ctx.fillStyle = 'rgba(26,5,0,0.95)';
+                ctx.fill();
+                ctx.strokeStyle = 'rgba(13,5,0,0.8)';
+                ctx.lineWidth = 0.8;
+                ctx.stroke();
+            }
+
+            // ── Dorsal fin ────────────────────────────
+            ctx.beginPath();
+            ctx.moveTo(2*S, -ry+1);
+            ctx.quadraticCurveTo(5*S, -ry - 5*S, 9*S, -ry+1);
+            ctx.closePath();
+            const finGrad = ctx.createLinearGradient(2*S, -ry, 9*S, -ry-5*S);
+            finGrad.addColorStop(0, 'rgba(200,100,0,0.8)');
+            finGrad.addColorStop(1, 'rgba(180,70,0,0.4)');
+            ctx.fillStyle = finGrad;
+            ctx.fill();
+
+            ctx.restore();  // body bend restore
+            ctx.restore();  // outer save
+        };
+
+        // ── Animation loop ───────────────────────────────────────────────────
+        let last = performance.now();
+
+        const LERP_POS   = 0.28;   // position follow speed
+        const LERP_ANGLE = 0.10;   // angle smoothing
+        const VEL_DECAY  = 0.82;   // velocity decay per frame
+
+        const loop = (now: number) => {
+            s.raf = requestAnimationFrame(loop);
+            const dt = Math.min((now - last) / 16.67, 4); // normalised to 60 fps
+            last = now;
+            const t = now * 0.001;
+
+            // Smooth position
+            const prevX = s.x, prevY = s.y;
+            s.x += (s.rawX - s.x) * LERP_POS * dt;
+            s.y += (s.rawY - s.y) * LERP_POS * dt;
+
+            // Velocity (pixels / frame at 60 fps)
+            const frameVX = (s.x - prevX);
+            const frameVY = (s.y - prevY);
+            s.vx = s.vx * VEL_DECAY + frameVX * (1 - VEL_DECAY);
+            s.vy = s.vy * VEL_DECAY + frameVY * (1 - VEL_DECAY);
+
+            // Advance swim phase proportional to speed
+            const speed  = Math.hypot(s.vx, s.vy);
+            s.phase += speed * 0.18 * dt;
+
+            // Target angle: direction of velocity (right = 0)
+            // Fish points RIGHT in local space, so angle = atan2(vy,vx)
+            const targetAngle = speed > 0.3
+                ? Math.atan2(s.vy, s.vx)
+                : s.angle;
+
+            // Shortest-path angle interpolation
+            let da = targetAngle - s.angle;
+            while (da >  Math.PI) da -= Math.PI * 2;
+            while (da < -Math.PI) da += Math.PI * 2;
+            s.angle += da * LERP_ANGLE * dt;
+
+            // Clear
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw
+            ctx.save();
+            ctx.scale(dpr, dpr);
+            ctx.translate(s.x, s.y);
+            ctx.rotate(s.angle);
+            drawFish(t, s.mouthOpen);
+            ctx.restore();
+        };
+
+        s.raf = requestAnimationFrame(loop);
+        return () => {
+            cancelAnimationFrame(s.raf);
+            window.removeEventListener('resize', resize);
+        };
+    }, []);
+
+    // Fine pointer only — on touch devices just render nothing (canvas stays invisible)
+    return (
+        <canvas
+            ref={canvasRef}
+            className="fixed inset-0 z-[9999] pointer-events-none"
+            aria-hidden="true"
+        />
+    );
+}
 
 const bubbleVertexShader = `
 uniform float uTime;
@@ -324,7 +558,9 @@ export default function DenshouoPage() {
     const [ripples, setRipples] = useState<Array<{ id: number; x: number; y: number; size: number; isHover: boolean }>>([]);
     const rippleIdRef = useRef(0);
     const lastHoverRippleAtRef = useRef(0);
-    const [cursorState, setCursorState] = useState<keyof typeof fishCursors>('default');
+    // isFinePointer — hide native cursor only on mouse devices
+    const [isFinePointer, setIsFinePointer] = useState(false);
+    useEffect(() => { setIsFinePointer(window.matchMedia('(pointer: fine)').matches); }, []);
 
     useEffect(() => {
         const reveal = () => {
@@ -373,20 +609,7 @@ export default function DenshouoPage() {
         };
     }, []);
 
-    // ── Cursor open/close on click (fine pointer only) ─────────────────────────
-    useEffect(() => {
-        if (!window.matchMedia('(pointer: fine)').matches) return;
-        const onDown = () => setCursorState('active');
-        const onUp   = () => setCursorState('default');
-        window.addEventListener('pointerdown',   onDown,  { passive: true });
-        window.addEventListener('pointerup',     onUp,    { passive: true });
-        window.addEventListener('pointercancel', onUp,    { passive: true });
-        return () => {
-            window.removeEventListener('pointerdown',   onDown);
-            window.removeEventListener('pointerup',     onUp);
-            window.removeEventListener('pointercancel', onUp);
-        };
-    }, []);
+
 
     const copy = {
         ja: {
@@ -449,9 +672,11 @@ export default function DenshouoPage() {
     };
 
     return (
+        <>
+        <FishCursor />
         <main
             className="relative min-h-dvh bg-[radial-gradient(circle_at_top_left,rgba(56,189,248,0.10),transparent_28%),radial-gradient(circle_at_bottom,rgba(20,184,166,0.12),transparent_35%),#041116] text-white overflow-x-hidden"
-            style={{ cursor: fishCursors[cursorState] }}
+            style={{ cursor: isFinePointer ? 'none' : 'auto' }}
         >
             {showBackdrop && <OceanBackdrop />}
 
@@ -628,5 +853,6 @@ export default function DenshouoPage() {
                 </div>
             </div>
         </main>
+        </>
     );
 }
