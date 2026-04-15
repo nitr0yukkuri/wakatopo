@@ -80,11 +80,13 @@ function CloudCursor() {
 
         // ── Cloud drawing ────────────────────────────────────────────────
         // Same quadratic-curve path as <CloudDecoration> SVG (viewBox 0 0 200 100).
-        // k = 0.30 → cloud is ~45px wide, ~21px tall (slightly smaller than before).
+        // kX drives x-coords only (width); k drives y-coords (height unchanged).
+        // kX=0.22 → ~33px wide   k=0.30 → ~21px tall
         const drawCloud = (squishX: number, squishY: number, lean: number, bobY: number) => {
-            const k  = 0.30;
-            const CX = 95 * k;   // horizontal cloud center in path coords
-            const CY = 52 * k;   // vertical   cloud center in path coords
+            const k  = 0.30;   // vertical scale  — height stays the same
+            const kX = 0.22;   // horizontal scale — only this controls width
+            const CX = 95 * kX;  // cloud center x
+            const CY = 52 * k;   // cloud center y
 
             ctx.save();
             ctx.translate(0, bobY);
@@ -97,19 +99,19 @@ function CloudCursor() {
             ctx.shadowOffsetY = 3;
             ctx.shadowColor   = 'rgba(120,160,200,0.28)';
 
-            // Cloud outline path (identical to CloudDecoration SVG)
+            // Cloud outline path — x uses kX, y uses k
             ctx.beginPath();
-            ctx.moveTo(50*k, 80*k);
-            ctx.quadraticCurveTo(20*k, 80*k, 20*k, 55*k);
-            ctx.quadraticCurveTo(20*k, 30*k, 50*k, 30*k);
-            ctx.quadraticCurveTo(60*k, 10*k, 90*k, 10*k);
-            ctx.quadraticCurveTo(120*k, 10*k, 130*k, 30*k);
-            ctx.quadraticCurveTo(170*k, 30*k, 170*k, 55*k);
-            ctx.quadraticCurveTo(170*k, 80*k, 140*k, 80*k);
+            ctx.moveTo(50*kX, 80*k);
+            ctx.quadraticCurveTo(20*kX, 80*k, 20*kX, 55*k);
+            ctx.quadraticCurveTo(20*kX, 30*k, 50*kX, 30*k);
+            ctx.quadraticCurveTo(60*kX, 10*k, 90*kX, 10*k);
+            ctx.quadraticCurveTo(120*kX, 10*k, 130*kX, 30*k);
+            ctx.quadraticCurveTo(170*kX, 30*k, 170*kX, 55*k);
+            ctx.quadraticCurveTo(170*kX, 80*k, 140*kX, 80*k);
             ctx.closePath();
 
             // Fill: white→light-blue gradient (top to bottom)
-            const grad = ctx.createLinearGradient(20*k, 10*k, 20*k, 80*k);
+            const grad = ctx.createLinearGradient(20*kX, 10*k, 20*kX, 80*k);
             grad.addColorStop(0, 'rgba(255,255,255,0.98)');
             grad.addColorStop(1, 'rgba(230,243,252,0.96)');
             ctx.fillStyle = grad;
@@ -119,7 +121,7 @@ function CloudCursor() {
             ctx.shadowBlur    = 0;
             ctx.shadowOffsetY = 0;
             ctx.strokeStyle   = '#98adc2';
-            ctx.lineWidth     = 3 * k;
+            ctx.lineWidth     = 2.8 * k;
             ctx.stroke();
 
             ctx.restore();
