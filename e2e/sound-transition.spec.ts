@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 
 type WeatherType = 'Morning' | 'Clouds' | 'Rain' | 'Thunder' | 'Snow' | 'Night';
 
@@ -8,8 +8,8 @@ type Counter = {
     audioContexts: number;
 };
 
-const readCounter = async (page: Parameters<typeof test>[0]['page']) => {
-    return page.evaluate<[], Counter>(() => {
+const readCounter = async (page: Page) => {
+    return page.evaluate<Counter>(() => {
         const c = (window as typeof window & {
             __lpAudioCounter?: Counter;
         }).__lpAudioCounter;
@@ -69,21 +69,21 @@ test.beforeEach(async ({ page }) => {
     });
 });
 
-const unlockAudioByKeyboard = async (page: Parameters<typeof test>[0]['page']) => {
+const unlockAudioByKeyboard = async (page: Page) => {
     await page.keyboard.press('A');
     await page.waitForTimeout(120);
 };
 
-const applyWeather = async (page: Parameters<typeof test>[0]['page'], weather: WeatherType) => {
+const applyWeather = async (page: Page, weather: WeatherType) => {
     await page.getByRole('button', { name: weather.toUpperCase() }).click();
 };
 
-const clickWork = async (page: Parameters<typeof test>[0]['page'], workTitle: string) => {
+const clickWork = async (page: Page, workTitle: string) => {
     await page.getByRole('heading', { name: workTitle }).click();
 };
 
 const expectAudioIncreaseAfterAction = async (
-    page: Parameters<typeof test>[0]['page'],
+    page: Page,
     action: () => Promise<void>,
     label: string,
 ) => {
