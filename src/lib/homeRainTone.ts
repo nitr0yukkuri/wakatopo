@@ -18,13 +18,13 @@ const playThunder = () => {
     
     const now = Tone.now();
     // High frequency crackle
-    thunderNoise?.triggerAttackRelease(2.0, now, 0.25);
+    thunderNoise?.triggerAttackRelease(2.0, now, 0.12);
     // Deep heavy rumble initial strike
-    thunderMembrane?.triggerAttackRelease('C1', 2.5, now, 1.0);
+    thunderMembrane?.triggerAttackRelease('C1', 2.5, now, 0.42);
     // Long lingering secondary rumble for realism (overlapping)
-    thunderMembrane?.triggerAttackRelease('C0', 4.0, now + 0.15, 0.8);
+    thunderMembrane?.triggerAttackRelease('C0', 4.0, now + 0.15, 0.34);
     // Final distant rumble
-    thunderMembrane?.triggerAttackRelease('E0', 3.0, now + 0.4, 0.5);
+    thunderMembrane?.triggerAttackRelease('E0', 3.0, now + 0.4, 0.24);
     
     // Schedule next majestic random thunder between 6 and 14 seconds
     const nextMs = 6000 + Math.random() * 8000;
@@ -36,12 +36,12 @@ export const startHomeRain = async (weather: WeatherType) => {
     await Tone.start();
     
     if (!initialized) {
-        rainVol = new Tone.Volume(-6).toDestination();
+        rainVol = new Tone.Volume(-14).toDestination();
         rainFilter = new Tone.Filter({ frequency: 400, type: 'lowpass' }).connect(rainVol);
         rainNoise = new Tone.Noise('brown').connect(rainFilter);
-        rainNoise.volume.value = -12;
+        rainNoise.volume.value = -20;
 
-        thunderVol = new Tone.Volume(2).toDestination();
+        thunderVol = new Tone.Volume(-10).toDestination();
         const thunderFilter = new Tone.Filter({ frequency: 600, type: 'lowpass' }).connect(thunderVol);
         
         thunderNoise = new Tone.NoiseSynth({

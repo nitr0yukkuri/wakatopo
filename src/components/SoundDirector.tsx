@@ -20,7 +20,7 @@ type TransitionType =
     | 'captcha-lock';
 
 const MUTE_KEY = 'lp-audio-muted';
-const OUTPUT_BOOST = 2.4;
+const OUTPUT_BOOST = 1.0;
 
 export default function SoundDirector() {
     const pathname = usePathname();
@@ -89,16 +89,17 @@ export default function SoundDirector() {
 
             outputConvolver.buffer = createImpulseResponse(ctx);
 
-            outputDryGain.gain.value = 0.58;
-            outputWetGain.gain.value = 0.95;
+            // Keep enough headroom so BGM + transition SFX + browser audio can coexist without clipping.
+            outputDryGain.gain.value = 0.32;
+            outputWetGain.gain.value = 0.24;
 
-            outputCompressor.threshold.value = -34;
-            outputCompressor.knee.value = 30;
-            outputCompressor.ratio.value = 1.9;
-            outputCompressor.attack.value = 0.05;
-            outputCompressor.release.value = 0.52;
+            outputCompressor.threshold.value = -24;
+            outputCompressor.knee.value = 20;
+            outputCompressor.ratio.value = 8;
+            outputCompressor.attack.value = 0.003;
+            outputCompressor.release.value = 0.2;
 
-            master.gain.value = 1.5;
+            master.gain.value = 0.62;
             master.connect(outputLowpass);
 
             outputLowpass.connect(outputDryGain);
@@ -142,7 +143,7 @@ export default function SoundDirector() {
         const osc = ctx.createOscillator();
         const filter = ctx.createBiquadFilter();
         const gain = ctx.createGain();
-        const boostedVolume = Math.min(Math.max(volume * OUTPUT_BOOST, 0.0001), 1.2);
+        const boostedVolume = Math.min(Math.max(volume * OUTPUT_BOOST, 0.0001), 0.24);
 
         osc.type = type;
         osc.frequency.setValueAtTime(Math.max(freq, 24), ctx.currentTime + at);
@@ -183,7 +184,7 @@ export default function SoundDirector() {
         const source = ctx.createBufferSource();
         const hp = ctx.createBiquadFilter();
         const gain = ctx.createGain();
-        const boostedVolume = Math.min(Math.max(volume * OUTPUT_BOOST, 0.0001), 1.2);
+        const boostedVolume = Math.min(Math.max(volume * OUTPUT_BOOST, 0.0001), 0.2);
 
         source.buffer = buffer;
 

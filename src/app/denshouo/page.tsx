@@ -38,15 +38,39 @@ const overviewFishSpecs = [
     { width: 102, duration: 27, src: '/hammerhead-shark.png', alt: 'hammerhead shark' },
 ];
 
-const clownfishCursorSvg = `
+// ── Fish cursor (pointing left, hotspot = mouth tip at 1,16) ─────────────────
+const makeFishCursorUrl = (svg: string) =>
+    `url("data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}") 1 16, auto`;
+
+// Default: mouth closed (smooth ellipse)
+const fishDefaultSvg = `
 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none">
-    <path d="M5 3L25 17L16.4 18.8L20.2 28.2L17.4 29.3L13.7 20.1L7 27.8L5 3Z" fill="#FF8A1E" stroke="#101010" stroke-width="1.4" stroke-linejoin="round"/>
-    <path d="M9.8 7.4L20.6 15.2L17.8 15.8L12 10.9L9.8 7.4Z" fill="#FFF4EA" opacity="0.98"/>
-    <path d="M12.8 12L22.4 18.5L19.8 19.1L14.4 14.9L12.8 12Z" fill="#101010" opacity="0.18"/>
+  <path d="M23 16 L30 9 L30 23 Z" fill="#C46200" stroke="#0d0d0d" stroke-width="1" stroke-linejoin="round"/>
+  <ellipse cx="12" cy="16" rx="11" ry="8.5" fill="#FF8C1A" stroke="#0d0d0d" stroke-width="1.3"/>
+  <rect x="9" y="7.5" width="3" height="17" rx="1.5" fill="white" opacity="0.88"/>
+  <rect x="15" y="9" width="2" height="14" rx="1" fill="white" opacity="0.78"/>
+  <circle cx="4" cy="14.5" r="2.2" fill="#111"/>
+  <circle cx="3.3" cy="13.8" r="0.7" fill="white"/>
 </svg>
 `;
 
-const clownfishCursor = `url("data:image/svg+xml;charset=UTF-8,${encodeURIComponent(clownfishCursorSvg)}") 4 3, auto`;
+// Active (clicked): mouth open — dark triangle cut into the left side
+const fishActiveSvg = `
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none">
+  <path d="M23 16 L30 9 L30 23 Z" fill="#C46200" stroke="#0d0d0d" stroke-width="1" stroke-linejoin="round"/>
+  <ellipse cx="12" cy="16" rx="11" ry="8.5" fill="#FF8C1A" stroke="#0d0d0d" stroke-width="1.3"/>
+  <path d="M 1 16 L 5.5 12.5 L 5.5 19.5 Z" fill="#1a0500" stroke="#0d0d0d" stroke-width="0.9" stroke-linejoin="round"/>
+  <rect x="9" y="7.5" width="3" height="17" rx="1.5" fill="white" opacity="0.88"/>
+  <rect x="15" y="9" width="2" height="14" rx="1" fill="white" opacity="0.78"/>
+  <circle cx="5" cy="13.5" r="2.2" fill="#111"/>
+  <circle cx="4.3" cy="12.8" r="0.7" fill="white"/>
+</svg>
+`;
+
+const fishCursors = {
+    default: makeFishCursorUrl(fishDefaultSvg),
+    active:  makeFishCursorUrl(fishActiveSvg),
+} as const;
 
 const bubbleVertexShader = `
 uniform float uTime;
@@ -300,6 +324,7 @@ export default function DenshouoPage() {
     const [ripples, setRipples] = useState<Array<{ id: number; x: number; y: number; size: number; isHover: boolean }>>([]);
     const rippleIdRef = useRef(0);
     const lastHoverRippleAtRef = useRef(0);
+    const [cursorState, setCursorState] = useState<keyof typeof fishCursors>('default');
 
     useEffect(() => {
         const reveal = () => {
@@ -345,6 +370,21 @@ export default function DenshouoPage() {
             window.removeEventListener('keydown', reveal);
             window.removeEventListener('scroll', reveal);
             window.clearTimeout(timer);
+        };
+    }, []);
+
+    // ── Cursor open/close on click (fine pointer only) ─────────────────────────
+    useEffect(() => {
+        if (!window.matchMedia('(pointer: fine)').matches) return;
+        const onDown = () => setCursorState('active');
+        const onUp   = () => setCursorState('default');
+        window.addEventListener('pointerdown',   onDown,  { passive: true });
+        window.addEventListener('pointerup',     onUp,    { passive: true });
+        window.addEventListener('pointercancel', onUp,    { passive: true });
+        return () => {
+            window.removeEventListener('pointerdown',   onDown);
+            window.removeEventListener('pointerup',     onUp);
+            window.removeEventListener('pointercancel', onUp);
         };
     }, []);
 
@@ -411,7 +451,7 @@ export default function DenshouoPage() {
     return (
         <main
             className="relative min-h-dvh bg-[radial-gradient(circle_at_top_left,rgba(56,189,248,0.10),transparent_28%),radial-gradient(circle_at_bottom,rgba(20,184,166,0.12),transparent_35%),#041116] text-white overflow-x-hidden"
-            style={{ cursor: clownfishCursor }}
+            style={{ cursor: fishCursors[cursorState] }}
         >
             {showBackdrop && <OceanBackdrop />}
 
