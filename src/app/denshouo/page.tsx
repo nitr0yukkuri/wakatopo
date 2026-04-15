@@ -126,7 +126,7 @@ function OceanSurface() {
         for (let i = 0; i < 10; i++) {
             const r = ripplesRef.current[i];
             r.time += delta;
-            
+
             flatRipples[i * 3 + 0] = r.x;
             flatRipples[i * 3 + 1] = r.y;
             flatRipples[i * 3 + 2] = r.time;
@@ -287,19 +287,51 @@ export default function DenshouoPage() {
     const lang = searchParams.get('lang') === 'en' ? 'en' : 'ja';
     const { setActiveWork } = useStore();
     const [showBackdrop, setShowBackdrop] = useState(false);
+    const [ripples, setRipples] = useState<Array<{ id: number; x: number; y: number; size: number; isHover: boolean }>>([]);
+    const rippleIdRef = useRef(0);
+    const lastHoverRippleAtRef = useRef(0);
 
     useEffect(() => {
         const reveal = () => {
             setShowBackdrop(true);
         };
 
+        const addRipple = (event: PointerEvent, isHover = false) => {
+            if (event.pointerType !== 'mouse') return;
+
+            if (isHover) {
+                const now = window.performance.now();
+                if (now - lastHoverRippleAtRef.current < 120) return;
+                lastHoverRippleAtRef.current = now;
+            }
+
+            const id = rippleIdRef.current;
+            rippleIdRef.current += 1;
+
+            setRipples((current) => [
+                ...current,
+                {
+                    id,
+                    x: (event.clientX / window.innerWidth) * 100,
+                    y: (event.clientY / window.innerHeight) * 100,
+                    size: isHover ? 96 + Math.random() * 28 : 120 + Math.random() * 40,
+                    isHover,
+                },
+            ]);
+        };
+        const handlePointerMove = (event: PointerEvent) => addRipple(event, true);
+
         window.addEventListener('pointerdown', reveal, { once: true, passive: true });
+        window.addEventListener('pointerdown', addRipple, { passive: true });
+        window.addEventListener('pointermove', handlePointerMove, { passive: true });
         window.addEventListener('keydown', reveal, { once: true });
         window.addEventListener('scroll', reveal, { once: true, passive: true });
         const timer = window.setTimeout(reveal, 15000);
 
         return () => {
             window.removeEventListener('pointerdown', reveal);
+            window.removeEventListener('pointerdown', addRipple);
+            window.removeEventListener('pointermove', handlePointerMove);
             window.removeEventListener('keydown', reveal);
             window.removeEventListener('scroll', reveal);
             window.clearTimeout(timer);
@@ -370,7 +402,33 @@ export default function DenshouoPage() {
         <main className="relative min-h-dvh bg-[radial-gradient(circle_at_top_left,rgba(56,189,248,0.10),transparent_28%),radial-gradient(circle_at_bottom,rgba(20,184,166,0.12),transparent_35%),#041116] text-white overflow-x-hidden">
             {showBackdrop && <OceanBackdrop />}
 
-            <div className="pointer-events-none fixed inset-0 z-[3] opacity-55" aria-hidden="true">
+            <div className="pointer-events-none fixed inset-0 z-4 overflow-hidden" aria-hidden="true">
+                {ripples.map((ripple) => (
+                    <motion.div
+                        key={ripple.id}
+                        className="absolute rounded-full border border-cyan-100/55 bg-cyan-50/5"
+                        style={{
+                            left: `${ripple.x}%`,
+                            top: `${ripple.y}%`,
+                            width: ripple.size,
+                            height: ripple.size,
+                            x: '-50%',
+                            y: '-50%',
+                            boxShadow: ripple.isHover
+                                ? '0 0 0 1px rgba(167, 243, 208, 0.14), 0 0 22px rgba(45, 212, 191, 0.12)'
+                                : '0 0 0 1px rgba(167, 243, 208, 0.18), 0 0 34px rgba(45, 212, 191, 0.18)',
+                        }}
+                        initial={{ scale: ripple.isHover ? 0.18 : 0.15, opacity: ripple.isHover ? 0.32 : 0.5 }}
+                        animate={{ scale: ripple.isHover ? 1.45 : 1.9, opacity: 0 }}
+                        transition={{ duration: ripple.isHover ? 0.85 : 1.1, ease: 'easeOut' }}
+                        onAnimationComplete={() => {
+                            setRipples((current) => current.filter((item) => item.id !== ripple.id));
+                        }}
+                    />
+                ))}
+            </div>
+
+            <div className="pointer-events-none fixed inset-0 z-3 opacity-55" aria-hidden="true">
                 {randomizedOverviewFishSpecs.map((fish, index) => (
                     <motion.div
                         key={`overview-fish-${index}`}
