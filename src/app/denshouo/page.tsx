@@ -51,8 +51,10 @@ function FishCursor() {
         rawX: -200, rawY: -200,
         // velocity (pixels/frame, exponential moving average)
         vx: 0, vy: 0,
-        // current display angle (radians)
-        angle: 0,
+        // true = fish faces left (horizontal mirror via scale(-1,1))
+        facingLeft: false,
+        // pitch angle: up/down tilt in radians (capped ±π/2, always right-side-up)
+        pitchAngle: 0,
         // swim phase (drives sine wave)
         phase: 0,
         // mouth open (click)
@@ -241,8 +243,11 @@ function FishCursor() {
         let last = performance.now();
 
         const LERP_POS   = 0.28;   // position follow speed
-        const LERP_ANGLE = 0.10;   // angle smoothing
+        const LERP_PITCH = 0.09;   // pitch (up/down tilt) smoothing
         const VEL_DECAY  = 0.82;   // velocity decay per frame
+        // Hysteresis thresholds for left/right flip — prevents flickering at zero
+        const FLIP_TO_LEFT_VX  = -1.2;  // flip to face-left when vx drops below this
+        const FLIP_TO_RIGHT_VX =  1.2;  // flip to face-right when vx rises above this
 
         const loop = (now: number) => {
             s.raf = requestAnimationFrame(loop);
@@ -255,27 +260,35 @@ function FishCursor() {
             s.x += (s.rawX - s.x) * LERP_POS * dt;
             s.y += (s.rawY - s.y) * LERP_POS * dt;
 
-            // Velocity (pixels / frame at 60 fps)
+            // Velocity (pixels / normalised-frame at 60 fps)
             const frameVX = (s.x - prevX);
             const frameVY = (s.y - prevY);
             s.vx = s.vx * VEL_DECAY + frameVX * (1 - VEL_DECAY);
             s.vy = s.vy * VEL_DECAY + frameVY * (1 - VEL_DECAY);
 
             // Advance swim phase proportional to speed
-            const speed  = Math.hypot(s.vx, s.vy);
+            const speed = Math.hypot(s.vx, s.vy);
             s.phase += speed * 0.18 * dt;
 
-            // Target angle: direction of velocity (right = 0)
-            // Fish points RIGHT in local space, so angle = atan2(vy,vx)
-            const targetAngle = speed > 0.3
-                ? Math.atan2(s.vy, s.vx)
-                : s.angle;
+            // ── Facing direction (hysteresis flip) ──────────────────────────
+            // Fish always stays right-side-up; we mirror it with scale(-1,1)
+            // to face left instead of rotating 180° (which would flip the dorsal fin).
+            if (s.vx < FLIP_TO_LEFT_VX)  s.facingLeft = true;
+            if (s.vx > FLIP_TO_RIGHT_VX) s.facingLeft = false;
 
-            // Shortest-path angle interpolation
-            let da = targetAngle - s.angle;
-            while (da >  Math.PI) da -= Math.PI * 2;
-            while (da < -Math.PI) da += Math.PI * 2;
-            s.angle += da * LERP_ANGLE * dt;
+            // ── Pitch angle: up/down tilt ───────────────────────────────────
+            // Compute target pitch relative to the fish's current facing direction
+            // so tilting up/down works correctly regardless of left/right.
+            let targetPitch = 0;
+            if (speed > 0.4) {
+                const signedVx = s.facingLeft ? -s.vx : s.vx; // always positive when moving forward
+                targetPitch = Math.atan2(s.vy, signedVx + 0.01) * 0.72; // dampen full tilt
+            }
+            // Smooth pitch
+            let dp = targetPitch - s.pitchAngle;
+            while (dp >  Math.PI) dp -= Math.PI * 2;
+            while (dp < -Math.PI) dp += Math.PI * 2;
+            s.pitchAngle += dp * LERP_PITCH * dt;
 
             // Clear
             ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -284,7 +297,9 @@ function FishCursor() {
             ctx.save();
             ctx.scale(dpr, dpr);
             ctx.translate(s.x, s.y);
-            ctx.rotate(s.angle);
+            // Apply facing direction THEN pitch so dorsal fin stays on top always
+            if (s.facingLeft) ctx.scale(-1, 1);
+            ctx.rotate(s.pitchAngle);
             drawFish(t, s.mouthOpen);
             ctx.restore();
         };
