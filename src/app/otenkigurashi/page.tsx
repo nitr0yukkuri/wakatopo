@@ -31,22 +31,34 @@ function CloudDecoration({ className, style, flip }: { className: string, style?
     );
 }
 
-// ── Animated cloud cursor ─────────────────────────────────────────────────
-// Uses the same quadratic-curve path as CloudDecoration (viewBox 0 0 200 100).
-// Bobs gently when hovering, squishes/leans when moving fast.
-function CloudCursor() {
+// ── Weather-aware animated cursor ─────────────────────────────────────────────
+// Reads weather from the Zustand store and draws a matching cursor motif.
+// Motifs: Cloud (bob+squish) / Sun+Morning (spinning rays) / Rain (teardrop)
+//         Snow (rotating snowflake) / Night (crescent moon) / Thunder (bolt)
+function WeatherCursor() {
+    const { weather } = useStore();
+    const weatherRef  = useRef(weather);
+    useEffect(() => { weatherRef.current = weather; }, [weather]);
+
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const stateRef  = useRef({
-        x:    -300, y:    -300,
-        rawX: -300, rawY: -300,
-        vx: 0, vy: 0,
-        bobPhase: 0,
-        squishX: 1.0, squishY: 1.0,
-        lean: 0,
-        raf:  0,
+        x: -300, y: -300, rawX: -300, rawY: -300,
+        vx: 0, vy: 0, raf: 0,
+        // Clouds
+        bobPhase: 0, squishX: 1.0, squishY: 1.0, lean: 0,
+        // Clear / Morning
+        sunRot: 0,
+        // Snow
+        snowRot: 0,
+        // Rain
+        rainStretch: 1.0, rainTilt: 0,
+        // Night
+        moonBobPhase: 0,
+        // Thunder
+        shakeX: 0, shakeY: 0, flashPhase: 0,
     });
 
-    // ── Mouse tracking ───────────────────────────────────────────────────
+    // ── Mouse tracking ───────────────────────────────────────────────────────
     useEffect(() => {
         if (!window.matchMedia('(pointer: fine)').matches) return;
         const s = stateRef.current;
@@ -59,7 +71,7 @@ function CloudCursor() {
         return () => window.removeEventListener('pointermove', onMove);
     }, []);
 
-    // ── Canvas animation loop ───────────────────────────────────────────
+    // ── Canvas animation loop ─────────────────────────────────────────────────
     useEffect(() => {
         const canvas = canvasRef.current;
         if (!canvas) return;
@@ -78,28 +90,15 @@ function CloudCursor() {
         const ctx = canvas.getContext('2d')!;
         const dpr = window.devicePixelRatio;
 
-        // ── Cloud drawing ────────────────────────────────────────────────
-        // Same quadratic-curve path as <CloudDecoration> SVG (viewBox 0 0 200 100).
-        // kX drives x-coords only (width); k drives y-coords (height unchanged).
-        // kX=0.22 → ~33px wide   k=0.30 → ~21px tall
-        const drawCloud = (squishX: number, squishY: number, lean: number, bobY: number) => {
-            const k  = 0.30;   // vertical scale  — height stays the same
-            const kX = 0.22;   // horizontal scale — only this controls width
-            const CX = 95 * kX;  // cloud center x
-            const CY = 52 * k;   // cloud center y
-
+        // ════════════════════════════════════════════════════════════════════
+        //  CLOUD  ── same bezier path as CloudDecoration SVG
+        // ════════════════════════════════════════════════════════════════════
+        const drawCloud = (sqX: number, sqY: number, lean: number, bobY: number) => {
+            const k = 0.30, kX = 0.22;
+            const CX = 95 * kX, CY = 52 * k;
             ctx.save();
-            ctx.translate(0, bobY);
-            ctx.scale(squishX, squishY);
-            ctx.rotate(lean);
-            ctx.translate(-CX, -CY);
-
-            // Soft drop shadow
-            ctx.shadowBlur    = 10;
-            ctx.shadowOffsetY = 3;
-            ctx.shadowColor   = 'rgba(120,160,200,0.28)';
-
-            // Cloud outline path — x uses kX, y uses k
+            ctx.translate(0, bobY); ctx.scale(sqX, sqY); ctx.rotate(lean); ctx.translate(-CX, -CY);
+            ctx.shadowBlur = 10; ctx.shadowOffsetY = 3; ctx.shadowColor = 'rgba(120,160,200,0.28)';
             ctx.beginPath();
             ctx.moveTo(50*kX, 80*k);
             ctx.quadraticCurveTo(20*kX, 80*k, 20*kX, 55*k);
@@ -109,64 +108,242 @@ function CloudCursor() {
             ctx.quadraticCurveTo(170*kX, 30*k, 170*kX, 55*k);
             ctx.quadraticCurveTo(170*kX, 80*k, 140*kX, 80*k);
             ctx.closePath();
-
-            // Fill: white→light-blue gradient (top to bottom)
-            const grad = ctx.createLinearGradient(20*kX, 10*k, 20*kX, 80*k);
-            grad.addColorStop(0, 'rgba(255,255,255,0.98)');
-            grad.addColorStop(1, 'rgba(230,243,252,0.96)');
-            ctx.fillStyle = grad;
-            ctx.fill();
-
-            // Stroke: same #98adc2 blue-gray as CloudDecoration border
-            ctx.shadowBlur    = 0;
-            ctx.shadowOffsetY = 0;
-            ctx.strokeStyle   = '#98adc2';
-            ctx.lineWidth     = 2.8 * k;
-            ctx.stroke();
-
+            const g = ctx.createLinearGradient(20*kX, 10*k, 20*kX, 80*k);
+            g.addColorStop(0, 'rgba(255,255,255,0.98)'); g.addColorStop(1, 'rgba(230,243,252,0.96)');
+            ctx.fillStyle = g; ctx.fill();
+            ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
+            ctx.strokeStyle = '#98adc2'; ctx.lineWidth = 2.8*k; ctx.stroke();
             ctx.restore();
         };
 
-        // ── Animation loop ──────────────────────────────────────────────────
+        // ════════════════════════════════════════════════════════════════════
+        //  SUN  ── spinning rays + pulsing circle body
+        // ════════════════════════════════════════════════════════════════════
+        const drawSun = (t: number, sunRot: number) => {
+            const pulse  = 1 + Math.sin(t * 2.5) * 0.06;
+            const BODY_R = 9 * pulse;
+            const RAY_IN = 13 * pulse, RAY_OUT = 19 * pulse;
+            const RAY_W  = 2.2;
+            ctx.save();
+            ctx.rotate(sunRot);
+            // Outer glow
+            const glow = ctx.createRadialGradient(0,0,0, 0,0,22);
+            glow.addColorStop(0, 'rgba(255,235,100,0.22)'); glow.addColorStop(1, 'rgba(255,200,50,0)');
+            ctx.beginPath(); ctx.arc(0,0,22,0,Math.PI*2); ctx.fillStyle = glow; ctx.fill();
+            // 8 diamond rays
+            for (let i = 0; i < 8; i++) {
+                ctx.save();
+                ctx.rotate((i / 8) * Math.PI * 2);
+                const MID = (RAY_IN + RAY_OUT) / 2;
+                ctx.beginPath();
+                ctx.moveTo(0, -RAY_IN);
+                ctx.lineTo(-RAY_W * 0.5, -MID);
+                ctx.lineTo(0, -RAY_OUT);
+                ctx.lineTo( RAY_W * 0.5, -MID);
+                ctx.closePath();
+                ctx.fillStyle = '#FFB347'; ctx.fill();
+                ctx.restore();
+            }
+            // Body circle
+            const bodyG = ctx.createRadialGradient(-3,-3,0, 0,0,BODY_R);
+            bodyG.addColorStop(0,'#FFF9C4'); bodyG.addColorStop(0.5,'#FFD700'); bodyG.addColorStop(1,'#FF8C1A');
+            ctx.beginPath(); ctx.arc(0,0,BODY_R,0,Math.PI*2);
+            ctx.fillStyle = bodyG; ctx.fill();
+            ctx.strokeStyle = '#C46200'; ctx.lineWidth = 1.1; ctx.stroke();
+            ctx.restore();
+        };
+
+        // ════════════════════════════════════════════════════════════════════
+        //  RAIN  ── teardrop, points down, tilts with wind, stretches with speed
+        // ════════════════════════════════════════════════════════════════════
+        const drawRain = (stretch: number, tilt: number) => {
+            const W = 7, TOP_CY = -4, BOT = 13;
+            ctx.save();
+            ctx.rotate(tilt);               // wind lean
+            ctx.scale(1, stretch);          // elongate in falling direction
+            ctx.shadowBlur = 8; ctx.shadowColor = 'rgba(59,130,246,0.30)';
+            // Teardrop path
+            ctx.beginPath();
+            ctx.arc(0, TOP_CY, W, Math.PI, 0);
+            ctx.bezierCurveTo( W,  TOP_CY + W,  W * 0.35, BOT * 0.75, 0, BOT);
+            ctx.bezierCurveTo(-W * 0.35, BOT * 0.75, -W, TOP_CY + W, -W, TOP_CY);
+            ctx.closePath();
+            const g = ctx.createLinearGradient(0, TOP_CY, 0, BOT);
+            g.addColorStop(0, 'rgba(186,230,253,0.97)');
+            g.addColorStop(0.5, 'rgba(96,165,250,0.95)');
+            g.addColorStop(1, 'rgba(37,99,235,0.90)');
+            ctx.fillStyle = g; ctx.fill();
+            ctx.shadowBlur = 0;
+            ctx.strokeStyle = 'rgba(59,130,246,0.65)'; ctx.lineWidth = 1.2; ctx.stroke();
+            // Highlight
+            ctx.beginPath(); ctx.ellipse(-2.5, TOP_CY - 1, 2, 1.4, -0.4, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(255,255,255,0.72)'; ctx.fill();
+            ctx.restore();
+        };
+
+        // ════════════════════════════════════════════════════════════════════
+        //  SNOW  ── 6-armed snowflake, slow rotation, gentle scale pulse
+        // ════════════════════════════════════════════════════════════════════
+        const drawSnow = (snowRot: number, t: number) => {
+            const ARM = 15;
+            const pulse = 1 + Math.sin(t * 1.8) * 0.07;
+            ctx.save();
+            ctx.rotate(snowRot); ctx.scale(pulse, pulse);
+            for (let i = 0; i < 6; i++) {
+                ctx.save();
+                ctx.rotate((i / 6) * Math.PI * 2);
+                // Main arm
+                ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(0, -ARM);
+                ctx.strokeStyle = 'rgba(186,230,253,0.95)'; ctx.lineWidth = 1.8; ctx.stroke();
+                // Branches at 60% and 35%
+                [[ARM * 0.60, 5.2], [ARM * 0.36, 3.6]].forEach(([d, hw]) => {
+                    ctx.beginPath();
+                    ctx.moveTo(-hw, -d); ctx.lineTo(hw, -d);
+                    ctx.strokeStyle = 'rgba(219,234,254,0.88)'; ctx.lineWidth = 1.3; ctx.stroke();
+                });
+                // Tip diamond
+                ctx.beginPath();
+                ctx.moveTo(0,  -ARM - 3); ctx.lineTo( 2.5, -ARM);
+                ctx.lineTo(0, -ARM + 3);  ctx.lineTo(-2.5, -ARM);
+                ctx.closePath();
+                ctx.fillStyle = 'rgba(224,242,254,0.92)'; ctx.fill();
+                ctx.restore();
+            }
+            // Center    
+            ctx.beginPath(); ctx.arc(0,0,3,0,Math.PI*2);
+            ctx.fillStyle = 'rgba(255,255,255,0.97)'; ctx.fill();
+            ctx.restore();
+        };
+
+        // ════════════════════════════════════════════════════════════════════
+        //  MOON  ── crescent (outer circle minus offset inner), tiny stars
+        //           Uses destination-out on the blank-after-clearRect canvas.
+        // ════════════════════════════════════════════════════════════════════
+        const drawMoon = (bobY: number, t: number) => {
+            const OUTER = 13, INNER = 10.5, OX = 6, OY = -2.5;
+            ctx.save();
+            ctx.translate(0, bobY);
+            // Crescent body
+            ctx.beginPath(); ctx.arc(0, 0, OUTER, 0, Math.PI * 2);
+            ctx.fillStyle = '#dce8ff'; ctx.fill();
+            // Cut shadow side (destination-out only touches the canvas pixels we just drew)
+            ctx.globalCompositeOperation = 'destination-out';
+            ctx.beginPath(); ctx.arc(OX, OY, INNER, 0, Math.PI * 2);
+            ctx.fillStyle = 'black'; ctx.fill();
+            ctx.globalCompositeOperation = 'source-over';
+            // Soft rim glow
+            const glow = ctx.createRadialGradient(0,0,OUTER*0.6, 0,0,OUTER+7);
+            glow.addColorStop(0, 'rgba(167,196,245,0.10)');
+            glow.addColorStop(1, 'rgba(167,196,245,0)');
+            ctx.beginPath(); ctx.arc(0,0,OUTER+7,0,Math.PI*2);
+            ctx.fillStyle = glow; ctx.fill();
+            // Tiny twinkling stars nearby
+            ([[-20,-11],[13,15],[22,-4]] as [number,number][]).forEach(([sx,sy], i) => {
+                const tw = 0.35 + 0.65 * Math.sin(t * 1.9 + i * 2.4);
+                ctx.beginPath(); ctx.arc(sx, sy, 1.2, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(220,232,255,${tw.toFixed(2)})`; ctx.fill();
+            });
+            ctx.restore();
+        };
+
+        // ════════════════════════════════════════════════════════════════════
+        //  THUNDER  ── lightning bolt, constant micro-shake, rare bright flash
+        // ════════════════════════════════════════════════════════════════════
+        const drawThunder = (shakeX: number, shakeY: number, flash: number) => {
+            ctx.save();
+            ctx.translate(shakeX, shakeY);
+            // Electric glow (brighter during flash)
+            const glowAlpha = 0.14 + flash * 0.50;
+            const glow = ctx.createRadialGradient(0,0,0, 0,0,20);
+            glow.addColorStop(0, `rgba(253,224,71,${glowAlpha})`);
+            glow.addColorStop(1, 'rgba(251,191,36,0)');
+            ctx.beginPath(); ctx.arc(0,0,20,0,Math.PI*2); ctx.fillStyle = glow; ctx.fill();
+            // Bolt path (classic zigzag pointing down)
+            ctx.beginPath();
+            ctx.moveTo( 4, -17);   // top-right
+            ctx.lineTo(-5,  -2);   // mid-left
+            ctx.lineTo( 2,  -2);   // inner jog right
+            ctx.lineTo(-6,  17);   // bottom-left
+            ctx.lineTo( 5,   3);   // inner-right
+            ctx.lineTo(-1,   3);   // inner-left
+            ctx.closePath();
+            const bG = ctx.createLinearGradient(0,-17,0,17);
+            bG.addColorStop(0, `rgba(255,${245 - Math.round(flash*30)},160,0.98)`);
+            bG.addColorStop(1, '#F59E0B');
+            ctx.fillStyle = bG; ctx.fill();
+            ctx.strokeStyle = 'rgba(160,100,0,0.55)'; ctx.lineWidth = 0.8; ctx.stroke();
+            ctx.restore();
+        };
+
+        // ════════════════════════════════════════════════════════════════════
+        //  ANIMATION LOOP
+        // ════════════════════════════════════════════════════════════════════
         let last = performance.now();
-        const LERP_POS  = 0.18;   // how quickly cursor follows raw position
-        const VEL_DECAY = 0.88;   // velocity smoothing
+        const LERP_POS  = 0.18;
+        const VEL_DECAY = 0.88;
 
         const loop = (now: number) => {
             s.raf = requestAnimationFrame(loop);
-            const dt = Math.min((now - last) / 16.67, 4); // normalised to 60 fps
+            const dt = Math.min((now - last) / 16.67, 4);
             last = now;
+            const t = now * 0.001;
+            const w = weatherRef.current;
 
-            // Smooth position toward raw mouse
+            // ── shared position + velocity ──────────────────────────────────
             const prevX = s.x, prevY = s.y;
             s.x += (s.rawX - s.x) * LERP_POS * dt;
             s.y += (s.rawY - s.y) * LERP_POS * dt;
-
-            // Velocity (exponential moving average)
             s.vx = s.vx * VEL_DECAY + (s.x - prevX) * (1 - VEL_DECAY);
             s.vy = s.vy * VEL_DECAY + (s.y - prevY) * (1 - VEL_DECAY);
             const speed = Math.hypot(s.vx, s.vy);
 
-            // Bob: gentle when hovering (large amp), quieter when moving fast
-            s.bobPhase += 0.038 * dt;
-            const bobAmp = Math.max(1.2, 4.5 - speed * 0.5);
-            const bobY   = Math.sin(s.bobPhase * 1.6) * bobAmp;
+            // ── per-weather state update ────────────────────────────────────
+            if (w === 'Clouds') {
+                s.bobPhase += 0.038 * dt;
+                const tSqX = 1 + Math.min(speed * 0.013, 0.22);
+                s.squishX += (tSqX - s.squishX) * 0.14 * dt;
+                s.squishY += ((1/tSqX) - s.squishY) * 0.14 * dt;
+                const tL = Math.max(-0.23, Math.min(0.23, s.vx * 0.055));
+                s.lean += (tL - s.lean) * 0.10 * dt;
+            } else if (w === 'Clear' || w === 'Morning') {
+                s.sunRot += 0.018 * dt;
+            } else if (w === 'Snow') {
+                s.snowRot += 0.012 * dt;
+            } else if (w === 'Rain') {
+                const tStr = 1 + Math.min(speed * 0.028, 0.55);
+                s.rainStretch += (tStr - s.rainStretch) * 0.14 * dt;
+                const tTilt = Math.max(-0.45, Math.min(0.45, s.vx * 0.042));
+                s.rainTilt += (tTilt - s.rainTilt) * 0.10 * dt;
+            } else if (w === 'Night') {
+                s.moonBobPhase += 0.022 * dt;
+            } else if (w === 'Thunder') {
+                s.shakeX = s.shakeX * 0.62 + (Math.random() - 0.5) * 3.0;
+                s.shakeY = s.shakeY * 0.62 + (Math.random() - 0.5) * 1.8;
+                if (Math.random() < 0.008) s.flashPhase = 1.0;
+                s.flashPhase *= 0.88;
+            }
 
-            // Squish: cloud stretches horizontally like a puff of wind
-            const tSqX = 1 + Math.min(speed * 0.013, 0.22);
-            const tSqY = 1 / tSqX; // preserve area
-            s.squishX += (tSqX - s.squishX) * 0.14 * dt;
-            s.squishY += (tSqY - s.squishY) * 0.14 * dt;
-
-            // Lean: subtle tilt toward movement direction (max ±13°)
-            const tLean = Math.max(-0.23, Math.min(0.23, s.vx * 0.055));
-            s.lean += (tLean - s.lean) * 0.10 * dt;
-
+            // ── draw ────────────────────────────────────────────────────────
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.save();
             ctx.scale(dpr, dpr);
             ctx.translate(s.x, s.y);
-            drawCloud(s.squishX, s.squishY, s.lean, bobY);
+
+            if (w === 'Clouds') {
+                const bobAmp = Math.max(1.2, 4.5 - speed * 0.5);
+                drawCloud(s.squishX, s.squishY, s.lean, Math.sin(s.bobPhase * 1.6) * bobAmp);
+            } else if (w === 'Clear' || w === 'Morning') {
+                drawSun(t, s.sunRot);
+            } else if (w === 'Snow') {
+                drawSnow(s.snowRot, t);
+            } else if (w === 'Rain') {
+                drawRain(s.rainStretch, s.rainTilt);
+            } else if (w === 'Night') {
+                drawMoon(Math.sin(s.moonBobPhase * 1.0) * 3.2, t);
+            } else if (w === 'Thunder') {
+                drawThunder(s.shakeX, s.shakeY, s.flashPhase);
+            }
+
             ctx.restore();
         };
 
@@ -369,7 +546,7 @@ export default function OtenkiGurashiPage() {
 
     return (
         <>
-        <CloudCursor />
+        <WeatherCursor />
         <main className={`relative w-full min-h-[120dvh] ${weather !== 'Rain' && weather !== 'Snow' ? 'bg-gradient-to-b' : ''} ${bgGradient} ${weather === 'Thunder' || weather === 'Night' ? 'text-gray-200' : 'text-gray-700'} overflow-hidden font-sans pb-32 transition-colors duration-1000`} style={{ cursor: isFinePointer ? 'none' : 'auto' }}>
 
             <nav className="fixed top-0 left-0 w-full z-50 p-6 md:p-10">
