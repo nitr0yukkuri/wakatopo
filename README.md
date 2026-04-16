@@ -1,4 +1,4 @@
-# 🌍 WAKATOPO | Living Planet Portfolio
+# 🌍 WAKATO | Living Planet Portfolio
 
 <div align="center">
   <img src="https://img.shields.io/badge/CSS_Winner-SOTD_WINNER-gold?style=for-the-badge&logo=trophy&logoColor=white" />
