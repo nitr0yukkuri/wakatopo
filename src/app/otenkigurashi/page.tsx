@@ -118,6 +118,7 @@ function WeatherCursor() {
 
         // ════════════════════════════════════════════════════════════════════
         //  SUN  ── spinning rays + pulsing circle body
+        //  Colors: pastel warm yellow palette to match otenkigurashi soft tones
         // ════════════════════════════════════════════════════════════════════
         const drawSun = (t: number, sunRot: number) => {
             const pulse  = 1 + Math.sin(t * 2.5) * 0.06;
@@ -126,11 +127,11 @@ function WeatherCursor() {
             const RAY_W  = 2.2;
             ctx.save();
             ctx.rotate(sunRot);
-            // Outer glow
+            // Outer glow — very soft warm-white, barely visible
             const glow = ctx.createRadialGradient(0,0,0, 0,0,22);
-            glow.addColorStop(0, 'rgba(255,235,100,0.22)'); glow.addColorStop(1, 'rgba(255,200,50,0)');
+            glow.addColorStop(0, 'rgba(255,245,190,0.13)'); glow.addColorStop(1, 'rgba(255,230,130,0)');
             ctx.beginPath(); ctx.arc(0,0,22,0,Math.PI*2); ctx.fillStyle = glow; ctx.fill();
-            // 8 diamond rays
+            // 8 diamond rays — soft dusty gold
             for (let i = 0; i < 8; i++) {
                 ctx.save();
                 ctx.rotate((i / 8) * Math.PI * 2);
@@ -141,15 +142,17 @@ function WeatherCursor() {
                 ctx.lineTo(0, -RAY_OUT);
                 ctx.lineTo( RAY_W * 0.5, -MID);
                 ctx.closePath();
-                ctx.fillStyle = '#FFB347'; ctx.fill();
+                ctx.fillStyle = '#FFD88A'; ctx.fill();  // was #FFB347
                 ctx.restore();
             }
-            // Body circle
+            // Body circle — warm-white center → pastel golden → soft peach outer
             const bodyG = ctx.createRadialGradient(-3,-3,0, 0,0,BODY_R);
-            bodyG.addColorStop(0,'#FFF9C4'); bodyG.addColorStop(0.5,'#FFD700'); bodyG.addColorStop(1,'#FF8C1A');
+            bodyG.addColorStop(0, '#FFFDF0');   // was #FFF9C4 — brighter/warmer white
+            bodyG.addColorStop(0.5, '#FFE57A'); // was #FFD700 — softer straw yellow
+            bodyG.addColorStop(1, '#FFBA72');   // was #FF8C1A — soft peach instead of vivid orange
             ctx.beginPath(); ctx.arc(0,0,BODY_R,0,Math.PI*2);
             ctx.fillStyle = bodyG; ctx.fill();
-            ctx.strokeStyle = '#C46200'; ctx.lineWidth = 1.1; ctx.stroke();
+            ctx.strokeStyle = '#aee1f9'; ctx.lineWidth = 2.0; ctx.stroke(); // sky-blue matching Clear bg
             ctx.restore();
         };
 
