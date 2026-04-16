@@ -157,44 +157,51 @@ function WeatherCursor() {
         };
 
         // ════════════════════════════════════════════════════════════════════
-        //  RAIN  ── umbrella: dome canopy + 3 scallops + ribs + J-handle
+        //  RAIN  ── umbrella (matches illustrated style in the app)
+        //  Clean semicircle dome · 3 ribs · ferrule tip · J-handle
         // ════════════════════════════════════════════════════════════════════
         const drawRain = (_stretch: number, tilt: number) => {
             const R = 13;  // dome radius → 26px wide
             ctx.save();
-            ctx.rotate(tilt * 0.45);  // gentle wind lean (umbrella is more rigid)
+            ctx.rotate(tilt * 0.45);  // gentle wind lean
 
-            // ── Canopy ─────────────────────────────────────────────────────
+            // ── Canopy: clean filled semicircle ────────────────────────────
             ctx.save();
             ctx.shadowBlur = 8; ctx.shadowOffsetY = 2;
-            ctx.shadowColor = 'rgba(80,140,200,0.22)';
+            ctx.shadowColor = 'rgba(80,140,200,0.20)';
             ctx.beginPath();
-            ctx.arc(0, 0, R, Math.PI, 0, false);          // dome over the top ↑
-            ctx.arc( R*0.692, 0, R*0.308, 0, Math.PI);   // right scallop ↓
-            ctx.arc( 0,       0, R*0.385, 0, Math.PI);   // center scallop ↓
-            ctx.arc(-R*0.692, 0, R*0.308, 0, Math.PI);   // left scallop ↓
-            ctx.closePath();
-            const cG = ctx.createLinearGradient(0, -R, 0, R*0.4);
-            cG.addColorStop(0, 'rgba(242,251,255,0.98)');
-            cG.addColorStop(1, 'rgba(200,228,248,0.96)');
-            ctx.fillStyle = cG; ctx.fill();
+            ctx.arc(0, 0, R, Math.PI, 0, false);  // dome ↑ through (0,−R)
+            ctx.closePath();                        // flat base: (R,0)→(−R,0)
+            ctx.fillStyle = 'rgba(142,203,230,0.93)';  // robin-egg blue
+            ctx.fill();
             ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
-            ctx.strokeStyle = 'rgba(120,170,215,0.80)'; ctx.lineWidth = 1.4; ctx.stroke();
+            // Outer arc only (not the flat base) for a clean look
+            ctx.beginPath();
+            ctx.arc(0, 0, R, Math.PI, 0, false);
+            ctx.strokeStyle = 'rgba(88,158,205,0.88)'; ctx.lineWidth = 1.3; ctx.stroke();
             ctx.restore();
 
-            // ── Ribs: center → scallop boundary points on dome ─────────────
-            // Boundary x = ±R*0.385; on dome: y = −R*sqrt(1−0.385²) ≈ −R*0.923
-            const bx = R * 0.385, by = -R * 0.923;
-            ctx.strokeStyle = 'rgba(155,200,238,0.50)'; ctx.lineWidth = 0.7;
-            ([[ bx, by], [-bx, by], [0, -R]] as [number,number][]).forEach(([ex, ey]) => {
+            // ── Ribs: 3 evenly-spaced lines from center to dome surface ────
+            // Arc spans angle π→2π (screen-clockwise). Rib angles at:
+            //   4π/3 (upper-left), 3π/2 (top), 5π/3 (upper-right)
+            ctx.strokeStyle = 'rgba(75,145,192,0.60)'; ctx.lineWidth = 0.9; ctx.lineCap = 'round';
+            ([
+                [R * Math.cos(4*Math.PI/3), R * Math.sin(4*Math.PI/3)],  // upper-left
+                [0,                          -R                        ],  // top (straight up)
+                [R * Math.cos(5*Math.PI/3), R * Math.sin(5*Math.PI/3)],  // upper-right
+            ] as [number,number][]).forEach(([ex, ey]) => {
                 ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(ex, ey); ctx.stroke();
             });
 
-            // ── Handle: shaft + J-hook ──────────────────────────────────────
+            // ── Ferrule: small circle at dome tip ──────────────────────────
+            ctx.beginPath(); ctx.arc(0, -R - 1.8, 2, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(88,155,205,0.95)'; ctx.fill();
+
+            // ── Handle: vertical shaft + J-hook ────────────────────────────
             ctx.beginPath();
-            ctx.moveTo(0, 0); ctx.lineTo(0, R + 3);       // vertical shaft
-            ctx.arc(3.5, R + 3, 3.5, Math.PI, 0);         // J-hook curves right
-            ctx.strokeStyle = 'rgba(100,155,205,0.82)';
+            ctx.moveTo(0, 0); ctx.lineTo(0, R + 4);     // shaft down
+            ctx.arc(3.5, R + 4, 3.5, Math.PI, 0);       // J-hook curves right
+            ctx.strokeStyle = 'rgba(88,148,200,0.85)';
             ctx.lineWidth = 1.6; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.stroke();
 
             ctx.restore();
