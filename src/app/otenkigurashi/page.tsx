@@ -152,35 +152,51 @@ function WeatherCursor() {
             bodyG.addColorStop(1, '#FFBA72');   // was #FF8C1A — soft peach instead of vivid orange
             ctx.beginPath(); ctx.arc(0,0,BODY_R,0,Math.PI*2);
             ctx.fillStyle = bodyG; ctx.fill();
-            ctx.strokeStyle = '#aee1f9'; ctx.lineWidth = 2.0; ctx.stroke(); // sky-blue matching Clear bg
+            ctx.strokeStyle = 'rgba(190,125,50,0.65)'; ctx.lineWidth = 1.1; ctx.stroke();
             ctx.restore();
         };
 
         // ════════════════════════════════════════════════════════════════════
-        //  RAIN  ── teardrop, points down, tilts with wind, stretches with speed
+        //  RAIN  ── umbrella: dome canopy + 3 scallops + ribs + J-handle
         // ════════════════════════════════════════════════════════════════════
-        const drawRain = (stretch: number, tilt: number) => {
-            const W = 7, TOP_CY = -4, BOT = 13;
+        const drawRain = (_stretch: number, tilt: number) => {
+            const R = 13;  // dome radius → 26px wide
             ctx.save();
-            ctx.rotate(tilt);               // wind lean
-            ctx.scale(1, stretch);          // elongate in falling direction
-            ctx.shadowBlur = 8; ctx.shadowColor = 'rgba(59,130,246,0.30)';
-            // Teardrop path
+            ctx.rotate(tilt * 0.45);  // gentle wind lean (umbrella is more rigid)
+
+            // ── Canopy ─────────────────────────────────────────────────────
+            ctx.save();
+            ctx.shadowBlur = 8; ctx.shadowOffsetY = 2;
+            ctx.shadowColor = 'rgba(80,140,200,0.22)';
             ctx.beginPath();
-            ctx.arc(0, TOP_CY, W, Math.PI, 0);
-            ctx.bezierCurveTo( W,  TOP_CY + W,  W * 0.35, BOT * 0.75, 0, BOT);
-            ctx.bezierCurveTo(-W * 0.35, BOT * 0.75, -W, TOP_CY + W, -W, TOP_CY);
+            ctx.arc(0, 0, R, Math.PI, 0, false);          // dome over the top ↑
+            ctx.arc( R*0.692, 0, R*0.308, 0, Math.PI);   // right scallop ↓
+            ctx.arc( 0,       0, R*0.385, 0, Math.PI);   // center scallop ↓
+            ctx.arc(-R*0.692, 0, R*0.308, 0, Math.PI);   // left scallop ↓
             ctx.closePath();
-            const g = ctx.createLinearGradient(0, TOP_CY, 0, BOT);
-            g.addColorStop(0, 'rgba(186,230,253,0.97)');
-            g.addColorStop(0.5, 'rgba(96,165,250,0.95)');
-            g.addColorStop(1, 'rgba(37,99,235,0.90)');
-            ctx.fillStyle = g; ctx.fill();
-            ctx.shadowBlur = 0;
-            ctx.strokeStyle = 'rgba(59,130,246,0.65)'; ctx.lineWidth = 1.2; ctx.stroke();
-            // Highlight
-            ctx.beginPath(); ctx.ellipse(-2.5, TOP_CY - 1, 2, 1.4, -0.4, 0, Math.PI * 2);
-            ctx.fillStyle = 'rgba(255,255,255,0.72)'; ctx.fill();
+            const cG = ctx.createLinearGradient(0, -R, 0, R*0.4);
+            cG.addColorStop(0, 'rgba(242,251,255,0.98)');
+            cG.addColorStop(1, 'rgba(200,228,248,0.96)');
+            ctx.fillStyle = cG; ctx.fill();
+            ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
+            ctx.strokeStyle = 'rgba(120,170,215,0.80)'; ctx.lineWidth = 1.4; ctx.stroke();
+            ctx.restore();
+
+            // ── Ribs: center → scallop boundary points on dome ─────────────
+            // Boundary x = ±R*0.385; on dome: y = −R*sqrt(1−0.385²) ≈ −R*0.923
+            const bx = R * 0.385, by = -R * 0.923;
+            ctx.strokeStyle = 'rgba(155,200,238,0.50)'; ctx.lineWidth = 0.7;
+            ([[ bx, by], [-bx, by], [0, -R]] as [number,number][]).forEach(([ex, ey]) => {
+                ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(ex, ey); ctx.stroke();
+            });
+
+            // ── Handle: shaft + J-hook ──────────────────────────────────────
+            ctx.beginPath();
+            ctx.moveTo(0, 0); ctx.lineTo(0, R + 3);       // vertical shaft
+            ctx.arc(3.5, R + 3, 3.5, Math.PI, 0);         // J-hook curves right
+            ctx.strokeStyle = 'rgba(100,155,205,0.82)';
+            ctx.lineWidth = 1.6; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.stroke();
+
             ctx.restore();
         };
 
