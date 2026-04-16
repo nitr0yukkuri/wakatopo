@@ -362,8 +362,6 @@ function WeatherCursor() {
             } else if (w === 'Night') {
                 s.moonBobPhase += 0.022 * dt;
             } else if (w === 'Thunder') {
-                s.shakeX = s.shakeX * 0.62 + (Math.random() - 0.5) * 3.0;
-                s.shakeY = s.shakeY * 0.62 + (Math.random() - 0.5) * 1.8;
                 if (Math.random() < 0.008) s.flashPhase = 1.0;
                 s.flashPhase *= 0.88;
             }
@@ -386,7 +384,7 @@ function WeatherCursor() {
             } else if (w === 'Night') {
                 drawMoon(Math.sin(s.moonBobPhase * 1.0) * 3.2, t);
             } else if (w === 'Thunder') {
-                drawThunder(s.shakeX, s.shakeY, s.flashPhase);
+                drawThunder(0, 0, s.flashPhase);
             }
 
             ctx.restore();
