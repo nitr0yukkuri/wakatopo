@@ -247,31 +247,76 @@ function WeatherCursor() {
         };
 
         // ════════════════════════════════════════════════════════════════════
-        //  THUNDER  ── lightning bolt, constant micro-shake, rare bright flash
+        //  THUNDER  ── storm cloud (dark version of Clouds shape) + small bolt
+        //             Cloud flashes bright on lightning; bolt glows on flash.
         // ════════════════════════════════════════════════════════════════════
         const drawThunder = (shakeX: number, shakeY: number, flash: number) => {
+            const k = 0.30, kX = 0.22;
+            const CX = 95 * kX;   // = 20.9  (horizontal cloud center)
+            const CY = 52 * k;    // = 15.6  (vertical cloud center)
+
             ctx.save();
             ctx.translate(shakeX, shakeY);
-            // Electric glow (brighter during flash)
-            const glowAlpha = 0.14 + flash * 0.50;
-            const glow = ctx.createRadialGradient(0,0,0, 0,0,20);
-            glow.addColorStop(0, `rgba(253,224,71,${glowAlpha})`);
-            glow.addColorStop(1, 'rgba(251,191,36,0)');
-            ctx.beginPath(); ctx.arc(0,0,20,0,Math.PI*2); ctx.fillStyle = glow; ctx.fill();
-            // Bolt path (classic zigzag pointing down)
+
+            // ── Storm cloud body ────────────────────────────────────────────
+            ctx.save();
+            ctx.translate(-CX, -CY);
+            // Shadow brightens blue on flash
+            ctx.shadowBlur    = 10 + flash * 10;
+            ctx.shadowOffsetY = 3;
+            ctx.shadowColor   = `rgba(80,100,200,${(0.22 + flash * 0.35).toFixed(2)})`;
+            // Same bezier path as the Clouds cursor
             ctx.beginPath();
-            ctx.moveTo( 4, -17);   // top-right
-            ctx.lineTo(-5,  -2);   // mid-left
-            ctx.lineTo( 2,  -2);   // inner jog right
-            ctx.lineTo(-6,  17);   // bottom-left
-            ctx.lineTo( 5,   3);   // inner-right
-            ctx.lineTo(-1,   3);   // inner-left
+            ctx.moveTo(50*kX, 80*k);
+            ctx.quadraticCurveTo(20*kX, 80*k, 20*kX, 55*k);
+            ctx.quadraticCurveTo(20*kX, 30*k, 50*kX, 30*k);
+            ctx.quadraticCurveTo(60*kX, 10*k, 90*kX, 10*k);
+            ctx.quadraticCurveTo(120*kX, 10*k, 130*kX, 30*k);
+            ctx.quadraticCurveTo(170*kX, 30*k, 170*kX, 55*k);
+            ctx.quadraticCurveTo(170*kX, 80*k, 140*kX, 80*k);
             ctx.closePath();
-            const bG = ctx.createLinearGradient(0,-17,0,17);
-            bG.addColorStop(0, `rgba(255,${245 - Math.round(flash*30)},160,0.98)`);
+            // Dark storm fill — flashes lighter during lightning strike
+            const r0 = Math.round(105 + flash * 90),  g0 = Math.round(112 + flash * 90),  b0 = Math.round(140 + flash * 75);
+            const r1 = Math.round(48  + flash * 70),  g1 = Math.round(55  + flash * 70),  b1 = Math.round(82  + flash * 65);
+            const cG = ctx.createLinearGradient(20*kX, 10*k, 20*kX, 80*k);
+            cG.addColorStop(0, `rgba(${r0},${g0},${b0},0.96)`);
+            cG.addColorStop(1, `rgba(${r1},${g1},${b1},0.97)`);
+            ctx.fillStyle = cG; ctx.fill();
+            ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
+            ctx.strokeStyle = 'rgba(38,44,72,0.72)';
+            ctx.lineWidth = 2.8 * k; ctx.stroke();
+            ctx.restore();
+
+            // ── Small bolt hanging from cloud bottom centre ─────────────────
+            // Cloud bottom in outer-local coords: y = 80*k − CY ≈ 8.4
+            const cloudBottom = 80 * k - CY;
+            ctx.save();
+            ctx.translate(0, cloudBottom + 0.5);
+            // Electric glow appears during flash
+            if (flash > 0.04) {
+                const gA = flash * 0.65;
+                const glw = ctx.createRadialGradient(0, 5, 0, 0, 5, 11);
+                glw.addColorStop(0, `rgba(255,240,80,${gA.toFixed(2)})`);
+                glw.addColorStop(1, 'rgba(255,200,50,0)');
+                ctx.beginPath(); ctx.arc(0, 5, 11, 0, Math.PI * 2);
+                ctx.fillStyle = glw; ctx.fill();
+            }
+            // Compact zigzag bolt
+            ctx.beginPath();
+            ctx.moveTo( 2.0,  0);
+            ctx.lineTo(-2.5,  5);
+            ctx.lineTo( 0.5,  5);
+            ctx.lineTo(-3.0, 12);
+            ctx.lineTo( 3.5,  6);
+            ctx.lineTo( 0.5,  6);
+            ctx.closePath();
+            const bG = ctx.createLinearGradient(0, 0, 0, 12);
+            bG.addColorStop(0, `rgba(255,230,80,${(0.88 + flash * 0.12).toFixed(2)})`);
             bG.addColorStop(1, '#F59E0B');
             ctx.fillStyle = bG; ctx.fill();
-            ctx.strokeStyle = 'rgba(160,100,0,0.55)'; ctx.lineWidth = 0.8; ctx.stroke();
+            ctx.strokeStyle = 'rgba(150,95,0,0.45)'; ctx.lineWidth = 0.6; ctx.stroke();
+            ctx.restore();
+
             ctx.restore();
         };
 
