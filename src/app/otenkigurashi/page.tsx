@@ -12,6 +12,7 @@ const RainParticles = dynamicImport(
     { ssr: false },
 );
 const SnowCanvas = dynamicImport(() => import('@/components/canvas/effects/SnowCanvas'), { ssr: false });
+const ThunderCanvas = dynamicImport(() => import('@/components/canvas/ThunderTransitionCanvas'), { ssr: false });
 
 export const dynamic = 'force-dynamic';
 
@@ -980,19 +981,9 @@ export default function OtenkiGurashiPage() {
                 </>
             )}
             {weather === 'Thunder' && (
-                <>
-                    <div className="fixed inset-0 pointer-events-none z-0" style={{
-                        background: 'radial-gradient(ellipse 50% 28% at 52% 18%, rgba(170,195,255,0.18), rgba(170,195,255,0.0) 72%)',
-                    }} />
-                    <div className="fixed inset-0 pointer-events-none z-0 bg-[#dbe9ff]" style={{ opacity: 0, animation: 'thunder-flash 4.8s infinite' }} />
-                    <style>{`
-                        @keyframes thunder-flash {
-                            0%, 39%, 42%, 100% { opacity: 0; }
-                            40% { opacity: 0.16; }
-                            41% { opacity: 0.05; }
-                        }
-                    `}</style>
-                </>
+                <div className="fixed inset-0 pointer-events-none z-0">
+                    <ThunderCanvas continuous={true} />
+                </div>
             )}
 
             {/* Ten-chan Companion */}
