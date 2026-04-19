@@ -30,6 +30,18 @@ let vol: Tone.Volume | null = null;
 let limiter: Tone.Limiter | null = null;
 let drumMix: Tone.Gain | null = null;
 
+// 追加: シンセのスケジューリングエラーを安全に無視するユーティリティ関数
+// (天気を連打した時など、Transportがリセットされる際に未来の時間に予約されたノーツがエラーを吐くのを防ぐため)
+const safeTrigger = (synth: any, note: any, duration: any, time: any, velocity?: any) => {
+    try {
+        if (synth && typeof synth.triggerAttackRelease === 'function') {
+            synth.triggerAttackRelease(note, duration, time, velocity);
+        }
+    } catch (e) {
+        // Tone.js timeline insertion errors are ignored safely
+    }
+};
+
 export const startOtenkiBgm = async (weather: WeatherType) => {
     await Tone.start();
     Tone.Transport.stop();
@@ -243,19 +255,19 @@ export const startOtenkiBgm = async (weather: WeatherType) => {
     drumLoop = new Tone.Loop((time) => {
         // Kick: On beats 1 (0) and 2.5 (10)
         if (beatStep === 0 || beatStep === 10) {
-            kickSynth?.triggerAttackRelease('C1', '8n', time, 0.8);
+            safeTrigger(kickSynth, 'C1', '8n', time, 0.8);
         }
         
         // Snare: On beats 2 (4) and 4 (12)
         if (beatStep === 4 || beatStep === 12) {
-            snareSynth?.triggerAttackRelease('16n', time, 0.5);
+            safeTrigger(snareSynth, '16n', time, 0.5);
         }
         
         // Hat: 8th notes (0,2,4,6...) with swing
         if (beatStep % 2 === 0) {
             const delayTime = (beatStep % 4 === 2) ? 0.05 : 0;
             const velocity = 0.4 + Math.random() * 0.3; 
-            hatSynth?.triggerAttackRelease('32n', time + delayTime, velocity);
+            safeTrigger(hatSynth, '32n', time + delayTime, velocity);
         }
         
         beatStep = (beatStep + 1) % 16;
@@ -268,14 +280,14 @@ export const startOtenkiBgm = async (weather: WeatherType) => {
         const chord = chords[barStep % chords.length];
         
         const velocity = 0.15 + Math.random() * 0.05;
-        lofiSynth?.triggerAttackRelease(chord, '2n', time, velocity);
+        safeTrigger(lofiSynth, chord, '2n', time, velocity);
         
         const rootNote = chord[0];
         const bassNote = Tone.Frequency(rootNote).transpose(-12).toNote();
         
-        bassSynth?.triggerAttackRelease(bassNote, '4n', time, 0.7);
+        safeTrigger(bassSynth, bassNote, '4n', time, 0.7);
         if (Math.random() > 0.5) {
-            bassSynth?.triggerAttackRelease(bassNote, '8n', time + Tone.Time('4n.').toSeconds(), 0.5);
+            safeTrigger(bassSynth, bassNote, '8n', time + Tone.Time('4n.').toSeconds(), 0.5);
         }
 
         barStep++;
@@ -291,7 +303,7 @@ export const startOtenkiBgm = async (weather: WeatherType) => {
                 const tryNote = currentChord[noteIndex % currentChord.length];
                 if (tryNote) {
                     const transposed = Tone.Frequency(tryNote).transpose(12).toNote();
-                    arpSynth?.triggerAttackRelease(transposed, '16n', time, 0.12);
+                    safeTrigger(arpSynth, transposed, '16n', time, 0.12);
                 }
             }
         }
