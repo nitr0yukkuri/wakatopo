@@ -939,9 +939,13 @@ export default function OtenkiGurashiPage() {
                     }} />
                 </>
             )}
-            <div className="fixed inset-0 pointer-events-none z-20">
-                <SnowCanvas density={1.45} />
-            </div>
+            {weather === 'Snow' && (
+                <>
+                    <div className="fixed inset-0 pointer-events-none z-20">
+                        <SnowCanvas density={1.45} />
+                    </div>
+                </>
+            )}
             {weather === 'Clouds' && (
                 <div className="fixed inset-0 pointer-events-none z-0 opacity-30">
                     <div className="w-full h-full" style={{
