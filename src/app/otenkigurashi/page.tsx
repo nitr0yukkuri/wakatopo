@@ -56,6 +56,8 @@ function WeatherCursor() {
         moonBobPhase: 0,
         // Thunder
         shakeX: 0, shakeY: 0, flashPhase: 0,
+        // Click Fuwan
+        clickScale: 0, clickVel: 0, ringRadius: 0, ringAlpha: 0,
     });
 
     // ── Mouse tracking ───────────────────────────────────────────────────────
@@ -67,8 +69,19 @@ function WeatherCursor() {
             s.rawX = e.clientX;
             s.rawY = e.clientY;
         };
+        const onDown = (e: PointerEvent) => {
+            if (e.pointerType !== 'mouse') return;
+            s.clickScale = 0.35; // Expand jump!
+            s.clickVel = 0;
+            s.ringRadius = 8;
+            s.ringAlpha = 0.8;
+        };
         window.addEventListener('pointermove', onMove, { passive: true });
-        return () => window.removeEventListener('pointermove', onMove);
+        window.addEventListener('pointerdown', onDown, { passive: true });
+        return () => {
+            window.removeEventListener('pointermove', onMove);
+            window.removeEventListener('pointerdown', onDown);
+        };
     }, []);
 
     // ── Canvas animation loop ─────────────────────────────────────────────────
@@ -238,19 +251,13 @@ function WeatherCursor() {
             // --- Body ---
             ctx.beginPath();
             ctx.arc(0, bodyY, bodyR, 0, Math.PI * 2);
-            const bodyG = ctx.createRadialGradient(-3, bodyY - 3, 0, 0, bodyY, bodyR);
-            bodyG.addColorStop(0, '#ffffff');
-            bodyG.addColorStop(1, '#e6f3fc');
-            ctx.fillStyle = bodyG;
+            ctx.fillStyle = '#ffffff';
             ctx.fill();
             
             // --- Head ---
             ctx.beginPath();
             ctx.arc(0, headY, headR, 0, Math.PI * 2);
-            const headG = ctx.createRadialGradient(-2, headY - 2, 0, 0, headY, headR);
-            headG.addColorStop(0, '#ffffff');
-            headG.addColorStop(1, '#e6f3fc');
-            ctx.fillStyle = headG;
+            ctx.fillStyle = '#ffffff';
             ctx.fill();
             
             ctx.shadowBlur = 0;
@@ -484,11 +491,37 @@ function WeatherCursor() {
                 s.flashPhase *= 0.88;
             }
 
+            // ── click spring physics ────────────────────────────────────────
+            const SPRING = 0.12;
+            const DAMPING = 0.70;
+            s.clickVel += (0 - s.clickScale) * SPRING * dt;
+            s.clickVel *= Math.pow(DAMPING, dt);
+            s.clickScale += s.clickVel * dt;
+
+            // ring expansion
+            if (s.ringAlpha > 0) {
+                s.ringRadius += 4.5 * dt;
+                s.ringAlpha -= 0.04 * dt;
+            }
+
             // ── draw ────────────────────────────────────────────────────────
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.save();
             ctx.scale(dpr, dpr);
             ctx.translate(s.x, s.y);
+
+            // Ring effect
+            if (s.ringAlpha > 0) {
+                ctx.beginPath();
+                ctx.arc(0, 0, s.ringRadius, 0, Math.PI * 2);
+                ctx.strokeStyle = `rgba(255, 255, 255, ${Math.max(0, s.ringAlpha)})`;
+                ctx.lineWidth = 2.5;
+                ctx.stroke();
+            }
+
+            // Apply Fuwan scale
+            const bs = 1.0 + Math.max(-0.5, s.clickScale);
+            ctx.scale(bs, bs);
 
             if (w === 'Clouds') {
                 const bobAmp = Math.max(1.2, 4.5 - speed * 0.5);
@@ -906,13 +939,9 @@ export default function OtenkiGurashiPage() {
                     }} />
                 </>
             )}
-            {weather === 'Snow' && (
-                <>
-                    <div className="fixed inset-0 pointer-events-none z-20">
-                        <SnowCanvas density={1.45} />
-                    </div>
-                </>
-            )}
+            <div className="fixed inset-0 pointer-events-none z-20">
+                <SnowCanvas density={1.45} />
+            </div>
             {weather === 'Clouds' && (
                 <div className="fixed inset-0 pointer-events-none z-0 opacity-30">
                     <div className="w-full h-full" style={{
