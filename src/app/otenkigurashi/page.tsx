@@ -157,87 +157,179 @@ function WeatherCursor() {
         };
 
         // ════════════════════════════════════════════════════════════════════
-        //  RAIN  ── umbrella (matches illustrated style in the app)
-        //  Clean semicircle dome · 3 ribs · ferrule tip · J-handle
+        //  RAIN  ── illustrated umbrella
+        //  4 equal pie-panel dome · 3 rib lines · ferrule · J-handle
+        //  Panels alternating light/dark for classic umbrella illustration look
         // ════════════════════════════════════════════════════════════════════
         const drawRain = (_stretch: number, tilt: number) => {
-            const R = 13;  // dome radius → 26px wide
+            const R = 14;  // dome radius → 28px wide
             ctx.save();
-            ctx.rotate(tilt * 0.45);  // gentle wind lean
+            ctx.rotate(tilt * 0.45);
 
-            // ── Canopy: clean filled semicircle ────────────────────────────
+            // ── Canopy: 4 equal pie-slice panels (45° each) ────────────────
+            // Arc spans π→2π going through top (3π/2). Equal splits at π/4 intervals:
+            //   π(left) | 5π/4(upper-left) | 3π/2(top) | 7π/4(upper-right) | 2π(right)
+            const ANGLES = [Math.PI, 5*Math.PI/4, 3*Math.PI/2, 7*Math.PI/4, 2*Math.PI];
+            const LIGHT  = 'rgba(168,220,242,0.94)';  // lighter robin-egg blue
+            const DARK   = 'rgba(112,178,218,0.94)';  // deeper sky blue
+
             ctx.save();
             ctx.shadowBlur = 8; ctx.shadowOffsetY = 2;
-            ctx.shadowColor = 'rgba(80,140,200,0.20)';
-            ctx.beginPath();
-            ctx.arc(0, 0, R, Math.PI, 0, false);  // dome ↑ through (0,−R)
-            ctx.closePath();                        // flat base: (R,0)→(−R,0)
-            ctx.fillStyle = 'rgba(142,203,230,0.93)';  // robin-egg blue
-            ctx.fill();
+            ctx.shadowColor = 'rgba(70,135,200,0.22)';
+            for (let i = 0; i < 4; i++) {
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.arc(0, 0, R, ANGLES[i], ANGLES[i+1], false);  // fragment of dome arc
+                ctx.closePath();   // line back to center → pie slice
+                ctx.fillStyle = i % 2 === 0 ? LIGHT : DARK;
+                ctx.fill();
+            }
             ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
-            // Outer arc only (not the flat base) for a clean look
+
+            // Outer dome arc outline (arc only, no flat base)
             ctx.beginPath();
-            ctx.arc(0, 0, R, Math.PI, 0, false);
-            ctx.strokeStyle = 'rgba(88,158,205,0.88)'; ctx.lineWidth = 1.3; ctx.stroke();
+            ctx.arc(0, 0, R, Math.PI, 2*Math.PI, false);
+            ctx.strokeStyle = 'rgba(82,152,205,0.88)'; ctx.lineWidth = 1.3; ctx.stroke();
             ctx.restore();
 
-            // ── Ribs: 3 evenly-spaced lines from center to dome surface ────
-            // Arc spans angle π→2π (screen-clockwise). Rib angles at:
-            //   4π/3 (upper-left), 3π/2 (top), 5π/3 (upper-right)
-            ctx.strokeStyle = 'rgba(75,145,192,0.60)'; ctx.lineWidth = 0.9; ctx.lineCap = 'round';
-            ([
-                [R * Math.cos(4*Math.PI/3), R * Math.sin(4*Math.PI/3)],  // upper-left
-                [0,                          -R                        ],  // top (straight up)
-                [R * Math.cos(5*Math.PI/3), R * Math.sin(5*Math.PI/3)],  // upper-right
-            ] as [number,number][]).forEach(([ex, ey]) => {
-                ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(ex, ey); ctx.stroke();
+            // ── Ribs: center → rib endpoints at ANGLES[1,2,3] ─────────────
+            ctx.strokeStyle = 'rgba(68,138,190,0.72)'; ctx.lineWidth = 1.0; ctx.lineCap = 'round';
+            [ANGLES[1], ANGLES[2], ANGLES[3]].forEach(angle => {
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.lineTo(R * Math.cos(angle), R * Math.sin(angle));
+                ctx.stroke();
             });
 
-            // ── Ferrule: small circle at dome tip ──────────────────────────
-            ctx.beginPath(); ctx.arc(0, -R - 1.8, 2, 0, Math.PI * 2);
-            ctx.fillStyle = 'rgba(88,155,205,0.95)'; ctx.fill();
+            // ── Ferrule: small filled circle at apex (0, −R) ───────────────
+            ctx.beginPath(); ctx.arc(0, -R - 2, 2.2, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(82,150,208,0.96)'; ctx.fill();
 
-            // ── Handle: vertical shaft + J-hook ────────────────────────────
+            // ── Handle: vertical shaft + J-hook curving right ──────────────
             ctx.beginPath();
-            ctx.moveTo(0, 0); ctx.lineTo(0, R + 4);     // shaft down
-            ctx.arc(3.5, R + 4, 3.5, Math.PI, 0);       // J-hook curves right
-            ctx.strokeStyle = 'rgba(88,148,200,0.85)';
-            ctx.lineWidth = 1.6; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.stroke();
+            ctx.moveTo(0, 0); ctx.lineTo(0, R + 4);       // shaft
+            ctx.arc(3.5, R + 4, 3.5, Math.PI, 0);         // J-hook
+            ctx.strokeStyle = 'rgba(82,145,205,0.87)';
+            ctx.lineWidth = 1.7; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.stroke();
 
             ctx.restore();
         };
 
         // ════════════════════════════════════════════════════════════════════
-        //  SNOW  ── 6-armed snowflake, slow rotation, gentle scale pulse
+        //  SNOW  ── snowman, gentle sway and bounce
         // ════════════════════════════════════════════════════════════════════
         const drawSnow = (snowRot: number, t: number) => {
-            const ARM = 15;
-            const pulse = 1 + Math.sin(t * 1.8) * 0.07;
+            const sway = Math.sin(t * 2.0) * 0.12; 
+            const pulse = 1 + Math.sin(t * 3.5) * 0.04;
+            
             ctx.save();
-            ctx.rotate(snowRot); ctx.scale(pulse, pulse);
-            for (let i = 0; i < 6; i++) {
-                ctx.save();
-                ctx.rotate((i / 6) * Math.PI * 2);
-                // Main arm
-                ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(0, -ARM);
-                ctx.strokeStyle = 'rgba(186,230,253,0.95)'; ctx.lineWidth = 1.8; ctx.stroke();
-                // Branches at 60% and 35%
-                [[ARM * 0.60, 5.2], [ARM * 0.36, 3.6]].forEach(([d, hw]) => {
-                    ctx.beginPath();
-                    ctx.moveTo(-hw, -d); ctx.lineTo(hw, -d);
-                    ctx.strokeStyle = 'rgba(219,234,254,0.88)'; ctx.lineWidth = 1.3; ctx.stroke();
-                });
-                // Tip diamond
-                ctx.beginPath();
-                ctx.moveTo(0,  -ARM - 3); ctx.lineTo( 2.5, -ARM);
-                ctx.lineTo(0, -ARM + 3);  ctx.lineTo(-2.5, -ARM);
-                ctx.closePath();
-                ctx.fillStyle = 'rgba(224,242,254,0.92)'; ctx.fill();
-                ctx.restore();
-            }
-            // Center    
-            ctx.beginPath(); ctx.arc(0,0,3,0,Math.PI*2);
-            ctx.fillStyle = 'rgba(255,255,255,0.97)'; ctx.fill();
+            ctx.rotate(sway); 
+            ctx.scale(1, pulse);
+            
+            const bodyR = 12;
+            const headR = 8.5;
+            const bodyY = 6;
+            const headY = -7;
+            
+            ctx.shadowBlur = 8; 
+            ctx.shadowOffsetY = 3; 
+            ctx.shadowColor = 'rgba(152,173,194,0.3)';
+            
+            // --- Body ---
+            ctx.beginPath();
+            ctx.arc(0, bodyY, bodyR, 0, Math.PI * 2);
+            const bodyG = ctx.createRadialGradient(-3, bodyY - 3, 0, 0, bodyY, bodyR);
+            bodyG.addColorStop(0, '#ffffff');
+            bodyG.addColorStop(1, '#e6f3fc');
+            ctx.fillStyle = bodyG;
+            ctx.fill();
+            
+            // --- Head ---
+            ctx.beginPath();
+            ctx.arc(0, headY, headR, 0, Math.PI * 2);
+            const headG = ctx.createRadialGradient(-2, headY - 2, 0, 0, headY, headR);
+            headG.addColorStop(0, '#ffffff');
+            headG.addColorStop(1, '#e6f3fc');
+            ctx.fillStyle = headG;
+            ctx.fill();
+            
+            ctx.shadowBlur = 0;
+            ctx.shadowOffsetY = 0;
+            
+            // Outlines
+            ctx.strokeStyle = 'rgba(152,173,194,0.6)';
+            ctx.lineWidth = 1.3;
+            ctx.beginPath(); ctx.arc(0, bodyY, bodyR, 0, Math.PI * 2); ctx.stroke();
+            ctx.beginPath(); ctx.arc(0, headY, headR, 0, Math.PI * 2); ctx.stroke();
+            
+            // --- Stick Arms ---
+            ctx.strokeStyle = 'rgba(150,130,110,0.8)';
+            ctx.lineWidth = 1.3;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            // Left arm
+            ctx.beginPath();
+            ctx.moveTo(-10, bodyY - 2); ctx.lineTo(-16, bodyY - 5);
+            ctx.moveTo(-13, bodyY - 3.5); ctx.lineTo(-15, bodyY - 1);
+            ctx.stroke();
+            // Right arm
+            ctx.beginPath();
+            ctx.moveTo(10, bodyY - 2); ctx.lineTo(16, bodyY - 5);
+            ctx.moveTo(13, bodyY - 3.5); ctx.lineTo(15, bodyY - 1);
+            ctx.stroke();
+
+            // --- Scarf ---
+            const scarfColor = '#fc8898';
+            // Neck wrap
+            ctx.beginPath();
+            ctx.moveTo(-5.5, -0.5);
+            ctx.lineTo(5.5, -0.5);
+            ctx.lineWidth = 3.5;
+            ctx.strokeStyle = scarfColor;
+            ctx.stroke();
+            // Tail
+            ctx.beginPath();
+            ctx.moveTo(3, -0.5);
+            ctx.lineTo(5.5, 9);
+            ctx.lineTo(1.5, 7.5);
+            ctx.closePath();
+            ctx.fillStyle = scarfColor;
+            ctx.fill();
+            // Tail detail
+            ctx.strokeStyle = '#e86a7a';
+            ctx.lineWidth = 0.8;
+            ctx.beginPath();
+            ctx.moveTo(2.5, 6); ctx.lineTo(4.5, 7.5);
+            ctx.stroke();
+            
+            // --- Face ---
+            const eyeColor = '#6b7a8d';
+            // Eyes
+            ctx.fillStyle = eyeColor;
+            ctx.beginPath(); ctx.arc(-3, headY - 1, 1.2, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.arc(3, headY - 1, 1.2, 0, Math.PI * 2); ctx.fill();
+            // Cheeks
+            ctx.fillStyle = 'rgba(255, 120, 140, 0.25)';
+            ctx.beginPath(); ctx.arc(-4.5, headY + 1.2, 1.6, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.arc(4.5, headY + 1.2, 1.6, 0, Math.PI * 2); ctx.fill();
+            // Nose (carrot)
+            ctx.fillStyle = '#ffb03a';
+            ctx.beginPath();
+            ctx.moveTo(0, headY + 0.5);
+            ctx.lineTo(0, headY + 2.5);
+            ctx.lineTo(-4, headY + 1.5);
+            ctx.closePath();
+            ctx.fill();
+            
+            // Highlights & Buttons
+            ctx.fillStyle = 'rgba(255,255,255,0.9)';
+            ctx.beginPath(); ctx.arc(-2, bodyY - 4, 1.5, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.arc(-2, headY - 3, 1.0, 0, Math.PI * 2); ctx.fill();
+
+            ctx.fillStyle = eyeColor;
+            ctx.beginPath(); ctx.arc(0, bodyY + 2, 1.1, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.arc(0, bodyY + 6, 1.1, 0, Math.PI * 2); ctx.fill();
+            
             ctx.restore();
         };
 
