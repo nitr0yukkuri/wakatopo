@@ -437,15 +437,26 @@ function OceanSurface() {
         };
 
         const onPointerDown = (e: PointerEvent) => {
+            if (e.pointerType === 'touch') return; // Handled by touchstart for better mobile support
             lastPos.current = { x: e.clientX, y: e.clientY };
             addRipple(e.clientX, e.clientY);
         };
 
+        const onTouchStart = (e: TouchEvent) => {
+            for (let i = 0; i < e.changedTouches.length; i++) {
+                const touch = e.changedTouches[i];
+                lastPos.current = { x: touch.clientX, y: touch.clientY };
+                addRipple(touch.clientX, touch.clientY);
+            }
+        };
+
         window.addEventListener('pointerdown', onPointerDown, { passive: true });
+        window.addEventListener('touchstart', onTouchStart, { passive: true });
 
         return () => {
             window.removeEventListener('resize', updateResolution);
             window.removeEventListener('pointerdown', onPointerDown);
+            window.removeEventListener('touchstart', onTouchStart);
         };
     }, []);
 
