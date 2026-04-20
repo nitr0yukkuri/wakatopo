@@ -224,7 +224,8 @@ function FishCursor() {
                 ctx.stroke();
             }
 
-            // ── Dorsal fin ────────────────────────────
+            // ── Dorsal fin (Removed as per request - "eyebrow") ───────
+            /*
             ctx.beginPath();
             ctx.moveTo(2*S, -ry+1);
             ctx.quadraticCurveTo(5*S, -ry - 5*S, 9*S, -ry+1);
@@ -234,6 +235,7 @@ function FishCursor() {
             finGrad.addColorStop(1, 'rgba(180,70,0,0.4)');
             ctx.fillStyle = finGrad;
             ctx.fill();
+            */
 
             ctx.restore();  // body bend restore
             ctx.restore();  // outer save
