@@ -80,14 +80,14 @@ function SnowParticles() {
     );
 }
 
-function WaterBottleCursor() {
+function IceCursor() {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const stateRef = useRef({
         x: -100, y: -100, rawX: -100, rawY: -100,
         vx: 0, vy: 0,
         clickScale: 1.0, clickVel: 0,
-        lidOffset: 0, lidVel: 0,
-        vaporParticles: [] as { x: number, y: number, vx: number, vy: number, life: number, r: number }[],
+        ripples: [] as { r: number, life: number }[],
+        dataParticles: [] as { x: number, y: number, vx: number, vy: number, life: number, r: number }[],
         raf: 0
     });
 
@@ -99,18 +99,22 @@ function WaterBottleCursor() {
         };
         const onDown = (e: PointerEvent) => {
             if (e.pointerType === 'touch') return;
-            stateRef.current.clickVel = -0.12; // sharp, stiff click instead of soft squish
-            stateRef.current.lidVel = -2.8; // pop lid up
+            stateRef.current.clickVel = -0.3; // Sharp, hard snap
+
+            // Soundwave ripple
+            stateRef.current.ripples.push({ r: 4, life: 1.0 });
             
-            // Spawn vapor (デジタルな輝く冷気パーティクル)
-            for (let i=0; i<10; i++) {
-                stateRef.current.vaporParticles.push({
-                    x: (Math.random() - 0.5) * 6,
-                    y: 12, 
-                    vx: (Math.random() - 0.5) * 3.5,
-                    vy: Math.random() * -1.8 - 0.4, // 上向きにピュッと出る
-                    life: 1.0 + Math.random() * 0.3,
-                    r: Math.random() * 2 + 1 // 細かくシャープな粒
+            // FFT Digital Ice Splinters
+            for (let i=0; i<8; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const speed = Math.random() * 3 + 2;
+                stateRef.current.dataParticles.push({
+                    x: 0,
+                    y: 12, // center of the shard
+                    vx: Math.cos(angle) * speed,
+                    vy: Math.sin(angle) * speed,
+                    life: 1.0,
+                    r: Math.random() * 1.5 + 0.5
                 });
             }
         };
@@ -140,24 +144,19 @@ function WaterBottleCursor() {
             const state = stateRef.current;
             ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
             
-            // smooth follow
+            // smooth follow - faster for digital tech feel
             const dx = state.rawX - state.x;
             const dy = state.rawY - state.y;
-            state.x += dx * 0.22;
-            state.y += dy * 0.22;
+            state.x += dx * 0.35;
+            state.y += dy * 0.35;
             
-            state.vx = dx * 0.22;
-            state.vy = dy * 0.22;
+            state.vx = dx * 0.35;
+            state.vy = dy * 0.35;
             
             // click spring (stiff mechanical click)
-            state.clickVel += (1.0 - state.clickScale) * 0.4;
-            state.clickVel *= 0.6; // high friction for snappiness
+            state.clickVel += (1.0 - state.clickScale) * 0.6;
+            state.clickVel *= 0.5; // very high friction for snap
             state.clickScale += state.clickVel;
-            
-            // lid spring (snappy shut)
-            state.lidVel += (0 - state.lidOffset) * 0.5; 
-            state.lidVel *= 0.55;
-            state.lidOffset += state.lidVel;
             
             if (state.rawX === -100) {
                 state.raf = requestAnimationFrame(draw);
@@ -167,134 +166,171 @@ function WaterBottleCursor() {
             ctx.save();
             ctx.translate(state.x, state.y);
             
-            // 基本の傾き(-36度) ＋ 追従時の少しの揺れSway
-            const baseTilt = -Math.PI * 0.2; 
-            const sway = Math.max(-0.2, Math.min(0.2, state.vx * 0.01));
-            ctx.rotate(baseTilt + sway);
-            ctx.scale(state.clickScale * 0.75, state.clickScale * 0.75); // 少し小さめにスケールダウン
+            // Slight sway for floating
+            const sway = Math.max(-0.15, Math.min(0.15, state.vx * 0.008));
+            ctx.rotate(sway);
+            ctx.scale(state.clickScale * 0.85, state.clickScale * 0.85);
             
-            // ポインターの真の先端（クリック座標）が「ボトルの左上カド」に来るように、描画位置を右下にシフトする
-            ctx.translate(6, 4);
-            
-            // --- Draw Vapor (デジタル冷気) ---
-            for (let i = state.vaporParticles.length - 1; i >= 0; i--) {
-                const p = state.vaporParticles[i];
+            // --- Draw Ripples (Soundwave / FFT expanding ring) ---
+            for (let i = state.ripples.length - 1; i >= 0; i--) {
+                const rp = state.ripples[i];
+                rp.r += 4 + (1 - rp.life) * 4; // log expansion
+                rp.life -= 0.04;
+                if (rp.life <= 0) {
+                    state.ripples.splice(i, 1);
+                    continue;
+                }
+                ctx.beginPath();
+                ctx.arc(0, 12, rp.r, 0, Math.PI * 2);
+                ctx.strokeStyle = `rgba(125, 211, 252, ${rp.life * 0.8})`;
+                ctx.lineWidth = 1 + rp.life * 2;
+                ctx.stroke();
+            }
+
+            // --- Draw Data Particles (Ice Splinters) ---
+            for (let i = state.dataParticles.length - 1; i >= 0; i--) {
+                const p = state.dataParticles[i];
                 p.x += p.vx;
                 p.y += p.vy;
-                p.vy += 0.05; // 沈む
-                p.vx += Math.sin(t * 3 + i) * 0.06; // swirl
+                p.vx *= 0.92; // Friction
+                p.vy *= 0.92;
                 p.life -= 0.03;
-                
                 if (p.life <= 0) {
-                    state.vaporParticles.splice(i, 1);
+                    state.dataParticles.splice(i, 1);
                     continue;
                 }
                 
                 ctx.beginPath();
-                ctx.arc(p.x, p.y, p.r * p.life, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(125, 211, 252, ${p.life * 0.9})`; // ネオンブルーの輝き
-                ctx.shadowBlur = 4;
-                ctx.shadowColor = '#38bdf8';
-                ctx.fill();
-                ctx.shadowBlur = 0;
+                // Sharp directional splinters
+                ctx.moveTo(p.x, p.y);
+                ctx.lineTo(p.x - p.vx * 2.5, p.y - p.vy * 2.5);
+                ctx.strokeStyle = `rgba(125, 211, 252, ${p.life})`;
+                ctx.lineWidth = p.r;
+                ctx.lineCap = 'round';
+                ctx.stroke();
             }
-            
-            // --- Draw Water Bottle (Stylish Game Asset Vibe) ---
-            // 座標(0,0)がフタの先端（正確なクリックポイント）
-            const lidY = Math.min(0, state.lidOffset);
 
-            const pathLid = (c: CanvasRenderingContext2D, y: number) => {
-                c.beginPath();
-                c.roundRect(-7, y, 14, 10, [2, 2, 0, 0]);
-                c.rect(-8, y + 10, 16, 3);
-            };
-
-            const pathNeck = (c: CanvasRenderingContext2D) => {
-                c.beginPath();
-                c.rect(-6, 13, 12, 4);
-            };
-
-            const bodyW = 18;
-            const bodyH = 55;
-            const bodyY = 17;
-
-            const pathBody = (c: CanvasRenderingContext2D) => {
-                c.beginPath();
-                c.roundRect(-bodyW/2, bodyY, bodyW, bodyH, [6, 6, 4, 4]);
-            };
-
-            // White Outer Halo Glow
+            // --- Realistic 3D Isometric Ice Cube ---
             ctx.lineJoin = 'round';
-            ctx.lineWidth = 6;
-            ctx.strokeStyle = '#ffffff';
-            ctx.shadowBlur = 10;
-            ctx.shadowColor = 'rgba(100, 200, 255, 0.8)';
+            ctx.lineCap = 'round';
+
+            // Coordinates for a slightly irregular, organic ice cube
+            // Top point is 0,0 causing natural pointer tip
+            const tc = { x: 0, y: 11 };
+            const tr = { x: 10, y: 5 };
+            const tl = { x: -10, y: 5 };
+            const bm = { x: 0, y: 22 };
+            const br = { x: 10, y: 16 };
+            const bl = { x: -10, y: 16 };
+
+            // Base glow
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = 'rgba(125, 211, 252, 0.4)';
+
+            // Draw faces with organic gradients
+            const drawFace = (pts: {x:number, y:number}[], fillColors: string[]) => {
+                ctx.beginPath();
+                ctx.moveTo(pts[0].x, pts[0].y);
+                for(let i=1; i<pts.length; i++) ctx.lineTo(pts[i].x, pts[i].y);
+                ctx.closePath();
+                
+                const minX = Math.min(...pts.map(p=>p.x));
+                const minY = Math.min(...pts.map(p=>p.y));
+                const maxX = Math.max(...pts.map(p=>p.x));
+                const maxY = Math.max(...pts.map(p=>p.y));
+                
+                const grad = ctx.createLinearGradient(minX, minY, maxX, maxY);
+                grad.addColorStop(0, fillColors[0]);
+                grad.addColorStop(1, fillColors[1]);
+                ctx.fillStyle = grad;
+                ctx.fill();
+                
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+            };
+
+            // Back interior reflections (gives 3D depth)
+            ctx.beginPath();
+            ctx.moveTo(0, 0); ctx.lineTo(5, 10); ctx.lineTo(0, 20); ctx.lineTo(-5, 10);
+            ctx.closePath();
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
+            ctx.fill();
+
+            // Right Face (Deep Shadow)
+            drawFace([tc, tr, br, bm], ['rgba(14, 165, 233, 0.3)', 'rgba(2, 132, 199, 0.5)']);
             
-            pathLid(ctx, lidY); ctx.stroke();
-            pathNeck(ctx); ctx.stroke();
-            pathBody(ctx); ctx.stroke();
-            
+            // Left Face (Mid Tone)
+            drawFace([tl, tc, bm, bl], ['rgba(125, 211, 252, 0.5)', 'rgba(14, 165, 233, 0.3)']);
+
+            // Top Face (Light / Glare)
+            drawFace([ {x:0, y:0}, tr, tc, tl ], ['rgba(255, 255, 255, 0.9)', 'rgba(186, 230, 253, 0.4)']);
+
+            // Realistic Cracks & Refractions
             ctx.shadowBlur = 0;
 
-            // 1. Lid Fills & Strokes
-            pathLid(ctx, lidY);
-            const capG = ctx.createLinearGradient(-8, 0, 8, 0);
-            capG.addColorStop(0, '#5a6d7c');
-            capG.addColorStop(0.3, '#94a7b5');
-            capG.addColorStop(0.7, '#94a7b5');
-            capG.addColorStop(1, '#5a6d7c');
-            ctx.fillStyle = capG;
-            ctx.fill();
-            ctx.lineWidth = 1.5;
-            ctx.strokeStyle = '#12182b';
-            ctx.stroke();
-
-            // Lid ridges
+            // Internal deep crack
             ctx.beginPath();
-            for (let rx = -4; rx <= 4; rx += 2.5) {
-                ctx.moveTo(rx, lidY + 1.5);
-                ctx.lineTo(rx, lidY + 8.5);
-            }
-            ctx.strokeStyle = 'rgba(20, 30, 50, 0.5)';
+            ctx.moveTo(tr.x - 2, tr.y + 2);
+            ctx.lineTo(tc.x - 3, tc.y + 3);
+            ctx.lineTo(bm.x, bm.y - 3);
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
             ctx.lineWidth = 1;
             ctx.stroke();
-
-            // 2. Neck
-            pathNeck(ctx);
-            ctx.fillStyle = '#8293a1';
-            ctx.fill();
-            ctx.lineWidth = 1.5;
-            ctx.strokeStyle = '#12182b';
-            ctx.stroke();
-
-            // 3. Body
-            pathBody(ctx);
-            const bodyG = ctx.createLinearGradient(0, bodyY, 0, bodyY + bodyH);
-            bodyG.addColorStop(0, '#a5b8c6');
-            bodyG.addColorStop(0.4, '#419cd3');
-            bodyG.addColorStop(1, '#6f3d9e');
-            ctx.fillStyle = bodyG;
-            ctx.fill();
             
-            ctx.lineWidth = 1.5;
-            ctx.strokeStyle = '#12182b';
-            ctx.stroke();
-
-            // Bottom seam
             ctx.beginPath();
-            ctx.moveTo(-bodyW/2, bodyY + bodyH - 6);
-            ctx.lineTo(bodyW/2, bodyY + bodyH - 6);
-            ctx.strokeStyle = 'rgba(18, 24, 43, 0.4)';
-            ctx.lineWidth = 1.5;
+            ctx.moveTo(tl.x + 2, tl.y + 3);
+            ctx.lineTo(tc.x, tc.y + 1);
+            ctx.strokeStyle = 'rgba(186, 230, 253, 0.5)';
             ctx.stroke();
 
-            // Highlight (Ice/Glass reflection on the left)
-            const hlX = -bodyW/2 + 3.5;
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
-            
-            ctx.beginPath(); ctx.arc(hlX, bodyY + 8, 1, 0, Math.PI*2); ctx.fill();
-            ctx.beginPath(); ctx.roundRect(hlX - 1, bodyY + 12, 2, 26, 1); ctx.fill();
-            ctx.beginPath(); ctx.arc(hlX, bodyY + 42, 1, 0, Math.PI*2); ctx.fill();
+            // Bubbles inside
+            const renderBubble = (x:number, y:number, r:number) => {
+                ctx.beginPath();
+                ctx.arc(x, y, r, 0, Math.PI*2);
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.7)';
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+                ctx.fill();
+                ctx.lineWidth = 0.5;
+                ctx.stroke();
+            };
+            renderBubble(-3, 13, 1.2);
+            renderBubble(2, 17, 0.8);
+            renderBubble(3, 12, 1.5);
+
+            // Specular Highlights (Ultra real shiny edges)
+            // Top-Left edge
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.lineTo(tl.x, tl.y);
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.9)';
+            ctx.lineWidth = 2.5;
+            ctx.stroke();
+
+            // Center vertical edge (closest to user)
+            ctx.beginPath();
+            ctx.moveTo(tc.x, tc.y);
+            ctx.lineTo(bm.x, bm.y - 4);
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.7)';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Reflection on the Top face
+            ctx.beginPath();
+            ctx.moveTo(0, 2);
+            ctx.lineTo(-5, 6);
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Tiny star glare at the very point (pointer tip)
+            ctx.beginPath();
+            ctx.arc(0, 0, 1.5, 0, Math.PI*2);
+            ctx.fillStyle = '#ffffff';
+            ctx.shadowBlur = 8;
+            ctx.shadowColor = '#ffffff';
+            ctx.fill();
+            ctx.shadowBlur = 0;
 
             ctx.restore();
             
@@ -385,7 +421,7 @@ export default function ColdKeepPage() {
     return (
         <main className="relative w-full min-h-dvh bg-[#01060c] text-white overflow-x-hidden font-sans selection:bg-cyan-200 selection:text-[#020b16]">
             
-            <WaterBottleCursor />
+            <IceCursor />
 
             <div
                 className="fixed inset-0 pointer-events-none z-0"
