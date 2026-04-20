@@ -450,13 +450,15 @@ function OceanSurface() {
             }
         };
 
-        window.addEventListener('pointerdown', onPointerDown, { passive: true });
-        window.addEventListener('touchstart', onTouchStart, { passive: true });
+        // Add event listeners to 'document' rather than 'window', and use { capture: true } 
+        // to intercept events from the top-down BEFORE any PWA/iOS bubbling issues swallow them.
+        document.addEventListener('pointerdown', onPointerDown, { capture: true, passive: true });
+        document.addEventListener('touchstart', onTouchStart, { capture: true, passive: true });
 
         return () => {
             window.removeEventListener('resize', updateResolution);
-            window.removeEventListener('pointerdown', onPointerDown);
-            window.removeEventListener('touchstart', onTouchStart);
+            document.removeEventListener('pointerdown', onPointerDown, { capture: true });
+            document.removeEventListener('touchstart', onTouchStart, { capture: true });
         };
     }, []);
 
