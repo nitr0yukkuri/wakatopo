@@ -1,6 +1,12 @@
 'use client'
 
 import { useEffect, useRef } from 'react';
+import dynamicImport from 'next/dynamic';
+
+const RainParticles = dynamicImport(
+    () => import('@/components/canvas/RainTransitionCanvas').then((m) => m.RainParticles),
+    { ssr: false },
+);
 
 // 雷（Thunder）の遷移エフェクト: HTML5 Canvasで動的に枝分かれするリアルな稲妻と発光を描画
 
@@ -209,6 +215,9 @@ export default function ThunderTransitionCanvas({ continuous = false }: { contin
     return (
         <div className="w-full h-full overflow-hidden relative">
             <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none" />
+            <div className="absolute inset-0 pointer-events-none z-10">
+                <RainParticles />
+            </div>
         </div>
     );
 }

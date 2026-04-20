@@ -930,7 +930,7 @@ export default function OtenkiGurashiPage() {
                     `}</style>
                 </>
             )}
-            {showHeavyEffects && weather === 'Rain' && (
+            {showHeavyEffects && (weather === 'Rain' || weather === 'Thunder') && (
                 <>
                     <div className="fixed inset-0 pointer-events-none z-0">
                         <RainParticles />
