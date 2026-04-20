@@ -167,10 +167,14 @@ function WaterBottleCursor() {
             ctx.save();
             ctx.translate(state.x, state.y);
             
-            // 移動による揺れ (ハイテク感を出すためSwayを控えめに)
+            // 基本の傾き(-36度) ＋ 追従時の少しの揺れSway
+            const baseTilt = -Math.PI * 0.2; 
             const sway = Math.max(-0.2, Math.min(0.2, state.vx * 0.01));
-            ctx.rotate(sway);
+            ctx.rotate(baseTilt + sway);
             ctx.scale(state.clickScale * 0.75, state.clickScale * 0.75); // 少し小さめにスケールダウン
+            
+            // ポインターの真の先端（クリック座標）が「ボトルの左上カド」に来るように、描画位置を右下にシフトする
+            ctx.translate(6, 4);
             
             // --- Draw Vapor (デジタル冷気) ---
             for (let i = state.vaporParticles.length - 1; i >= 0; i--) {
