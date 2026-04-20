@@ -70,7 +70,7 @@ export default function CrosshairCursor() {
 
     return (
         <motion.div
-            className="fixed top-0 left-0 w-12 h-12 pointer-events-none z-[9999] mix-blend-difference"
+            className="fixed top-0 left-0 w-10 h-10 pointer-events-none z-[9999] mix-blend-difference"
             style={{ x: smX, y: smY, translateX: '-50%', translateY: '-50%' }}
         >
             <style dangerouslySetInnerHTML={{ __html: `* { cursor: none !important; }` }} />
