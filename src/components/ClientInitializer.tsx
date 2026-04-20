@@ -10,12 +10,13 @@ export default function ClientInitializer({
     initialWeather: WeatherType;
     initialActivity: number;
 }) {
-    const { setWeather, setActivity } = useStore();
+    const { setWeather, setActivity, setActiveWork } = useStore();
 
     useEffect(() => {
         setWeather(initialWeather);
         setActivity(initialActivity);
-    }, [initialWeather, initialActivity, setWeather, setActivity]);
+        setActiveWork(null);
+    }, [initialWeather, initialActivity, setWeather, setActivity, setActiveWork]);
 
     return null;
 }

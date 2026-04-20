@@ -22,13 +22,14 @@ let arpLoop: Tone.Loop | null = null;
 let drumLoop: Tone.Loop | null = null;
 
 // FX
-let crusher: Tone.BitCrusher | null = null;
 let filter: Tone.Filter | null = null;
 let vibrato: Tone.Vibrato | null = null;
 let delay: Tone.FeedbackDelay | null = null;
 let vol: Tone.Volume | null = null;
 let limiter: Tone.Limiter | null = null;
-let drumMix: Tone.Gain | null = null;
+let melodicBus: Tone.Gain | null = null;
+let drumBassBus: Tone.Gain | null = null;
+let masterBus: Tone.Gain | null = null;
 
 // 追加: シンセのスケジューリングエラーを安全に無視するユーティリティ関数
 // (天気を連打した時など、Transportがリセットされる際に未来の時間に予約されたノーツがエラーを吐くのを防ぐため)
@@ -62,17 +63,14 @@ export const startOtenkiBgm = async (weather: WeatherType) => {
     
     // Initialize components if not already
     if (!initialized) {
-        // Output mixer & Limiter to prevent clipping. 
-        // We boost final volume here safely after safely reducing synth outputs.
+        // Safe Master Output
         vol = new Tone.Volume(0).toDestination(); 
-        limiter = new Tone.Limiter(-1).connect(vol);
+        limiter = new Tone.Limiter(-2).connect(vol);
         
         // Lofi Effects
-        crusher = new Tone.BitCrusher({ bits: 12 });
-        // Hip-hop lowpass to muffle everything slightly
         filter = new Tone.Filter({ frequency: 1800, type: 'lowpass', rolloff: -24 });
-        vibrato = new Tone.Vibrato({ frequency: 1.5, depth: 0.15 }); 
-        delay = new Tone.FeedbackDelay("4n.", 0.25);
+        vibrato = new Tone.Vibrato({ frequency: 1.5, depth: 0.12 }); 
+        delay = new Tone.FeedbackDelay("4n.", 0.2);
         
         // --- 1. Chords ---
         lofiSynth = new Tone.PolySynth(Tone.Synth, {
@@ -125,32 +123,38 @@ export const startOtenkiBgm = async (weather: WeatherType) => {
         rainNoise.chain(rainFilter, limiter); // Route rain directly to limiter
         rainNoise.volume.value = -28; // Gentle rain ambience
         
-        // FX Routing - Create a clean Master Lofi Bus to prevent recursive feedback loops!
-        // 🔥 FIX: Tone.js BitCrusher uses a WaveShaperNode that hard-clips amplitudes > 1.0.
-        // We add a pre-limiter to gracefully compress the combined synths before they hit the crusher.
-        // This permanently eliminates the screeching digital distortion noise you hear on earphones.
-        const preLimiter = new Tone.Limiter(-1);
-        const masterLofiMix = new Tone.Gain(1);
-        masterLofiMix.chain(preLimiter, vibrato, crusher, delay, filter, limiter);
+        // FX Routing - Clean Mix Architecture
+        melodicBus = new Tone.Gain(1);
+        drumBassBus = new Tone.Gain(1);
+        masterBus = new Tone.Gain(1);
 
-        kickSynth.connect(masterLofiMix);
-        snareSynth.connect(masterLofiMix);
-        hatSynth.connect(masterLofiMix);
+        // Melodic elements (Chords, Arps) get the wobbly tape vibrato and delay
+        melodicBus.chain(vibrato, delay, filter, masterBus);
         
-        bassSynth.connect(masterLofiMix);
-        lofiSynth.connect(masterLofiMix);
-        arpSynth.connect(masterLofiMix);
+        // Drums and bass skip pitch modulation/delay so transients and sub stay clean and punchy
+        drumBassBus.chain(filter, masterBus);
 
-        // Keep noises out of the crusher/delay path to keep them clean
-        vinylNoise.connect(filter); // filter is already connected to limiter
+        // Everything routes to a gentle master limiter before hitting the speaker
+        masterBus.connect(limiter);
+
+        kickSynth.connect(drumBassBus);
+        snareSynth.connect(drumBassBus);
+        hatSynth.connect(drumBassBus);
+        bassSynth.connect(drumBassBus);
         
-        // 🔥 FIX: Thoroughly balanced Lofi Mix Levels
-        lofiSynth.volume.value = -6;   // Muffle the aggressive chord output
-        arpSynth.volume.value = -6;    // Sweet floating melody
-        kickSynth.volume.value = -6;   // Punchy but not overloading
-        bassSynth.volume.value = -8;   // Deep, warm sub bass
-        snareSynth.volume.value = -16; // Soft, relaxed snare
-        hatSynth.volume.value = -22;   // Gentle tape-like hi-hats 
+        lofiSynth.connect(melodicBus);
+        arpSynth.connect(melodicBus);
+
+        // Noises inject directly to master so they stay wide and raw
+        vinylNoise.connect(masterBus); 
+        
+        // Volume Balancing - Dramatically reduced synth volumes to prevent internal Gain Node clipping
+        lofiSynth.volume.value = -12;   
+        arpSynth.volume.value = -10;    
+        kickSynth.volume.value = -5;   
+        bassSynth.volume.value = -5;   
+        snareSynth.volume.value = -14; 
+        hatSynth.volume.value = -20;   
 
         // 🔥 FIX: Prevent multiple-tab OS clipping by suspending audio context when tab is hidden
         document.addEventListener("visibilitychange", () => {
