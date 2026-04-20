@@ -170,7 +170,7 @@ function WaterBottleCursor() {
             // 移動による揺れ (ハイテク感を出すためSwayを控えめに)
             const sway = Math.max(-0.2, Math.min(0.2, state.vx * 0.01));
             ctx.rotate(sway);
-            ctx.scale(state.clickScale, state.clickScale); // 有機的な変形ではなく均等なスケール
+            ctx.scale(state.clickScale * 0.75, state.clickScale * 0.75); // 少し小さめにスケールダウン
             
             // --- Draw Vapor (デジタル冷気) ---
             for (let i = state.vaporParticles.length - 1; i >= 0; i--) {
