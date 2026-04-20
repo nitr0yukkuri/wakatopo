@@ -168,11 +168,11 @@ function FishCursor() {
             ctx.save();
             ctx.rotate(bodyBend * 0.3);
 
-            // Stubby cute deep-sea tail (rounded rather than spiky)
+            // Stubby cute deep-sea tail (scaled up)
             ctx.beginPath();
             ctx.moveTo(-10*S, 0); 
-            ctx.lineTo(-14*S, 4*S + tailSwing*8);
-            ctx.quadraticCurveTo(-16*S, 0, -14*S, -4*S + tailSwing*8);
+            ctx.lineTo(-17*S, 6*S + tailSwing*10);
+            ctx.quadraticCurveTo(-20*S, 0, -17*S, -6*S + tailSwing*10);
             ctx.fillStyle = '#1e1b4b'; // deep indigo tail
             ctx.fill(); 
             ctx.strokeStyle = '#020617'; ctx.lineWidth = 1.2; ctx.stroke();
@@ -209,12 +209,12 @@ function FishCursor() {
             ctx.fillStyle = bulbGrad; ctx.fill(); 
             ctx.strokeStyle = '#1e1b4b'; ctx.lineWidth = 1.6; ctx.stroke();
 
-            // Cute chunky snaggleteeth
+            // Cute chunky snaggleteeth (scaled up as requested)
             ctx.fillStyle = '#f8fafc';
             ctx.beginPath();
-            // Just cute little rounded upper teeth
-            ctx.moveTo(12.5*S, -3*S); ctx.lineTo(11.5*S, 1.5*S); ctx.lineTo(10.5*S, -3*S); // mid short fang
-            ctx.moveTo(10.5*S, -3*S); ctx.lineTo(9*S, 2.5*S);    ctx.lineTo(8*S, -3.5*S); // long back fang
+            // Just cute little rounded upper teeth (scaled up)
+            ctx.moveTo(13.5*S, -3*S); ctx.lineTo(11.5*S, 3.5*S); ctx.lineTo(9.5*S, -3*S); // scaled small fang
+            ctx.moveTo(10.5*S, -3*S); ctx.lineTo(7.5*S, 6.0*S);  ctx.lineTo(4.5*S, -4*S); // scaled big fang
             
             if (mouthOpen) {
                 // Cute lower teeth pointing up
