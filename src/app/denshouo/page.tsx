@@ -115,130 +115,145 @@ function FishCursor() {
         const dpr = window.devicePixelRatio;
 
         // ── Drawing helpers ──────────────────────────────────────────────────
-        const drawFish = (t: number, mouthOpen: boolean) => {
-            // Fish is drawn pointing RIGHT in local space (mouth at right).
-            // We rotate the canvas so it faces the velocity direction.
-            // ALL coords are in logical pixels; we apply dpr via scale.
-
-            const SCALE = 1.5;   // apparent size multiplier
-            const S     = SCALE;
-
-            const swingAmp   = Math.max(0.18, Math.min(0.9, Math.hypot(s.vx, s.vy) * 0.04)); // amplitude scales with speed
-            const tailSwing  = Math.sin(t * 7.0 + s.phase) * swingAmp;   // tail oscillation
-            const bodyBend   = Math.sin(t * 7.0 + s.phase + 0.8) * swingAmp * 0.35; // body
+        const drawClownfish = (t: number, mouthOpen: boolean) => {
+            const SCALE = 1.5; const S = SCALE;
+            const swingAmp = Math.max(0.18, Math.min(0.9, Math.hypot(s.vx, s.vy) * 0.04));
+            const tailSwing = Math.sin(t * 7.0 + s.phase) * swingAmp;
+            const bodyBend = Math.sin(t * 7.0 + s.phase + 0.8) * swingAmp * 0.35;
 
             ctx.save();
-
-            // ── Tail (drawn first, behind body) ───────
-            // Tail root is at local x=−11*S, spans outward to x=−22*S
-            const tailAngle  = tailSwing * 1.4;         // total fan angle
-            const tailLength = 13 * S;
-            const tailRoot   = -11 * S;
-
+            const tailAngle = tailSwing * 1.4; const tailLength = 13 * S; const tailRoot = -11 * S;
             ctx.save();
-            ctx.rotate(bodyBend * 0.6);  // body bend affects tail root
-            ctx.beginPath();
-            ctx.moveTo(tailRoot, 0);
-            ctx.lineTo(
-                tailRoot - Math.cos(tailAngle + 0.5) * tailLength,
-                 Math.sin(tailAngle + 0.5) * tailLength * 1.15
-            );
-            ctx.lineTo(
-                tailRoot - Math.cos(tailAngle - 0.5) * tailLength,
-                 Math.sin(tailAngle - 0.5) * tailLength * 1.15
-            );
+            ctx.rotate(bodyBend * 0.6);
+            ctx.beginPath(); ctx.moveTo(tailRoot, 0);
+            ctx.lineTo(tailRoot - Math.cos(tailAngle + 0.5) * tailLength, Math.sin(tailAngle + 0.5) * tailLength * 1.15);
+            ctx.lineTo(tailRoot - Math.cos(tailAngle - 0.5) * tailLength, Math.sin(tailAngle - 0.5) * tailLength * 1.15);
             ctx.closePath();
             const tailGrad = ctx.createLinearGradient(tailRoot, 0, tailRoot - tailLength, 0);
             tailGrad.addColorStop(0, 'rgba(180,80,0,0.95)');
             tailGrad.addColorStop(1, 'rgba(140,55,0,0.6)');
-            ctx.fillStyle = tailGrad;
-            ctx.fill();
-            ctx.strokeStyle = 'rgba(20,8,0,0.7)';
-            ctx.lineWidth = 0.9;
-            ctx.stroke();
+            ctx.fillStyle = tailGrad; ctx.fill(); ctx.strokeStyle = 'rgba(20,8,0,0.7)'; ctx.lineWidth = 0.9; ctx.stroke();
             ctx.restore();
 
-            // ── Body (ellipse, slightly bent) ─────────
-            ctx.save();
-            ctx.rotate(bodyBend);          // tilt whole body
-            const bx = 0, by = 0;
-            const rx = 13 * S, ry = 8 * S;
-
-            // Body gradient: orange → warm highlight
+            ctx.save(); ctx.rotate(bodyBend);
+            const bx = 0, by = 0; const rx = 13 * S, ry = 8 * S;
             const bodyGrad = ctx.createRadialGradient(-2*S, -3*S, 1, bx, by, rx);
-            bodyGrad.addColorStop(0, '#FFB347');
-            bodyGrad.addColorStop(0.55, '#FF8C1A');
-            bodyGrad.addColorStop(1, '#C46200');
-            ctx.beginPath();
-            ctx.ellipse(bx, by, rx, ry, 0, 0, Math.PI * 2);
-            ctx.fillStyle = bodyGrad;
-            ctx.fill();
-            ctx.strokeStyle = 'rgba(13,5,0,0.75)';
-            ctx.lineWidth = 1.3;
-            ctx.stroke();
-
-            // ── Stripes ───────────────────────────────
-            ctx.save();
-            ctx.clip(); // clip stripes inside body ellipse
+            bodyGrad.addColorStop(0, '#FFB347'); bodyGrad.addColorStop(0.55, '#FF8C1A'); bodyGrad.addColorStop(1, '#C46200');
             ctx.beginPath(); ctx.ellipse(bx, by, rx, ry, 0, 0, Math.PI * 2);
-            ctx.clip();
+            ctx.fillStyle = bodyGrad; ctx.fill(); ctx.strokeStyle = 'rgba(13,5,0,0.75)'; ctx.lineWidth = 1.3; ctx.stroke();
 
-            // Stripe 1 (wide, near center)
-            ctx.fillStyle = 'rgba(255,255,255,0.82)';
-            ctx.beginPath();
-            ctx.ellipse(-1*S, by, 1.6*S, ry * 0.92, 0, 0, Math.PI * 2);
-            ctx.fill();
-            // Stripe 2 (narrower)
-            ctx.fillStyle = 'rgba(255,255,255,0.68)';
-            ctx.beginPath();
-            ctx.ellipse(5*S, by, 1.1*S, ry * 0.87, 0, 0, Math.PI * 2);
-            ctx.fill();
+            ctx.save(); ctx.clip(); ctx.beginPath(); ctx.ellipse(bx, by, rx, ry, 0, 0, Math.PI * 2); ctx.clip();
+            ctx.fillStyle = 'rgba(255,255,255,0.82)'; ctx.beginPath(); ctx.ellipse(-1*S, by, 1.6*S, ry * 0.92, 0, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = 'rgba(255,255,255,0.68)'; ctx.beginPath(); ctx.ellipse(5*S, by, 1.1*S, ry * 0.87, 0, 0, Math.PI * 2); ctx.fill();
             ctx.restore();
 
-            // ── Eye ───────────────────────────────────
-            const eyeX = 9 * S;
-            const eyeY = -2.5 * S;
-            ctx.beginPath();
-            ctx.arc(eyeX, eyeY, 2.6 * S, 0, Math.PI * 2);
-            ctx.fillStyle = '#111';
-            ctx.fill();
-            // Catch-light
-            ctx.beginPath();
-            ctx.arc(eyeX + 0.7*S, eyeY - 0.7*S, 0.8*S, 0, Math.PI * 2);
-            ctx.fillStyle = 'white';
-            ctx.fill();
+            const eyeX = 9 * S; const eyeY = -2.5 * S;
+            ctx.beginPath(); ctx.arc(eyeX, eyeY, 2.6 * S, 0, Math.PI * 2); ctx.fillStyle = '#111'; ctx.fill();
+            ctx.beginPath(); ctx.arc(eyeX + 0.7*S, eyeY - 0.7*S, 0.8*S, 0, Math.PI * 2); ctx.fillStyle = 'white'; ctx.fill();
 
-            // ── Mouth ─────────────────────────────────
-            const mouthX = 13 * S;
-            const mouthY = 1.5 * S;
+            const mouthX = 13 * S; const mouthY = 1.5 * S;
             if (mouthOpen) {
-                ctx.beginPath();
-                ctx.moveTo(mouthX, mouthY);
-                ctx.lineTo(mouthX - 5*S,  mouthY - 4*S);
-                ctx.lineTo(mouthX - 5*S,  mouthY + 4*S);
-                ctx.closePath();
-                ctx.fillStyle = 'rgba(26,5,0,0.95)';
-                ctx.fill();
-                ctx.strokeStyle = 'rgba(13,5,0,0.8)';
-                ctx.lineWidth = 0.8;
-                ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(mouthX, mouthY); ctx.lineTo(mouthX - 5*S, mouthY - 4*S); ctx.lineTo(mouthX - 5*S, mouthY + 4*S); ctx.closePath();
+                ctx.fillStyle = 'rgba(26,5,0,0.95)'; ctx.fill(); ctx.strokeStyle = 'rgba(13,5,0,0.8)'; ctx.lineWidth = 0.8; ctx.stroke();
             }
+            ctx.restore(); ctx.restore();
+        };
 
-            // ── Dorsal fin (Removed as per request - "eyebrow") ───────
-            /*
+        const drawAnglerfish = (t: number, mouthOpen: boolean) => {
+            const SCALE = 1.7; const S = SCALE; // Slightly larger for intimidation
+            const swingAmp = Math.max(0.18, Math.min(0.9, Math.hypot(s.vx, s.vy) * 0.04));
+            const tailSwing = Math.sin(t * 8.0 + s.phase) * swingAmp;
+            const bodyBend = Math.sin(t * 8.0 + s.phase + 0.8) * swingAmp * 0.35;
+
+            ctx.save();
+            // Angler swims more slowly/bulbously, back heavy
+            ctx.rotate(bodyBend * 0.3);
+
+            // Stubby deep-sea tail
             ctx.beginPath();
-            ctx.moveTo(2*S, -ry+1);
-            ctx.quadraticCurveTo(5*S, -ry - 5*S, 9*S, -ry+1);
-            ctx.closePath();
-            const finGrad = ctx.createLinearGradient(2*S, -ry, 9*S, -ry-5*S);
-            finGrad.addColorStop(0, 'rgba(200,100,0,0.8)');
-            finGrad.addColorStop(1, 'rgba(180,70,0,0.4)');
-            ctx.fillStyle = finGrad;
-            ctx.fill();
-            */
+            ctx.moveTo(-10*S, 0); 
+            ctx.lineTo(-16*S, 5*S + tailSwing*9); 
+            ctx.lineTo(-17*S, -4*S + tailSwing*9);
+            ctx.fillStyle = '#0f172a'; ctx.fill(); ctx.strokeStyle = '#020617'; ctx.lineWidth = 1; ctx.stroke();
 
-            ctx.restore();  // body bend restore
-            ctx.restore();  // outer save
+            // Pectoral fin flap
+            ctx.beginPath(); ctx.moveTo(-3*S, 2*S);
+            const finSwing = Math.sin(t*10)*S;
+            ctx.quadraticCurveTo(0*S, 5*S+finSwing, -1*S, 8*S+finSwing*1.5); 
+            ctx.quadraticCurveTo(-4*S, 5*S, -3*S, 2*S);
+            ctx.fillStyle = '#1e293b'; ctx.fill(); ctx.stroke();
+
+            // Bulbous organic body 
+            const bulbGrad = ctx.createRadialGradient(2*S, -2*S, 2*S, 2*S, -2*S, 14*S);
+            bulbGrad.addColorStop(0, '#334155'); bulbGrad.addColorStop(1, '#0f172a');
+            
+            ctx.beginPath();
+            ctx.moveTo(-12*S, 0); 
+            ctx.bezierCurveTo(-6*S, -15*S, 8*S, -14*S, 14*S, -3*S); 
+            
+            // Monstrous jaw
+            if (mouthOpen) {
+                // Wide open gaping maw
+                ctx.lineTo(8*S, 1*S); // jaw hinge deep inside
+                ctx.lineTo(13*S, 12*S); // drop jaw
+            } else {
+                ctx.lineTo(14*S, 8*S); // underbite
+            }
+            
+            ctx.bezierCurveTo(4*S, 16*S, -6*S, 10*S, -12*S, 0);
+            ctx.fillStyle = bulbGrad; ctx.fill(); ctx.strokeStyle = '#020617'; ctx.lineWidth = 1.6; ctx.stroke();
+
+            // Jagged needle teeth
+            ctx.fillStyle = '#e2e8f0';
+            ctx.beginPath();
+            // Upper teeth row
+            ctx.moveTo(13*S, -3*S); ctx.lineTo(12*S,  2*S); ctx.lineTo(11*S, -3*S);
+            ctx.moveTo(11*S, -3*S); ctx.lineTo(10*S,  4*S); ctx.lineTo(9*S, -4*S);
+            ctx.moveTo(9*S,  -4*S); ctx.lineTo(8*S,  2*S); ctx.lineTo(7*S, -3*S);
+            // Lower teeth row
+            if (mouthOpen) {
+                ctx.moveTo(12*S, 10*S); ctx.lineTo(11*S, 5*S);  ctx.lineTo(10*S, 10*S);
+                ctx.moveTo(10*S, 9*S);  ctx.lineTo(9*S,  4*S);  ctx.lineTo(8*S,  8*S);
+                ctx.moveTo(8*S,  8*S);  ctx.lineTo(7*S,  5*S);  ctx.lineTo(6*S,  7*S);
+            } else {
+                ctx.moveTo(13*S, 7*S);  ctx.lineTo(12*S, 0*S);  ctx.lineTo(11*S, 7*S);
+                ctx.moveTo(11*S, 7*S);  ctx.lineTo(10*S, 3*S);  ctx.lineTo(9*S,  7*S);
+            }
+            ctx.fill();
+
+            // Tiny, dead, milk-white deep sea eye
+            ctx.beginPath(); ctx.arc(6*S, -6*S, 1.8*S, 0, Math.PI * 2);
+            ctx.fillStyle = '#cbd5e1'; ctx.shadowBlur = 10; ctx.shadowColor = 'rgba(120,240,255,0.4)'; ctx.fill(); ctx.shadowBlur = 0;
+            ctx.beginPath(); ctx.arc(6.5*S, -6*S, 0.4*S, 0, Math.PI*2); ctx.fillStyle = '#0f172a'; ctx.fill();
+
+            // Angler Illicium (Stalk) & Esca (Bulb)
+            const lanternX = 16 * S; const lanternY = -14 * S;
+            ctx.beginPath(); ctx.moveTo(4*S, -11*S); ctx.quadraticCurveTo(8*S, -18*S, lanternX, lanternY);
+            ctx.strokeStyle = '#334155'; ctx.lineWidth = 1.5; ctx.stroke();
+
+            // Bioluminescent pulse
+            const bulbPhase = Math.sin(t * 3.5) * 0.5 + 0.5;
+            ctx.beginPath(); ctx.arc(lanternX, lanternY, 2*S, 0, Math.PI*2);
+            ctx.fillStyle = '#a5f3fc'; ctx.shadowBlur = 20 + bulbPhase * 10; ctx.shadowColor = `rgba(34, 211, 238, ${0.5 + bulbPhase*0.5})`; ctx.fill();
+            ctx.beginPath(); ctx.arc(lanternX, lanternY, 4*S, 0, Math.PI*2);
+            ctx.fillStyle = `rgba(34, 211, 238, ${0.2 + bulbPhase*0.2})`; ctx.fill(); ctx.shadowBlur = 0;
+
+            ctx.restore();
+        };
+
+        const drawFish = (t: number, mouthOpen: boolean, depthPhase: number) => {
+            if (depthPhase < 1.0) {
+                ctx.save();
+                ctx.globalAlpha = 1.0 - depthPhase;
+                drawClownfish(t, mouthOpen);
+                ctx.restore();
+            }
+            if (depthPhase > 0.0) {
+                ctx.save();
+                ctx.globalAlpha = depthPhase;
+                drawAnglerfish(t, mouthOpen);
+                ctx.restore();
+            }
         };
 
         // ── Animation loop ───────────────────────────────────────────────────
@@ -292,6 +307,15 @@ function FishCursor() {
             while (dp < -Math.PI) dp += Math.PI * 2;
             s.pitchAngle += dp * LERP_PITCH * dt;
 
+            // Calculate depthPhase (fade into Anglerfish at the bottom 35% of the screen)
+            const logicalHeight = canvas.height / dpr;
+            const deepStart = logicalHeight * 0.65;
+            const deepEnd = logicalHeight * 0.85;
+            let depthPhase = 0;
+            if (s.y > deepStart) {
+                depthPhase = Math.min(1.0, (s.y - deepStart) / (deepEnd - deepStart));
+            }
+
             // Clear
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -302,7 +326,7 @@ function FishCursor() {
             // Apply facing direction THEN pitch so dorsal fin stays on top always
             if (s.facingLeft) ctx.scale(-1, 1);
             ctx.rotate(s.pitchAngle);
-            drawFish(t, s.mouthOpen);
+            drawFish(t, s.mouthOpen, depthPhase);
             ctx.restore();
         };
 
