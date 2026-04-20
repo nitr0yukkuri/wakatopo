@@ -99,18 +99,18 @@ function WaterBottleCursor() {
         };
         const onDown = (e: PointerEvent) => {
             if (e.pointerType === 'touch') return;
-            stateRef.current.clickVel = -0.15; // squish (ふわん)
+            stateRef.current.clickVel = -0.12; // sharp, stiff click instead of soft squish
             stateRef.current.lidVel = -2.8; // pop lid up
             
-            // Spawn vapor (冷気)
-            for (let i=0; i<12; i++) {
+            // Spawn vapor (デジタルな輝く冷気パーティクル)
+            for (let i=0; i<10; i++) {
                 stateRef.current.vaporParticles.push({
-                    x: (Math.random() - 0.5) * 8,
-                    y: 7, 
-                    vx: (Math.random() - 0.5) * 3,
-                    vy: Math.random() * -1.5 - 0.2, // 上向きに吹き出す
-                    life: 1.0 + Math.random() * 0.4,
-                    r: Math.random() * 3 + 2
+                    x: (Math.random() - 0.5) * 6,
+                    y: 12, 
+                    vx: (Math.random() - 0.5) * 3.5,
+                    vy: Math.random() * -1.8 - 0.4, // 上向きにピュッと出る
+                    life: 1.0 + Math.random() * 0.3,
+                    r: Math.random() * 2 + 1 // 細かくシャープな粒
                 });
             }
         };
@@ -149,14 +149,14 @@ function WaterBottleCursor() {
             state.vx = dx * 0.22;
             state.vy = dy * 0.22;
             
-            // click spring (fuwan bouncy)
-            state.clickVel += (1.0 - state.clickScale) * 0.25;
-            state.clickVel *= 0.72;
+            // click spring (stiff mechanical click)
+            state.clickVel += (1.0 - state.clickScale) * 0.4;
+            state.clickVel *= 0.6; // high friction for snappiness
             state.clickScale += state.clickVel;
             
-            // lid spring (gravity shut)
-            state.lidVel += (0 - state.lidOffset) * 0.35; 
-            state.lidVel *= 0.68;
+            // lid spring (snappy shut)
+            state.lidVel += (0 - state.lidOffset) * 0.5; 
+            state.lidVel *= 0.55;
             state.lidOffset += state.lidVel;
             
             if (state.rawX === -100) {
@@ -167,19 +167,19 @@ function WaterBottleCursor() {
             ctx.save();
             ctx.translate(state.x, state.y);
             
-            // 移動による心地よい揺れ (Sway)
-            const sway = Math.max(-0.4, Math.min(0.4, state.vx * 0.015));
+            // 移動による揺れ (ハイテク感を出すためSwayを控えめに)
+            const sway = Math.max(-0.2, Math.min(0.2, state.vx * 0.01));
             ctx.rotate(sway);
-            ctx.scale(1.0 + (1.0 - state.clickScale)*0.4, state.clickScale);
+            ctx.scale(state.clickScale, state.clickScale); // 有機的な変形ではなく均等なスケール
             
-            // --- Draw Vapor (冷気) ---
+            // --- Draw Vapor (デジタル冷気) ---
             for (let i = state.vaporParticles.length - 1; i >= 0; i--) {
                 const p = state.vaporParticles[i];
                 p.x += p.vx;
                 p.y += p.vy;
-                p.vy += 0.04; // 冷気はだんだん下に沈む (gravity)
-                p.vx += Math.sin(t * 2 + i) * 0.08; // swirl
-                p.life -= 0.025;
+                p.vy += 0.05; // 沈む
+                p.vx += Math.sin(t * 3 + i) * 0.06; // swirl
+                p.life -= 0.03;
                 
                 if (p.life <= 0) {
                     state.vaporParticles.splice(i, 1);
@@ -187,69 +187,110 @@ function WaterBottleCursor() {
                 }
                 
                 ctx.beginPath();
-                ctx.arc(p.x, p.y, p.r * (p.life + 0.2), 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(220, 245, 255, ${p.life * 0.5})`;
+                ctx.arc(p.x, p.y, p.r * p.life, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(125, 211, 252, ${p.life * 0.9})`; // ネオンブルーの輝き
+                ctx.shadowBlur = 4;
+                ctx.shadowColor = '#38bdf8';
                 ctx.fill();
+                ctx.shadowBlur = 0;
             }
             
-            // --- Draw Water Bottle ---
+            // --- Draw Water Bottle (Stylish Game Asset Vibe) ---
             // 座標(0,0)がフタの先端（正確なクリックポイント）
-            
-            // 1. Neck
-            const neckW = 11;
-            ctx.beginPath();
-            ctx.rect(-neckW/2, 8, neckW, 3);
-            ctx.fillStyle = '#bae6fd';
-            ctx.fill();
-            ctx.strokeStyle = '#38bdf8';
-            ctx.lineWidth = 1;
-            ctx.stroke();
+            const lidY = Math.min(0, state.lidOffset);
 
-            // 2. Trunk (Body)
-            const bodyW = 20;
-            const bodyH = 26;
-            const bodyY = 11;
-            
-            ctx.shadowBlur = 12;
-            ctx.shadowColor = 'rgba(125, 211, 252, 0.45)';
-            ctx.shadowOffsetY = 2;
+            const pathLid = (c: CanvasRenderingContext2D, y: number) => {
+                c.beginPath();
+                c.roundRect(-7, y, 14, 10, [2, 2, 0, 0]);
+                c.rect(-8, y + 10, 16, 3);
+            };
 
-            ctx.beginPath();
-            ctx.roundRect(-bodyW/2, bodyY, bodyW, bodyH, 5);
+            const pathNeck = (c: CanvasRenderingContext2D) => {
+                c.beginPath();
+                c.rect(-6, 13, 12, 4);
+            };
+
+            const bodyW = 18;
+            const bodyH = 55;
+            const bodyY = 17;
+
+            const pathBody = (c: CanvasRenderingContext2D) => {
+                c.beginPath();
+                c.roundRect(-bodyW/2, bodyY, bodyW, bodyH, [6, 6, 4, 4]);
+            };
+
+            // White Outer Halo Glow
+            ctx.lineJoin = 'round';
+            ctx.lineWidth = 6;
+            ctx.strokeStyle = '#ffffff';
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = 'rgba(100, 200, 255, 0.8)';
             
-            const bottleG = ctx.createLinearGradient(-bodyW/2, bodyY, bodyW/2, bodyY);
-            bottleG.addColorStop(0, '#e0f2fe'); 
-            bottleG.addColorStop(0.5, '#bae6fd');
-            bottleG.addColorStop(1, '#7dd3fc');
-            ctx.fillStyle = bottleG;
-            ctx.fill();
+            pathLid(ctx, lidY); ctx.stroke();
+            pathNeck(ctx); ctx.stroke();
+            pathBody(ctx); ctx.stroke();
             
             ctx.shadowBlur = 0;
-            ctx.strokeStyle = 'rgba(56, 189, 248, 0.8)';
-            ctx.lineWidth = 1.2;
+
+            // 1. Lid Fills & Strokes
+            pathLid(ctx, lidY);
+            const capG = ctx.createLinearGradient(-8, 0, 8, 0);
+            capG.addColorStop(0, '#5a6d7c');
+            capG.addColorStop(0.3, '#94a7b5');
+            capG.addColorStop(0.7, '#94a7b5');
+            capG.addColorStop(1, '#5a6d7c');
+            ctx.fillStyle = capG;
+            ctx.fill();
+            ctx.lineWidth = 1.5;
+            ctx.strokeStyle = '#12182b';
             ctx.stroke();
 
-            // Decorative grip
+            // Lid ridges
             ctx.beginPath();
-            ctx.roundRect(-bodyW/2 - 0.5, bodyY + 12, bodyW + 1, 5, 2);
-            ctx.fillStyle = '#ffffff';
-            ctx.fill();
-
-            // 3. Lid
-            const lidY = Math.min(0, state.lidOffset);
-            const lidW = 14;
-            const lidH = 8;
-            
-            ctx.beginPath();
-            ctx.roundRect(-lidW/2, lidY, lidW, lidH, [3, 3, 1, 1]);
-            const lidG = ctx.createLinearGradient(-lidW/2, lidY, lidW/2, lidY);
-            lidG.addColorStop(0, '#ffffff');
-            lidG.addColorStop(1, '#e2e8f0');
-            ctx.fillStyle = lidG;
-            ctx.fill();
-            ctx.strokeStyle = '#94a3b8';
+            for (let rx = -4; rx <= 4; rx += 2.5) {
+                ctx.moveTo(rx, lidY + 1.5);
+                ctx.lineTo(rx, lidY + 8.5);
+            }
+            ctx.strokeStyle = 'rgba(20, 30, 50, 0.5)';
             ctx.lineWidth = 1;
             ctx.stroke();
+
+            // 2. Neck
+            pathNeck(ctx);
+            ctx.fillStyle = '#8293a1';
+            ctx.fill();
+            ctx.lineWidth = 1.5;
+            ctx.strokeStyle = '#12182b';
+            ctx.stroke();
+
+            // 3. Body
+            pathBody(ctx);
+            const bodyG = ctx.createLinearGradient(0, bodyY, 0, bodyY + bodyH);
+            bodyG.addColorStop(0, '#a5b8c6');
+            bodyG.addColorStop(0.4, '#419cd3');
+            bodyG.addColorStop(1, '#6f3d9e');
+            ctx.fillStyle = bodyG;
+            ctx.fill();
+            
+            ctx.lineWidth = 1.5;
+            ctx.strokeStyle = '#12182b';
+            ctx.stroke();
+
+            // Bottom seam
+            ctx.beginPath();
+            ctx.moveTo(-bodyW/2, bodyY + bodyH - 6);
+            ctx.lineTo(bodyW/2, bodyY + bodyH - 6);
+            ctx.strokeStyle = 'rgba(18, 24, 43, 0.4)';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+
+            // Highlight (Ice/Glass reflection on the left)
+            const hlX = -bodyW/2 + 3.5;
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+            
+            ctx.beginPath(); ctx.arc(hlX, bodyY + 8, 1, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.roundRect(hlX - 1, bodyY + 12, 2, 26, 1); ctx.fill();
+            ctx.beginPath(); ctx.arc(hlX, bodyY + 42, 1, 0, Math.PI*2); ctx.fill();
 
             ctx.restore();
             
