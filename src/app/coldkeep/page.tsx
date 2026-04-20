@@ -99,22 +99,22 @@ function IceCursor() {
         };
         const onDown = (e: PointerEvent) => {
             if (e.pointerType === 'touch') return;
-            stateRef.current.clickVel = -0.3; // Sharp, hard snap
+            stateRef.current.clickVel = -0.12; // 硬く鋭い弾き（ゴムのような収縮ではなくクリスタルの振動）
 
-            // Soundwave ripple
-            stateRef.current.ripples.push({ r: 4, life: 1.0 });
+            // 氷の波紋（シャープな幾何学フロスト）
+            stateRef.current.ripples.push({ r: 2, life: 1.0 });
             
-            // FFT Digital Ice Splinters
+            // FFT Digital Ice Splinters (破片・冷気)
             for (let i=0; i<8; i++) {
                 const angle = Math.random() * Math.PI * 2;
-                const speed = Math.random() * 3 + 2;
+                const speed = Math.random() * 4 + 3; // さらに素早く飛ぶ
                 stateRef.current.dataParticles.push({
                     x: 0,
-                    y: 12, // center of the shard
+                    y: 11, // 氷の中心
                     vx: Math.cos(angle) * speed,
                     vy: Math.sin(angle) * speed,
                     life: 1.0,
-                    r: Math.random() * 1.5 + 0.5
+                    r: Math.random() * 2 + 1
                 });
             }
         };
@@ -153,9 +153,9 @@ function IceCursor() {
             state.vx = dx * 0.35;
             state.vy = dy * 0.35;
             
-            // click spring (stiff mechanical click)
-            state.clickVel += (1.0 - state.clickScale) * 0.6;
-            state.clickVel *= 0.5; // very high friction for snap
+            // click spring (Hard Ice Knock)
+            state.clickVel += (1.0 - state.clickScale) * 0.7; // 高いバネ定数で即座に跳ね返す
+            state.clickVel *= 0.45; // 強い摩擦でビヨーンとさせない（硬い質感）
             state.clickScale += state.clickVel;
             
             if (state.rawX === -100) {
@@ -166,24 +166,46 @@ function IceCursor() {
             ctx.save();
             ctx.translate(state.x, state.y);
             
-            // Slight sway for floating
-            const sway = Math.max(-0.15, Math.min(0.15, state.vx * 0.008));
-            ctx.rotate(sway);
-            ctx.scale(state.clickScale * 0.85, state.clickScale * 0.85);
+            // クリック時の鋭い微小回転（氷を叩いた時の硬い振動）
+            const hitTilt = (1.0 - state.clickScale) * -1.5; 
             
-            // --- Draw Ripples (Soundwave / FFT expanding ring) ---
+            // 浮遊感のためのわずかなSway
+            const sway = Math.max(-0.15, Math.min(0.15, state.vx * 0.008));
+            ctx.rotate(sway + hitTilt);
+            ctx.scale(state.clickScale * 0.85, state.clickScale * 0.85);
+
+            // --- Ice Glint Flash （タップ時の氷の内部反射・フラッシュ） ---
+            const flash = Math.max(0, (1.0 - state.clickScale) * 8);
+            if (flash > 0.01) {
+                ctx.shadowBlur = 20;
+                ctx.shadowColor = '#ffffff';
+                ctx.beginPath();
+                ctx.moveTo(0, 0); ctx.lineTo(10, 5); ctx.lineTo(0, 11); ctx.lineTo(-10, 5);
+                ctx.closePath();
+                ctx.fillStyle = `rgba(255, 255, 255, ${Math.min(1, flash)})`;
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            }
+            
+            // --- Draw Ripples (シャープなひし形状のフロスト波紋) ---
             for (let i = state.ripples.length - 1; i >= 0; i--) {
                 const rp = state.ripples[i];
-                rp.r += 4 + (1 - rp.life) * 4; // log expansion
+                rp.r += 3 + (1 - rp.life) * 6; // 爆発的な早い拡大
                 rp.life -= 0.04;
                 if (rp.life <= 0) {
                     state.ripples.splice(i, 1);
                     continue;
                 }
                 ctx.beginPath();
-                ctx.arc(0, 12, rp.r, 0, Math.PI * 2);
-                ctx.strokeStyle = `rgba(125, 211, 252, ${rp.life * 0.8})`;
+                // 柔らかい円ではなく、鋭いひし形を描画して氷っぽさを出す
+                ctx.moveTo(0, 11 - rp.r);
+                ctx.lineTo(rp.r, 11);
+                ctx.lineTo(0, 11 + rp.r);
+                ctx.lineTo(-rp.r, 11);
+                ctx.closePath();
+                ctx.strokeStyle = `rgba(224, 242, 254, ${rp.life})`; // フロストホワイト
                 ctx.lineWidth = 1 + rp.life * 2;
+                ctx.lineJoin = 'miter';
                 ctx.stroke();
             }
 
