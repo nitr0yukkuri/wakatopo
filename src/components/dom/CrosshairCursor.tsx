@@ -96,17 +96,7 @@ export default function CrosshairCursor() {
                         scale: { type: 'spring', stiffness: 400, damping: 25 },
                         borderColor: { duration: 0.3 }
                     }}
-                >
-                    {/* Tiny Satellite Dot orbiting on the ring */}
-                    <motion.div 
-                        className="absolute -top-[2px] left-1/2 w-[3px] h-[3px] bg-white rounded-full"
-                        style={{ translateX: '-50%' }}
-                        animate={{ 
-                            scale: active ? 1.5 : 1,
-                            opacity: active ? 1 : 0.6 
-                        }}
-                    />
-                </motion.div>
+                />
                 
             </div>
         </motion.div>
