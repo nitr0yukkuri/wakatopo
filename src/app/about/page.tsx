@@ -3,7 +3,6 @@ import Image from 'next/image';
 import GeoLocationBadge from '@/components/dom/GeoLocationBadge';
 
 export const dynamic = 'force-dynamic';
-
 type SearchParams = {
     lang?: string | string[];
 };
