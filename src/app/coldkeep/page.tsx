@@ -80,6 +80,201 @@ function SnowParticles() {
     );
 }
 
+function WaterBottleCursor() {
+    const canvasRef = useRef<HTMLCanvasElement>(null);
+    const stateRef = useRef({
+        x: -100, y: -100, rawX: -100, rawY: -100,
+        vx: 0, vy: 0,
+        clickScale: 1.0, clickVel: 0,
+        lidOffset: 0, lidVel: 0,
+        vaporParticles: [] as { x: number, y: number, vx: number, vy: number, life: number, r: number }[],
+        raf: 0
+    });
+
+    useEffect(() => {
+        const onMove = (e: PointerEvent) => {
+            if (e.pointerType === 'touch') return;
+            stateRef.current.rawX = e.clientX;
+            stateRef.current.rawY = e.clientY;
+        };
+        const onDown = (e: PointerEvent) => {
+            if (e.pointerType === 'touch') return;
+            stateRef.current.clickVel = -0.15; // squish (ふわん)
+            stateRef.current.lidVel = -2.8; // pop lid up
+            
+            // Spawn vapor (冷気)
+            for (let i=0; i<12; i++) {
+                stateRef.current.vaporParticles.push({
+                    x: (Math.random() - 0.5) * 8,
+                    y: 7, 
+                    vx: (Math.random() - 0.5) * 3,
+                    vy: Math.random() * -1.5 - 0.2, // 上向きに吹き出す
+                    life: 1.0 + Math.random() * 0.4,
+                    r: Math.random() * 3 + 2
+                });
+            }
+        };
+
+        window.addEventListener('pointermove', onMove);
+        window.addEventListener('pointerdown', onDown);
+
+        const canvas = canvasRef.current!;
+        const ctx = canvas.getContext('2d')!;
+        let dpr = window.devicePixelRatio || 1;
+        
+        const resize = () => {
+            dpr = window.devicePixelRatio || 1;
+            canvas.width = Math.floor(window.innerWidth * dpr);
+            canvas.height = Math.floor(window.innerHeight * dpr);
+            canvas.style.width = '100%';
+            canvas.style.height = '100%';
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        };
+        resize();
+        window.addEventListener('resize', resize);
+        
+        let t = 0;
+        
+        const draw = () => {
+            t += 0.05;
+            const state = stateRef.current;
+            ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+            
+            // smooth follow
+            const dx = state.rawX - state.x;
+            const dy = state.rawY - state.y;
+            state.x += dx * 0.22;
+            state.y += dy * 0.22;
+            
+            state.vx = dx * 0.22;
+            state.vy = dy * 0.22;
+            
+            // click spring (fuwan bouncy)
+            state.clickVel += (1.0 - state.clickScale) * 0.25;
+            state.clickVel *= 0.72;
+            state.clickScale += state.clickVel;
+            
+            // lid spring (gravity shut)
+            state.lidVel += (0 - state.lidOffset) * 0.35; 
+            state.lidVel *= 0.68;
+            state.lidOffset += state.lidVel;
+            
+            if (state.rawX === -100) {
+                state.raf = requestAnimationFrame(draw);
+                return;
+            }
+            
+            ctx.save();
+            ctx.translate(state.x, state.y);
+            
+            // 移動による心地よい揺れ (Sway)
+            const sway = Math.max(-0.4, Math.min(0.4, state.vx * 0.015));
+            ctx.rotate(sway);
+            ctx.scale(1.0 + (1.0 - state.clickScale)*0.4, state.clickScale);
+            
+            // --- Draw Vapor (冷気) ---
+            for (let i = state.vaporParticles.length - 1; i >= 0; i--) {
+                const p = state.vaporParticles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+                p.vy += 0.04; // 冷気はだんだん下に沈む (gravity)
+                p.vx += Math.sin(t * 2 + i) * 0.08; // swirl
+                p.life -= 0.025;
+                
+                if (p.life <= 0) {
+                    state.vaporParticles.splice(i, 1);
+                    continue;
+                }
+                
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.r * (p.life + 0.2), 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(220, 245, 255, ${p.life * 0.5})`;
+                ctx.fill();
+            }
+            
+            // --- Draw Water Bottle ---
+            // 座標(0,0)がフタの先端（正確なクリックポイント）
+            
+            // 1. Neck
+            const neckW = 11;
+            ctx.beginPath();
+            ctx.rect(-neckW/2, 8, neckW, 3);
+            ctx.fillStyle = '#bae6fd';
+            ctx.fill();
+            ctx.strokeStyle = '#38bdf8';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+
+            // 2. Trunk (Body)
+            const bodyW = 20;
+            const bodyH = 26;
+            const bodyY = 11;
+            
+            ctx.shadowBlur = 12;
+            ctx.shadowColor = 'rgba(125, 211, 252, 0.45)';
+            ctx.shadowOffsetY = 2;
+
+            ctx.beginPath();
+            ctx.roundRect(-bodyW/2, bodyY, bodyW, bodyH, 5);
+            
+            const bottleG = ctx.createLinearGradient(-bodyW/2, bodyY, bodyW/2, bodyY);
+            bottleG.addColorStop(0, '#e0f2fe'); 
+            bottleG.addColorStop(0.5, '#bae6fd');
+            bottleG.addColorStop(1, '#7dd3fc');
+            ctx.fillStyle = bottleG;
+            ctx.fill();
+            
+            ctx.shadowBlur = 0;
+            ctx.strokeStyle = 'rgba(56, 189, 248, 0.8)';
+            ctx.lineWidth = 1.2;
+            ctx.stroke();
+
+            // Decorative grip
+            ctx.beginPath();
+            ctx.roundRect(-bodyW/2 - 0.5, bodyY + 12, bodyW + 1, 5, 2);
+            ctx.fillStyle = '#ffffff';
+            ctx.fill();
+
+            // 3. Lid
+            const lidY = Math.min(0, state.lidOffset);
+            const lidW = 14;
+            const lidH = 8;
+            
+            ctx.beginPath();
+            ctx.roundRect(-lidW/2, lidY, lidW, lidH, [3, 3, 1, 1]);
+            const lidG = ctx.createLinearGradient(-lidW/2, lidY, lidW/2, lidY);
+            lidG.addColorStop(0, '#ffffff');
+            lidG.addColorStop(1, '#e2e8f0');
+            ctx.fillStyle = lidG;
+            ctx.fill();
+            ctx.strokeStyle = '#94a3b8';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+
+            ctx.restore();
+            
+            state.raf = requestAnimationFrame(draw);
+        };
+        draw();
+        
+        return () => {
+            window.removeEventListener('pointermove', onMove);
+            window.removeEventListener('pointerdown', onDown);
+            window.removeEventListener('resize', resize);
+            cancelAnimationFrame(stateRef.current.raf);
+        };
+    }, []);
+
+    return (
+        <div className="fixed inset-0 pointer-events-none z-[100]">
+            <style>{`
+                * { cursor: none !important; }
+            `}</style>
+            <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none" />
+        </div>
+    );
+}
+
 export default function ColdKeepPage() {
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -144,6 +339,8 @@ export default function ColdKeepPage() {
 
     return (
         <main className="relative w-full min-h-dvh bg-[#01060c] text-white overflow-x-hidden font-sans selection:bg-cyan-200 selection:text-[#020b16]">
+            
+            <WaterBottleCursor />
 
             <div
                 className="fixed inset-0 pointer-events-none z-0"
