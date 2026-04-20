@@ -4,6 +4,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useStore } from '@/store';
 import dynamicImport from 'next/dynamic';
 import Image from 'next/image';
+import CrosshairCursor from '@/components/dom/CrosshairCursor';
 import { useEffect, useState } from 'react';
 
 export const dynamic = 'force-dynamic';
@@ -67,13 +68,16 @@ export default function GitHubPlanetPage() {
 
     return (
         <main className="relative w-full min-h-[120dvh] bg-[#020202] text-white overflow-x-hidden">
+            {/* Custom Mouse Cursor */}
+            <CrosshairCursor />
+
             {/* 3Dのリアルな惑星背景（GitHub Planetからの移植・調整版） */}
             {showScene && <RealisticPlanetScene />}
 
-            <nav className="fixed top-0 left-0 w-full z-50 p-6 md:p-12">
+            <nav className="fixed top-0 left-0 w-full z-50 p-6 md:p-12 pointer-events-none">
                 <button
                     onClick={handleReturn}
-                    className="inline-flex items-center gap-3 text-sm font-mono tracking-widest text-cyan-300 hover:text-white transition-colors group"
+                    className="inline-flex items-center gap-3 text-sm font-mono tracking-widest text-cyan-300 hover:text-white transition-colors group pointer-events-auto"
                 >
                     <span className="w-6 h-px bg-cyan-300 group-hover:bg-white transition-colors" />
                     {copy.returnToOrbit}
