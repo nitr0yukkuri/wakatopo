@@ -212,14 +212,19 @@ function FishCursor() {
             // Cute chunky snaggleteeth
             ctx.fillStyle = '#f8fafc';
             ctx.beginPath();
+            // Just cute little rounded upper teeth
+            ctx.moveTo(12.5*S, -3*S); ctx.lineTo(11.5*S, 1.5*S); ctx.lineTo(10.5*S, -3*S); // mid short fang
+            ctx.moveTo(10.5*S, -3*S); ctx.lineTo(9*S, 2.5*S);    ctx.lineTo(8*S, -3.5*S); // long back fang
             
             if (mouthOpen) {
-                // Cute lower teeth pointing UP when jaw is dropped
-                ctx.moveTo(12*S, 9*S); ctx.lineTo(11*S, 5*S); ctx.lineTo(10*S, 8.5*S);
-                ctx.moveTo(10*S, 8.5*S); ctx.lineTo(9*S, 4*S); ctx.lineTo(8*S, 7.5*S);
+                // Cute lower teeth pointing up
+                ctx.moveTo(13*S, 8.5*S); ctx.lineTo(12*S, 4*S); ctx.lineTo(11*S, 8*S);
+                ctx.moveTo(10*S, 8*S);   ctx.lineTo(9.5*S, 3*S); ctx.lineTo(8*S, 7*S);
+                ctx.moveTo(8*S,  7*S);   ctx.lineTo(7*S, 4*S);  ctx.lineTo(6*S, 6*S);
             } else {
-                // One small, cute snaggle tooth poking UP from the closed underbite jaw
-                ctx.moveTo(12*S, 7*S); ctx.lineTo(11*S, 3.5*S); ctx.lineTo(10*S, 7*S);
+                // Just snaggle teeth poking out over the closed mouth!
+                ctx.moveTo(12*S, 7*S); ctx.lineTo(11*S, 2*S); ctx.lineTo(10*S, 6*S);
+                ctx.moveTo(9*S,  6*S); ctx.lineTo(8.5*S, 3*S); ctx.lineTo(7*S, 4.5*S);
             }
             ctx.fill();
 
