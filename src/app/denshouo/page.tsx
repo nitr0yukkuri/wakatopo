@@ -160,83 +160,99 @@ function FishCursor() {
         };
 
         const drawAnglerfish = (t: number, mouthOpen: boolean) => {
-            const SCALE = 1.7; const S = SCALE; // Slightly larger for intimidation
+            const SCALE = 1.35; const S = SCALE; // slightly smaller/chubbier scale
             const swingAmp = Math.max(0.18, Math.min(0.9, Math.hypot(s.vx, s.vy) * 0.04));
             const tailSwing = Math.sin(t * 8.0 + s.phase) * swingAmp;
             const bodyBend = Math.sin(t * 8.0 + s.phase + 0.8) * swingAmp * 0.35;
 
             ctx.save();
-            // Angler swims more slowly/bulbously, back heavy
             ctx.rotate(bodyBend * 0.3);
 
-            // Stubby deep-sea tail
+            // Stubby cute deep-sea tail (rounded rather than spiky)
             ctx.beginPath();
             ctx.moveTo(-10*S, 0); 
-            ctx.lineTo(-16*S, 5*S + tailSwing*9); 
-            ctx.lineTo(-17*S, -4*S + tailSwing*9);
-            ctx.fillStyle = '#0f172a'; ctx.fill(); ctx.strokeStyle = '#020617'; ctx.lineWidth = 1; ctx.stroke();
+            ctx.lineTo(-14*S, 4*S + tailSwing*8);
+            ctx.quadraticCurveTo(-16*S, 0, -14*S, -4*S + tailSwing*8);
+            ctx.fillStyle = '#1e1b4b'; // deep indigo tail
+            ctx.fill(); 
+            ctx.strokeStyle = '#020617'; ctx.lineWidth = 1.2; ctx.stroke();
 
-            // Pectoral fin flap
+            // Pectoral fin flap (soft rounded)
             ctx.beginPath(); ctx.moveTo(-3*S, 2*S);
             const finSwing = Math.sin(t*10)*S;
-            ctx.quadraticCurveTo(0*S, 5*S+finSwing, -1*S, 8*S+finSwing*1.5); 
-            ctx.quadraticCurveTo(-4*S, 5*S, -3*S, 2*S);
-            ctx.fillStyle = '#1e293b'; ctx.fill(); ctx.stroke();
+            ctx.quadraticCurveTo(0*S, 4*S+finSwing, -1*S, 7*S+finSwing); 
+            ctx.quadraticCurveTo(-4*S, 4*S, -3*S, 2*S);
+            ctx.fillStyle = '#312e81'; ctx.fill(); ctx.stroke();
 
-            // Bulbous organic body 
-            const bulbGrad = ctx.createRadialGradient(2*S, -2*S, 2*S, 2*S, -2*S, 14*S);
-            bulbGrad.addColorStop(0, '#334155'); bulbGrad.addColorStop(1, '#0f172a');
+            // Bulbous, chubby potato body 
+            const bulbGrad = ctx.createRadialGradient(2*S, -2*S, 2*S, 1*S, -1*S, 12*S);
+            bulbGrad.addColorStop(0, '#4338ca'); // soft purple/indigo top
+            bulbGrad.addColorStop(1, '#1e1b4b'); // dark belly
             
             ctx.beginPath();
             ctx.moveTo(-12*S, 0); 
-            ctx.bezierCurveTo(-6*S, -15*S, 8*S, -14*S, 14*S, -3*S); 
+            // Plump back
+            ctx.bezierCurveTo(-6*S, -16*S, 8*S, -14*S, 13*S, -4*S); 
             
-            // Monstrous jaw
+            // Mouth
             if (mouthOpen) {
-                // Wide open gaping maw
-                ctx.lineTo(8*S, 1*S); // jaw hinge deep inside
-                ctx.lineTo(13*S, 12*S); // drop jaw
+                // Happy wide gasp
+                ctx.lineTo(8*S, 0*S); // deep smile inside
+                ctx.quadraticCurveTo(10*S, 14*S, 14*S, 9*S); // drop round jaw
             } else {
-                ctx.lineTo(14*S, 8*S); // underbite
+                // Cute round face with slight underbite
+                ctx.lineTo(13*S, 7*S);
             }
             
+            // Plump belly
             ctx.bezierCurveTo(4*S, 16*S, -6*S, 10*S, -12*S, 0);
-            ctx.fillStyle = bulbGrad; ctx.fill(); ctx.strokeStyle = '#020617'; ctx.lineWidth = 1.6; ctx.stroke();
+            ctx.fillStyle = bulbGrad; ctx.fill(); 
+            ctx.strokeStyle = '#1e1b4b'; ctx.lineWidth = 1.6; ctx.stroke();
 
-            // Jagged needle teeth
-            ctx.fillStyle = '#e2e8f0';
+            // Cute chunky snaggleteeth
+            ctx.fillStyle = '#f8fafc';
             ctx.beginPath();
-            // Upper teeth row
-            ctx.moveTo(13*S, -3*S); ctx.lineTo(12*S,  2*S); ctx.lineTo(11*S, -3*S);
-            ctx.moveTo(11*S, -3*S); ctx.lineTo(10*S,  4*S); ctx.lineTo(9*S, -4*S);
-            ctx.moveTo(9*S,  -4*S); ctx.lineTo(8*S,  2*S); ctx.lineTo(7*S, -3*S);
-            // Lower teeth row
+            
             if (mouthOpen) {
-                ctx.moveTo(12*S, 10*S); ctx.lineTo(11*S, 5*S);  ctx.lineTo(10*S, 10*S);
-                ctx.moveTo(10*S, 9*S);  ctx.lineTo(9*S,  4*S);  ctx.lineTo(8*S,  8*S);
-                ctx.moveTo(8*S,  8*S);  ctx.lineTo(7*S,  5*S);  ctx.lineTo(6*S,  7*S);
+                // Cute lower teeth pointing UP when jaw is dropped
+                ctx.moveTo(12*S, 9*S); ctx.lineTo(11*S, 5*S); ctx.lineTo(10*S, 8.5*S);
+                ctx.moveTo(10*S, 8.5*S); ctx.lineTo(9*S, 4*S); ctx.lineTo(8*S, 7.5*S);
             } else {
-                ctx.moveTo(13*S, 7*S);  ctx.lineTo(12*S, 0*S);  ctx.lineTo(11*S, 7*S);
-                ctx.moveTo(11*S, 7*S);  ctx.lineTo(10*S, 3*S);  ctx.lineTo(9*S,  7*S);
+                // One small, cute snaggle tooth poking UP from the closed underbite jaw
+                ctx.moveTo(12*S, 7*S); ctx.lineTo(11*S, 3.5*S); ctx.lineTo(10*S, 7*S);
             }
             ctx.fill();
 
-            // Tiny, dead, milk-white deep sea eye
-            ctx.beginPath(); ctx.arc(6*S, -6*S, 1.8*S, 0, Math.PI * 2);
-            ctx.fillStyle = '#cbd5e1'; ctx.shadowBlur = 10; ctx.shadowColor = 'rgba(120,240,255,0.4)'; ctx.fill(); ctx.shadowBlur = 0;
-            ctx.beginPath(); ctx.arc(6.5*S, -6*S, 0.4*S, 0, Math.PI*2); ctx.fillStyle = '#0f172a'; ctx.fill();
+            // Pure, simple, classically cute flat eye
+            const eyeX = 7 * S;
+            const eyeY = -4.5 * S;
+            ctx.beginPath(); 
+            ctx.arc(eyeX, eyeY, 2.6 * S, 0, Math.PI * 2);
+            ctx.fillStyle = '#0f172a'; // solid dark base
+            ctx.fill();
+            
+            // Single large glowing cyan catchlight for an innocent look
+            ctx.beginPath(); 
+            ctx.arc(eyeX + 0.6 * S, eyeY - 0.6 * S, 1.2 * S, 0, Math.PI * 2);
+            ctx.fillStyle = '#cffafe';
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = '#67e8f9';
+            ctx.fill();
+            ctx.shadowBlur = 0;
 
-            // Angler Illicium (Stalk) & Esca (Bulb)
-            const lanternX = 16 * S; const lanternY = -14 * S;
-            ctx.beginPath(); ctx.moveTo(4*S, -11*S); ctx.quadraticCurveTo(8*S, -18*S, lanternX, lanternY);
-            ctx.strokeStyle = '#334155'; ctx.lineWidth = 1.5; ctx.stroke();
+            // Lantern Stalk & Huge Bulb
+            const lanternX = 14 * S; const lanternY = -15 * S;
+            ctx.beginPath(); ctx.moveTo(3*S, -11*S); 
+            ctx.quadraticCurveTo(8*S, -18*S, lanternX, lanternY);
+            ctx.strokeStyle = '#312e81'; ctx.lineWidth = 2; ctx.stroke(); // thicker stalk
 
-            // Bioluminescent pulse
+            // Bioluminescent pulse (cute soft glow)
             const bulbPhase = Math.sin(t * 3.5) * 0.5 + 0.5;
-            ctx.beginPath(); ctx.arc(lanternX, lanternY, 2*S, 0, Math.PI*2);
-            ctx.fillStyle = '#a5f3fc'; ctx.shadowBlur = 20 + bulbPhase * 10; ctx.shadowColor = `rgba(34, 211, 238, ${0.5 + bulbPhase*0.5})`; ctx.fill();
-            ctx.beginPath(); ctx.arc(lanternX, lanternY, 4*S, 0, Math.PI*2);
-            ctx.fillStyle = `rgba(34, 211, 238, ${0.2 + bulbPhase*0.2})`; ctx.fill(); ctx.shadowBlur = 0;
+            ctx.beginPath(); ctx.arc(lanternX, lanternY, 2.5*S, 0, Math.PI*2); // big round bulb
+            ctx.fillStyle = '#cffafe'; ctx.shadowBlur = 24 + bulbPhase * 12; ctx.shadowColor = `rgba(103, 232, 249, ${0.7 + bulbPhase*0.3})`; ctx.fill();
+            // Inner hot core
+            ctx.beginPath(); ctx.arc(lanternX, lanternY, 1.2*S, 0, Math.PI*2);
+            ctx.fillStyle = '#ffffff'; ctx.fill(); ctx.shadowBlur = 0;
 
             ctx.restore();
         };
