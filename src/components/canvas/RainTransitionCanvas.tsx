@@ -3,7 +3,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 
-export function RainParticles() {
+type RainIntensity = 'default' | 'heavy';
+
+export function RainParticles({ intensity = 'default' }: { intensity?: RainIntensity }) {
     const [mounted, setMounted] = useState(false);
     const [isLightMode, setIsLightMode] = useState(false);
 
@@ -25,17 +27,18 @@ export function RainParticles() {
     }, []);
 
     const drops = useMemo(() => {
-        const count = isLightMode ? 42 : 110;
-        const baseDuration = isLightMode ? 1.05 : 0.95;
-        const maxDurationAdd = isLightMode ? 0.35 : 0.45;
-        const minHeight = isLightMode ? 9 : 10;
-        const maxHeightAdd = isLightMode ? 14 : 22;
-        const minOpacity = isLightMode ? 0.14 : 0.16;
-        const maxOpacityAdd = isLightMode ? 0.18 : 0.28;
-        const minDrift = isLightMode ? 20 : 26;
-        const maxDriftAdd = isLightMode ? 40 : 64;
-        const minWidth = isLightMode ? 0.9 : 1;
-        const maxWidthAdd = isLightMode ? 0.8 : 1.2;
+        const heavy = intensity === 'heavy';
+        const count = heavy ? 180 : isLightMode ? 42 : 110;
+        const baseDuration = heavy ? 0.82 : isLightMode ? 1.05 : 0.95;
+        const maxDurationAdd = heavy ? 0.28 : isLightMode ? 0.35 : 0.45;
+        const minHeight = heavy ? 12 : isLightMode ? 9 : 10;
+        const maxHeightAdd = heavy ? 28 : isLightMode ? 14 : 22;
+        const minOpacity = heavy ? 0.24 : isLightMode ? 0.14 : 0.16;
+        const maxOpacityAdd = heavy ? 0.34 : isLightMode ? 0.18 : 0.28;
+        const minDrift = heavy ? 18 : isLightMode ? 20 : 26;
+        const maxDriftAdd = heavy ? 36 : isLightMode ? 40 : 64;
+        const minWidth = heavy ? 1.2 : isLightMode ? 0.9 : 1;
+        const maxWidthAdd = heavy ? 1.8 : isLightMode ? 0.8 : 1.2;
 
         return Array.from({ length: count }).map((_, i) => ({
             id: i,
@@ -47,7 +50,7 @@ export function RainParticles() {
             drift: minDrift + Math.random() * maxDriftAdd,
             width: minWidth + Math.random() * maxWidthAdd,
         }));
-    }, [isLightMode]);
+    }, [intensity, isLightMode]);
 
     if (!mounted) return null;
 

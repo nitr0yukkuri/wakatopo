@@ -932,10 +932,10 @@ export default function OtenkiGurashiPage() {
                 )}
                 {(weather === 'Rain' || weather === 'Thunder') && (
                     <>
-                        <div className="fixed inset-0 pointer-events-none z-0">
-                            <RainParticles />
+                        <div className="fixed inset-0 pointer-events-none z-20">
+                            <RainParticles intensity="heavy" />
                         </div>
-                        <div className="fixed inset-0 pointer-events-none z-0 opacity-45" style={{
+                        <div className="fixed inset-0 pointer-events-none z-20 opacity-45" style={{
                             background: 'linear-gradient(180deg, rgba(52,95,145,0.24) 0%, rgba(67,123,188,0.18) 35%, rgba(18,52,90,0.24) 100%)',
                         }} />
                     </>
