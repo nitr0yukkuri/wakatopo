@@ -72,79 +72,93 @@ export default function GameboyCursor() {
         >
             <style dangerouslySetInnerHTML={{ __html: `* { cursor: none !important; }` }} />
             
-            {/* Compact game machine cursor - 18×20px */}
+            {/* Modern minimalist game device cursor - tilted 20deg for perspective */}
             <svg
-                width="18"
-                height="20"
-                viewBox="0 0 18 20"
+                width="32"
+                height="40"
+                viewBox="0 0 32 40"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
+                style={{ 
+                    transform: 'skewX(-15deg) rotateZ(20deg)',
+                    transformOrigin: 'center center'
+                }}
             >
-                {/* Main body - compact rectangular device */}
+                {/* Outer frame - elegant rectangle */}
                 <rect
-                    x="1"
-                    y="1"
-                    width="16"
-                    height="18"
-                    rx="2"
-                    fill="#0f0f2e"
+                    x="2"
+                    y="2"
+                    width="28"
+                    height="32"
+                    rx="4"
+                    fill="none"
                     stroke="#00d4ff"
-                    strokeWidth="0.8"
+                    strokeWidth="0.9"
+                    opacity="0.7"
                 />
 
-                {/* Screen area - glowing game display */}
-                <motion.rect
-                    x="2"
-                    y="2"
-                    width="14"
-                    height="8"
-                    rx="1"
-                    fill="#00d4ff"
-                    opacity={active ? 0.3 : 0.1}
-                    animate={{ opacity: active ? 0.4 : 0.15 }}
-                    transition={{ duration: 0.2 }}
-                />
-
-                {/* Screen border */}
+                {/* Inner accent frame */}
                 <rect
-                    x="2"
-                    y="2"
-                    width="14"
-                    height="8"
-                    rx="1"
+                    x="3.5"
+                    y="3.5"
+                    width="25"
+                    height="29"
+                    rx="3"
                     fill="none"
                     stroke="#00d4ff"
                     strokeWidth="0.5"
-                    opacity="0.4"
+                    opacity="0.3"
                 />
 
-                {/* Tiny scanlines - game screen effect */}
-                <line x1="2" y1="3.5" x2="16" y2="3.5" stroke="#00d4ff" strokeWidth="0.3" opacity="0.2" />
-                <line x1="2" y1="5" x2="16" y2="5" stroke="#00d4ff" strokeWidth="0.3" opacity="0.2" />
-                <line x1="2" y1="6.5" x2="16" y2="6.5" stroke="#00d4ff" strokeWidth="0.3" opacity="0.2" />
-
-                {/* D-Pad (left) - minimal representation */}
-                <circle cx="5" cy="14" r="1.5" fill="none" stroke="#00d4ff" strokeWidth="0.5" opacity="0.5" />
-                <line x1="5" y1="12.8" x2="5" y2="13.2" stroke="#00d4ff" strokeWidth="0.4" opacity="0.6" />
-                <line x1="3.8" y1="14" x2="6.2" y2="14" stroke="#00d4ff" strokeWidth="0.4" opacity="0.6" />
-
-                {/* Action buttons (right) - indicator dots */}
-                <motion.circle
-                    cx="13"
-                    cy="13.5"
-                    r="0.8"
-                    fill="#ff6b6b"
-                    opacity={active ? 0.9 : 0.6}
-                    animate={{ scale: active ? 1.2 : 1 }}
-                    transition={{ type: 'spring', stiffness: 500, damping: 20 }}
-                />
-                <circle cx="11" cy="14.5" r="0.8" fill="#ffd93d" opacity="0.6" />
-
-                {/* Cursor pointer - directional accent */}
-                <motion.polygon
-                    points="9,18 7,16 9,16.5 11,16"
+                {/* Screen - subtle glow */}
+                <motion.rect
+                    x="5"
+                    y="5"
+                    width="22"
+                    height="12"
+                    rx="1"
                     fill="#00d4ff"
-                    opacity={active ? 0.8 : 0.4}
+                    opacity={active ? 0.2 : 0.05}
+                    animate={{ opacity: active ? 0.25 : 0.08 }}
+                    transition={{ duration: 0.2 }}
+                />
+
+                {/* Minimal scanline accent */}
+                <line x1="5" y1="10.5" x2="27" y2="10.5" stroke="#00d4ff" strokeWidth="0.4" opacity="0.15" />
+
+                {/* Left control - geometric D-pad */}
+                <g opacity={active ? 0.9 : 0.6}>
+                    {/* Center circle */}
+                    <circle cx="10" cy="24" r="1.8" fill="none" stroke="#00d4ff" strokeWidth="0.7" />
+                    {/* Directional indicators */}
+                    <line x1="10" y1="21.5" x2="10" y2="22.2" stroke="#00d4ff" strokeWidth="0.5" />
+                    <line x1="10" y1="25.8" x2="10" y2="26.5" stroke="#00d4ff" strokeWidth="0.5" />
+                    <line x1="7.5" y1="24" x2="8.2" y2="24" stroke="#00d4ff" strokeWidth="0.5" />
+                    <line x1="11.8" y1="24" x2="12.5" y2="24" stroke="#00d4ff" strokeWidth="0.5" />
+                </g>
+
+                {/* Right control - action buttons */}
+                <g>
+                    {/* Button indicator dots */}
+                    <motion.circle
+                        cx="22"
+                        cy="23"
+                        r="1.2"
+                        fill="none"
+                        stroke="#ff6b6b"
+                        strokeWidth="0.7"
+                        opacity={active ? 0.95 : 0.65}
+                        animate={{ r: active ? 1.4 : 1.2, opacity: active ? 1 : 0.65 }}
+                        transition={{ type: 'spring', stiffness: 500, damping: 20 }}
+                    />
+                    <circle cx="18" cy="25.5" r="1.2" fill="none" stroke="#ffd93d" strokeWidth="0.7" opacity="0.65" />
+                </g>
+
+                {/* Bottom indicator - play pointer */}
+                <motion.path
+                    d="M 16 34 L 13 30 L 15.5 31.5 L 18 30 Z"
+                    fill="#00d4ff"
+                    opacity={active ? 0.85 : 0.45}
                     animate={{ opacity: active ? 0.9 : 0.5 }}
                     transition={{ duration: 0.2 }}
                 />
