@@ -59,7 +59,7 @@ export default function TopLeftMenu() {
         if (href === '/otenkigurashi') {
             setActiveWork('02');
             const currentWeather = useStore.getState().weather;
-            const otenkiHref = `/otenkigurashi?lang=${lang}&weather=${encodeURIComponent(currentWeather)}`;
+            const otenkiHref = `/otenkigurashi?lang=${lang}&weather=Rain`;
 
             if (currentWeather === 'Rain') {
                 setTransitionType('rain');
