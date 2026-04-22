@@ -5,6 +5,8 @@ import { motion, useSpring, useMotionValue } from 'framer-motion';
 
 export default function GameboyCursor() {
     const [isVisible, setIsVisible] = useState(false);
+    const [isGrabbing, setIsGrabbing] = useState(false);
+    const [isHovering, setIsHovering] = useState(false);
 
     // Motion values for smooth tracking
     const cursorX = useMotionValue(-100);
@@ -26,18 +28,42 @@ export default function GameboyCursor() {
             if (!isVisible) setIsVisible(true);
         };
 
-        window.addEventListener('mousemove', moveMouse);
+        const handleMouseDown = () => setIsGrabbing(true);
+        const handleMouseUp = () => setIsGrabbing(false);
 
-        // Hide default cursor
+        const handleMouseOver = (e: MouseEvent) => {
+            const target = e.target as HTMLElement;
+            if (
+                target.tagName.toLowerCase() === 'a' ||
+                target.tagName.toLowerCase() === 'button' ||
+                target.closest('a') ||
+                target.closest('button')
+            ) {
+                setIsHovering(true);
+            } else {
+                setIsHovering(false);
+            }
+        };
+
+        window.addEventListener('mousemove', moveMouse);
+        window.addEventListener('mousedown', handleMouseDown);
+        window.addEventListener('mouseup', handleMouseUp);
+        window.addEventListener('mouseover', handleMouseOver);
+
         document.documentElement.style.cursor = 'none';
 
         return () => {
             window.removeEventListener('mousemove', moveMouse);
+            window.removeEventListener('mousedown', handleMouseDown);
+            window.removeEventListener('mouseup', handleMouseUp);
+            window.removeEventListener('mouseover', handleMouseOver);
             document.documentElement.style.cursor = '';
         };
     }, [cursorX, cursorY, isVisible]);
 
     if (!isVisible) return null;
+
+    const active = isGrabbing || isHovering;
 
     return (
         <motion.div
@@ -46,117 +72,82 @@ export default function GameboyCursor() {
         >
             <style dangerouslySetInnerHTML={{ __html: `* { cursor: none !important; }` }} />
             
-            {/* Gameboy-inspired portable game device SVG cursor */}
+            {/* Compact game machine cursor - 18×20px */}
             <svg
-                width="56"
-                height="80"
-                viewBox="0 0 56 80"
+                width="18"
+                height="20"
+                viewBox="0 0 18 20"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
-                className="drop-shadow-lg"
             >
-                {/* Main body */}
+                {/* Main body - compact rectangular device */}
                 <rect
-                    x="4"
-                    y="2"
-                    width="48"
-                    height="68"
-                    rx="6"
-                    fill="#1a1a2e"
-                    stroke="#00d4ff"
-                    strokeWidth="1.5"
-                />
-
-                {/* Screen bezel */}
-                <rect
-                    x="8"
-                    y="8"
-                    width="40"
-                    height="32"
-                    rx="3"
-                    fill="#0a0f1f"
-                    stroke="#00d4ff"
-                    strokeWidth="1"
-                />
-
-                {/* Screen glow */}
-                <rect
-                    x="10"
-                    y="10"
-                    width="36"
-                    height="28"
+                    x="1"
+                    y="1"
+                    width="16"
+                    height="18"
                     rx="2"
-                    fill="#00d4ff"
-                    opacity="0.15"
+                    fill="#0f0f2e"
+                    stroke="#00d4ff"
+                    strokeWidth="0.8"
                 />
 
-                {/* Screen scanlines effect */}
-                <defs>
-                    <pattern
-                        id="scanlines"
-                        x="0"
-                        y="0"
-                        width="36"
-                        height="2"
-                        patternUnits="userSpaceOnUse"
-                    >
-                        <line
-                            x1="0"
-                            y1="0"
-                            x2="36"
-                            y2="0"
-                            stroke="#00d4ff"
-                            strokeWidth="0.5"
-                            opacity="0.2"
-                        />
-                    </pattern>
-                </defs>
+                {/* Screen area - glowing game display */}
+                <motion.rect
+                    x="2"
+                    y="2"
+                    width="14"
+                    height="8"
+                    rx="1"
+                    fill="#00d4ff"
+                    opacity={active ? 0.3 : 0.1}
+                    animate={{ opacity: active ? 0.4 : 0.15 }}
+                    transition={{ duration: 0.2 }}
+                />
+
+                {/* Screen border */}
                 <rect
-                    x="10"
-                    y="10"
-                    width="36"
-                    height="28"
-                    fill="url(#scanlines)"
+                    x="2"
+                    y="2"
+                    width="14"
+                    height="8"
+                    rx="1"
+                    fill="none"
+                    stroke="#00d4ff"
+                    strokeWidth="0.5"
+                    opacity="0.4"
                 />
 
-                {/* D-Pad (left side) */}
-                <g>
-                    {/* D-Pad background circle */}
-                    <circle cx="18" cy="50" r="8" fill="#0a0a0a" stroke="#00d4ff" strokeWidth="1" />
-                    
-                    {/* D-Pad cross */}
-                    <rect x="16" y="46" width="4" height="8" fill="#00d4ff" opacity="0.6" />
-                    <rect x="14" y="48" width="8" height="4" fill="#00d4ff" opacity="0.6" />
-                </g>
+                {/* Tiny scanlines - game screen effect */}
+                <line x1="2" y1="3.5" x2="16" y2="3.5" stroke="#00d4ff" strokeWidth="0.3" opacity="0.2" />
+                <line x1="2" y1="5" x2="16" y2="5" stroke="#00d4ff" strokeWidth="0.3" opacity="0.2" />
+                <line x1="2" y1="6.5" x2="16" y2="6.5" stroke="#00d4ff" strokeWidth="0.3" opacity="0.2" />
 
-                {/* Action buttons (right side) */}
-                <g>
-                    {/* Button A */}
-                    <circle cx="38" cy="54" r="3.5" fill="#ff6b6b" stroke="#ff6b6b" strokeWidth="0.5" opacity="0.8" />
-                    
-                    {/* Button B */}
-                    <circle cx="30" cy="50" r="3.5" fill="#ffd93d" stroke="#ffd93d" strokeWidth="0.5" opacity="0.8" />
-                </g>
+                {/* D-Pad (left) - minimal representation */}
+                <circle cx="5" cy="14" r="1.5" fill="none" stroke="#00d4ff" strokeWidth="0.5" opacity="0.5" />
+                <line x1="5" y1="12.8" x2="5" y2="13.2" stroke="#00d4ff" strokeWidth="0.4" opacity="0.6" />
+                <line x1="3.8" y1="14" x2="6.2" y2="14" stroke="#00d4ff" strokeWidth="0.4" opacity="0.6" />
 
-                {/* Speaker grills */}
-                <g>
-                    <rect x="8" y="46" width="3" height="12" rx="1" fill="none" stroke="#00d4ff" strokeWidth="0.5" opacity="0.5" />
-                    <rect x="12" y="46" width="3" height="12" rx="1" fill="none" stroke="#00d4ff" strokeWidth="0.5" opacity="0.5" />
-                </g>
+                {/* Action buttons (right) - indicator dots */}
+                <motion.circle
+                    cx="13"
+                    cy="13.5"
+                    r="0.8"
+                    fill="#ff6b6b"
+                    opacity={active ? 0.9 : 0.6}
+                    animate={{ scale: active ? 1.2 : 1 }}
+                    transition={{ type: 'spring', stiffness: 500, damping: 20 }}
+                />
+                <circle cx="11" cy="14.5" r="0.8" fill="#ffd93d" opacity="0.6" />
 
-                {/* Bottom button area label */}
-                <text
-                    x="28"
-                    y="72"
-                    textAnchor="middle"
-                    fontSize="6"
+                {/* Cursor pointer - directional accent */}
+                <motion.polygon
+                    points="9,18 7,16 9,16.5 11,16"
                     fill="#00d4ff"
-                    opacity="0.6"
-                    fontFamily="monospace"
-                    fontWeight="bold"
-                >
-                    PLAY
-                </text>
+                    opacity={active ? 0.8 : 0.4}
+                    animate={{ opacity: active ? 0.9 : 0.5 }}
+                    transition={{ duration: 0.2 }}
+                />
             </svg>
         </motion.div>
     );
