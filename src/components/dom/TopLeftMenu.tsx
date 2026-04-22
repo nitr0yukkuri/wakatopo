@@ -255,7 +255,13 @@ export default function TopLeftMenu() {
             >
                 <div className="mb-2 flex items-center justify-between text-[10px] tracking-[0.2em] text-cyan-300/80">
                     <span>LOCAL SHELL</span>
-                    <span className="rounded border border-cyan-400/30 px-1.5 py-0.5 text-[9px] text-cyan-200/70">ESC / EXIT</span>
+                    <button
+                        type="button"
+                        onClick={() => setCliOpen(false)}
+                        className="rounded border border-cyan-400/30 px-1.5 py-0.5 text-[9px] text-cyan-200/70 hover:border-cyan-300 hover:text-cyan-200 transition-colors cursor-pointer"
+                    >
+                        ESC / EXIT
+                    </button>
                 </div>
 
                 <div className="mb-2 h-36 overflow-y-auto rounded border border-cyan-400/20 bg-black/35 px-2 py-2 font-mono text-[11px] leading-relaxed">
@@ -295,7 +301,13 @@ export default function TopLeftMenu() {
             >
                 <div className="mb-2 flex items-center justify-between text-[10px] tracking-[0.2em] text-cyan-300/80">
                     <span>COMMAND PALETTE</span>
-                    <span className="rounded border border-cyan-400/30 px-1.5 py-0.5 text-[9px] text-cyan-200/70">ESC</span>
+                    <button
+                        type="button"
+                        onClick={() => setOpen(false)}
+                        className="rounded border border-cyan-400/30 px-1.5 py-0.5 text-[9px] text-cyan-200/70 hover:border-cyan-300 hover:text-cyan-200 transition-colors cursor-pointer"
+                    >
+                        ESC
+                    </button>
                 </div>
 
                 <div className="mb-2 rounded border border-cyan-400/20 bg-black/30 px-2 py-1.5 font-mono text-[11px] tracking-wide text-cyan-100/90">
