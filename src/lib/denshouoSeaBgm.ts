@@ -8,14 +8,17 @@ type SeaState = {
     foamGain: GainNode | null;
     undertowGain: GainNode | null;
     shoreFilter: BiquadFilterNode | null;
-    foamFilter: BiquadFilterNode | null;
+    foamHighpass: BiquadFilterNode | null;
+    foamLowpass: BiquadFilterNode | null;
     undertowFilter: BiquadFilterNode | null;
     shoreSource: AudioBufferSourceNode | null;
     foamSource: AudioBufferSourceNode | null;
     undertowSource: AudioBufferSourceNode | null;
     breathTimer: number | null;
+    macroTimer: number | null;
     motifTimer: number | null;
     chordTimer: number | null;
+    foamPulseTimer: number | null;
     harmonicStep: number;
 };
 
@@ -29,14 +32,17 @@ const state: SeaState = {
     foamGain: null,
     undertowGain: null,
     shoreFilter: null,
-    foamFilter: null,
+    foamHighpass: null,
+    foamLowpass: null,
     undertowFilter: null,
     shoreSource: null,
     foamSource: null,
     undertowSource: null,
     breathTimer: null,
+    macroTimer: null,
     motifTimer: null,
     chordTimer: null,
+    foamPulseTimer: null,
     harmonicStep: 0,
 };
 
@@ -44,23 +50,12 @@ const rand = (min: number, max: number) => min + Math.random() * (max - min);
 const midiToFreq = (midi: number) => 440 * Math.pow(2, (midi - 69) / 12);
 
 const HARMONY_STEPS: Array<{ root: number; color: number[] }> = [
-    { root: 45, color: [52, 57] }, // A2 + E3 + A3
-    { root: 48, color: [55, 60] }, // C3 + G3 + C4
-    { root: 43, color: [50, 55] }, // G2 + D3 + G3
-    { root: 46, color: [53, 58] }, // Bb2 + F3 + Bb3
+    { root: 45, color: [52, 57, 60] },
+    { root: 48, color: [55, 60, 64] },
+    { root: 43, color: [50, 57, 60] },
+    { root: 41, color: [48, 53, 57] },
+    { root: 46, color: [53, 58, 62] },
 ];
-
-const createWhiteNoiseBuffer = (ctx: AudioContext, seconds: number) => {
-    const frames = Math.max(1, Math.floor(ctx.sampleRate * seconds));
-    const buffer = ctx.createBuffer(1, frames, ctx.sampleRate);
-    const data = buffer.getChannelData(0);
-
-    for (let i = 0; i < frames; i += 1) {
-        data[i] = Math.random() * 2 - 1;
-    }
-
-    return buffer;
-};
 
 const createBrownNoiseBuffer = (ctx: AudioContext, seconds: number) => {
     const frames = Math.max(1, Math.floor(ctx.sampleRate * seconds));
@@ -77,6 +72,35 @@ const createBrownNoiseBuffer = (ctx: AudioContext, seconds: number) => {
     return buffer;
 };
 
+const createPinkNoiseBuffer = (ctx: AudioContext, seconds: number) => {
+    const frames = Math.max(1, Math.floor(ctx.sampleRate * seconds));
+    const buffer = ctx.createBuffer(1, frames, ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+
+    let b0 = 0;
+    let b1 = 0;
+    let b2 = 0;
+    let b3 = 0;
+    let b4 = 0;
+    let b5 = 0;
+    let b6 = 0;
+
+    for (let i = 0; i < frames; i += 1) {
+        const white = Math.random() * 2 - 1;
+        b0 = 0.99886 * b0 + white * 0.0555179;
+        b1 = 0.99332 * b1 + white * 0.0750759;
+        b2 = 0.96900 * b2 + white * 0.1538520;
+        b3 = 0.86650 * b3 + white * 0.3104856;
+        b4 = 0.55000 * b4 + white * 0.5329522;
+        b5 = -0.7616 * b5 - white * 0.0168980;
+        const pink = b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362;
+        b6 = white * 0.115926;
+        data[i] = Math.max(-1, Math.min(1, pink * 0.1));
+    }
+
+    return buffer;
+};
+
 const createLoopSource = (ctx: AudioContext, buffer: AudioBuffer, out: AudioNode) => {
     const src = ctx.createBufferSource();
     src.buffer = buffer;
@@ -88,54 +112,156 @@ const createLoopSource = (ctx: AudioContext, buffer: AudioBuffer, out: AudioNode
 
 const stopSource = (source: AudioBufferSourceNode | null) => {
     if (!source) return;
-
     try {
         source.stop();
     } catch {
         // no-op
     }
-
     source.disconnect();
 };
 
-const createSoftVoice = (
+const clearTimer = (timer: number | null) => {
+    if (timer !== null) {
+        window.clearTimeout(timer);
+    }
+    return null;
+};
+
+const createPianoVoice = (
     ctx: AudioContext,
     destination: AudioNode,
     frequency: number,
+    startAt: number,
     duration: number,
-    volume: number,
     attack: number,
-    releasePad: number,
-    highCutHz: number,
+    volume: number,
+    lowpassHz: number,
 ) => {
-    const carrier = ctx.createOscillator();
-    const color = ctx.createOscillator();
+    const body = ctx.createOscillator();
+    const tone = ctx.createOscillator();
+    const air = ctx.createOscillator();
     const filter = ctx.createBiquadFilter();
     const gain = ctx.createGain();
 
-    carrier.type = 'triangle';
-    carrier.frequency.setValueAtTime(Math.max(36, frequency), ctx.currentTime);
+    body.type = 'triangle';
+    tone.type = 'sine';
+    air.type = 'sine';
 
-    color.type = 'sine';
-    color.frequency.setValueAtTime(Math.max(36, frequency * 2), ctx.currentTime);
+    body.frequency.setValueAtTime(frequency, startAt);
+    tone.frequency.setValueAtTime(frequency * 2, startAt);
+    air.frequency.setValueAtTime(frequency * 3.01, startAt);
 
     filter.type = 'lowpass';
-    filter.frequency.setValueAtTime(highCutHz, ctx.currentTime);
-    filter.Q.value = 0.55;
+    filter.frequency.setValueAtTime(lowpassHz, startAt);
+    filter.Q.value = 0.6;
 
-    gain.gain.setValueAtTime(0.0001, ctx.currentTime);
-    gain.gain.linearRampToValueAtTime(volume, ctx.currentTime + attack);
-    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duration);
+    gain.gain.setValueAtTime(0.0001, startAt);
+    gain.gain.linearRampToValueAtTime(volume, startAt + attack);
+    gain.gain.exponentialRampToValueAtTime(0.0001, startAt + duration);
 
-    carrier.connect(filter);
-    color.connect(filter);
+    body.connect(filter);
+    tone.connect(filter);
+    air.connect(filter);
     filter.connect(gain);
     gain.connect(destination);
 
-    carrier.start();
-    color.start();
-    carrier.stop(ctx.currentTime + duration + releasePad);
-    color.stop(ctx.currentTime + duration + releasePad);
+    body.start(startAt);
+    tone.start(startAt);
+    air.start(startAt);
+
+    const stopAt = startAt + duration + 0.2;
+    body.stop(stopAt);
+    tone.stop(stopAt);
+    air.stop(stopAt);
+};
+
+const scheduleFoamPulse = () => {
+    if (!state.isPlaying || !state.ctx || !state.foamGain) return;
+
+    const now = state.ctx.currentTime;
+    const base = rand(0.019, 0.028);
+    const swell = rand(0.029, 0.043);
+    const attack = rand(0.3, 1.2);
+    const release = rand(1.8, 4.0);
+
+    state.foamGain.gain.cancelScheduledValues(now);
+    state.foamGain.gain.setValueAtTime(state.foamGain.gain.value, now);
+    state.foamGain.gain.linearRampToValueAtTime(swell, now + attack);
+    state.foamGain.gain.linearRampToValueAtTime(base, now + attack + release);
+
+    state.foamPulseTimer = window.setTimeout(() => {
+        scheduleFoamPulse();
+    }, Math.floor(rand(2600, 6800)));
+};
+
+const scheduleMacroShift = () => {
+    if (!state.isPlaying || !state.ctx || !state.shoreGain || !state.foamGain || !state.undertowGain) return;
+
+    const now = state.ctx.currentTime;
+    const span = rand(16, 30);
+
+    const shoreTarget = rand(0.16, 0.24);
+    const foamTarget = rand(0.019, 0.03);
+    const undertowTarget = rand(0.038, 0.055);
+
+    state.shoreGain.gain.cancelScheduledValues(now);
+    state.shoreGain.gain.setValueAtTime(state.shoreGain.gain.value, now);
+    state.shoreGain.gain.linearRampToValueAtTime(shoreTarget, now + span);
+
+    state.foamGain.gain.cancelScheduledValues(now);
+    state.foamGain.gain.setValueAtTime(state.foamGain.gain.value, now);
+    state.foamGain.gain.linearRampToValueAtTime(foamTarget, now + span * rand(0.65, 0.95));
+
+    state.undertowGain.gain.cancelScheduledValues(now);
+    state.undertowGain.gain.setValueAtTime(state.undertowGain.gain.value, now);
+    state.undertowGain.gain.linearRampToValueAtTime(undertowTarget, now + span * rand(0.7, 1.0));
+
+    state.macroTimer = window.setTimeout(() => {
+        scheduleMacroShift();
+    }, Math.floor((span + rand(2.6, 5.8)) * 1000));
+};
+
+const scheduleBreathing = () => {
+    if (!state.isPlaying || !state.ctx || !state.mixGain) return;
+
+    const now = state.ctx.currentTime;
+    const duration = rand(5.8, 10.4);
+    const target = rand(0.83, 1.0);
+    const attack = duration * rand(0.25, 0.48);
+    const recover = duration * rand(0.52, 0.78);
+
+    state.mixGain.gain.cancelScheduledValues(now);
+    state.mixGain.gain.setValueAtTime(state.mixGain.gain.value, now);
+    state.mixGain.gain.linearRampToValueAtTime(target, now + attack);
+    state.mixGain.gain.linearRampToValueAtTime(rand(0.86, 0.97), now + recover);
+
+    if (state.shoreFilter) {
+        state.shoreFilter.frequency.cancelScheduledValues(now);
+        state.shoreFilter.frequency.setValueAtTime(rand(780, 1180), now);
+        state.shoreFilter.frequency.linearRampToValueAtTime(rand(980, 1420), now + duration);
+    }
+
+    if (state.foamHighpass) {
+        state.foamHighpass.frequency.cancelScheduledValues(now);
+        state.foamHighpass.frequency.setValueAtTime(rand(1700, 2600), now);
+        state.foamHighpass.frequency.linearRampToValueAtTime(rand(2300, 3400), now + duration * 0.82);
+    }
+
+    if (state.foamLowpass) {
+        state.foamLowpass.frequency.cancelScheduledValues(now);
+        state.foamLowpass.frequency.setValueAtTime(rand(3900, 5200), now);
+        state.foamLowpass.frequency.linearRampToValueAtTime(rand(4500, 6100), now + duration * 0.72);
+    }
+
+    if (state.undertowFilter) {
+        state.undertowFilter.frequency.cancelScheduledValues(now);
+        state.undertowFilter.frequency.setValueAtTime(rand(94, 145), now);
+        state.undertowFilter.frequency.linearRampToValueAtTime(rand(118, 176), now + duration * 0.9);
+    }
+
+    state.breathTimer = window.setTimeout(() => {
+        scheduleBreathing();
+    }, Math.floor((duration + rand(0.4, 1.4)) * 1000));
 };
 
 const scheduleChordBed = () => {
@@ -144,96 +270,57 @@ const scheduleChordBed = () => {
     const step = HARMONY_STEPS[state.harmonicStep % HARMONY_STEPS.length];
     state.harmonicStep += 1;
 
-    const chordNotes = [step.root, ...step.color];
-    const span = rand(8.0, 12.2);
+    const baseStart = state.ctx.currentTime + rand(0.1, 0.5);
+    const span = rand(10.0, 18.0);
 
-    for (const midi of chordNotes) {
-        createSoftVoice(
+    for (let i = 0; i < step.color.length; i += 1) {
+        const midi = i === 0 ? step.root : step.color[i];
+        createPianoVoice(
             state.ctx,
             state.mixGain,
             midiToFreq(midi),
-            span,
-            rand(0.0045, 0.0075),
-            rand(1.4, 2.3),
-            0.2,
-            rand(1200, 1680),
+            baseStart + i * rand(0.08, 0.34),
+            span * rand(0.72, 1.04),
+            rand(1.2, 2.7),
+            rand(0.0038, 0.0075),
+            rand(900, 1650),
         );
     }
 
-    const nextMs = Math.floor(rand(12000, 18500));
     state.chordTimer = window.setTimeout(() => {
         scheduleChordBed();
-    }, nextMs);
+    }, Math.floor(rand(9800, 17600)));
 };
 
 const schedulePianoMotif = () => {
     if (!state.isPlaying || !state.ctx || !state.mixGain) return;
 
-    const scale = [57, 60, 62, 64, 67, 69]; // A minor pentatonic-ish plus color
-    const noteCount = Math.floor(rand(1, 3.2));
-    const startAt = state.ctx.currentTime + rand(0.08, 0.26);
+    const scale = [50, 53, 57, 60, 62, 65, 69, 72];
+    const phraseCount = Math.floor(rand(1, 4.2));
+    const phraseStart = state.ctx.currentTime + rand(0.06, 0.35);
 
-    for (let i = 0; i < noteCount; i += 1) {
+    for (let i = 0; i < phraseCount; i += 1) {
+        if (Math.random() < 0.25) continue;
+
         const midi = scale[Math.floor(rand(0, scale.length))];
-        const offset = i * rand(0.64, 1.2);
-        const duration = rand(2.6, 4.2);
+        const startAt = phraseStart + i * rand(0.48, 1.6);
+        const length = rand(1.6, 4.4);
 
-        const carrier = state.ctx.createOscillator();
-        const overtone = state.ctx.createOscillator();
-        const filter = state.ctx.createBiquadFilter();
-        const gain = state.ctx.createGain();
-
-        carrier.type = 'triangle';
-        carrier.frequency.setValueAtTime(midiToFreq(midi), startAt + offset);
-
-        overtone.type = 'sine';
-        overtone.frequency.setValueAtTime(midiToFreq(midi + 12), startAt + offset);
-
-        filter.type = 'lowpass';
-        filter.frequency.setValueAtTime(rand(1050, 1750), startAt + offset);
-        filter.Q.value = 0.62;
-
-        gain.gain.setValueAtTime(0.0001, startAt + offset);
-        gain.gain.linearRampToValueAtTime(rand(0.0032, 0.0072), startAt + offset + rand(0.16, 0.34));
-        gain.gain.exponentialRampToValueAtTime(0.0001, startAt + offset + duration);
-
-        carrier.connect(filter);
-        overtone.connect(filter);
-        filter.connect(gain);
-        gain.connect(state.mixGain);
-
-        carrier.start(startAt + offset);
-        overtone.start(startAt + offset);
-        carrier.stop(startAt + offset + duration + 0.12);
-        overtone.stop(startAt + offset + duration + 0.12);
+        createPianoVoice(
+            state.ctx,
+            state.mixGain,
+            midiToFreq(midi),
+            startAt,
+            length,
+            rand(0.14, 0.42),
+            rand(0.0022, 0.0062),
+            rand(980, 1880),
+        );
     }
 
-    const nextMs = Math.floor(rand(6800, 11500));
     state.motifTimer = window.setTimeout(() => {
         schedulePianoMotif();
-    }, nextMs);
-};
-
-const scheduleBreathing = () => {
-    if (!state.ctx || !state.mixGain) return;
-
-    const now = state.ctx.currentTime;
-    const duration = rand(6.0, 9.0);
-    const target = rand(0.84, 1.0);
-    const current = state.mixGain.gain.value;
-    const attack = Math.min(duration * 0.45, 2.8);
-
-    state.mixGain.gain.cancelScheduledValues(now);
-    state.mixGain.gain.setValueAtTime(current, now);
-    state.mixGain.gain.linearRampToValueAtTime(target, now + attack);
-    state.mixGain.gain.linearRampToValueAtTime(rand(0.86, 0.98), now + duration);
-    modulateFilters();
-
-    const nextMs = Math.floor((duration + rand(0.35, 0.9)) * 1000);
-    state.breathTimer = window.setTimeout(() => {
-        if (!state.isPlaying) return;
-        scheduleBreathing();
-    }, nextMs);
+    }, Math.floor(rand(4200, 12400)));
 };
 
 const initialize = (ctx: AudioContext, destination: AudioNode) => {
@@ -249,27 +336,32 @@ const initialize = (ctx: AudioContext, destination: AudioNode) => {
     shoreGain.gain.value = 0.0001;
     const shoreFilter = ctx.createBiquadFilter();
     shoreFilter.type = 'lowpass';
-    shoreFilter.frequency.value = rand(820, 1200);
-    shoreFilter.Q.value = 0.7;
+    shoreFilter.frequency.value = rand(840, 1240);
+    shoreFilter.Q.value = 0.72;
 
     const foamGain = ctx.createGain();
     foamGain.gain.value = 0.0001;
-    const foamFilter = ctx.createBiquadFilter();
-    foamFilter.type = 'highpass';
-    foamFilter.frequency.value = rand(2600, 4700);
-    foamFilter.Q.value = 0.5;
+    const foamHighpass = ctx.createBiquadFilter();
+    foamHighpass.type = 'highpass';
+    foamHighpass.frequency.value = rand(1800, 2800);
+    foamHighpass.Q.value = 0.68;
+    const foamLowpass = ctx.createBiquadFilter();
+    foamLowpass.type = 'lowpass';
+    foamLowpass.frequency.value = rand(3900, 5600);
+    foamLowpass.Q.value = 0.56;
 
     const undertowGain = ctx.createGain();
     undertowGain.gain.value = 0.0001;
     const undertowFilter = ctx.createBiquadFilter();
     undertowFilter.type = 'bandpass';
-    undertowFilter.frequency.value = rand(110, 160);
-    undertowFilter.Q.value = 0.75;
+    undertowFilter.frequency.value = rand(102, 162);
+    undertowFilter.Q.value = 0.78;
 
     shoreFilter.connect(shoreGain);
     shoreGain.connect(mixGain);
 
-    foamFilter.connect(foamGain);
+    foamHighpass.connect(foamLowpass);
+    foamLowpass.connect(foamGain);
     foamGain.connect(mixGain);
 
     undertowFilter.connect(undertowGain);
@@ -282,57 +374,33 @@ const initialize = (ctx: AudioContext, destination: AudioNode) => {
     state.foamGain = foamGain;
     state.undertowGain = undertowGain;
     state.shoreFilter = shoreFilter;
-    state.foamFilter = foamFilter;
+    state.foamHighpass = foamHighpass;
+    state.foamLowpass = foamLowpass;
     state.undertowFilter = undertowFilter;
     state.initialized = true;
 };
 
 const applyStartEnvelope = () => {
     if (!state.ctx) return;
-
     const now = state.ctx.currentTime;
 
     if (state.shoreGain) {
         state.shoreGain.gain.cancelScheduledValues(now);
         state.shoreGain.gain.setValueAtTime(0.0001, now);
-        state.shoreGain.gain.linearRampToValueAtTime(0.185, now + 1.4);
+        state.shoreGain.gain.linearRampToValueAtTime(0.19, now + 1.5);
     }
 
     if (state.foamGain) {
         state.foamGain.gain.cancelScheduledValues(now);
         state.foamGain.gain.setValueAtTime(0.0001, now);
-        state.foamGain.gain.linearRampToValueAtTime(0.058, now + 0.18);
-        state.foamGain.gain.linearRampToValueAtTime(0.049, now + 1.4);
+        state.foamGain.gain.linearRampToValueAtTime(0.03, now + 1.0);
+        state.foamGain.gain.linearRampToValueAtTime(0.024, now + 2.1);
     }
 
     if (state.undertowGain) {
         state.undertowGain.gain.cancelScheduledValues(now);
         state.undertowGain.gain.setValueAtTime(0.0001, now);
-        state.undertowGain.gain.linearRampToValueAtTime(0.044, now + 2.2);
-    }
-};
-
-const modulateFilters = () => {
-    if (!state.ctx) return;
-
-    const now = state.ctx.currentTime;
-
-    if (state.shoreFilter) {
-        state.shoreFilter.frequency.cancelScheduledValues(now);
-        state.shoreFilter.frequency.setValueAtTime(rand(760, 1180), now);
-        state.shoreFilter.frequency.linearRampToValueAtTime(rand(920, 1360), now + rand(5.5, 8.7));
-    }
-
-    if (state.foamFilter) {
-        state.foamFilter.frequency.cancelScheduledValues(now);
-        state.foamFilter.frequency.setValueAtTime(rand(2200, 3600), now);
-        state.foamFilter.frequency.linearRampToValueAtTime(rand(3400, 5600), now + rand(4.8, 7.4));
-    }
-
-    if (state.undertowFilter) {
-        state.undertowFilter.frequency.cancelScheduledValues(now);
-        state.undertowFilter.frequency.setValueAtTime(rand(95, 150), now);
-        state.undertowFilter.frequency.linearRampToValueAtTime(rand(110, 178), now + rand(6.2, 9.1));
+        state.undertowGain.gain.linearRampToValueAtTime(0.044, now + 2.4);
     }
 };
 
@@ -341,45 +409,36 @@ export const startDenshouoSeaBgm = ({ ctx, destination }: { ctx: AudioContext; d
 
     initialize(ctx, destination);
 
-    if (!state.shoreFilter || !state.foamFilter || !state.undertowFilter) return;
+    if (!state.shoreFilter || !state.foamHighpass || !state.undertowFilter) return;
 
-    const shoreNoise = createBrownNoiseBuffer(ctx, 5.0);
-    const foamNoise = createWhiteNoiseBuffer(ctx, 2.6);
-    const undertowNoise = createBrownNoiseBuffer(ctx, 6.2);
+    const shoreNoise = createBrownNoiseBuffer(ctx, 5.5);
+    const foamNoise = createPinkNoiseBuffer(ctx, 4.2);
+    const undertowNoise = createBrownNoiseBuffer(ctx, 7.0);
 
     state.shoreSource = createLoopSource(ctx, shoreNoise, state.shoreFilter);
-    state.foamSource = createLoopSource(ctx, foamNoise, state.foamFilter);
+    state.foamSource = createLoopSource(ctx, foamNoise, state.foamHighpass);
     state.undertowSource = createLoopSource(ctx, undertowNoise, state.undertowFilter);
 
     state.isPlaying = true;
     state.harmonicStep = Math.floor(rand(0, HARMONY_STEPS.length));
 
     applyStartEnvelope();
-    modulateFilters();
     scheduleBreathing();
+    scheduleMacroShift();
+    scheduleFoamPulse();
     scheduleChordBed();
     schedulePianoMotif();
 };
 
 export const stopDenshouoSeaBgm = () => {
     if (!state.isPlaying) return;
-
     state.isPlaying = false;
 
-    if (state.breathTimer !== null) {
-        window.clearTimeout(state.breathTimer);
-        state.breathTimer = null;
-    }
-
-    if (state.motifTimer !== null) {
-        window.clearTimeout(state.motifTimer);
-        state.motifTimer = null;
-    }
-
-    if (state.chordTimer !== null) {
-        window.clearTimeout(state.chordTimer);
-        state.chordTimer = null;
-    }
+    state.breathTimer = clearTimer(state.breathTimer);
+    state.macroTimer = clearTimer(state.macroTimer);
+    state.motifTimer = clearTimer(state.motifTimer);
+    state.chordTimer = clearTimer(state.chordTimer);
+    state.foamPulseTimer = clearTimer(state.foamPulseTimer);
 
     stopSource(state.shoreSource);
     stopSource(state.foamSource);
@@ -393,6 +452,6 @@ export const stopDenshouoSeaBgm = () => {
         const now = state.ctx.currentTime;
         state.mixGain.gain.cancelScheduledValues(now);
         state.mixGain.gain.setValueAtTime(state.mixGain.gain.value, now);
-        state.mixGain.gain.linearRampToValueAtTime(0.0001, now + 0.2);
+        state.mixGain.gain.linearRampToValueAtTime(0.0001, now + 0.22);
     }
 };
