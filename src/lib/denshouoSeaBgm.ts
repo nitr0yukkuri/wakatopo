@@ -4,21 +4,8 @@ type SeaState = {
     ctx: AudioContext | null;
     destination: AudioNode | null;
     mixGain: GainNode | null;
-    shoreGain: GainNode | null;
-    foamGain: GainNode | null;
-    undertowGain: GainNode | null;
-    shoreFilter: BiquadFilterNode | null;
-    foamHighpass: BiquadFilterNode | null;
-    foamLowpass: BiquadFilterNode | null;
-    undertowFilter: BiquadFilterNode | null;
-    shoreSource: AudioBufferSourceNode | null;
-    foamSource: AudioBufferSourceNode | null;
-    undertowSource: AudioBufferSourceNode | null;
     breathTimer: number | null;
-    macroTimer: number | null;
-    motifTimer: number | null;
-    chordTimer: number | null;
-    foamPulseTimer: number | null;
+    phraseTimer: number | null;
     harmonicStep: number;
 };
 
@@ -28,380 +15,190 @@ const state: SeaState = {
     ctx: null,
     destination: null,
     mixGain: null,
-    shoreGain: null,
-    foamGain: null,
-    undertowGain: null,
-    shoreFilter: null,
-    foamHighpass: null,
-    foamLowpass: null,
-    undertowFilter: null,
-    shoreSource: null,
-    foamSource: null,
-    undertowSource: null,
     breathTimer: null,
-    macroTimer: null,
-    motifTimer: null,
-    chordTimer: null,
-    foamPulseTimer: null,
+    phraseTimer: null,
     harmonicStep: 0,
 };
 
 const rand = (min: number, max: number) => min + Math.random() * (max - min);
 const midiToFreq = (midi: number) => 440 * Math.pow(2, (midi - 69) / 12);
 
-const HARMONY_STEPS: Array<{ root: number; color: number[] }> = [
-    { root: 45, color: [52, 57, 60] },
-    { root: 48, color: [55, 60, 64] },
-    { root: 43, color: [50, 57, 60] },
-    { root: 41, color: [48, 53, 57] },
-    { root: 46, color: [53, 58, 62] },
+// 完全にコントロールされた楽曲の進行（海と沈黙を表現するルバートピアノ）
+type PhraseDef = {
+    bass: number[];
+    arp: number[];
+    melody: number[];
+};
+
+const SCORE: PhraseDef[] = [
+    // 1: 静かなる沈み込み (Cm11)
+    { bass: [36, 43], arp: [55, 58, 62], melody: [67, 65, 63, 62] },
+    // 2: 揺らめく光 (AbM9#11)
+    { bass: [32, 44], arp: [55, 60, 63], melody: [67, 72, 70, 67] },
+    // 3: さらなる深淵 (Fm9)
+    { bass: [29, 41], arp: [56, 60, 65], melody: [72, 75, 74, 72] },
+    // 4: 立ち止まる (G7sus4 b9)
+    { bass: [31, 43], arp: [55, 59, 63], melody: [67, 63, 60, 59] },
+
+    // 5: 再び沈む (Cm11)
+    { bass: [36, 43], arp: [55, 62, 63], melody: [67, 70, 75, 74] },
+    // 6: 広い景色 (EbM9)
+    { bass: [39, 46], arp: [55, 58, 62], melody: [67, 74, 70, 67] },
+    // 7: 郷愁 (Fm9)
+    { bass: [29, 41], arp: [53, 56, 60], melody: [68, 65, 63, 60] },
+    // 8: 次の波へ (Bb13)
+    { bass: [34, 46], arp: [58, 62, 65], melody: [68, 72, 70, 67] }
 ];
 
-const createBrownNoiseBuffer = (ctx: AudioContext, seconds: number) => {
-    const frames = Math.max(1, Math.floor(ctx.sampleRate * seconds));
-    const buffer = ctx.createBuffer(1, frames, ctx.sampleRate);
-    const data = buffer.getChannelData(0);
-    let lastOut = 0;
-
-    for (let i = 0; i < frames; i += 1) {
-        const white = Math.random() * 2 - 1;
-        lastOut = (lastOut + 0.025 * white) / 1.025;
-        data[i] = Math.max(-1, Math.min(1, lastOut * 3.5));
-    }
-
-    return buffer;
-};
-
-const createPinkNoiseBuffer = (ctx: AudioContext, seconds: number) => {
-    const frames = Math.max(1, Math.floor(ctx.sampleRate * seconds));
-    const buffer = ctx.createBuffer(1, frames, ctx.sampleRate);
-    const data = buffer.getChannelData(0);
-
-    let b0 = 0;
-    let b1 = 0;
-    let b2 = 0;
-    let b3 = 0;
-    let b4 = 0;
-    let b5 = 0;
-    let b6 = 0;
-
-    for (let i = 0; i < frames; i += 1) {
-        const white = Math.random() * 2 - 1;
-        b0 = 0.99886 * b0 + white * 0.0555179;
-        b1 = 0.99332 * b1 + white * 0.0750759;
-        b2 = 0.96900 * b2 + white * 0.1538520;
-        b3 = 0.86650 * b3 + white * 0.3104856;
-        b4 = 0.55000 * b4 + white * 0.5329522;
-        b5 = -0.7616 * b5 - white * 0.0168980;
-        const pink = b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362;
-        b6 = white * 0.115926;
-        data[i] = Math.max(-1, Math.min(1, pink * 0.1));
-    }
-
-    return buffer;
-};
-
-const createLoopSource = (ctx: AudioContext, buffer: AudioBuffer, out: AudioNode) => {
-    const src = ctx.createBufferSource();
-    src.buffer = buffer;
-    src.loop = true;
-    src.connect(out);
-    src.start();
-    return src;
-};
-
-const stopSource = (source: AudioBufferSourceNode | null) => {
-    if (!source) return;
-    try {
-        source.stop();
-    } catch {
-        // no-op
-    }
-    source.disconnect();
-};
-
 const clearTimer = (timer: number | null) => {
-    if (timer !== null) {
-        window.clearTimeout(timer);
-    }
+    if (timer !== null) { window.clearTimeout(timer); }
     return null;
 };
 
-const createPianoVoice = (
+// 重厚で余韻の長いピアノシンセサイザーの作成
+const createLushPianoVoice = (
     ctx: AudioContext,
     destination: AudioNode,
     frequency: number,
     startAt: number,
     duration: number,
-    attack: number,
     volume: number,
-    lowpassHz: number,
+    lowpassHz: number
 ) => {
+    // 豊かな厚みを作るためのオシレーター群（アナログシンセ的な手法）
     const body = ctx.createOscillator();
     const tone = ctx.createOscillator();
     const air = ctx.createOscillator();
-    const filter = ctx.createBiquadFilter();
+    const bite = ctx.createOscillator();
+
+    const synthFilter = ctx.createBiquadFilter();
     const gain = ctx.createGain();
 
     body.type = 'triangle';
     tone.type = 'sine';
     air.type = 'sine';
+    bite.type = 'triangle';
 
+    // デチューンによるコーラス効果（広がりのあるピアノ音）
     body.frequency.setValueAtTime(frequency, startAt);
-    tone.frequency.setValueAtTime(frequency * 2, startAt);
-    air.frequency.setValueAtTime(frequency * 3.01, startAt);
+    tone.frequency.setValueAtTime(frequency * 1.996, startAt); // わずかにフラットな2倍音
+    air.frequency.setValueAtTime(frequency * 3.003, startAt);  // わずかにシャープな3倍音
+    bite.frequency.setValueAtTime(frequency * 4.0, startAt);   // アタックを付ける4倍音
 
-    filter.type = 'lowpass';
-    filter.frequency.setValueAtTime(lowpassHz, startAt);
-    filter.Q.value = 0.6;
+    // ローパスフィルターで丸みのある音にする
+    synthFilter.type = 'lowpass';
+    synthFilter.frequency.setValueAtTime(lowpassHz, startAt);
+    // 音が伸びるにつれてフィルターを閉じていき、徐々にこもった音にする（アコースティックな挙動）
+    synthFilter.frequency.exponentialRampToValueAtTime(Math.max(lowpassHz * 0.25, 100), startAt + duration * 0.5);
+    synthFilter.Q.value = 0.5;
 
+    const attack = 0.04;
     gain.gain.setValueAtTime(0.0001, startAt);
     gain.gain.linearRampToValueAtTime(volume, startAt + attack);
+    
+    // 長いサスティンとリリース（ルバートした演奏に隙間を作らせない）
+    gain.gain.exponentialRampToValueAtTime(volume * 0.25, startAt + attack + duration * 0.3);
+    gain.gain.exponentialRampToValueAtTime(volume * 0.05, startAt + attack + duration * 0.7);
     gain.gain.exponentialRampToValueAtTime(0.0001, startAt + duration);
 
-    body.connect(filter);
-    tone.connect(filter);
-    air.connect(filter);
-    filter.connect(gain);
+    // バランス調整（倍音ほど音量を下げる）
+    const bodyGain = ctx.createGain(); bodyGain.gain.value = 0.6;
+    const toneGain = ctx.createGain(); toneGain.gain.value = 0.25;
+    const airGain = ctx.createGain(); airGain.gain.value = 0.1;
+    const biteGain = ctx.createGain(); biteGain.gain.value = 0.05;
+
+    body.connect(bodyGain); bodyGain.connect(synthFilter);
+    tone.connect(toneGain); toneGain.connect(synthFilter);
+    air.connect(airGain); airGain.connect(synthFilter);
+    bite.connect(biteGain); biteGain.connect(synthFilter);
+
+    synthFilter.connect(gain);
     gain.connect(destination);
 
-    body.start(startAt);
-    tone.start(startAt);
-    air.start(startAt);
-
+    body.start(startAt); tone.start(startAt); air.start(startAt); bite.start(startAt);
     const stopAt = startAt + duration + 0.2;
-    body.stop(stopAt);
-    tone.stop(stopAt);
-    air.stop(stopAt);
+    body.stop(stopAt); tone.stop(stopAt); air.stop(stopAt); bite.stop(stopAt);
 };
 
-const scheduleFoamPulse = () => {
-    if (!state.isPlaying || !state.ctx || !state.foamGain) return;
+const schedulePhrase = () => {
+    if (!state.isPlaying || !state.ctx || !state.mixGain) return;
+
+    // 楽譜に沿って進行
+    const phrase = SCORE[state.harmonicStep % SCORE.length];
+    state.harmonicStep++;
 
     const now = state.ctx.currentTime;
-    const base = rand(0.019, 0.028);
-    const swell = rand(0.029, 0.043);
-    const attack = rand(0.3, 1.2);
-    const release = rand(1.8, 4.0);
+    
+    // 息継ぎのわずかな隙間と、ゆっくりとしたフレーズの開始
+    const phraseStart = now + rand(0.5, 1.5);
+    const sustainDur = 18.0; // ペダルを踏んだような長いサスティン
 
-    state.foamGain.gain.cancelScheduledValues(now);
-    state.foamGain.gain.setValueAtTime(state.foamGain.gain.value, now);
-    state.foamGain.gain.linearRampToValueAtTime(swell, now + attack);
-    state.foamGain.gain.linearRampToValueAtTime(base, now + attack + release);
+    // 1. 深いベース（ルートと5度を非常に広い音域で鳴らす）
+    const bassVol = 0.035; 
+    createLushPianoVoice(state.ctx, state.mixGain, midiToFreq(phrase.bass[0]), phraseStart, sustainDur, bassVol, 600);
+    createLushPianoVoice(state.ctx, state.mixGain, midiToFreq(phrase.bass[1]), phraseStart + rand(0.1, 0.3), sustainDur * 0.9, bassVol * 0.8, 800);
 
-    state.foamPulseTimer = window.setTimeout(() => {
-        scheduleFoamPulse();
-    }, Math.floor(rand(2600, 6800)));
-};
+    // 2. アルペジオ（中音域〜高音域へ這い上がる）
+    let arpTime = phraseStart + rand(0.8, 1.6);
+    for (let i = 0; i < phrase.arp.length; i++) {
+        createLushPianoVoice(state.ctx, state.mixGain, midiToFreq(phrase.arp[i]), arpTime, sustainDur * 0.7, 0.015 + rand(0.002, 0.005), 1400);
+        arpTime += rand(0.3, 0.7); // ゆっくりとしたロール
+    }
 
-const scheduleMacroShift = () => {
-    if (!state.isPlaying || !state.ctx || !state.shoreGain || !state.foamGain || !state.undertowGain) return;
+    // 3. ルバートを効かせたメロディ（高音域）
+    let melodyTime = arpTime + rand(0.4, 1.5);
+    for (let i = 0; i < phrase.melody.length; i++) {
+        const noteDur = sustainDur * 0.6; 
+        createLushPianoVoice(state.ctx, state.mixGain, midiToFreq(phrase.melody[i]), melodyTime, noteDur, 0.022 + rand(0.002, 0.008), 2400);
+        
+        // ルバート：メロディの音符同士の間隔を感覚的に揺らす（ためる）
+        if (i < phrase.melody.length - 1) {
+            melodyTime += rand(1.2, 3.8); // 非常にゆっくりとした旋律
+        }
+    }
 
-    const now = state.ctx.currentTime;
-    const span = rand(16, 30);
+    // 次のフレーズまでのインターバル
+    // 現在のメロディが弾き終わってから、深呼吸する時間（4秒〜8秒）を設ける
+    const breath = rand(4.0, 8.0);
+    const nextPhraseIn = (melodyTime - now) + breath;
 
-    const shoreTarget = rand(0.16, 0.24);
-    const foamTarget = rand(0.019, 0.03);
-    const undertowTarget = rand(0.038, 0.055);
-
-    state.shoreGain.gain.cancelScheduledValues(now);
-    state.shoreGain.gain.setValueAtTime(state.shoreGain.gain.value, now);
-    state.shoreGain.gain.linearRampToValueAtTime(shoreTarget, now + span);
-
-    state.foamGain.gain.cancelScheduledValues(now);
-    state.foamGain.gain.setValueAtTime(state.foamGain.gain.value, now);
-    state.foamGain.gain.linearRampToValueAtTime(foamTarget, now + span * rand(0.65, 0.95));
-
-    state.undertowGain.gain.cancelScheduledValues(now);
-    state.undertowGain.gain.setValueAtTime(state.undertowGain.gain.value, now);
-    state.undertowGain.gain.linearRampToValueAtTime(undertowTarget, now + span * rand(0.7, 1.0));
-
-    state.macroTimer = window.setTimeout(() => {
-        scheduleMacroShift();
-    }, Math.floor((span + rand(2.6, 5.8)) * 1000));
+    state.phraseTimer = window.setTimeout(() => {
+        schedulePhrase();
+    }, Math.floor(nextPhraseIn * 1000));
 };
 
 const scheduleBreathing = () => {
     if (!state.isPlaying || !state.ctx || !state.mixGain) return;
 
     const now = state.ctx.currentTime;
-    const duration = rand(5.8, 10.4);
-    const target = rand(0.83, 1.0);
-    const attack = duration * rand(0.25, 0.48);
-    const recover = duration * rand(0.52, 0.78);
+    const duration = rand(6.0, 12.0);
+    // ノイズ除去に伴い、マスターの呼吸（全体のうねり）を少しマイルドに
+    const target = rand(0.85, 1.0);
+    const attack = duration * rand(0.3, 0.5);
+    const recover = duration * rand(0.5, 0.7);
 
     state.mixGain.gain.cancelScheduledValues(now);
     state.mixGain.gain.setValueAtTime(state.mixGain.gain.value, now);
     state.mixGain.gain.linearRampToValueAtTime(target, now + attack);
-    state.mixGain.gain.linearRampToValueAtTime(rand(0.86, 0.97), now + recover);
-
-    if (state.shoreFilter) {
-        state.shoreFilter.frequency.cancelScheduledValues(now);
-        state.shoreFilter.frequency.setValueAtTime(rand(780, 1180), now);
-        state.shoreFilter.frequency.linearRampToValueAtTime(rand(980, 1420), now + duration);
-    }
-
-    if (state.foamHighpass) {
-        state.foamHighpass.frequency.cancelScheduledValues(now);
-        state.foamHighpass.frequency.setValueAtTime(rand(1700, 2600), now);
-        state.foamHighpass.frequency.linearRampToValueAtTime(rand(2300, 3400), now + duration * 0.82);
-    }
-
-    if (state.foamLowpass) {
-        state.foamLowpass.frequency.cancelScheduledValues(now);
-        state.foamLowpass.frequency.setValueAtTime(rand(3900, 5200), now);
-        state.foamLowpass.frequency.linearRampToValueAtTime(rand(4500, 6100), now + duration * 0.72);
-    }
-
-    if (state.undertowFilter) {
-        state.undertowFilter.frequency.cancelScheduledValues(now);
-        state.undertowFilter.frequency.setValueAtTime(rand(94, 145), now);
-        state.undertowFilter.frequency.linearRampToValueAtTime(rand(118, 176), now + duration * 0.9);
-    }
+    state.mixGain.gain.linearRampToValueAtTime(rand(0.86, 0.95), now + recover);
 
     state.breathTimer = window.setTimeout(() => {
         scheduleBreathing();
-    }, Math.floor((duration + rand(0.4, 1.4)) * 1000));
-};
-
-const scheduleChordBed = () => {
-    if (!state.isPlaying || !state.ctx || !state.mixGain) return;
-
-    const step = HARMONY_STEPS[state.harmonicStep % HARMONY_STEPS.length];
-    state.harmonicStep += 1;
-
-    const baseStart = state.ctx.currentTime + rand(0.1, 0.5);
-    const span = rand(10.0, 18.0);
-
-    for (let i = 0; i < step.color.length; i += 1) {
-        const midi = i === 0 ? step.root : step.color[i];
-        createPianoVoice(
-            state.ctx,
-            state.mixGain,
-            midiToFreq(midi),
-            baseStart + i * rand(0.08, 0.34),
-            span * rand(0.72, 1.04),
-            rand(1.2, 2.7),
-            rand(0.0038, 0.0075),
-            rand(900, 1650),
-        );
-    }
-
-    state.chordTimer = window.setTimeout(() => {
-        scheduleChordBed();
-    }, Math.floor(rand(9800, 17600)));
-};
-
-const schedulePianoMotif = () => {
-    if (!state.isPlaying || !state.ctx || !state.mixGain) return;
-
-    const scale = [50, 53, 57, 60, 62, 65, 69, 72];
-    const phraseCount = Math.floor(rand(1, 4.2));
-    const phraseStart = state.ctx.currentTime + rand(0.06, 0.35);
-
-    for (let i = 0; i < phraseCount; i += 1) {
-        if (Math.random() < 0.25) continue;
-
-        const midi = scale[Math.floor(rand(0, scale.length))];
-        const startAt = phraseStart + i * rand(0.48, 1.6);
-        const length = rand(1.6, 4.4);
-
-        createPianoVoice(
-            state.ctx,
-            state.mixGain,
-            midiToFreq(midi),
-            startAt,
-            length,
-            rand(0.14, 0.42),
-            rand(0.0022, 0.0062),
-            rand(980, 1880),
-        );
-    }
-
-    state.motifTimer = window.setTimeout(() => {
-        schedulePianoMotif();
-    }, Math.floor(rand(4200, 12400)));
+    }, Math.floor((duration + rand(0.5, 1.5)) * 1000));
 };
 
 const initialize = (ctx: AudioContext, destination: AudioNode) => {
     if (state.initialized && state.ctx === ctx && state.destination === destination) return;
-
     state.ctx = ctx;
     state.destination = destination;
 
     const mixGain = ctx.createGain();
     mixGain.gain.value = 0.9;
 
-    const shoreGain = ctx.createGain();
-    shoreGain.gain.value = 0.0001;
-    const shoreFilter = ctx.createBiquadFilter();
-    shoreFilter.type = 'lowpass';
-    shoreFilter.frequency.value = rand(840, 1240);
-    shoreFilter.Q.value = 0.72;
-
-    const foamGain = ctx.createGain();
-    foamGain.gain.value = 0.0001;
-    const foamHighpass = ctx.createBiquadFilter();
-    foamHighpass.type = 'highpass';
-    foamHighpass.frequency.value = rand(1800, 2800);
-    foamHighpass.Q.value = 0.68;
-    const foamLowpass = ctx.createBiquadFilter();
-    foamLowpass.type = 'lowpass';
-    foamLowpass.frequency.value = rand(3900, 5600);
-    foamLowpass.Q.value = 0.56;
-
-    const undertowGain = ctx.createGain();
-    undertowGain.gain.value = 0.0001;
-    const undertowFilter = ctx.createBiquadFilter();
-    undertowFilter.type = 'bandpass';
-    undertowFilter.frequency.value = rand(102, 162);
-    undertowFilter.Q.value = 0.78;
-
-    shoreFilter.connect(shoreGain);
-    shoreGain.connect(mixGain);
-
-    foamHighpass.connect(foamLowpass);
-    foamLowpass.connect(foamGain);
-    foamGain.connect(mixGain);
-
-    undertowFilter.connect(undertowGain);
-    undertowGain.connect(mixGain);
-
     mixGain.connect(destination);
 
     state.mixGain = mixGain;
-    state.shoreGain = shoreGain;
-    state.foamGain = foamGain;
-    state.undertowGain = undertowGain;
-    state.shoreFilter = shoreFilter;
-    state.foamHighpass = foamHighpass;
-    state.foamLowpass = foamLowpass;
-    state.undertowFilter = undertowFilter;
     state.initialized = true;
-};
-
-const applyStartEnvelope = () => {
-    if (!state.ctx) return;
-    const now = state.ctx.currentTime;
-
-    if (state.shoreGain) {
-        state.shoreGain.gain.cancelScheduledValues(now);
-        state.shoreGain.gain.setValueAtTime(0.0001, now);
-        state.shoreGain.gain.linearRampToValueAtTime(0.19, now + 1.5);
-    }
-
-    if (state.foamGain) {
-        state.foamGain.gain.cancelScheduledValues(now);
-        state.foamGain.gain.setValueAtTime(0.0001, now);
-        state.foamGain.gain.linearRampToValueAtTime(0.03, now + 1.0);
-        state.foamGain.gain.linearRampToValueAtTime(0.024, now + 2.1);
-    }
-
-    if (state.undertowGain) {
-        state.undertowGain.gain.cancelScheduledValues(now);
-        state.undertowGain.gain.setValueAtTime(0.0001, now);
-        state.undertowGain.gain.linearRampToValueAtTime(0.044, now + 2.4);
-    }
 };
 
 export const startDenshouoSeaBgm = ({ ctx, destination }: { ctx: AudioContext; destination: AudioNode }) => {
@@ -409,25 +206,13 @@ export const startDenshouoSeaBgm = ({ ctx, destination }: { ctx: AudioContext; d
 
     initialize(ctx, destination);
 
-    if (!state.shoreFilter || !state.foamHighpass || !state.undertowFilter) return;
-
-    const shoreNoise = createBrownNoiseBuffer(ctx, 5.5);
-    const foamNoise = createPinkNoiseBuffer(ctx, 4.2);
-    const undertowNoise = createBrownNoiseBuffer(ctx, 7.0);
-
-    state.shoreSource = createLoopSource(ctx, shoreNoise, state.shoreFilter);
-    state.foamSource = createLoopSource(ctx, foamNoise, state.foamHighpass);
-    state.undertowSource = createLoopSource(ctx, undertowNoise, state.undertowFilter);
-
     state.isPlaying = true;
-    state.harmonicStep = Math.floor(rand(0, HARMONY_STEPS.length));
+    state.harmonicStep = 0; // 曲の最初から演奏スタート
 
-    applyStartEnvelope();
     scheduleBreathing();
-    scheduleMacroShift();
-    scheduleFoamPulse();
-    scheduleChordBed();
-    schedulePianoMotif();
+    
+    // 完全な楽曲としてシーケンスを走らせる
+    schedulePhrase();
 };
 
 export const stopDenshouoSeaBgm = () => {
@@ -435,18 +220,7 @@ export const stopDenshouoSeaBgm = () => {
     state.isPlaying = false;
 
     state.breathTimer = clearTimer(state.breathTimer);
-    state.macroTimer = clearTimer(state.macroTimer);
-    state.motifTimer = clearTimer(state.motifTimer);
-    state.chordTimer = clearTimer(state.chordTimer);
-    state.foamPulseTimer = clearTimer(state.foamPulseTimer);
-
-    stopSource(state.shoreSource);
-    stopSource(state.foamSource);
-    stopSource(state.undertowSource);
-
-    state.shoreSource = null;
-    state.foamSource = null;
-    state.undertowSource = null;
+    state.phraseTimer = clearTimer(state.phraseTimer);
 
     if (state.mixGain && state.ctx) {
         const now = state.ctx.currentTime;
