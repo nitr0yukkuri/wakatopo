@@ -167,6 +167,39 @@ const schedulePhrase = () => {
     }, Math.floor(nextPhraseIn * 1000));
 };
 
+const scheduleGentleWave = () => {
+    if (!state.isPlaying || !state.ctx || !state.shoreGain) return;
+
+    const now = state.ctx.currentTime;
+    // 寄せては返す波の長さ（10秒〜16秒と非常にゆっくり）
+    const duration = rand(10.0, 16.0);
+    
+    // 波が満ちる時間
+    const attack = duration * 0.4;
+    // ごくわずかな音量（以前の0.1前後から0.003前後へ激減させ、本当に「かすかな」音に）
+    const peakVolume = rand(0.002, 0.0045);
+
+    state.shoreGain.gain.cancelScheduledValues(now);
+    state.shoreGain.gain.setValueAtTime(state.shoreGain.gain.value, now);
+    state.shoreGain.gain.linearRampToValueAtTime(peakVolume, now + attack);
+    state.shoreGain.gain.linearRampToValueAtTime(0.0001, now + duration);
+
+    if (state.shoreFilter) {
+        // 音色（周波数）を揺らすことで、「シャー」という音が近付いて遠ざかるリアルな水辺を表現
+        state.shoreFilter.frequency.cancelScheduledValues(now);
+        state.shoreFilter.frequency.setValueAtTime(rand(600, 900), now);
+        // 波が近づくにつれて高音（水の細かな飛沫の音）が含まれる
+        state.shoreFilter.frequency.exponentialRampToValueAtTime(rand(1600, 2400), now + attack);
+        // 波が引くにつれてこもった音になる
+        state.shoreFilter.frequency.exponentialRampToValueAtTime(rand(500, 800), now + duration);
+    }
+
+    // 次の波までの間隔
+    state.macroTimer = window.setTimeout(() => {
+        scheduleGentleWave();
+    }, Math.floor((duration + rand(3.0, 8.0)) * 1000));
+};
+
 const scheduleBreathing = () => {
     if (!state.isPlaying || !state.ctx || !state.mixGain) return;
 
@@ -195,9 +228,24 @@ const initialize = (ctx: AudioContext, destination: AudioNode) => {
     const mixGain = ctx.createGain();
     mixGain.gain.value = 0.9;
 
+    // 今回は静かな波1つ（shoreGain）のみを使用
+    const shoreGain = ctx.createGain();
+    shoreGain.gain.value = 0.0001;
+    
+    const shoreFilter = ctx.createBiquadFilter();
+    // 低音や高音を削り、水音らしい中音域だけを通すバンドパスフィルター
+    shoreFilter.type = 'bandpass';
+    shoreFilter.frequency.value = 1000;
+    shoreFilter.Q.value = 0.5; // 広めにとって自然なノイズに
+
+    shoreFilter.connect(shoreGain);
+    shoreGain.connect(mixGain);
+
     mixGain.connect(destination);
 
     state.mixGain = mixGain;
+    state.shoreGain = shoreGain;
+    state.shoreFilter = shoreFilter;
     state.initialized = true;
 };
 
@@ -206,11 +254,20 @@ export const startDenshouoSeaBgm = ({ ctx, destination }: { ctx: AudioContext; d
 
     initialize(ctx, destination);
 
+    if (!state.shoreFilter) return;
+
+    // 波の音の元となるピンクノイズ（自然界の「1/fゆらぎ」を持つノイズ）
+    const foamNoise = createPinkNoiseBuffer(ctx, 4.2);
+    state.shoreSource = createLoopSource(ctx, foamNoise, state.shoreFilter);
+
     state.isPlaying = true;
     state.harmonicStep = 0; // 曲の最初から演奏スタート
 
-    scheduleBreathing();
+    // かすかな波の音ループを開始
+    scheduleGentleWave();
 
+    scheduleBreathing();
+    
     // 完全な楽曲としてシーケンスを走らせる
     schedulePhrase();
 };
@@ -221,6 +278,10 @@ export const stopDenshouoSeaBgm = () => {
 
     state.breathTimer = clearTimer(state.breathTimer);
     state.phraseTimer = clearTimer(state.phraseTimer);
+    state.macroTimer = clearTimer(state.macroTimer);
+
+    stopSource(state.shoreSource);
+    state.shoreSource = null;
 
     if (state.mixGain && state.ctx) {
         const now = state.ctx.currentTime;
