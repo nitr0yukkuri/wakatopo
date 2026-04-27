@@ -153,14 +153,14 @@ const scheduleChordBed = () => {
             state.mixGain,
             midiToFreq(midi),
             span,
-            rand(0.007, 0.011),
-            rand(1.0, 1.8),
+            rand(0.0045, 0.0075),
+            rand(1.4, 2.3),
             0.2,
-            rand(1300, 1850),
+            rand(1200, 1680),
         );
     }
 
-    const nextMs = Math.floor(rand(9000, 14000));
+    const nextMs = Math.floor(rand(12000, 18500));
     state.chordTimer = window.setTimeout(() => {
         scheduleChordBed();
     }, nextMs);
@@ -170,13 +170,13 @@ const schedulePianoMotif = () => {
     if (!state.isPlaying || !state.ctx || !state.mixGain) return;
 
     const scale = [57, 60, 62, 64, 67, 69]; // A minor pentatonic-ish plus color
-    const noteCount = Math.floor(rand(2, 4.99));
+    const noteCount = Math.floor(rand(1, 3.2));
     const startAt = state.ctx.currentTime + rand(0.08, 0.26);
 
     for (let i = 0; i < noteCount; i += 1) {
         const midi = scale[Math.floor(rand(0, scale.length))];
-        const offset = i * rand(0.38, 0.72);
-        const duration = rand(1.8, 3.3);
+        const offset = i * rand(0.64, 1.2);
+        const duration = rand(2.6, 4.2);
 
         const carrier = state.ctx.createOscillator();
         const overtone = state.ctx.createOscillator();
@@ -190,11 +190,11 @@ const schedulePianoMotif = () => {
         overtone.frequency.setValueAtTime(midiToFreq(midi + 12), startAt + offset);
 
         filter.type = 'lowpass';
-        filter.frequency.setValueAtTime(rand(1200, 2100), startAt + offset);
+        filter.frequency.setValueAtTime(rand(1050, 1750), startAt + offset);
         filter.Q.value = 0.62;
 
         gain.gain.setValueAtTime(0.0001, startAt + offset);
-        gain.gain.linearRampToValueAtTime(rand(0.006, 0.013), startAt + offset + rand(0.09, 0.18));
+        gain.gain.linearRampToValueAtTime(rand(0.0032, 0.0072), startAt + offset + rand(0.16, 0.34));
         gain.gain.exponentialRampToValueAtTime(0.0001, startAt + offset + duration);
 
         carrier.connect(filter);
@@ -208,7 +208,7 @@ const schedulePianoMotif = () => {
         overtone.stop(startAt + offset + duration + 0.12);
     }
 
-    const nextMs = Math.floor(rand(3600, 6400));
+    const nextMs = Math.floor(rand(6800, 11500));
     state.motifTimer = window.setTimeout(() => {
         schedulePianoMotif();
     }, nextMs);
@@ -295,20 +295,20 @@ const applyStartEnvelope = () => {
     if (state.shoreGain) {
         state.shoreGain.gain.cancelScheduledValues(now);
         state.shoreGain.gain.setValueAtTime(0.0001, now);
-        state.shoreGain.gain.linearRampToValueAtTime(0.15, now + 1.4);
+        state.shoreGain.gain.linearRampToValueAtTime(0.185, now + 1.4);
     }
 
     if (state.foamGain) {
         state.foamGain.gain.cancelScheduledValues(now);
         state.foamGain.gain.setValueAtTime(0.0001, now);
-        state.foamGain.gain.linearRampToValueAtTime(0.052, now + 0.18);
-        state.foamGain.gain.linearRampToValueAtTime(0.045, now + 1.4);
+        state.foamGain.gain.linearRampToValueAtTime(0.058, now + 0.18);
+        state.foamGain.gain.linearRampToValueAtTime(0.049, now + 1.4);
     }
 
     if (state.undertowGain) {
         state.undertowGain.gain.cancelScheduledValues(now);
         state.undertowGain.gain.setValueAtTime(0.0001, now);
-        state.undertowGain.gain.linearRampToValueAtTime(0.036, now + 2.2);
+        state.undertowGain.gain.linearRampToValueAtTime(0.044, now + 2.2);
     }
 };
 
