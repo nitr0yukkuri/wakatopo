@@ -21,6 +21,8 @@ type TransitionType =
 
 const MUTE_KEY = 'lp-audio-muted';
 const OUTPUT_BOOST = 1.0;
+const OTENKI_BGM_FLAG = -1;
+const DENSHOUO_BGM_FLAG = -2;
 
 export default function SoundDirector() {
     const pathname = usePathname();
@@ -304,10 +306,26 @@ export default function SoundDirector() {
         if (bgmTimerRef.current !== null) return;
 
         if (resolvedWorkId === '02') {
+            bgmTimerRef.current = OTENKI_BGM_FLAG;
             import('@/lib/otenkiToneBgm').then(({ startOtenkiBgm }) => {
                 void startOtenkiBgm(weather);
+            }).catch(() => {
+                bgmTimerRef.current = null;
             });
-            bgmTimerRef.current = -1;
+            return;
+        }
+
+        if (resolvedWorkId === '05') {
+            const ctx = audioContextRef.current;
+            const master = masterGainRef.current;
+            if (!ctx || !master) return;
+
+            bgmTimerRef.current = DENSHOUO_BGM_FLAG;
+            import('@/lib/denshouoSeaBgm').then(({ startDenshouoSeaBgm }) => {
+                startDenshouoSeaBgm({ ctx, destination: master });
+            }).catch(() => {
+                bgmTimerRef.current = null;
+            });
             return;
         }
 
@@ -355,9 +373,13 @@ export default function SoundDirector() {
         }).catch(() => { });
 
         if (bgmTimerRef.current !== null) {
-            if (bgmTimerRef.current === -1) {
+            if (bgmTimerRef.current === OTENKI_BGM_FLAG) {
                 import('@/lib/otenkiToneBgm').then(({ stopOtenkiBgm }) => {
                     stopOtenkiBgm();
+                });
+            } else if (bgmTimerRef.current === DENSHOUO_BGM_FLAG) {
+                import('@/lib/denshouoSeaBgm').then(({ stopDenshouoSeaBgm }) => {
+                    stopDenshouoSeaBgm();
                 });
             } else {
                 window.clearInterval(bgmTimerRef.current);

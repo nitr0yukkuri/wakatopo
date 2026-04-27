@@ -136,15 +136,15 @@ export const getLofiBgmProfile = (weather: WeatherType, activity: number, active
             };
         case '05':
             return {
-                notes: [82.41, 98.0, 123.47, 110.0],
-                highRatio: 1.25,
-                pulseRatio: 1.1,
-                waveform: 'triangle',
-                accentWaveform: 'triangle',
-                accentRatio: 1.5,
-                accentVolume: 0.011,
-                accentAt: 0.5,
-                tickMs: 5480 + tempoOffset,
+                notes: [82.41, 98.0, 92.5],
+                highRatio: 1.08,
+                pulseRatio: 1.02,
+                waveform: 'sine',
+                accentWaveform: 'sine',
+                accentRatio: 1.08,
+                accentVolume: 0.004,
+                accentAt: 0.62,
+                tickMs: 7420 + tempoOffset,
             };
         default:
             break;

@@ -133,7 +133,7 @@ const applyWeather = async (page: Page, weather: WeatherType) => {
 };
 
 const clickWork = async (page: Page, workTitle: string) => {
-    await page.getByRole('heading', { name: workTitle }).click();
+    await page.getByRole('heading', { name: workTitle }).click({ force: true });
 };
 
 const expectAudioIncreaseAfterAction = async (
@@ -249,4 +249,36 @@ test('音割れ対策: 過大ゲイン要求がなく、出力コンプレッサ
     const after = await readCounter(page);
     expect(after.gainOverOneRequests).toBe(0);
     expect(after.maxGainRequested).toBeLessThanOrEqual(1);
+});
+
+test('denshouo 常駐BGM: 連続ノイズが起動し、多重ループしない', async ({ page }) => {
+    await page.goto('/denshouo?lang=ja');
+    const beforeUnlock = await readCounter(page);
+    await unlockAudioByKeyboard(page);
+
+    await expect
+        .poll(async () => {
+            const after = await readCounter(page);
+            return after.noiseStarts - beforeUnlock.noiseStarts;
+        }, { message: 'denshouo の 3レイヤー連続ノイズが起動すること' })
+        .toBeGreaterThanOrEqual(3);
+
+    const started = await readCounter(page);
+    await page.waitForTimeout(2600);
+    const stable = await readCounter(page);
+    expect(stable.noiseStarts - started.noiseStarts).toBe(0);
+
+    await page.keyboard.press('m');
+    await page.waitForTimeout(180);
+    await page.keyboard.press('m');
+
+    await expect
+        .poll(async () => {
+            const resumed = await readCounter(page);
+            return resumed.noiseStarts - stable.noiseStarts;
+        }, { message: '再開時もノイズループは1セット(3 start)のみ増えること' })
+        .toBeGreaterThanOrEqual(3);
+
+    const resumed = await readCounter(page);
+    expect(resumed.noiseStarts - stable.noiseStarts).toBeLessThanOrEqual(3);
 });
