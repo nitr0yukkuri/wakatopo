@@ -95,7 +95,7 @@ const createLushPianoVoice = (
     const attack = 0.04;
     gain.gain.setValueAtTime(0.0001, startAt);
     gain.gain.linearRampToValueAtTime(volume, startAt + attack);
-    
+
     // 長いサスティンとリリース（ルバートした演奏に隙間を作らせない）
     gain.gain.exponentialRampToValueAtTime(volume * 0.25, startAt + attack + duration * 0.3);
     gain.gain.exponentialRampToValueAtTime(volume * 0.05, startAt + attack + duration * 0.7);
@@ -128,13 +128,13 @@ const schedulePhrase = () => {
     state.harmonicStep++;
 
     const now = state.ctx.currentTime;
-    
+
     // 息継ぎのわずかな隙間と、ゆっくりとしたフレーズの開始
     const phraseStart = now + rand(0.5, 1.5);
     const sustainDur = 18.0; // ペダルを踏んだような長いサスティン
 
     // 1. 深いベース（ルートと5度を非常に広い音域で鳴らす）
-    const bassVol = 0.035; 
+    const bassVol = 0.035;
     createLushPianoVoice(state.ctx, state.mixGain, midiToFreq(phrase.bass[0]), phraseStart, sustainDur, bassVol, 600);
     createLushPianoVoice(state.ctx, state.mixGain, midiToFreq(phrase.bass[1]), phraseStart + rand(0.1, 0.3), sustainDur * 0.9, bassVol * 0.8, 800);
 
@@ -148,9 +148,9 @@ const schedulePhrase = () => {
     // 3. ルバートを効かせたメロディ（高音域）
     let melodyTime = arpTime + rand(0.4, 1.5);
     for (let i = 0; i < phrase.melody.length; i++) {
-        const noteDur = sustainDur * 0.6; 
+        const noteDur = sustainDur * 0.6;
         createLushPianoVoice(state.ctx, state.mixGain, midiToFreq(phrase.melody[i]), melodyTime, noteDur, 0.022 + rand(0.002, 0.008), 2400);
-        
+
         // ルバート：メロディの音符同士の間隔を感覚的に揺らす（ためる）
         if (i < phrase.melody.length - 1) {
             melodyTime += rand(1.2, 3.8); // 非常にゆっくりとした旋律
@@ -210,7 +210,7 @@ export const startDenshouoSeaBgm = ({ ctx, destination }: { ctx: AudioContext; d
     state.harmonicStep = 0; // 曲の最初から演奏スタート
 
     scheduleBreathing();
-    
+
     // 完全な楽曲としてシーケンスを走らせる
     schedulePhrase();
 };
