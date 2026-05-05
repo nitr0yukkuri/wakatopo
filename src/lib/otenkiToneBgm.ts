@@ -64,8 +64,10 @@ export const startOtenkiBgm = async (weather: WeatherType) => {
     // Initialize components if not already
     if (!initialized) {
         // Safe Master Output
-        vol = new Tone.Volume(0).toDestination(); 
-        limiter = new Tone.Limiter(-2).connect(vol);
+        // Safe Master Output
+        vol = new Tone.Volume(0); 
+        limiter = new Tone.Limiter(-2).toDestination();
+        vol.connect(limiter);
         
         // Lofi Effects
         filter = new Tone.Filter({ frequency: 1800, type: 'lowpass', rolloff: -24 });
@@ -120,7 +122,7 @@ export const startOtenkiBgm = async (weather: WeatherType) => {
 
         rainNoise = new Tone.Noise('brown');
         const rainFilter = new Tone.Filter({ frequency: 600, type: 'lowpass' });
-        rainNoise.chain(rainFilter, limiter); // Route rain directly to limiter
+        rainNoise.chain(rainFilter, vol); // Route rain directly to vol
         rainNoise.volume.value = -28; // Gentle rain ambience
         
         // FX Routing - Clean Mix Architecture
@@ -134,8 +136,8 @@ export const startOtenkiBgm = async (weather: WeatherType) => {
         // Drums and bass skip pitch modulation/delay so transients and sub stay clean and punchy
         drumBassBus.chain(filter, masterBus);
 
-        // Everything routes to a gentle master limiter before hitting the speaker
-        masterBus.connect(limiter);
+        // Everything routes to the master volume before hitting the safety limiter
+        masterBus.connect(vol);
 
         kickSynth.connect(drumBassBus);
         snareSynth.connect(drumBassBus);
