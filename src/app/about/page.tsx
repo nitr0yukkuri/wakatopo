@@ -128,6 +128,8 @@ export default async function AboutPage({
                             <p className="text-gray-300 leading-relaxed">{t.careerText}</p>
                         </article>
 
+
+
                         <article className="rounded-2xl border border-white/10 bg-white/5 p-4">
                             <h2 className="text-cyan-300 text-xs tracking-widest mb-3">{t.sectionAchievements}</h2>
                             <ul className="text-gray-300 space-y-2 leading-relaxed text-xs">
