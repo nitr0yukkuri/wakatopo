@@ -13,7 +13,8 @@ const copyByLang = {
         role: 'Interactive Web Developer / Creative Coder',
         internship: 'INTERNSHIP WELCOME',
         sectionCareer: '経歴',
-        careerText: 'ECCコンピュータ専門学校在学（29卒）。フロントエンドとバックエンドを横断し、3D表現や複雑なインタラクションの実装を探求しています。UI/UXの体験設計や緻密なビジュアルの作り込みを得意としていますが、目指しているのは単なる画面の制作者ではありません。APIやデータモデルの枠を超え、堅牢なアーキテクチャ設計まで責任を持ってシステム全体を組み上げられるソフトウェアエンジニアを目指しています。',
+        careerText:
+            'ECCコンピュータ専門学校在学（29卒）。フロントエンドとバックエンドを横断し、3D表現や複雑なインタラクションの実装を探求しています。UI/UXの体験設計や緻密なビジュアルの作り込みを得意としていますが、目指しているのは単なる画面の制作者ではありません。APIやデータモデルの枠を超え、堅牢なアーキテクチャ設計まで責任を持ってシステム全体を組み上げられるソフトウェアエンジニアを目指しています。',
         sectionAchievements: '実績',
         achievements: [
             '2025',
@@ -29,16 +30,12 @@ const copyByLang = {
             '機械学習基盤体験型2daysサイバーエージェントインターンシップ 参加',
             'CSS Winner SOTD WAKATO | Living Planet Portfolio',
         ],
-        sectionCommunity: 'コミュニティ活動',
-        communityActivities: [
-            'フロントエンドカンファレンス関西 参加・ネットワーキング',
-            '技育博（東京） 企業ブース訪問・技術交流',
-            '（※今後、痛バで乗り込んだイベントや、LT登壇などをここに無限に追加していく）',
-        ],
         sectionDev: '開発体制',
-        devText: '個人で要件整理・UI設計・実装・デプロイまで一貫対応。必要に応じてAPI/DB連携まで対応可能。',
+        devText:
+            '個人で要件整理・UI設計・実装・デプロイまで一貫対応。必要に応じてAPI/DB連携まで対応可能。',
         sectionAvailability: '稼働可能時期',
-        availabilityText: 'インターン・業務委託ともに相談可。短期PoC/プロトタイプ案件は優先して調整可能。',
+        availabilityText:
+            'インターン・業務委託ともに相談可。短期PoC/プロトタイプ案件は優先して調整可能。',
         sectionStrengths: '得意領域',
     },
     en: {
@@ -46,7 +43,8 @@ const copyByLang = {
         role: 'Interactive Web Developer / Creative Coder',
         internship: 'INTERNSHIP WELCOME',
         sectionCareer: 'CAREER',
-        careerText: 'I am currently studying at ECC Computer College (Class of 2029), focusing on frontend development with continuous 3D and interaction implementation. While my strength is designing polished UI experiences and visual quality, my long-term direction is backend-oriented, aiming to take full responsibility from API design to data modeling.',
+        careerText:
+            'I am currently studying at ECC Computer College (Class of 2029), focusing on frontend development with continuous 3D and interaction implementation. While my strength is designing polished UI experiences and visual quality, my long-term direction is backend-oriented, aiming to take full responsibility from API design to data modeling.',
         sectionAchievements: 'ACHIEVEMENTS',
         achievements: [
             '2025',
@@ -55,23 +53,19 @@ const copyByLang = {
             'Umeda TechBase Grand Prize - Gurumeiker',
             'GeekCamp Vol.14 Excellence Award - GitHub Planet',
             'Geek Expo Vol.5 Exhibition - Otenkigurashi | Gurumeiker',
-            "Heroes League Finalist - GitHub Planet",
+            'Heroes League Finalist - GitHub Planet',
             '2026',
             'Geek Expo Vol.6 Corporate Award (WingArc 1st) - GitHub Planet',
             'GeekCamp Vol.19 Grand Prize - reCAPTCHA Game',
             'CyberAgent 2-day Hands-on ML Platform Internship - Participant',
             'CSS Winner SOTD WAKATO | Living Planet Portfolio',
         ],
-        sectionCommunity: 'Community Activities',
-        communityActivities: [
-            'Front-end Conference Kansai — participation & networking',
-            'Geek Expo (Tokyo) — company booth visits & technical exchange',
-            '(*Will add future events such as cosplay appearances or LT talks)',
-        ],
         sectionDev: 'DEVELOPMENT STYLE',
-        devText: 'I handle projects end-to-end as an individual, from requirement definition and UI design to implementation and deployment. I can also cover API and database integration when needed.',
+        devText:
+            'I handle projects end-to-end as an individual, from requirement definition and UI design to implementation and deployment. I can also cover API and database integration when needed.',
         sectionAvailability: 'AVAILABILITY',
-        availabilityText: 'Open to both internships and contract work. Short-term PoC and prototype projects can be prioritized.',
+        availabilityText:
+            'Open to both internships and contract work. Short-term PoC and prototype projects can be prioritized.',
         sectionStrengths: 'CORE STRENGTHS',
     },
 } as const;
@@ -144,15 +138,6 @@ export default async function AboutPage({
                         </article>
 
                         <article className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                            <h2 className="text-cyan-300 text-xs tracking-widest mb-3">{t.sectionCommunity}</h2>
-                            <ul className="text-gray-300 space-y-2 leading-relaxed text-xs">
-                                {t.communityActivities.map((item) => (
-                                    <li key={item}>{item}</li>
-                                ))}
-                            </ul>
-                        </article>
-
-                        <article className="rounded-2xl border border-white/10 bg-white/5 p-4">
                             <h2 className="text-cyan-300 text-xs tracking-widest mb-3">{t.sectionDev}</h2>
                             <p className="text-gray-300 leading-relaxed">{t.devText}</p>
                         </article>
@@ -162,7 +147,7 @@ export default async function AboutPage({
                             <p className="text-gray-300 leading-relaxed">{t.availabilityText}</p>
                         </article>
 
-                        <article className="rounded-2xl border border-white/10 bg-white/5 p-4 md:col-span-2 xl:col-span-3">
+                        <article className="rounded-2xl border border-white/10 bg-white/5 p-4 md:col-span-2 xl:col-span-2">
                             <h2 className="text-cyan-300 text-xs tracking-widest mb-3">{t.sectionStrengths}</h2>
                             <div className="flex flex-wrap gap-2 text-[11px]">
                                 <span className="rounded-full border border-cyan-400/30 bg-cyan-400/10 px-3 py-1 text-cyan-200">Next.js / React</span>
