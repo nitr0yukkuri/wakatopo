@@ -31,7 +31,8 @@ export default function WeatherEffectsOverlay() {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="X を新しいタブで開く"
-                    className="pointer-events-auto fixed right-[8%] top-[9%] w-24 h-24 z-50 rounded-full"
+                    className="pointer-events-auto fixed right-[8%] top-[9%] w-12 h-12 z-50 rounded-full"
+                    style={{ touchAction: 'manipulation' }}
                     onClick={() => {
                         try {
                             (window as any).dataLayer?.push?.({ event: 'click_x_from_sun' });
@@ -48,7 +49,8 @@ export default function WeatherEffectsOverlay() {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="X を新しいタブで開く"
-                    className="pointer-events-auto fixed right-[6.8%] top-[5.2%] w-[162px] h-[162px] z-50 rounded-full"
+                    className="pointer-events-auto fixed right-[6.8%] top-[5.2%] w-24 h-24 z-50 rounded-full"
+                    style={{ touchAction: 'manipulation' }}
                     onClick={() => {
                         try {
                             (window as any).dataLayer?.push?.({ event: 'click_x_from_moon' });
