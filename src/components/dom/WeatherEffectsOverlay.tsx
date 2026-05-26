@@ -14,13 +14,50 @@ export default function WeatherEffectsOverlay() {
     const { weather } = useStore();
 
     return (
-        <AnimatePresence mode="wait">
-            {(weather === 'Clear' || weather === 'Morning') && <SunraysCanvas key="sunrays" />}
-            {weather === 'Clouds' && <CloudsOverlayCanvas key="clouds" />}
-            {weather === 'Thunder' && <RainParticles key="thunder-rain" />}
-            {weather === 'Thunder' && <ThunderCanvas key="thunder" />}
-            {weather === 'Snow' && <SnowCanvas key="snow" density={0.72} />}
-            {weather === 'Night' && <NightGlowOverlay key="night" />}
-        </AnimatePresence>
+        <>
+            <AnimatePresence mode="wait">
+                {(weather === 'Clear' || weather === 'Morning') && <SunraysCanvas key="sunrays" />}
+                {weather === 'Clouds' && <CloudsOverlayCanvas key="clouds" />}
+                {weather === 'Thunder' && <RainParticles key="thunder-rain" />}
+                {weather === 'Thunder' && <ThunderCanvas key="thunder" />}
+                {weather === 'Snow' && <SnowCanvas key="snow" density={0.72} />}
+                {weather === 'Night' && <NightGlowOverlay key="night" />}
+            </AnimatePresence>
+
+            {/* Sun / Moon overlay anchors: open X in a new tab. Position tuned to match canvases. */}
+            {(weather === 'Clear' || weather === 'Morning') && (
+                <a
+                    href="https://x.com/0ts_st"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="X を新しいタブで開く"
+                    className="pointer-events-auto fixed right-[8%] top-[9%] w-24 h-24 z-50 rounded-full"
+                    onClick={() => {
+                        try {
+                            (window as any).dataLayer?.push?.({ event: 'click_x_from_sun' });
+                        } catch { }
+                    }}
+                >
+                    <span className="sr-only">X で開く</span>
+                </a>
+            )}
+
+            {weather === 'Night' && (
+                <a
+                    href="https://x.com/0ts_st"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="X を新しいタブで開く"
+                    className="pointer-events-auto fixed right-[6.8%] top-[5.2%] w-[162px] h-[162px] z-50 rounded-full"
+                    onClick={() => {
+                        try {
+                            (window as any).dataLayer?.push?.({ event: 'click_x_from_moon' });
+                        } catch { }
+                    }}
+                >
+                    <span className="sr-only">X で開く</span>
+                </a>
+            )}
+        </>
     );
 }
