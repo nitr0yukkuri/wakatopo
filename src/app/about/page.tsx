@@ -13,7 +13,7 @@ const copyByLang = {
         role: 'Interactive Web Developer / Creative Coder',
         internship: 'INTERNSHIP WELCOME',
         sectionCareer: '経歴',
-        careerText: 'ECCコンピュータ専門学校 在学（29卒）。フロントエンドを軸に3D/インタラクション実装を継続中。UIの体験設計と見た目の作り込みを得意にしつつ、志望はバックエンド寄りで、API設計やデータ設計まで責任を持てる開発者を目指しています。',
+        careerText: 'ECCコンピュータ専門学校 在学（29卒）。フロントエンドとバックエンドの両面を軸に、3Dやインタラクションの実装を続けています。UIの体験設計やビジュアルの作り込みを得意としつつ、志望職はソフトウェアエンジニアで、API設計やデータ設計まで責任を持って取り組める開発者を目指しています。',
         sectionAchievements: '実績',
         achievements: [
             '2025',
