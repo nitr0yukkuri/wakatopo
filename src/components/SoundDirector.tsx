@@ -425,6 +425,16 @@ export default function SoundDirector() {
         };
 
         const toggleMute = async (event: KeyboardEvent) => {
+            // 入力フォームでのキー操作の場合は無視する
+            const target = event.target as HTMLElement | null;
+            const isInput =
+                target?.tagName === 'INPUT' ||
+                target?.tagName === 'TEXTAREA' ||
+                target?.isContentEditable;
+
+            if (isInput) return;
+
+            // 'm' キー以外は無視する
             if (event.key.toLowerCase() !== 'm') return;
 
             event.preventDefault();
