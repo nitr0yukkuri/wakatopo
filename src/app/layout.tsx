@@ -140,7 +140,9 @@ export default function RootLayout({
         <PwaRegister />
         <SoundDirector />
         <GlobalTransitionOverlay />
-        {children}
+        <main className="overflow-x-hidden">
+          {children}
+        </main>
       </body>
     </html>
   );

@@ -8,8 +8,9 @@ export default function HomeBackgroundLayers() {
     useEffect(() => {
         // Only run diagnostics when the app is running as a PWA (standalone)
         try {
+            const standaloneNavigator = navigator as Navigator & { standalone?: boolean };
             const isPwa = (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches)
-                || (navigator as any).standalone === true;
+                || standaloneNavigator.standalone === true;
 
             if (!isPwa) return;
 
@@ -61,7 +62,7 @@ export default function HomeBackgroundLayers() {
 
     return (
         <>
-            <div className="fixed inset-0 z-0 opacity-80 mix-blend-screen pointer-events-none lg:pointer-events-auto">
+            <div className="fixed inset-0 z-0 opacity-80 mix-blend-screen pointer-events-none">
                 <SceneClient />
             </div>
             <WeatherEffectsOverlay />
