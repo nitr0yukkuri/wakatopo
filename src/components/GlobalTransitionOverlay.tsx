@@ -57,20 +57,16 @@ export default function GlobalTransitionOverlay() {
 
     useEffect(() => {
         const prevOverflow = document.body.style.overflow;
-        const prevTouchAction = document.body.style.touchAction;
 
         // トランジション中はスクロールを無効化
         if (transitionType !== 'none') {
             document.body.style.overflow = 'hidden';
-            document.body.style.touchAction = 'none';
         } else {
             document.body.style.overflow = '';
-            document.body.style.touchAction = '';
         }
 
         return () => {
             document.body.style.overflow = prevOverflow;
-            document.body.style.touchAction = prevTouchAction;
         };
     }, [transitionType]);
 
