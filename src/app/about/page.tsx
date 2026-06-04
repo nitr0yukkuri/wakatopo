@@ -29,6 +29,7 @@ const copyByLang = {
             '技育CAMP Vol.19 最優秀賞 recaptchaゲーム',
             '機械学習基盤体験型2daysサイバーエージェントインターンシップ 参加',
             'CSS Winner SOTD WAKATO | Living Planet Portfolio',
+            '技育博 Vol.1 展示　recaptchagame',
         ],
         sectionDev: '開発体制',
         devText:
@@ -59,6 +60,7 @@ const copyByLang = {
             'GeekCamp Vol.19 Grand Prize - reCAPTCHA Game',
             'CyberAgent 2-day Hands-on ML Platform Internship - Participant',
             'CSS Winner SOTD WAKATO | Living Planet Portfolio',
+            'Geek Expo Vol.1 Exhibition - recaptchagame',
         ],
         sectionDev: 'DEVELOPMENT STYLE',
         devText:
