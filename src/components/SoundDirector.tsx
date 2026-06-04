@@ -23,6 +23,7 @@ const MUTE_KEY = 'lp-audio-muted';
 const OUTPUT_BOOST = 1.0;
 const OTENKI_BGM_FLAG = -1;
 const DENSHOUO_BGM_FLAG = -2;
+const COLDKEEP_BGM_FLAG = -3;
 
 export default function SoundDirector() {
     const pathname = usePathname();
@@ -329,6 +330,20 @@ export default function SoundDirector() {
             return;
         }
 
+        if (resolvedWorkId === '03') {
+            const ctx = audioContextRef.current;
+            const compressor = outputCompressorRef.current;
+            if (!ctx || !compressor) return;
+
+            bgmTimerRef.current = COLDKEEP_BGM_FLAG;
+            import('@/lib/coldkeepIceBgm').then(({ startColdkeepIceBgm }) => {
+                startColdkeepIceBgm({ ctx, destination: compressor });
+            }).catch(() => {
+                bgmTimerRef.current = null;
+            });
+            return;
+        }
+
         // Home screen Tone.js rain/thunder effect
         if (pathname === '/' && (weather === 'Rain' || weather === 'Thunder')) {
             import('@/lib/homeRainTone').then(({ startHomeRain }) => {
@@ -380,6 +395,10 @@ export default function SoundDirector() {
             } else if (bgmTimerRef.current === DENSHOUO_BGM_FLAG) {
                 import('@/lib/denshouoSeaBgm').then(({ stopDenshouoSeaBgm }) => {
                     stopDenshouoSeaBgm();
+                });
+            } else if (bgmTimerRef.current === COLDKEEP_BGM_FLAG) {
+                import('@/lib/coldkeepIceBgm').then(({ stopColdkeepIceBgm }) => {
+                    stopColdkeepIceBgm();
                 });
             } else {
                 window.clearInterval(bgmTimerRef.current);
