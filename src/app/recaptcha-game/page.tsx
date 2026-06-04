@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useStore } from '@/store';
 import Image from 'next/image';
 import GameboyCursor from '@/components/dom/GameboyCursor';
+import { motion } from 'framer-motion';
 
 export const dynamic = 'force-dynamic';
 
@@ -55,12 +56,12 @@ export default function RecaptchaGamePage() {
         <main className="relative min-h-[100dvh] overflow-x-hidden bg-[#02050c] text-white">
             <GameboyCursor />
             <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_20%,rgba(59,130,246,0.2),transparent_33%),radial-gradient(circle_at_82%_12%,rgba(56,189,248,0.15),transparent_30%),radial-gradient(circle_at_50%_85%,rgba(14,165,233,0.2),transparent_40%)]" />
-            <div className="pointer-events-none absolute inset-0 opacity-30 [background:linear-gradient(rgba(125,211,252,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(125,211,252,0.08)_1px,transparent_1px)] [background-size:36px_36px]" />
+            <motion.div
+                className="pointer-events-none absolute inset-0 opacity-20 [background:linear-gradient(rgba(125,211,252,0.15)_1px,transparent_1px),linear-gradient(90deg,rgba(125,211,252,0.1)_1px,transparent_1px)] [background-size:40px_40px]"
+                animate={{ backgroundPosition: ['0px 0px', '0px 40px'] }}
+                transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
+            />
             <div className="pointer-events-none absolute inset-0 opacity-20 [background:repeating-linear-gradient(0deg,rgba(255,255,255,0.06)_0px,rgba(255,255,255,0.06)_1px,transparent_1px,transparent_3px)]" />
-            <div className="recaptcha-scan-field pointer-events-none fixed inset-0 z-[1]" aria-hidden="true">
-                <div className="recaptcha-scan-beam" />
-                <div className="recaptcha-scan-sweep" />
-            </div>
             <div className="pointer-events-none absolute -top-44 left-1/2 h-[700px] w-[700px] -translate-x-1/2 rounded-full border border-cyan-300/20" />
             <div className="pointer-events-none absolute -top-28 left-1/2 h-[480px] w-[480px] -translate-x-1/2 rounded-full border border-sky-300/15" />
 
