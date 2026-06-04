@@ -171,3 +171,111 @@ body {
     transform: translateX(-100vw);
   }
 }
+
+.recaptcha-scan-field {
+  mix-blend-mode: screen;
+  opacity: 0.78;
+}
+
+.recaptcha-scan-field::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      rgba(56, 189, 248, 0.045) 0,
+      rgba(56, 189, 248, 0.045) 1px,
+      transparent 1px,
+      transparent 11px
+    );
+  opacity: 0.45;
+  animation: recaptcha-scan-noise 3.8s steps(4, end) infinite;
+}
+
+.recaptcha-scan-beam,
+.recaptcha-scan-sweep {
+  position: absolute;
+  left: 0;
+  right: 0;
+  transform: translateY(-34vh);
+  will-change: transform, opacity;
+}
+
+.recaptcha-scan-beam {
+  top: 0;
+  height: 3px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(34, 211, 238, 0.12) 16%,
+    rgba(165, 243, 252, 0.94) 48%,
+    rgba(34, 211, 238, 0.18) 82%,
+    transparent 100%
+  );
+  box-shadow:
+    0 0 14px rgba(34, 211, 238, 0.8),
+    0 0 34px rgba(59, 130, 246, 0.48);
+  animation: recaptcha-scan-pass 7.4s cubic-bezier(0.68, 0, 0.28, 1) infinite;
+}
+
+.recaptcha-scan-sweep {
+  top: -10vh;
+  height: 28vh;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(14, 165, 233, 0.02) 28%,
+    rgba(34, 211, 238, 0.12) 54%,
+    rgba(125, 211, 252, 0.035) 72%,
+    transparent 100%
+  );
+  filter: blur(0.4px);
+  animation: recaptcha-scan-pass 7.4s cubic-bezier(0.68, 0, 0.28, 1) infinite;
+}
+
+@keyframes recaptcha-scan-pass {
+  0% {
+    opacity: 0;
+    transform: translateY(-34vh);
+  }
+  10% {
+    opacity: 1;
+  }
+  56% {
+    opacity: 0.92;
+  }
+  72% {
+    opacity: 0;
+    transform: translateY(134vh);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(134vh);
+  }
+}
+
+@keyframes recaptcha-scan-noise {
+  0%, 100% {
+    transform: translateY(0);
+    opacity: 0.32;
+  }
+  50% {
+    transform: translateY(3px);
+    opacity: 0.5;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .recaptcha-scan-field::before,
+  .recaptcha-scan-beam,
+  .recaptcha-scan-sweep {
+    animation: none;
+  }
+
+  .recaptcha-scan-beam,
+  .recaptcha-scan-sweep {
+    opacity: 0.28;
+    transform: translateY(38vh);
+  }
+}
