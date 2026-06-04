@@ -88,7 +88,7 @@ export const useCoreAnimation = ({
             const rotSpeedY = 0.05 + githubActivityLevel * 0.1 + hoverLevel * 1.5 + activeLevel * 4.0;
             const rotSpeedX = 0.03 + hoverLevel * 1.0 + activeLevel * 2.0;
 
-            meshRef.current.rotation.y += rotSpeedY * delta;
+            meshRef.current.rotation.y -= rotSpeedY * delta;
             meshRef.current.rotation.x += rotSpeedX * delta;
 
             const scale = 1.0 + activeLevel * 0.05 + Math.sin(time * (2.2 + blendedVisual.ringPulse)) * 0.02 * (1 + activeLevel);
@@ -134,7 +134,7 @@ export const useCoreAnimation = ({
         }
 
         if (particlesRef.current) {
-            particlesRef.current.rotation.y += (0.05 + hoverLevel * 0.2 + activeLevel * 1.0) * delta;
+            particlesRef.current.rotation.y -= (0.05 + hoverLevel * 0.2 + activeLevel * 1.0) * delta;
 
             particlesRef.current.rotation.x = THREE.MathUtils.lerp(
                 particlesRef.current.rotation.x,

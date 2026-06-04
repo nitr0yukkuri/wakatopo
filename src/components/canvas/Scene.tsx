@@ -1,8 +1,8 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react';
-import { Canvas } from '@react-three/fiber';
-import { OrbitControls, Environment, Stars, useProgress } from '@react-three/drei';
+import { Canvas, useFrame } from '@react-three/fiber';
+import { Environment, Stars, useProgress } from '@react-three/drei';
 import { EffectComposer, Bloom } from '@react-three/postprocessing';
 import AbstractCore from './AbstractCore';
 import Weather from './Weather';
@@ -36,6 +36,19 @@ function SceneReadySignal({ onReady }: { onReady?: () => void }) {
     return null;
 }
 
+function CameraRotator({ isMobile }: { isMobile: boolean }) {
+    useFrame(({ camera, clock }) => {
+        // OrbitControlsの autoRotateSpeed={0.8} と同じ角速度（約0.0837 rad/s）
+        const t = clock.getElapsedTime() * 0.0837;
+        const radius = isMobile ? 9.2 : 8; // カメラの距離
+
+        camera.position.x = Math.sin(t) * radius;
+        camera.position.z = Math.cos(t) * radius;
+        camera.lookAt(0, 0, 0); // 常に中心の惑星を向く
+    });
+    return null;
+}
+
 export default function Scene({ onSceneReady }: { onSceneReady?: () => void }) {
     const [isMobile, setIsMobile] = useState(false);
 
@@ -49,8 +62,9 @@ export default function Scene({ onSceneReady }: { onSceneReady?: () => void }) {
     return (
         <div className="absolute inset-0 z-0 bg-black pointer-events-none lg:pointer-events-auto">
             <Canvas
+                style={{ touchAction: 'auto' }}
                 camera={{ position: [0, 0, isMobile ? 9.2 : 8], fov: isMobile ? 42 : 35 }}
-                dpr={[1, 1.25]}
+                dpr={isMobile ? [1, 1] : [1, 1.25]}
                 gl={{ antialias: false, powerPreference: 'high-performance' }}
                 performance={{ min: 0.7, debounce: 300 }}
             >
@@ -74,23 +88,17 @@ export default function Scene({ onSceneReady }: { onSceneReady?: () => void }) {
                     <Environment preset="city" environmentIntensity={0.18} />
 
                     {/* Bloom エフェクト: 発光をより劇的に */}
-                    <EffectComposer multisampling={8}>
+                    <EffectComposer multisampling={isMobile ? 0 : 8}>
                         <Bloom
                             intensity={0.8}
                             luminanceThreshold={0.3}
                             luminanceSmoothing={0.4}
-                            mipmapBlur
+                            mipmapBlur={!isMobile}
                         />
                     </EffectComposer>
 
-                    {/* スクロールを妨害しないよう、手動回転(enableRotate)のみ無効化 */}
-                    <OrbitControls
-                        enableZoom={false}
-                        enablePan={false}
-                        enableRotate={false}
-                        autoRotate
-                        autoRotateSpeed={0.8}
-                    />
+                    {/* OrbitControlsを削除し、純粋なカメラの周回処理に変更 */}
+                    <CameraRotator isMobile={isMobile} />
                 </Suspense>
             </Canvas>
         </div>
