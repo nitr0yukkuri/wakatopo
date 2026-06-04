@@ -56,17 +56,15 @@ export default function GlobalTransitionOverlay() {
     }, []);
 
     useEffect(() => {
-        const prevOverflow = document.body.style.overflow;
-
         // トランジション中はスクロールを無効化
         if (transitionType !== 'none') {
-            document.body.style.overflow = 'hidden';
+            document.body.classList.add('overflow-hidden');
         } else {
-            document.body.style.overflow = '';
+            document.body.classList.remove('overflow-hidden');
         }
 
         return () => {
-            document.body.style.overflow = prevOverflow;
+            document.body.classList.remove('overflow-hidden');
         };
     }, [transitionType]);
 
@@ -196,17 +194,18 @@ export default function GlobalTransitionOverlay() {
             )}
 
             {/* Freeze Transition (ColdKeep) */}
-            <div
-                className={`fixed inset-0 z-50 pointer-events-none transition-opacity duration-700 bg-[#020b16] flex items-center justify-center ${transitionType === 'freeze' ? 'opacity-100' : 'opacity-0'
-                    }`}
-                style={{ visibility: transitionType === 'freeze' || transitionType === 'none' ? 'visible' : 'hidden' }}
-            >
-                {transitionType === 'freeze' && (
-                    <div className="absolute inset-0">
-                        <FreezeTransitionCanvas />
-                    </div>
-                )}
-            </div>
+            {transitionType === 'freeze' && (
+                <motion.div
+                    key="freeze"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.7 }}
+                    className="fixed inset-0 z-[9999] pointer-events-none bg-[#020b16]"
+                >
+                    <FreezeTransitionCanvas />
+                </motion.div>
+            )}
 
             {transitionType === 'captcha-lock' && (
                 <motion.div
