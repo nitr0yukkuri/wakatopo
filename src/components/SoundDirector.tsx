@@ -332,12 +332,11 @@ export default function SoundDirector() {
 
         if (resolvedWorkId === '03') {
             const ctx = audioContextRef.current;
-            const compressor = outputCompressorRef.current;
-            if (!ctx || !compressor) return;
+            if (!ctx) return;
 
             bgmTimerRef.current = COLDKEEP_BGM_FLAG;
             import('@/lib/coldkeepIceBgm').then(({ startColdkeepIceBgm }) => {
-                startColdkeepIceBgm({ ctx, destination: compressor });
+                startColdkeepIceBgm(ctx);
             }).catch(() => {
                 bgmTimerRef.current = null;
             });
