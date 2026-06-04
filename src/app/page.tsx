@@ -106,7 +106,7 @@ export default async function Home({
   return (
     <main
       className="relative w-full min-h-[100dvh] text-white font-sans bg-[#050505]"
-      style={{ touchAction: 'pan-y', userSelect: 'none', WebkitUserSelect: 'none', WebkitTouchCallout: 'none' }}
+      style={{ userSelect: 'none', WebkitUserSelect: 'none', WebkitTouchCallout: 'none' }}
     >
       <ClientInitializer
         initialWeather={data.weather as any}
@@ -160,10 +160,10 @@ export default async function Home({
       </div>
 
       {/* === SCROLLABLE CONTENT === */}
-      <div className="relative z-10 w-full pointer-events-none">
+      <div className="relative z-10 w-full pointer-events-none md:pointer-events-auto">
 
         {/* HERO */}
-        <section className="h-[100dvh] min-h-[100dvh] flex items-center justify-center pointer-events-none">
+        <section className="h-[100dvh] min-h-[100dvh] flex items-center justify-center pointer-events-auto md:pointer-events-none">
           <div className="text-center space-y-4 md:space-y-6">
             <h2 className="text-6xl md:text-9xl font-bold tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white to-transparent opacity-80">
               LIVING<br />PLANET
