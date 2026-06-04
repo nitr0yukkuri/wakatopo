@@ -208,7 +208,7 @@ export default async function Home({
                 <div className="space-y-4 font-mono text-xs">
                   {([
                     { label: 'Frontend', items: ['Next.js', 'React', 'TypeScript', 'Tailwind CSS'] },
-                    { label: '3D / Creative', items: ['Three.js', 'WebGL', 'GLSL', 'Framer Motion'] },
+                    { label: '3D / Creative', items: ['Three.js', 'React Three Fiber', 'WebGL', 'GLSL', 'Framer Motion'] },
                     { label: 'Backend', items: ['Node.js', 'Go', 'PostgreSQL', 'Supabase'] },
                     { label: 'Other', items: ['WebSocket', 'Docker', 'PWA', 'Figma'] },
                   ] as { label: string; items: string[] }[]).map(({ label, items }) => (
