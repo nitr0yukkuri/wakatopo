@@ -506,7 +506,7 @@ export default function SoundDirector() {
     }, [weather, githubActivityLevel, activeWorkId, pathname]);
 
     return (
-        <div className="fixed bottom-20 right-4 z-70 pointer-events-auto sm:bottom-6 sm:right-6">
+        <div className="fixed bottom-36 right-4 z-70 pointer-events-auto sm:bottom-6 sm:right-6">
             <button
                 type="button"
                 onClick={() => {
