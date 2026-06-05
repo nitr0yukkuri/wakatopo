@@ -209,7 +209,7 @@ export default async function Home({
                   {([
                     { label: 'Frontend', items: ['Next.js', 'React', 'TypeScript', 'Tailwind CSS'] },
                     { label: '3D / Creative', items: ['Three.js', 'React Three Fiber', 'WebGL', 'GLSL', 'Framer Motion'] },
-                    { label: 'Backend', items: ['Node.js', 'Go', 'PostgreSQL', 'Supabase'] },
+                    { label: 'Backend', items: ['Node.js', 'Go', 'PostgreSQL'] },
                     { label: 'Other', items: ['WebSocket', 'Docker', 'PWA', 'Figma'] },
                   ] as { label: string; items: string[] }[]).map(({ label, items }) => (
                     <div key={label} className="flex gap-4 items-start">
