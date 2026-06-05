@@ -36,6 +36,7 @@
 
 👉 **https://wakato.tech**
 
+<img src="preview.gif" alt="Live weather preview" />
 GitHubの活動履歴とリアルタイム天気が融合した  
 **インタラクティブな3Dポートフォリオ**を実際に体験できます。
 

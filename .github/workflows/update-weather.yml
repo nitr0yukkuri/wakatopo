@@ -1,0 +1,56 @@
+name: Update Live Weather GIF
+
+on:
+  schedule:
+    - cron: '0 */3 * * *'
+  workflow_dispatch:
+
+jobs:
+  update-gif:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright Browsers
+        run: npx playwright install chromium --with-deps
+
+      - name: Install FFmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+
+      - name: Run recording script
+        run: npx --yes tsx scripts/record_weather.ts
+
+      - name: Convert WebM to GIF
+        run: |
+          set -euo pipefail
+          WEBM_FILE=$(find videos -type f -name '*.webm' | head -n 1)
+          if [ -z "$WEBM_FILE" ]; then
+            echo "No WebM file was recorded."
+            exit 1
+          fi
+          ffmpeg -y -i "$WEBM_FILE" -vf "fps=15,scale=800:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" -loop 0 preview.gif
+          rm -rf videos/
+
+      - name: Commit and Push
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add preview.gif
+          if git diff --cached --quiet; then
+            echo "preview.gif is unchanged."
+            exit 0
+          fi
+          git commit -m "chore: update live weather gif [skip ci]"
+          git push
