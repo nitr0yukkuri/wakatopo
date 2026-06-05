@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { useStore, WeatherType } from '@/store';
+import { useStore } from '@/store';
 import { usePathname } from 'next/navigation';
 import { getLofiBgmProfile } from '@/lib/lofiAudio';
 
@@ -43,6 +43,7 @@ export default function SoundDirector() {
     const isMutedRef = useRef(false);
     const bgmStepRef = useRef(0);
     const [isMuted, setIsMuted] = useState(false);
+    const isCardPage = pathname === '/card';
 
     const resolvedWorkId = (() => {
         if (pathname === '/github-planet') return '01';
@@ -428,6 +429,7 @@ export default function SoundDirector() {
     };
 
     useEffect(() => {
+        if (isCardPage) return;
         if (typeof window === 'undefined') return;
 
         const savedMuted = window.localStorage.getItem(MUTE_KEY);
@@ -481,9 +483,10 @@ export default function SoundDirector() {
             outputWetGainRef.current = null;
             outputCompressorRef.current = null;
         };
-    }, []);
+    }, [isCardPage]);
 
     useEffect(() => {
+        if (isCardPage) return;
         const previous = previousTransitionRef.current;
         previousTransitionRef.current = transitionType;
 
@@ -495,15 +498,18 @@ export default function SoundDirector() {
             if (!ok) return;
             playTransitionSfx(transitionType);
         });
-    }, [transitionType]);
+    }, [isCardPage, transitionType]);
 
     useEffect(() => {
+        if (isCardPage) return;
         if (isMutedRef.current) return;
         if (bgmTimerRef.current === null) return;
 
         stopBgm();
         startBgm();
-    }, [weather, githubActivityLevel, activeWorkId, pathname]);
+    }, [activeWorkId, githubActivityLevel, isCardPage, pathname, weather]);
+
+    if (isCardPage) return null;
 
     return (
         <div className="fixed bottom-36 right-4 z-70 pointer-events-auto sm:bottom-6 sm:right-6">

@@ -1,10 +1,10 @@
 import { chromium } from '@playwright/test';
 import { mkdir, rm } from 'node:fs/promises';
 
-const targetUrl = process.env.WEATHER_RECORD_URL ?? 'https://wakato.tech';
+const targetUrl = process.env.WEATHER_RECORD_URL ?? 'https://wakato.tech/card';
 const videoDir = process.env.WEATHER_RECORD_VIDEO_DIR ?? './videos';
 const width = Number(process.env.WEATHER_RECORD_WIDTH ?? 800);
-const height = Number(process.env.WEATHER_RECORD_HEIGHT ?? 600);
+const height = Number(process.env.WEATHER_RECORD_HEIGHT ?? 400);
 const warmupMs = Number(process.env.WEATHER_RECORD_WARMUP_MS ?? 15000);
 const recordMs = Number(process.env.WEATHER_RECORD_MS ?? 5000);
 
