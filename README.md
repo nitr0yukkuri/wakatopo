@@ -31,19 +31,7 @@
 **[CSS Winner](https://www.csswinner.com/details/wakato-3d-portfolio/19159)**
 - **Site of the Day (SOTD)** - 2026/04/08
 
----
 
-# 🌐 Live Demo
-
-**Experience the living planet directly in your browser**
-
-👉 **https://wakato.tech**
-
-<img src="preview.gif" alt="Live weather preview" />
-GitHubの活動履歴とリアルタイム天気が融合した  
-**インタラクティブな3Dポートフォリオ**を実際に体験できます。
-
----
 
 # 🧬 Concept: Fusion of Two Origins
 
