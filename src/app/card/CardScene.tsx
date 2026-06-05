@@ -1,10 +1,11 @@
 'use client';
 
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Stars } from '@react-three/drei';
+import { Environment, Stars } from '@react-three/drei';
 import { EffectComposer, Bloom } from '@react-three/postprocessing';
 import { Suspense } from 'react';
 import AbstractCore from '@/components/canvas/AbstractCore';
+import Weather from '@/components/canvas/Weather';
 
 function CardCameraRig() {
     useFrame(({ camera, clock }) => {
@@ -23,25 +24,31 @@ export default function CardScene() {
         <Canvas
             camera={{ position: [0, 0, 6.4], fov: 38 }}
             dpr={[1, 1.5]}
-            gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
+            gl={{ antialias: false, powerPreference: 'high-performance' }}
             performance={{ min: 0.8, debounce: 250 }}
         >
             <Suspense fallback={null}>
-                <ambientLight intensity={0.14} />
-                <pointLight position={[6, 5, 6]} intensity={1.7} />
-                <pointLight position={[-5, -4, -6]} intensity={0.7} color="#22d3ee" />
+                <color attach="background" args={['#050505']} />
+                <fog attach="fog" args={['#050505', 3, 12]} />
+                <ambientLight intensity={0.1} />
+                <pointLight position={[10, 10, 10]} intensity={1.5} />
+                <pointLight position={[-10, -10, -10]} intensity={0.5} color="#00ffff" />
 
                 <group scale={1.08} position={[0, 0.02, 0]}>
                     <AbstractCore />
                 </group>
 
-                <Stars radius={70} depth={36} count={360} factor={1.15} saturation={0} fade speed={0.25} />
+                <Weather />
 
-                <EffectComposer multisampling={4}>
+                <Stars radius={100} depth={50} count={640} factor={1.5} saturation={0} fade speed={0.35} />
+
+                <Environment preset="city" environmentIntensity={0.18} />
+
+                <EffectComposer multisampling={8}>
                     <Bloom
-                        intensity={0.7}
-                        luminanceThreshold={0.28}
-                        luminanceSmoothing={0.35}
+                        intensity={0.8}
+                        luminanceThreshold={0.3}
+                        luminanceSmoothing={0.4}
                         mipmapBlur
                     />
                 </EffectComposer>
