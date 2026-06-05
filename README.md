@@ -1,3 +1,8 @@
+<div align="center">
+  <a href="https://wakato.tech">
+    <img src="preview.gif" alt="Live Weather" width="800" style="border-radius: 12px;" />
+  </a>
+</div>
 # 🌍 WAKATO | Living Planet Portfolio
 
 <div align="center">
