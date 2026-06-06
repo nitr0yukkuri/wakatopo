@@ -24,6 +24,14 @@ const OUTPUT_BOOST = 1.0;
 const OTENKI_BGM_FLAG = -1;
 const DENSHOUO_BGM_FLAG = -2;
 const COLDKEEP_BGM_FLAG = -3;
+const EXCLUSIVE_BGM_WORK_IDS = new Set(['02', '03', '05']);
+
+type AudioStateSnapshot = {
+    pathname: string;
+    resolvedWorkId: string | null;
+    weather: ReturnType<typeof useStore.getState>['weather'];
+    githubActivityLevel: number;
+};
 
 export default function SoundDirector() {
     const pathname = usePathname();
@@ -41,6 +49,12 @@ export default function SoundDirector() {
     const bgmTimerRef = useRef<number | null>(null);
     const bgmSessionRef = useRef(0);
     const activeAudioSourcesRef = useRef<Set<AudioScheduledSourceNode>>(new Set());
+    const latestAudioStateRef = useRef<AudioStateSnapshot>({
+        pathname: '/',
+        resolvedWorkId: null,
+        weather: 'Clear',
+        githubActivityLevel: 0.5,
+    });
     const previousTransitionRef = useRef<TransitionType>('none');
     const isMutedRef = useRef(false);
     const bgmStepRef = useRef(0);
@@ -55,6 +69,13 @@ export default function SoundDirector() {
         if (pathname === '/denshouo') return '05';
         return activeWorkId;
     })();
+
+    latestAudioStateRef.current = {
+        pathname,
+        resolvedWorkId,
+        weather,
+        githubActivityLevel,
+    };
 
     const ensureAudioGraph = async () => {
         if (typeof window === 'undefined') return false;
@@ -324,29 +345,34 @@ export default function SoundDirector() {
     const startBgm = () => {
         if (bgmTimerRef.current !== null) return;
         const session = bgmSessionRef.current;
+        const audioState = latestAudioStateRef.current;
+        const currentPathname = audioState.pathname;
+        const currentWorkId = audioState.resolvedWorkId;
+        const currentWeather = audioState.weather;
+        const currentActivityLevel = audioState.githubActivityLevel;
 
-        if (resolvedWorkId === '02') {
+        if (currentWorkId === '02') {
             bgmTimerRef.current = OTENKI_BGM_FLAG;
             import('@/lib/otenkiToneBgm').then(({ startOtenkiBgm, stopOtenkiBgm }) => {
-                if (session !== bgmSessionRef.current || isMutedRef.current || resolvedWorkId !== '02') {
+                if (session !== bgmSessionRef.current || isMutedRef.current || latestAudioStateRef.current.resolvedWorkId !== '02') {
                     stopOtenkiBgm();
                     return;
                 }
-                void startOtenkiBgm(weather);
+                void startOtenkiBgm(latestAudioStateRef.current.weather);
             }).catch(() => {
                 bgmTimerRef.current = null;
             });
             return;
         }
 
-        if (resolvedWorkId === '05') {
+        if (currentWorkId === '05') {
             const ctx = audioContextRef.current;
             const master = masterGainRef.current;
             if (!ctx || !master) return;
 
             bgmTimerRef.current = DENSHOUO_BGM_FLAG;
             import('@/lib/denshouoSeaBgm').then(({ startDenshouoSeaBgm, stopDenshouoSeaBgm }) => {
-                if (session !== bgmSessionRef.current || isMutedRef.current || resolvedWorkId !== '05') {
+                if (session !== bgmSessionRef.current || isMutedRef.current || latestAudioStateRef.current.resolvedWorkId !== '05') {
                     stopDenshouoSeaBgm();
                     return;
                 }
@@ -357,13 +383,13 @@ export default function SoundDirector() {
             return;
         }
 
-        if (resolvedWorkId === '03') {
+        if (currentWorkId === '03') {
             const ctx = audioContextRef.current;
             if (!ctx) return;
 
             bgmTimerRef.current = COLDKEEP_BGM_FLAG;
             import('@/lib/coldkeepIceBgm').then(({ startColdkeepIceBgm, stopColdkeepIceBgm }) => {
-                if (session !== bgmSessionRef.current || isMutedRef.current || resolvedWorkId !== '03') {
+                if (session !== bgmSessionRef.current || isMutedRef.current || latestAudioStateRef.current.resolvedWorkId !== '03') {
                     stopColdkeepIceBgm();
                     return;
                 }
@@ -374,22 +400,27 @@ export default function SoundDirector() {
             return;
         }
 
+        if (currentWorkId && EXCLUSIVE_BGM_WORK_IDS.has(currentWorkId)) return;
+
         // Home screen Tone.js rain/thunder effect
-        if (pathname === '/' && (weather === 'Rain' || weather === 'Thunder')) {
+        if (currentPathname === '/' && (currentWeather === 'Rain' || currentWeather === 'Thunder')) {
             import('@/lib/homeRainTone').then(({ startHomeRain, stopHomeRain }) => {
-                if (session !== bgmSessionRef.current || isMutedRef.current || pathname !== '/') {
+                if (session !== bgmSessionRef.current || isMutedRef.current || latestAudioStateRef.current.pathname !== '/') {
                     stopHomeRain();
                     return;
                 }
-                void startHomeRain(weather);
+                void startHomeRain(latestAudioStateRef.current.weather);
             });
         }
 
-        const profile = getLofiBgmProfile(weather, githubActivityLevel, resolvedWorkId);
+        const profile = getLofiBgmProfile(currentWeather, currentActivityLevel, currentWorkId);
         bgmStepRef.current = 0;
 
         const tick = () => {
             if (isMutedRef.current) return;
+            const latestState = latestAudioStateRef.current;
+            if (latestState.resolvedWorkId && EXCLUSIVE_BGM_WORK_IDS.has(latestState.resolvedWorkId)) return;
+
             const index = bgmStepRef.current % profile.notes.length;
             const base = profile.notes[index];
             const sway = 1 + Math.sin(bgmStepRef.current * 0.63) * 0.08;
@@ -403,8 +434,8 @@ export default function SoundDirector() {
             playTone(pulse, 0.36, 0.01, 'triangle', 0.62);
             playTone(base * profile.accentRatio, 0.28, profile.accentVolume, profile.accentWaveform, profile.accentAt);
 
-            if (weather === 'Rain' || weather === 'Clouds') {
-                if (!(pathname === '/' && weather === 'Rain')) {
+            if (latestState.weather === 'Rain' || latestState.weather === 'Clouds') {
+                if (!(latestState.pathname === '/' && latestState.weather === 'Rain')) {
                     playNoiseBurst(0.1, 0.0026, 0.72, 1400);
                 }
             }
@@ -532,6 +563,8 @@ export default function SoundDirector() {
         if (isCardPage) return;
         const previous = previousTransitionRef.current;
         previousTransitionRef.current = transitionType;
+
+        if (resolvedWorkId && EXCLUSIVE_BGM_WORK_IDS.has(resolvedWorkId)) return;
 
         if (transitionType === 'none' || transitionType === previous) {
             return;
