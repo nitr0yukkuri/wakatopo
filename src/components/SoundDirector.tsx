@@ -39,6 +39,8 @@ export default function SoundDirector() {
     const outputWetGainRef = useRef<GainNode | null>(null);
     const outputCompressorRef = useRef<DynamicsCompressorNode | null>(null);
     const bgmTimerRef = useRef<number | null>(null);
+    const bgmSessionRef = useRef(0);
+    const activeAudioSourcesRef = useRef<Set<AudioScheduledSourceNode>>(new Set());
     const previousTransitionRef = useRef<TransitionType>('none');
     const isMutedRef = useRef(false);
     const bgmStepRef = useRef(0);
@@ -163,6 +165,11 @@ export default function SoundDirector() {
         filter.connect(gain);
         gain.connect(master);
 
+        activeAudioSourcesRef.current.add(osc);
+        osc.onended = () => {
+            activeAudioSourcesRef.current.delete(osc);
+        };
+
         osc.start(ctx.currentTime + at);
         osc.stop(ctx.currentTime + at + duration + 0.03);
     };
@@ -202,6 +209,11 @@ export default function SoundDirector() {
         hp.connect(gain);
         gain.connect(master);
 
+        activeAudioSourcesRef.current.add(source);
+        source.onended = () => {
+            activeAudioSourcesRef.current.delete(source);
+        };
+
         source.start(ctx.currentTime + at);
         source.stop(ctx.currentTime + at + duration + 0.01);
     };
@@ -231,6 +243,11 @@ export default function SoundDirector() {
         osc.connect(filter);
         filter.connect(gain);
         gain.connect(master);
+
+        activeAudioSourcesRef.current.add(osc);
+        osc.onended = () => {
+            activeAudioSourcesRef.current.delete(osc);
+        };
 
         osc.start();
         osc.stop(ctx.currentTime + duration + 0.05);
@@ -306,10 +323,15 @@ export default function SoundDirector() {
 
     const startBgm = () => {
         if (bgmTimerRef.current !== null) return;
+        const session = bgmSessionRef.current;
 
         if (resolvedWorkId === '02') {
             bgmTimerRef.current = OTENKI_BGM_FLAG;
-            import('@/lib/otenkiToneBgm').then(({ startOtenkiBgm }) => {
+            import('@/lib/otenkiToneBgm').then(({ startOtenkiBgm, stopOtenkiBgm }) => {
+                if (session !== bgmSessionRef.current || isMutedRef.current || resolvedWorkId !== '02') {
+                    stopOtenkiBgm();
+                    return;
+                }
                 void startOtenkiBgm(weather);
             }).catch(() => {
                 bgmTimerRef.current = null;
@@ -323,7 +345,11 @@ export default function SoundDirector() {
             if (!ctx || !master) return;
 
             bgmTimerRef.current = DENSHOUO_BGM_FLAG;
-            import('@/lib/denshouoSeaBgm').then(({ startDenshouoSeaBgm }) => {
+            import('@/lib/denshouoSeaBgm').then(({ startDenshouoSeaBgm, stopDenshouoSeaBgm }) => {
+                if (session !== bgmSessionRef.current || isMutedRef.current || resolvedWorkId !== '05') {
+                    stopDenshouoSeaBgm();
+                    return;
+                }
                 startDenshouoSeaBgm({ ctx, destination: master });
             }).catch(() => {
                 bgmTimerRef.current = null;
@@ -336,7 +362,11 @@ export default function SoundDirector() {
             if (!ctx) return;
 
             bgmTimerRef.current = COLDKEEP_BGM_FLAG;
-            import('@/lib/coldkeepIceBgm').then(({ startColdkeepIceBgm }) => {
+            import('@/lib/coldkeepIceBgm').then(({ startColdkeepIceBgm, stopColdkeepIceBgm }) => {
+                if (session !== bgmSessionRef.current || isMutedRef.current || resolvedWorkId !== '03') {
+                    stopColdkeepIceBgm();
+                    return;
+                }
                 startColdkeepIceBgm(ctx);
             }).catch(() => {
                 bgmTimerRef.current = null;
@@ -346,7 +376,11 @@ export default function SoundDirector() {
 
         // Home screen Tone.js rain/thunder effect
         if (pathname === '/' && (weather === 'Rain' || weather === 'Thunder')) {
-            import('@/lib/homeRainTone').then(({ startHomeRain }) => {
+            import('@/lib/homeRainTone').then(({ startHomeRain, stopHomeRain }) => {
+                if (session !== bgmSessionRef.current || isMutedRef.current || pathname !== '/') {
+                    stopHomeRain();
+                    return;
+                }
                 void startHomeRain(weather);
             });
         }
@@ -383,6 +417,15 @@ export default function SoundDirector() {
     };
 
     const stopBgm = () => {
+        bgmSessionRef.current += 1;
+
+        activeAudioSourcesRef.current.forEach((source) => {
+            try {
+                source.stop();
+            } catch { }
+        });
+        activeAudioSourcesRef.current.clear();
+
         import('@/lib/homeRainTone').then(({ stopHomeRain }) => {
             stopHomeRain();
         }).catch(() => { });
