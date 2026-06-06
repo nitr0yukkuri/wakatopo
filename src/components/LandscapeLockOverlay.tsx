@@ -12,7 +12,7 @@ export default function LandscapeLockOverlay() {
       className="landscape-lock-overlay"
       role="alert"
       aria-live="assertive"
-      aria-label="縦画面でお楽しみください"
+      aria-label="Orientation lock"
     >
       <div className="landscape-lock-grid" />
       <div className="landscape-lock-panel">
