@@ -44,7 +44,7 @@ jobs:
             echo "No WebM file was recorded."
             exit 1
           fi
-          ffmpeg -y -i "$WEBM_FILE" -vf "fps=15,scale=800:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" -loop 0 preview.gif
+          ffmpeg -y -i "$WEBM_FILE" -ss 15 -t 5 -vf "fps=15,scale=800:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" -loop 0 preview.gif
           rm -rf videos/
 
       - name: Commit and Push
