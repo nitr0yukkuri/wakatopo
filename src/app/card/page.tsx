@@ -12,7 +12,7 @@ export default async function CardPage() {
     const visualWeather = weather === 'Clear' ? 'Morning' : weather;
 
     return (
-        <main className="relative flex h-[400px] w-[800px] select-none items-center justify-center overflow-hidden rounded-xl border border-cyan-100/10 bg-[#050505] text-white shadow-2xl">
+        <main className="card-capture-page relative flex h-[400px] w-[800px] select-none items-center justify-center overflow-hidden rounded-xl border border-cyan-100/10 bg-[#050505] text-white shadow-2xl">
             <ClientInitializer
                 initialWeather={visualWeather}
                 initialActivity={data.activityLevel}

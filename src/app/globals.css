@@ -42,6 +42,10 @@ body {
   display: none;
 }
 
+body:has(.card-capture-page) .landscape-lock-overlay {
+  display: none !important;
+}
+
 /* スクロールバーを細くスタイリッシュに */
 ::-webkit-scrollbar {
   width: 4px;
