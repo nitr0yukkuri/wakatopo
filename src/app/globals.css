@@ -176,53 +176,6 @@ body {
   }
 }
 
-@keyframes landscapeLockScan {
-  from {
-    transform: translateY(-120%);
-  }
-  to {
-    transform: translateY(120%);
-  }
-}
-
-@keyframes landscapeLockGlitch {
-  0%,
-  100% {
-    text-shadow:
-      0 0 18px rgba(34, 211, 238, 0.48),
-      0 0 42px rgba(59, 130, 246, 0.22);
-    transform: translate3d(0, 0, 0);
-  }
-  18% {
-    text-shadow:
-      -2px 0 rgba(34, 211, 238, 0.8),
-      2px 0 rgba(255, 87, 87, 0.58);
-  }
-  20% {
-    transform: translate3d(1px, -1px, 0);
-  }
-  22% {
-    transform: translate3d(-1px, 1px, 0);
-  }
-  24% {
-    text-shadow:
-      1px 0 rgba(34, 211, 238, 0.7),
-      -1px 0 rgba(255, 184, 108, 0.55);
-    transform: translate3d(0, 0, 0);
-  }
-}
-
-@keyframes landscapeLockRotate {
-  0%,
-  20% {
-    transform: rotate(90deg);
-  }
-  62%,
-  100% {
-    transform: rotate(0deg);
-  }
-}
-
 @media (orientation: landscape) and (max-height: 600px) {
   html,
   body {
@@ -254,22 +207,6 @@ body {
       linear-gradient(90deg, rgba(125, 211, 252, 0.14) 1px, transparent 1px);
     background-size: 34px 34px;
     mask-image: radial-gradient(circle at 50% 50%, black 0%, transparent 78%);
-  }
-
-  .landscape-lock-scan {
-    position: absolute;
-    inset: -40% 0;
-    background: linear-gradient(
-      180deg,
-      transparent 0%,
-      rgba(34, 211, 238, 0) 45%,
-      rgba(34, 211, 238, 0.3) 50%,
-      rgba(255, 255, 255, 0.15) 51%,
-      rgba(34, 211, 238, 0) 57%,
-      transparent 100%
-    );
-    mix-blend-mode: screen;
-    animation: landscapeLockScan 2.8s linear infinite;
   }
 
   .landscape-lock-panel {
@@ -313,66 +250,12 @@ body {
     border-bottom: 1px solid;
   }
 
-  .landscape-lock-icon {
-    display: grid;
-    place-items: center;
-    width: 74px;
-    height: 74px;
-    color: #8ff6ff;
-    filter: drop-shadow(0 0 18px rgba(34, 211, 238, 0.42));
-  }
-
-  .landscape-lock-icon svg {
-    width: 100%;
-    height: 100%;
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 3;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    animation: landscapeLockRotate 2.4s ease-in-out infinite;
-    transform-origin: 50% 50%;
-  }
-
   .landscape-lock-code {
     margin: 0;
     font-family: var(--font-geist-mono), monospace;
     font-size: 10px;
     letter-spacing: 0.22em;
     color: rgba(125, 211, 252, 0.72);
-  }
-
-  .landscape-lock-title {
-    position: relative;
-    margin: 0;
-    font-size: clamp(20px, 6vh, 30px);
-    font-weight: 700;
-    line-height: 1.2;
-    letter-spacing: 0;
-    text-align: center;
-    color: #ffffff;
-    animation: landscapeLockGlitch 3.2s steps(1, end) infinite;
-  }
-
-  .landscape-lock-title::before,
-  .landscape-lock-title::after {
-    position: absolute;
-    inset: 0;
-    content: attr(data-text);
-    pointer-events: none;
-    opacity: 0.58;
-  }
-
-  .landscape-lock-title::before {
-    color: #67e8f9;
-    transform: translateX(-1px);
-    clip-path: inset(0 0 54% 0);
-  }
-
-  .landscape-lock-title::after {
-    color: #ff8f70;
-    transform: translateX(1px);
-    clip-path: inset(48% 0 0 0);
   }
 
   .landscape-lock-message {
