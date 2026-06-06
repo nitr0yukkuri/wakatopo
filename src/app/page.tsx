@@ -38,8 +38,8 @@ const copyByLang = {
       'IoT × AI を組み合わせたプロトタイプ・PoC開発',
     ],
     endSignal: '04 / END SIGNAL',
-    footerText1: 'ECCコンピュータ専門学校 在学（29卒）。フロントエンドを軸に3D/インタラクション実装を継続中。',
-    footerText2: 'UIの体験設計と見た目の作り込みを得意にしつつ、志望はバックエンド寄り。API設計やデータ設計まで責任を持てる開発者を目指しています。',
+    footerText1: 'ECCコンピュータ専門学校 在学（29卒）。特定領域に閉じるのではなく、プロダクト価値を届けるために必要な領域を横断できるSWEを目指しています。',
+    footerText2: 'UI/UX、3D表現、API設計、データ設計まで、ユーザー体験から逆算して必要な技術を選び、設計から実装、改善まで担えるエンジニアを目指しています。',
     designedIn: 'DESIGNED IN OSAKA.',
     works: [
       { id: '01', title: 'GitHub Planet', cat: 'THREE.JS / VISUALIZATION', desc: 'GitHubのコミット数を惑星として可視化する3Dビジュアライザー。' },
@@ -73,8 +73,8 @@ const copyByLang = {
       'Prototype and PoC development combining IoT and AI',
     ],
     endSignal: '04 / END SIGNAL',
-    footerText1: 'Primarily frontend, and I can deliver solo from design to backend integration.',
-    footerText2: 'Class of 2029. Internships and casual chats are always welcome.',
+    footerText1: 'I aim to become a software engineer who is not limited to one specific layer, but can work across the areas needed to deliver product value.',
+    footerText2: 'Class of 2029. I want to choose the right technologies from the user experience backward, from UI/UX and 3D expression to API and data design.',
     designedIn: 'DESIGNED IN OSAKA.',
     works: [
       { id: '01', title: 'GitHub Planet', cat: 'THREE.JS / VISUALIZATION', desc: 'A 3D visualizer where GitHub commit count becomes planetary terrain in real time. Each line of code uplifts the landscape.' },

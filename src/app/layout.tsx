@@ -40,8 +40,8 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL("https://wakatopo.vercel.app"),
   title: "WAKATO | Living Planet Portfolio",
-  description: "GitHubの活動とリアルタイム天気が連動する、インタラクティブな3Dポートフォリオ。3D・インタラクション実装を得意とするフロントエンドエンジニア。",
-  keywords: ["ポートフォリオ", "3D", "インタラクション", "フロントエンド", "GitHub", "Three.js", "React"],
+  description: "GitHubの活動とリアルタイム天気が連動する、インタラクティブな3Dポートフォリオ。プロダクト価値から逆算して必要な領域を横断するSWEを目指しています。",
+  keywords: ["ポートフォリオ", "3D", "インタラクション", "SWE", "GitHub", "Three.js", "React"],
   openGraph: {
     title: "WAKATO | Living Planet Portfolio",
     description: "GitHubの活動とリアルタイム天気が連動する、インタラクティブな3Dポートフォリオ。",
@@ -101,14 +101,14 @@ export default function RootLayout({
               "@type": "ProfilePage",
               name: "WAKATO",
               url: "https://wakatopo.vercel.app",
-              description: "GitHubの活動とリアルタイム天気が連動する、インタラクティブな3Dポートフォリオ。フロントエンドエンジニア。",
+              description: "GitHubの活動とリアルタイム天気が連動する、インタラクティブな3Dポートフォリオ。プロダクト価値から逆算して必要な領域を横断するSWEを目指しています。",
               image: "https://wakatopo.vercel.app/faviconwakato.png",
               mainEntity: {
                 "@type": "Person",
                 name: "WAKATO (nitr0yukkuri)",
                 url: "https://wakatopo.vercel.app",
                 image: "https://wakatopo.vercel.app/faviconwakato.png",
-                description: "3D・インタラクション実装を得意とするフロントエンドエンジニア",
+                description: "プロダクト価値から逆算して必要な領域を横断するSWEを目指しています",
                 jobTitle: "Interactive Web Developer / Creative Coder",
                 sameAs: ["https://github.com/nitr0yukkuri", "https://twitter.com/nitr0yukkuri"],
               },

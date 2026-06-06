@@ -14,7 +14,7 @@ const copyByLang = {
         internship: 'INTERNSHIP WELCOME',
         sectionCareer: '経歴',
         careerText:
-            'ECCコンピュータ専門学校在学（29卒）。フロントエンドとバックエンドを横断し、3D表現や複雑なインタラクションの実装を探求しています。UI/UXの体験設計や緻密なビジュアルの作り込みを得意としていますが、目指しているのは単なる画面の制作者ではありません。APIやデータモデルの枠を超え、堅牢なアーキテクチャ設計まで責任を持ってシステム全体を組み上げられるソフトウェアエンジニアを目指しています。',
+            'ECCコンピュータ専門学校在学（29卒）。現時点ではフロントエンド・バックエンドのどちらかに限定するのではなく、ソフトウェアエンジニアとしてプロダクト全体に関われる力を伸ばしたいと考えています。UI/UXや3D表現、インタラクション実装だけでなく、API設計、データ設計、パフォーマンス改善まで、ユーザー体験から逆算して必要な技術を選び、設計から実装、改善まで担えるSWEを目指しています。',
         sectionAchievements: '実績',
         achievements: [
             '2025',
@@ -45,7 +45,7 @@ const copyByLang = {
         internship: 'INTERNSHIP WELCOME',
         sectionCareer: 'CAREER',
         careerText:
-            'I am currently studying at ECC Computer College (Class of 2029), focusing on frontend development with continuous 3D and interaction implementation. While my strength is designing polished UI experiences and visual quality, my long-term direction is backend-oriented, aiming to take full responsibility from API design to data modeling.',
+            'I am currently studying at ECC Computer College (Class of 2029). Rather than limiting myself to either frontend or backend, I want to grow as a software engineer who can work across the whole product. I aim to choose the right technologies from the user experience backward, covering UI/UX, 3D expression, interaction implementation, API design, data design, and performance improvements.',
         sectionAchievements: 'ACHIEVEMENTS',
         achievements: [
             '2025',
