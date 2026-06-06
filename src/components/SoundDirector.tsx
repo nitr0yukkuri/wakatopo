@@ -512,7 +512,7 @@ export default function SoundDirector() {
     if (isCardPage) return null;
 
     return (
-        <div className="fixed bottom-36 right-4 z-70 pointer-events-auto sm:bottom-6 sm:right-6">
+        <div className="fixed right-4 top-[calc(env(safe-area-inset-top)+4.5rem)] z-70 pointer-events-auto sm:right-6 md:right-8">
             <button
                 type="button"
                 onClick={() => {
