@@ -7,8 +7,15 @@ import { useStore } from '@/store';
 import { useCoreInteraction } from './abstractCore/useCoreInteraction';
 import { useCoreParticles } from './abstractCore/useCoreParticles';
 import { useCoreAnimation } from './abstractCore/useCoreAnimation';
+import type { WeatherType } from '@/store';
 
-export default function AbstractCore() {
+export default function AbstractCore({
+    weatherOverride,
+    activityOverride,
+}: {
+    weatherOverride?: WeatherType;
+    activityOverride?: number;
+} = {}) {
     const { size } = useThree();
     const meshRef = useRef<THREE.Mesh>(null);
     const innerRef = useRef<THREE.Mesh>(null);
@@ -18,7 +25,9 @@ export default function AbstractCore() {
     const wireframe2Ref = useRef<THREE.Mesh>(null);
 
     const isMobile = size.width < 768;
-    const { githubActivityLevel, weather } = useStore();
+    const { githubActivityLevel: storeActivityLevel, weather: storeWeather } = useStore();
+    const githubActivityLevel = activityOverride ?? storeActivityLevel;
+    const weather = weatherOverride ?? storeWeather;
     const { hovered, active, hitPointRef, pointerHandlers } = useCoreInteraction();
     const particleState = useCoreParticles();
 

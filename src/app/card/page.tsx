@@ -8,11 +8,13 @@ export const dynamic = 'force-dynamic';
 
 export default async function CardPage() {
     const data = await fetchPlanetData();
+    const weather = data.weather as WeatherType;
+    const visualWeather = weather === 'Clear' ? 'Morning' : weather;
 
     return (
         <main className="relative flex h-[400px] w-[800px] select-none items-center justify-center overflow-hidden rounded-xl border border-cyan-100/10 bg-[#050505] text-white shadow-2xl">
             <ClientInitializer
-                initialWeather={data.weather as WeatherType}
+                initialWeather={visualWeather}
                 initialActivity={data.activityLevel}
             />
 
@@ -22,11 +24,11 @@ export default async function CardPage() {
             <div className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-linear-to-r from-transparent via-blue-300/40 to-transparent" />
 
             <div className="absolute inset-0 z-0">
-                <CardScene />
+                <CardScene weather={visualWeather} activityLevel={data.activityLevel} />
             </div>
 
             <div className="pointer-events-none absolute inset-0 z-10">
-                <WeatherEffectsOverlay />
+                <WeatherEffectsOverlay weatherOverride={visualWeather} includeRain />
             </div>
 
             <div className="pointer-events-none absolute inset-0 z-20 bg-[radial-gradient(circle_at_50%_45%,transparent_0%,transparent_44%,rgba(0,0,0,0.3)_78%,rgba(0,0,0,0.62)_100%)]" />

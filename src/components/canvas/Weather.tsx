@@ -3,7 +3,12 @@
 import { useRef, useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
-import { useStore } from '@/store';
+import { useStore, type WeatherType } from '@/store';
+
+const seededRandom = (index: number, salt: number) => {
+    const x = Math.sin(index * 12.9898 + salt * 78.233) * 43758.5453;
+    return x - Math.floor(x);
+};
 
 // === シェーダー定義 (画面付着エフェクト用) ===
 
@@ -186,8 +191,9 @@ void main() {
 }
 `;
 
-export default function Weather() {
-    const { weather } = useStore();
+export default function Weather({ weatherOverride }: { weatherOverride?: WeatherType } = {}) {
+    const { weather: storeWeather } = useStore();
+    const weather = weatherOverride ?? storeWeather;
 
     const linesRef = useRef<THREE.LineSegments>(null);
 
@@ -200,11 +206,11 @@ export default function Weather() {
         const pos = new Float32Array(count * 2 * 3);
         const vels = new Float32Array(count);
         for (let i = 0; i < count; i++) {
-            const x = (Math.random() - 0.5) * 60;
-            const y = (Math.random() - 0.5) * 40;
-            const z = (Math.random() - 0.5) * 60;
+            const x = (seededRandom(i, 1) - 0.5) * 60;
+            const y = (seededRandom(i, 2) - 0.5) * 40;
+            const z = (seededRandom(i, 3) - 0.5) * 60;
 
-            const length = 1.5 + Math.random() * 2.5;
+            const length = 1.5 + seededRandom(i, 4) * 2.5;
             const windX = 0.4;
             const windZ = 0.1;
 
@@ -215,7 +221,7 @@ export default function Weather() {
             pos[i * 6 + 4] = y - length;
             pos[i * 6 + 5] = z + windZ * length;
 
-            vels[i] = 1.0 + Math.random() * 1.5;
+            vels[i] = 1.0 + seededRandom(i, 5) * 1.5;
         }
         return { positions: pos, velocities: vels };
     }, []);

@@ -1,7 +1,7 @@
 'use client';
 import dynamic from 'next/dynamic';
 import { AnimatePresence } from 'framer-motion';
-import { useStore } from '@/store';
+import { useStore, type WeatherType } from '@/store';
 import { RainParticles } from '@/components/canvas/RainTransitionCanvas';
 
 const SunraysCanvas = dynamic(() => import('@/components/canvas/effects/SunraysCanvas'), { ssr: false });
@@ -10,14 +10,28 @@ const ThunderCanvas = dynamic(() => import('@/components/canvas/effects/ThunderC
 const SnowCanvas = dynamic(() => import('@/components/canvas/effects/SnowCanvas'), { ssr: false });
 const NightGlowOverlay = dynamic(() => import('@/components/canvas/effects/NightGlowOverlay'), { ssr: false });
 
-export default function WeatherEffectsOverlay() {
-    const { weather } = useStore();
+type WindowWithDataLayer = Window & {
+    dataLayer?: {
+        push?: (payload: { event: string }) => void;
+    };
+};
+
+export default function WeatherEffectsOverlay({
+    weatherOverride,
+    includeRain = false,
+}: {
+    weatherOverride?: WeatherType;
+    includeRain?: boolean;
+} = {}) {
+    const { weather: storeWeather } = useStore();
+    const weather = weatherOverride ?? storeWeather;
 
     return (
         <>
             <AnimatePresence mode="wait">
                 {(weather === 'Clear' || weather === 'Morning') && <SunraysCanvas key="sunrays" />}
                 {weather === 'Clouds' && <CloudsOverlayCanvas key="clouds" />}
+                {includeRain && weather === 'Rain' && <RainParticles key="rain" />}
                 {weather === 'Thunder' && <RainParticles key="thunder-rain" />}
                 {weather === 'Thunder' && <ThunderCanvas key="thunder" />}
                 {weather === 'Snow' && <SnowCanvas key="snow" density={0.72} />}
@@ -35,7 +49,7 @@ export default function WeatherEffectsOverlay() {
                     style={{ touchAction: 'manipulation' }}
                     onClick={() => {
                         try {
-                            (window as any).dataLayer?.push?.({ event: 'click_x_from_sun' });
+                            (window as WindowWithDataLayer).dataLayer?.push?.({ event: 'click_x_from_sun' });
                         } catch { }
                     }}
                 >
@@ -53,7 +67,7 @@ export default function WeatherEffectsOverlay() {
                     style={{ touchAction: 'manipulation' }}
                     onClick={() => {
                         try {
-                            (window as any).dataLayer?.push?.({ event: 'click_x_from_moon' });
+                            (window as WindowWithDataLayer).dataLayer?.push?.({ event: 'click_x_from_moon' });
                         } catch { }
                     }}
                 >

@@ -6,6 +6,7 @@ import { EffectComposer, Bloom } from '@react-three/postprocessing';
 import { Suspense } from 'react';
 import AbstractCore from '@/components/canvas/AbstractCore';
 import Weather from '@/components/canvas/Weather';
+import type { WeatherType } from '@/store';
 
 function CardCameraRig() {
     useFrame(({ camera, clock }) => {
@@ -19,7 +20,13 @@ function CardCameraRig() {
     return null;
 }
 
-export default function CardScene() {
+export default function CardScene({
+    weather,
+    activityLevel,
+}: {
+    weather: WeatherType;
+    activityLevel: number;
+}) {
     return (
         <Canvas
             camera={{ position: [0, 0, 6.4], fov: 38 }}
@@ -35,10 +42,10 @@ export default function CardScene() {
                 <pointLight position={[-10, -10, -10]} intensity={0.5} color="#00ffff" />
 
                 <group scale={1.08} position={[0, 0.02, 0]}>
-                    <AbstractCore />
+                    <AbstractCore weatherOverride={weather} activityOverride={activityLevel} />
                 </group>
 
-                <Weather />
+                <Weather weatherOverride={weather} />
 
                 <Stars radius={100} depth={50} count={640} factor={1.5} saturation={0} fade speed={0.35} />
 
