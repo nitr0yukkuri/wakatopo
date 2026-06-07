@@ -585,10 +585,10 @@ export default function SoundDirector() {
         startBgm();
     }, [activeWorkId, githubActivityLevel, isCardPage, pathname, weather]);
 
-    if (isCardPage) return null;
+    if (isCardPage || pathname === '/otenkigurashi') return null;
 
     return (
-        <div className="fixed right-4 top-[calc(env(safe-area-inset-top)+4.5rem)] z-70 pointer-events-auto sm:bottom-6 sm:right-6 sm:top-auto">
+        <div className="fixed right-4 bottom-6 z-70 pointer-events-auto sm:right-6 sm:bottom-6">
             <button
                 type="button"
                 onClick={() => {
