@@ -2,6 +2,8 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 
+type TenchanWeather = 'Clear' | 'Rain' | 'Clouds' | 'Snow' | 'Night' | 'Morning' | 'Thunder';
+
 type CharacterFaceProps = {
     mood?: "happy" | "neutral" | "sad" | "scared" | "sleepy" | "looking" | "surprised" | "talking";
     petColor?: string;
@@ -136,11 +138,12 @@ export function CharacterFace({
 type TenchanCompanionProps = {
     section: 'hero' | 'concept' | 'features' | 'tech' | 'bottom';
     lang?: 'ja' | 'en';
+    weather?: TenchanWeather;
     overrideDialog?: { text: string; mood: "happy" | "neutral" | "sad" | "scared" | "sleepy" | "looking" | "surprised" | "talking" } | null;
     onClick?: () => void;
 };
 
-export default function TenchanCompanion({ section, lang = 'ja', overrideDialog, onClick }: TenchanCompanionProps) {
+export default function TenchanCompanion({ section, lang = 'ja', weather, overrideDialog, onClick }: TenchanCompanionProps) {
     // セクションに応じたデフォルトメッセージと表情を設定
     const getDialogue = () => {
         const byLang = {
@@ -178,6 +181,7 @@ export default function TenchanCompanion({ section, lang = 'ja', overrideDialog,
 
     const defaultDialog = getDialogue();
     const activeDialog = overrideDialog || defaultDialog;
+    const hasUmbrella = weather === 'Rain' || weather === 'Thunder';
 
     return (
         <div className="fixed bottom-6 right-6 z-50 flex items-end gap-4 pointer-events-none">
@@ -202,7 +206,7 @@ export default function TenchanCompanion({ section, lang = 'ja', overrideDialog,
 
             {/* てんちゃん本体 */}
             <motion.div
-                className={`w-24 h-24 md:w-32 md:h-32 ${onClick ? 'pointer-events-auto cursor-pointer' : ''}`}
+                className={`relative w-24 h-24 md:w-32 md:h-32 ${onClick ? 'pointer-events-auto cursor-pointer' : ''}`}
                 initial={{ y: 100, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 whileHover={onClick ? { scale: 1.05 } : undefined}
@@ -210,6 +214,18 @@ export default function TenchanCompanion({ section, lang = 'ja', overrideDialog,
                 transition={{ type: "spring", stiffness: 200, damping: 20, delay: 0.5 }}
                 onClick={onClick}
             >
+                {hasUmbrella && (
+                    <svg
+                        className="absolute -right-3 -top-5 z-10 h-20 w-20 md:-right-4 md:-top-7 md:h-28 md:w-28"
+                        viewBox="0 0 120 120"
+                        aria-hidden="true"
+                    >
+                        <path d="M18 48 Q60 10 102 48 Z" fill={weather === 'Thunder' ? '#7c83ff' : '#79d8ff'} stroke="#4f6f83" strokeWidth="4" strokeLinejoin="round" />
+                        <path d="M18 48 Q38 36 60 48 Q82 36 102 48" fill="none" stroke="#eefaff" strokeWidth="3" strokeLinecap="round" />
+                        <path d="M60 48 V92" fill="none" stroke="#6b4a3a" strokeWidth="5" strokeLinecap="round" />
+                        <path d="M60 92 Q60 108 74 104" fill="none" stroke="#6b4a3a" strokeWidth="5" strokeLinecap="round" />
+                    </svg>
+                )}
                 <CharacterFace mood={activeDialog.mood} />
             </motion.div>
         </div>

@@ -991,6 +991,7 @@ export default function OtenkiGurashiPage() {
                     <TenchanCompanion
                         lang={lang}
                         section={activeSection}
+                        weather={weather}
                         overrideDialog={overrideDialog}
                         onClick={handleTenchanClick}
                     />
