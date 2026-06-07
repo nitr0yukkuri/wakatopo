@@ -180,6 +180,17 @@ body:has(.card-capture-page) .landscape-lock-overlay {
   }
 }
 
+@keyframes landscapeLockRotatePhone {
+  0%,
+  18% {
+    transform: rotate(90deg);
+  }
+  58%,
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
 @media (orientation: landscape) and (max-height: 600px) {
   html,
   body {
@@ -238,6 +249,8 @@ body:has(.card-capture-page) .landscape-lock-overlay {
     stroke-width: 3;
     stroke-linecap: round;
     stroke-linejoin: round;
+    transform-origin: 50% 50%;
+    animation: landscapeLockRotatePhone 2.4s ease-in-out infinite;
   }
 
   .landscape-lock-title {
