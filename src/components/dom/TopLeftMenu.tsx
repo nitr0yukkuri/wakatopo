@@ -172,7 +172,7 @@ export default function TopLeftMenu() {
         appendHistory({ tone: 'info', text: `$ ${command}` });
 
         if (command.toLowerCase() === 'help') {
-            appendHistory({ tone: 'info', text: 'Available: sudo make rain|snow|clear|thunder|night|summer|season-clear, help, exit' });
+            appendHistory({ tone: 'info', text: 'Available: sudo make rain|snow|clear|thunder|night|spring|summer|autumn|winter|season-clear, help, exit' });
             return;
         }
 
@@ -186,7 +186,10 @@ export default function TopLeftMenu() {
         if (sudoMatch) {
             const token = sudoMatch[1].toLowerCase();
             const seasonMap: Record<string, SeasonType> = {
+                spring: 'spring',
                 summer: 'summer',
+                autumn: 'autumn',
+                winter: 'winter',
                 'season-clear': 'none',
             };
             const weatherMap: Record<string, WeatherType> = {

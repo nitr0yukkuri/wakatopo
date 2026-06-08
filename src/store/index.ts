@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 
 export type WeatherType = 'Clear' | 'Rain' | 'Clouds' | 'Snow' | 'Night' | 'Morning' | 'Thunder';
-export type SeasonType = 'none' | 'summer';
+export type SeasonType = 'none' | 'spring' | 'summer' | 'autumn' | 'winter';
 
 interface AppState {
     weather: WeatherType;

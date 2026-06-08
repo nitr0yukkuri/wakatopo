@@ -25,7 +25,11 @@ export default function WeatherEffectsOverlay({
 } = {}) {
     const { season, weather: storeWeather } = useStore();
     const weather = weatherOverride ?? storeWeather;
-    const sunraysVariant = season === 'summer' && weather === 'Clear' ? 'summer-clear' : 'default';
+    const sunraysVariant = season === 'summer' && weather === 'Clear'
+        ? 'summer-clear'
+        : season === 'spring' && weather === 'Clear'
+            ? 'spring-clear'
+            : 'default';
 
     return (
         <>

@@ -99,10 +99,28 @@ const SUMMER_CLEAR_VISUAL: CoreVisualProfile = {
     activeColor: '#d2f3ff',
 };
 
-export const getCoreVisualProfile = (weather: WeatherType, season: SeasonType): CoreVisualProfile => {
-    if (season === 'summer' && weather === 'Clear') {
-        return SUMMER_CLEAR_VISUAL;
-    }
+const SPRING_CLEAR_VISUAL: CoreVisualProfile = {
+    ...CORE_VISUALS.Clear,
+    baseColor: '#ffb7c8',
+    hoverColor: '#ffd7df',
+    activeColor: '#fff1f5',
+    meshOpacity: 0.17,
+    wireOpacity: 0.13,
+    innerOpacity: 0.075,
+};
 
-    return CORE_VISUALS[weather] ?? CORE_VISUALS.Clear;
+export const getCoreVisualProfile = (weather: WeatherType, season: SeasonType): CoreVisualProfile => {
+    const defaultVisual = CORE_VISUALS[weather] ?? CORE_VISUALS.Clear;
+
+    switch (season) {
+        case 'spring':
+            return weather === 'Clear' ? SPRING_CLEAR_VISUAL : defaultVisual;
+        case 'summer':
+            return weather === 'Clear' ? SUMMER_CLEAR_VISUAL : defaultVisual;
+        case 'autumn':
+        case 'winter':
+        case 'none':
+        default:
+            return defaultVisual;
+    }
 };
