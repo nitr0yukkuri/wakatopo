@@ -14,6 +14,16 @@ const COLOR: Record<WeatherType, string> = {
     Night: 'text-indigo-400  border-indigo-400/60',
 };
 
+const LABEL: Record<WeatherType, string> = {
+    Clear: 'CLEAR',
+    Morning: 'CLEAR',
+    Clouds: 'CLOUDS',
+    Rain: 'RAIN',
+    Thunder: 'THUNDER',
+    Snow: 'SNOW',
+    Night: 'NIGHT',
+};
+
 export default function WeatherDebugSelector() {
     const { weather, setWeather } = useStore();
 
@@ -30,7 +40,7 @@ export default function WeatherDebugSelector() {
                             : 'text-gray-600 border-gray-700 hover:text-gray-400 hover:border-gray-500'
                             }`}
                     >
-                        {w.toUpperCase()}
+                        {LABEL[w]}
                     </button>
                 ))}
             </div>

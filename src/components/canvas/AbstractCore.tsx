@@ -7,7 +7,7 @@ import { useStore } from '@/store';
 import { useCoreInteraction } from './abstractCore/useCoreInteraction';
 import { useCoreParticles } from './abstractCore/useCoreParticles';
 import { useCoreAnimation } from './abstractCore/useCoreAnimation';
-import { CORE_VISUALS } from './abstractCore/coreVisuals';
+import { getCoreVisualProfile } from './abstractCore/coreVisuals';
 import type { WeatherType } from '@/store';
 
 export default function AbstractCore({
@@ -26,10 +26,10 @@ export default function AbstractCore({
     const wireframe2Ref = useRef<THREE.Mesh>(null);
 
     const isMobile = size.width < 768;
-    const { githubActivityLevel: storeActivityLevel, weather: storeWeather } = useStore();
+    const { githubActivityLevel: storeActivityLevel, season, weather: storeWeather } = useStore();
     const githubActivityLevel = activityOverride ?? storeActivityLevel;
     const weather = weatherOverride ?? storeWeather;
-    const visual = CORE_VISUALS[weather] ?? CORE_VISUALS.Clear;
+    const visual = getCoreVisualProfile(weather, season);
     const initialColor = visual.baseColor;
     const initialInnerColor = visual.hoverColor;
     const { hovered, active, hitPointRef, pointerHandlers } = useCoreInteraction();
@@ -37,6 +37,7 @@ export default function AbstractCore({
 
     useCoreAnimation({
         weather,
+        season,
         githubActivityLevel,
         hovered,
         active,

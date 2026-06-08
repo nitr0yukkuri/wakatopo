@@ -100,6 +100,7 @@ export default async function Home({
     : resolvedSearchParams.lang;
   const lang: SupportedLang = langParam === 'en' ? 'en' : 'ja';
   const t = copyByLang[lang];
+  const hudWeatherLabel = data.weather === 'Morning' ? 'CLEAR' : data.weather.toUpperCase();
 
   const works = t.works.map((work) => ({ ...work }));
 
@@ -143,7 +144,7 @@ export default async function Home({
               <div className="flex gap-4">
                 <span className="w-12">WTHR</span>
                 <span className={data.weather === 'Rain' ? 'text-blue-400' : 'text-orange-400'}>
-                  {data.weather.toUpperCase()}
+                  {hudWeatherLabel}
                 </span>
               </div>
               <div className="flex gap-4">

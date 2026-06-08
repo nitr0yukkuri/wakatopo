@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
-import { useStore, type WeatherType } from '@/store';
+import { useStore, type SeasonType, type WeatherType } from '@/store';
 
 const MENU_COMMANDS = {
     ja: [
@@ -39,7 +39,7 @@ export default function TopLeftMenu() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const lang = searchParams.get('lang') === 'en' ? 'en' : 'ja';
-    const { setActiveWork, setTransitionType, setWeather } = useStore();
+    const { setActiveWork, setTransitionType, setWeather, setSeason } = useStore();
     const commands = MENU_COMMANDS[lang];
     const withLang = (href: string) => `${href}?lang=${lang}`;
 
@@ -172,7 +172,7 @@ export default function TopLeftMenu() {
         appendHistory({ tone: 'info', text: `$ ${command}` });
 
         if (command.toLowerCase() === 'help') {
-            appendHistory({ tone: 'info', text: 'Available: sudo make rain|snow|clear|thunder|night, help, exit' });
+            appendHistory({ tone: 'info', text: 'Available: sudo make rain|snow|clear|thunder|night|summer|season-clear, help, exit' });
             return;
         }
 
@@ -184,7 +184,11 @@ export default function TopLeftMenu() {
 
         const sudoMatch = command.match(/^sudo\s+make\s+([a-z-]+)$/i);
         if (sudoMatch) {
-            const weatherToken = sudoMatch[1].toLowerCase();
+            const token = sudoMatch[1].toLowerCase();
+            const seasonMap: Record<string, SeasonType> = {
+                summer: 'summer',
+                'season-clear': 'none',
+            };
             const weatherMap: Record<string, WeatherType> = {
                 rain: 'Rain',
                 snow: 'Snow',
@@ -193,9 +197,16 @@ export default function TopLeftMenu() {
                 night: 'Night',
             };
 
-            const nextWeather = weatherMap[weatherToken];
+            const nextSeason = seasonMap[token];
+            if (nextSeason) {
+                setSeason(nextSeason);
+                appendHistory({ tone: 'ok', text: `[ok] season switched to ${nextSeason.toUpperCase()}` });
+                return;
+            }
+
+            const nextWeather = weatherMap[token];
             if (!nextWeather) {
-                appendHistory({ tone: 'error', text: `make: *** No rule to make target '${weatherToken}'.  Stop.` });
+                appendHistory({ tone: 'error', text: `make: *** No rule to make target '${token}'.  Stop.` });
                 return;
             }
 

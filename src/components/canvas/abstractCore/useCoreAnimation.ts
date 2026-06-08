@@ -1,12 +1,13 @@
 import { useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
-import type { WeatherType } from '@/store';
-import { CORE_VISUALS } from './coreVisuals';
+import type { SeasonType, WeatherType } from '@/store';
+import { getCoreVisualProfile } from './coreVisuals';
 import type { CoreParticleState } from './useCoreParticles';
 
 type UseCoreAnimationParams = {
     weather: WeatherType;
+    season: SeasonType;
     githubActivityLevel: number;
     hovered: boolean;
     active: boolean;
@@ -22,6 +23,7 @@ type UseCoreAnimationParams = {
 
 export const useCoreAnimation = ({
     weather,
+    season,
     githubActivityLevel,
     hovered,
     active,
@@ -35,24 +37,25 @@ export const useCoreAnimation = ({
     particleState,
 }: UseCoreAnimationParams) => {
     const interactionValues = useRef({ hoverLevel: 0, activeLevel: 0 });
+    const initialVisual = getCoreVisualProfile(weather, season);
     const blendedVisualRef = useRef({
-        meshOpacity: CORE_VISUALS[weather].meshOpacity,
-        wireOpacity: CORE_VISUALS[weather].wireOpacity,
-        innerOpacity: CORE_VISUALS[weather].innerOpacity,
-        ringPulse: CORE_VISUALS[weather].ringPulse,
-        orbitTilt: CORE_VISUALS[weather].orbitTilt,
-        particleSize: CORE_VISUALS[weather].particleSize,
+        meshOpacity: initialVisual.meshOpacity,
+        wireOpacity: initialVisual.wireOpacity,
+        innerOpacity: initialVisual.innerOpacity,
+        ringPulse: initialVisual.ringPulse,
+        orbitTilt: initialVisual.orbitTilt,
+        particleSize: initialVisual.particleSize,
     });
-    const blendedBaseColorRef = useRef(new THREE.Color(CORE_VISUALS[weather].baseColor));
-    const blendedHoverColorRef = useRef(new THREE.Color(CORE_VISUALS[weather].hoverColor));
-    const blendedActiveColorRef = useRef(new THREE.Color(CORE_VISUALS[weather].activeColor));
+    const blendedBaseColorRef = useRef(new THREE.Color(initialVisual.baseColor));
+    const blendedHoverColorRef = useRef(new THREE.Color(initialVisual.hoverColor));
+    const blendedActiveColorRef = useRef(new THREE.Color(initialVisual.activeColor));
 
     const tempColor = useMemo(() => new THREE.Color(), []);
     const tempVec3A = useMemo(() => new THREE.Vector3(), []);
     const tempVec3B = useMemo(() => new THREE.Vector3(), []);
     const tempLocalPos = useMemo(() => new THREE.Vector3(), []);
 
-    const visual = CORE_VISUALS[weather] ?? CORE_VISUALS.Clear;
+    const visual = getCoreVisualProfile(weather, season);
     const baseColorHolo = useMemo(() => new THREE.Color(visual.baseColor), [visual.baseColor]);
     const hoverColor = useMemo(() => new THREE.Color(visual.hoverColor), [visual.hoverColor]);
     const activeColor = useMemo(() => new THREE.Color(visual.activeColor), [visual.activeColor]);
