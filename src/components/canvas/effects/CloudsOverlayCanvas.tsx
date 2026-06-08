@@ -48,13 +48,13 @@ export default function CloudsOverlayCanvas({ variant = 'default' }: { variant?:
             };
         });
 
-        const particles: MistParticle[] = Array.from({ length: isSpringClouds ? 68 : 120 }, () => ({
+        const particles: MistParticle[] = Array.from({ length: isSpringClouds ? 96 : 120 }, () => ({
             x: Math.random() * window.innerWidth,
             y: isSpringClouds
                 ? Math.random() * window.innerHeight
                 : Math.random() * (window.innerHeight * 0.55) - 50,
             vx: isSpringClouds ? Math.random() * 0.1 + 0.02 : (Math.random() - 0.5) * 0.2,
-            vy: isSpringClouds ? Math.random() * 0.18 + 0.06 : -(Math.random() * 0.25 + 0.06),
+            vy: isSpringClouds ? Math.random() * 0.22 + 0.09 : -(Math.random() * 0.25 + 0.06),
             r: Math.random() * (isSpringClouds ? 2.2 : 1.7) + 0.35,
             life: Math.random(),
             phase: Math.random() * Math.PI * 2,
@@ -80,9 +80,9 @@ export default function CloudsOverlayCanvas({ variant = 'default' }: { variant?:
                 const a = Math.max(0, b.alpha + pulse);
 
                 const grad = ctx.createRadialGradient(b.x, b.y, 0, b.x, b.y, b.r);
-                grad.addColorStop(0, isSpringClouds ? `rgba(224,213,222,${a})` : `rgba(190,200,215,${a})`);
-                grad.addColorStop(0.45, isSpringClouds ? `rgba(196,190,205,${a * 0.58})` : `rgba(170,185,205,${a * 0.55})`);
-                grad.addColorStop(1, isSpringClouds ? 'rgba(196,190,205,0)' : 'rgba(170,185,205,0)');
+                grad.addColorStop(0, isSpringClouds ? `rgba(232,210,224,${a})` : `rgba(190,200,215,${a})`);
+                grad.addColorStop(0.45, isSpringClouds ? `rgba(214,184,204,${a * 0.62})` : `rgba(170,185,205,${a * 0.55})`);
+                grad.addColorStop(1, isSpringClouds ? 'rgba(214,184,204,0)' : 'rgba(170,185,205,0)');
 
                 ctx.beginPath();
                 ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
@@ -110,7 +110,7 @@ export default function CloudsOverlayCanvas({ variant = 'default' }: { variant?:
                     ctx.rotate(Math.sin(t * 1.05 + p.phase) * 0.55 + p.phase);
                     ctx.beginPath();
                     ctx.ellipse(0, 0, p.r * 1.65, p.r * 0.68, 0, 0, Math.PI * 2);
-                    ctx.fillStyle = `rgba(236,194,211,${a * 0.6})`;
+                    ctx.fillStyle = `rgba(244,184,210,${a * 0.68})`;
                     ctx.fill();
                     ctx.restore();
                 } else {
@@ -128,9 +128,9 @@ export default function CloudsOverlayCanvas({ variant = 'default' }: { variant?:
         return () => { cancelAnimationFrame(raf); window.removeEventListener('resize', resize); };
     }, [isSpringClouds]);
 
-    const springGroundHaze = 'radial-gradient(ellipse 82% 36% at 50% 100%, rgba(238,223,230,0.2) 0%, rgba(218,190,205,0.13) 34%, rgba(240,238,232,0.07) 60%, transparent 84%), linear-gradient(to top, rgba(221,198,211,0.1) 0%, rgba(232,228,224,0.055) 42%, transparent 78%)';
+    const springGroundHaze = 'radial-gradient(ellipse 82% 38% at 50% 100%, rgba(246,222,234,0.24) 0%, rgba(232,180,205,0.16) 34%, rgba(244,230,234,0.09) 62%, transparent 86%), linear-gradient(to top, rgba(232,188,208,0.13) 0%, rgba(238,220,226,0.07) 44%, transparent 80%)';
     const cloudWash = isSpringClouds
-        ? 'linear-gradient(to bottom, rgba(148,150,165,0.1) 0%, rgba(185,176,188,0.075) 35%, rgba(212,196,205,0.035) 62%, rgba(212,196,205,0) 82%)'
+        ? 'linear-gradient(to bottom, rgba(166,142,160,0.1) 0%, rgba(205,166,188,0.085) 35%, rgba(226,190,208,0.045) 64%, rgba(226,190,208,0) 84%)'
         : 'linear-gradient(to bottom, rgba(120,140,170,0.12) 0%, rgba(115,138,170,0.05) 35%, rgba(115,138,170,0) 60%)';
 
     return (
