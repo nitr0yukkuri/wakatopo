@@ -275,7 +275,7 @@ export default function TopLeftMenu() {
                         onClick={() => setCliOpen(false)}
                         className="rounded border border-cyan-400/30 px-1.5 py-0.5 text-[9px] text-cyan-200/70 hover:border-cyan-300 hover:text-cyan-200 transition-colors cursor-pointer"
                     >
-                        ESC / EXIT
+                        ESC
                     </button>
                 </div>
 

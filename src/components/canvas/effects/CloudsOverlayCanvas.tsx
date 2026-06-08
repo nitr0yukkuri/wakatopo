@@ -12,8 +12,11 @@ interface MistParticle {
     r: number; life: number; phase: number;
 }
 
-export default function CloudsOverlayCanvas() {
+type CloudsVariant = 'default' | 'spring-clouds';
+
+export default function CloudsOverlayCanvas({ variant = 'default' }: { variant?: CloudsVariant }) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
+    const isSpringClouds = variant === 'spring-clouds';
 
     useEffect(() => {
         const canvas = canvasRef.current!;
@@ -28,31 +31,31 @@ export default function CloudsOverlayCanvas() {
         resize();
         window.addEventListener('resize', resize);
 
-        // 2レイヤー: 遠近で速度・サイズが異なるフォグブロブ
-        const blobs: FogBlob[] = Array.from({ length: 30 }, (_, i) => {
-            const layer = i < 15 ? 0 : 1; // 0=奥(小・遅い), 1=手前(大・速い)
+        const blobs: FogBlob[] = Array.from({ length: isSpringClouds ? 36 : 30 }, (_, i) => {
+            const layer = i < 15 ? 0 : 1;
             return {
                 x: Math.random() * window.innerWidth,
-                y: Math.random() * (window.innerHeight * 0.55) - 50,
-                vx: (Math.random() - 0.5) * (layer === 0 ? 0.04 : 0.08),
-                vy: (Math.random() - 0.5) * (layer === 0 ? 0.015 : 0.02),
+                y: Math.random() * (window.innerHeight * (isSpringClouds ? 0.7 : 0.55)) - 50,
+                vx: (Math.random() - 0.5) * (layer === 0 ? 0.04 : 0.08) * (isSpringClouds ? 0.72 : 1),
+                vy: (Math.random() - 0.5) * (layer === 0 ? 0.015 : 0.02) * (isSpringClouds ? 0.65 : 1),
                 r: layer === 0
                     ? Math.random() * 200 + 150
                     : Math.random() * 300 + 250,
                 alpha: layer === 0
-                    ? Math.random() * 0.06 + 0.03
-                    : Math.random() * 0.04 + 0.02,
+                    ? Math.random() * (isSpringClouds ? 0.075 : 0.06) + 0.03
+                    : Math.random() * (isSpringClouds ? 0.052 : 0.04) + 0.02,
                 phase: Math.random() * Math.PI * 2,
             };
         });
 
-        // 晴れ遷移の浮遊感を曇天向けに転用したミスト粒子
-        const particles: MistParticle[] = Array.from({ length: 120 }, () => ({
+        const particles: MistParticle[] = Array.from({ length: isSpringClouds ? 68 : 120 }, () => ({
             x: Math.random() * window.innerWidth,
-            y: Math.random() * (window.innerHeight * 0.55) - 50,
-            vx: (Math.random() - 0.5) * 0.2,
-            vy: -(Math.random() * 0.25 + 0.06),
-            r: Math.random() * 1.7 + 0.35,
+            y: isSpringClouds
+                ? Math.random() * window.innerHeight
+                : Math.random() * (window.innerHeight * 0.55) - 50,
+            vx: isSpringClouds ? Math.random() * 0.1 + 0.02 : (Math.random() - 0.5) * 0.2,
+            vy: isSpringClouds ? Math.random() * 0.18 + 0.06 : -(Math.random() * 0.25 + 0.06),
+            r: Math.random() * (isSpringClouds ? 2.2 : 1.7) + 0.35,
             life: Math.random(),
             phase: Math.random() * Math.PI * 2,
         }));
@@ -67,21 +70,19 @@ export default function CloudsOverlayCanvas() {
                 b.x += b.vx;
                 b.y += b.vy + Math.sin(t * 0.18 + b.phase) * 0.04;
 
-                // 画面外ループ
+                const cloudHeight = h * (isSpringClouds ? 0.7 : 0.55);
                 if (b.x > w + b.r) b.x = -b.r;
                 if (b.x < -b.r) b.x = w + b.r;
-                if (b.y > h * 0.55 + b.r) b.y = -b.r;
-                if (b.y < -b.r) b.y = h * 0.55 + b.r;
+                if (b.y > cloudHeight + b.r) b.y = -b.r;
+                if (b.y < -b.r) b.y = cloudHeight + b.r;
 
                 const pulse = Math.sin(t * 0.2 + b.phase) * 0.004;
                 const a = Math.max(0, b.alpha + pulse);
 
                 const grad = ctx.createRadialGradient(b.x, b.y, 0, b.x, b.y, b.r);
-                grad.addColorStop(0, `rgba(190,200,215,${a})`);
-                grad.addColorStop(0.45, `rgba(170,185,205,${a * 0.55})`);
-                // FIX: Fading RGB to a darker color while alpha approaches 0 creates "dirty ringing" (pre-multiplied alpha Mach bands).
-                // Keep the exact same mid-RGB (170,185,205) for the edge stop to allow pure clean alpha fade.
-                grad.addColorStop(1, 'rgba(170,185,205,0)');
+                grad.addColorStop(0, isSpringClouds ? `rgba(224,213,222,${a})` : `rgba(190,200,215,${a})`);
+                grad.addColorStop(0.45, isSpringClouds ? `rgba(196,190,205,${a * 0.58})` : `rgba(170,185,205,${a * 0.55})`);
+                grad.addColorStop(1, isSpringClouds ? 'rgba(196,190,205,0)' : 'rgba(170,185,205,0)');
 
                 ctx.beginPath();
                 ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
@@ -89,24 +90,35 @@ export default function CloudsOverlayCanvas() {
                 ctx.fill();
             }
 
-            // 霧粒で奥行き感を追加
             for (const p of particles) {
-                p.x += p.vx + Math.sin(t * 0.33 + p.phase) * 0.09;
+                p.x += p.vx + Math.sin(t * (isSpringClouds ? 0.46 : 0.33) + p.phase) * (isSpringClouds ? 0.13 : 0.09);
                 p.y += p.vy;
-                p.life += 0.003;
+                p.life += isSpringClouds ? 0.0022 : 0.003;
 
                 if (p.life > 1) {
                     p.life = 0;
-                    p.y = h * 0.55 + 6;
+                    p.y = isSpringClouds ? -8 : h * 0.55 + 6;
                     p.x = Math.random() * w;
                 }
-                if (p.y < -6) p.y = h * 0.55 + 6;
+                if (isSpringClouds && (p.y > h + 8 || p.x > w + 8)) { p.y = -8; p.x = Math.random() * w; }
+                if (!isSpringClouds && p.y < -6) p.y = h * 0.55 + 6;
 
-                const a = Math.sin(p.life * Math.PI) * 0.22;
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(208,224,244,${a})`;
-                ctx.fill();
+                const a = Math.sin(p.life * Math.PI) * (isSpringClouds ? 0.24 : 0.22);
+                if (isSpringClouds) {
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate(Math.sin(t * 1.05 + p.phase) * 0.55 + p.phase);
+                    ctx.beginPath();
+                    ctx.ellipse(0, 0, p.r * 1.65, p.r * 0.68, 0, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(236,194,211,${a * 0.6})`;
+                    ctx.fill();
+                    ctx.restore();
+                } else {
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(208,224,244,${a})`;
+                    ctx.fill();
+                }
             }
 
             raf = requestAnimationFrame(draw);
@@ -114,7 +126,12 @@ export default function CloudsOverlayCanvas() {
         draw();
 
         return () => { cancelAnimationFrame(raf); window.removeEventListener('resize', resize); };
-    }, []);
+    }, [isSpringClouds]);
+
+    const springGroundHaze = 'radial-gradient(ellipse 82% 36% at 50% 100%, rgba(238,223,230,0.2) 0%, rgba(218,190,205,0.13) 34%, rgba(240,238,232,0.07) 60%, transparent 84%), linear-gradient(to top, rgba(221,198,211,0.1) 0%, rgba(232,228,224,0.055) 42%, transparent 78%)';
+    const cloudWash = isSpringClouds
+        ? 'linear-gradient(to bottom, rgba(148,150,165,0.1) 0%, rgba(185,176,188,0.075) 35%, rgba(212,196,205,0.035) 62%, rgba(212,196,205,0) 82%)'
+        : 'linear-gradient(to bottom, rgba(120,140,170,0.12) 0%, rgba(115,138,170,0.05) 35%, rgba(115,138,170,0) 60%)';
 
     return (
         <motion.div
@@ -123,11 +140,18 @@ export default function CloudsOverlayCanvas() {
             transition={{ duration: 2.5 }}
         >
             <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />
-            {/* 上部にうっすら霞 */}
             <div
                 className="absolute inset-0"
-                style={{ background: 'linear-gradient(to bottom, rgba(120,140,170,0.12) 0%, rgba(115,138,170,0.05) 35%, rgba(115,138,170,0) 60%)' }}
+                style={{ background: cloudWash }}
             />
+            {isSpringClouds && (
+                <motion.div
+                    className="absolute inset-x-0 bottom-0 h-[36%]"
+                    style={{ background: springGroundHaze }}
+                    animate={{ opacity: [0.64, 0.9, 0.72] }}
+                    transition={{ duration: 8.4, repeat: Infinity, ease: 'easeInOut' }}
+                />
+            )}
         </motion.div>
     );
 }

@@ -30,12 +30,13 @@ export default function WeatherEffectsOverlay({
         : season === 'spring' && weather === 'Clear'
             ? 'spring-clear'
             : 'default';
+    const cloudsVariant = season === 'spring' && weather === 'Clouds' ? 'spring-clouds' : 'default';
 
     return (
         <>
             <AnimatePresence mode="wait">
                 {(weather === 'Clear' || weather === 'Morning') && <SunraysCanvas key={`sunrays-${sunraysVariant}`} variant={sunraysVariant} />}
-                {weather === 'Clouds' && <CloudsOverlayCanvas key="clouds" />}
+                {weather === 'Clouds' && <CloudsOverlayCanvas key={`clouds-${cloudsVariant}`} variant={cloudsVariant} />}
                 {includeRain && weather === 'Rain' && <RainParticles key="rain" />}
                 {weather === 'Thunder' && <RainParticles key="thunder-rain" />}
                 {weather === 'Thunder' && <ThunderCanvas key="thunder" />}
