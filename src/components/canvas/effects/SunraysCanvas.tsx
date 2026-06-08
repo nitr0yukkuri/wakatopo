@@ -122,7 +122,7 @@ export default function SunraysCanvas({ variant = 'default' }: { variant?: Sunra
                 }
                 if (isSpringClear && (p.y > canvas.height + 8 || p.x > canvas.width + 8)) { p.y = -8; p.x = Math.random() * canvas.width; }
                 if (isAutumnClear && (p.y > canvas.height + 8 || p.x > canvas.width + 8)) { p.y = -8; p.x = Math.random() * canvas.width; }
-                if (!isSpringClear && p.y < -5) { p.y = canvas.height + 5; }
+                if (!isSpringClear && !isAutumnClear && p.y < -5) { p.y = canvas.height + 5; }
                 const a = Math.sin(p.life * Math.PI) * (isSummerClear ? 0.52 : isSpringClear ? 0.36 : isAutumnClear ? 0.38 : 0.42);
                 if (isSpringClear) {
                     ctx.save();
