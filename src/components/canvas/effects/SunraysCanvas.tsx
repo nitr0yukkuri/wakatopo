@@ -25,7 +25,7 @@ export default function SunraysCanvas({ variant = 'default' }: { variant?: Sunra
         window.addEventListener('resize', resize);
 
         // 浮遊ダスト粒子
-        const particles: Particle[] = Array.from({ length: isSummerClear ? 128 : isSpringClear ? 92 : 90 }, () => ({
+        const particles: Particle[] = Array.from({ length: isSummerClear ? 128 : isSpringClear ? 124 : 90 }, () => ({
             x: Math.random() * window.innerWidth,
             y: Math.random() * window.innerHeight,
             vx: isSpringClear ? Math.random() * 0.22 + 0.04 : (Math.random() - 0.5) * (isSummerClear ? 0.42 : 0.25),
@@ -144,6 +144,7 @@ export default function SunraysCanvas({ variant = 'default' }: { variant?: Sunra
             ? 'linear-gradient(to bottom, rgba(255,215,225,0.07) 0%, rgba(255,236,216,0.035) 34%, transparent 72%)'
         : 'linear-gradient(to bottom, rgba(255,222,180,0.07) 0%, rgba(255,215,170,0.03) 34%, transparent 72%)';
     const summerAtmosphere = 'radial-gradient(ellipse 78% 46% at 48% 4%, rgba(90,184,255,0.14) 0%, rgba(92,177,235,0.08) 42%, rgba(92,177,235,0) 72%), linear-gradient(to bottom, rgba(71,165,235,0.08) 0%, rgba(71,165,235,0.03) 38%, transparent 66%)';
+    const springGroundHaze = 'radial-gradient(ellipse 78% 34% at 50% 100%, rgba(255,236,242,0.18) 0%, rgba(255,198,218,0.12) 32%, rgba(255,244,236,0.07) 58%, transparent 82%), linear-gradient(to top, rgba(255,216,228,0.09) 0%, rgba(255,239,232,0.045) 38%, transparent 76%)';
 
     return (
         <motion.div
@@ -172,6 +173,14 @@ export default function SunraysCanvas({ variant = 'default' }: { variant?: Sunra
                 className="absolute inset-0"
                 style={{ background: wash }}
             />
+            {isSpringClear && (
+                <motion.div
+                    className="absolute inset-x-0 bottom-0 h-[32%]"
+                    style={{ background: springGroundHaze }}
+                    animate={{ opacity: [0.62, 0.86, 0.7] }}
+                    transition={{ duration: 7.2, repeat: Infinity, ease: 'easeInOut' }}
+                />
+            )}
             <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />
         </motion.div>
     );
