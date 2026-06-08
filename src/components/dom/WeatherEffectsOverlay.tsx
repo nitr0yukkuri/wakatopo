@@ -23,13 +23,14 @@ export default function WeatherEffectsOverlay({
     weatherOverride?: WeatherType;
     includeRain?: boolean;
 } = {}) {
-    const { weather: storeWeather } = useStore();
+    const { season, weather: storeWeather } = useStore();
     const weather = weatherOverride ?? storeWeather;
+    const sunraysVariant = season === 'summer' && weather === 'Clear' ? 'summer-clear' : 'default';
 
     return (
         <>
             <AnimatePresence mode="wait">
-                {(weather === 'Clear' || weather === 'Morning') && <SunraysCanvas key="sunrays" />}
+                {(weather === 'Clear' || weather === 'Morning') && <SunraysCanvas key={`sunrays-${sunraysVariant}`} variant={sunraysVariant} />}
                 {weather === 'Clouds' && <CloudsOverlayCanvas key="clouds" />}
                 {includeRain && weather === 'Rain' && <RainParticles key="rain" />}
                 {weather === 'Thunder' && <RainParticles key="thunder-rain" />}

@@ -97,8 +97,6 @@ const SUMMER_CLEAR_VISUAL: CoreVisualProfile = {
     baseColor: '#1e9bff',
     hoverColor: '#66c7ff',
     activeColor: '#d2f3ff',
-    ringPulse: 0.72,
-    particleSize: 0.034,
 };
 
 export const getCoreVisualProfile = (weather: WeatherType, season: SeasonType): CoreVisualProfile => {
