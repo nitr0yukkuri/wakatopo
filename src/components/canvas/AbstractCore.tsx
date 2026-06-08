@@ -7,6 +7,7 @@ import { useStore } from '@/store';
 import { useCoreInteraction } from './abstractCore/useCoreInteraction';
 import { useCoreParticles } from './abstractCore/useCoreParticles';
 import { useCoreAnimation } from './abstractCore/useCoreAnimation';
+import { CORE_VISUALS } from './abstractCore/coreVisuals';
 import type { WeatherType } from '@/store';
 
 export default function AbstractCore({
@@ -28,6 +29,9 @@ export default function AbstractCore({
     const { githubActivityLevel: storeActivityLevel, weather: storeWeather } = useStore();
     const githubActivityLevel = activityOverride ?? storeActivityLevel;
     const weather = weatherOverride ?? storeWeather;
+    const visual = CORE_VISUALS[weather] ?? CORE_VISUALS.Clear;
+    const initialColor = visual.baseColor;
+    const initialInnerColor = visual.hoverColor;
     const { hovered, active, hitPointRef, pointerHandlers } = useCoreInteraction();
     const particleState = useCoreParticles();
 
@@ -56,7 +60,7 @@ export default function AbstractCore({
             <mesh ref={meshRef}>
                 <icosahedronGeometry args={[1.6, 2]} />
                 <meshBasicMaterial
-                    color="#00ffff"
+                    color={initialColor}
                     wireframe
                     transparent
                     opacity={0.15}
@@ -68,7 +72,7 @@ export default function AbstractCore({
             <mesh ref={wireframe2Ref} scale={0.9}>
                 <icosahedronGeometry args={[1.5, 3]} />
                 <meshBasicMaterial
-                    color="#00ffff"
+                    color={initialColor}
                     wireframe
                     transparent
                     opacity={0.1}
@@ -80,7 +84,7 @@ export default function AbstractCore({
             <mesh ref={innerRef} scale={0.88}>
                 <icosahedronGeometry args={[1.6, 2]} />
                 <meshBasicMaterial
-                    color="#0088ff"
+                    color={initialInnerColor}
                     transparent
                     opacity={0.05}
                     blending={THREE.AdditiveBlending}
@@ -91,7 +95,7 @@ export default function AbstractCore({
             <mesh ref={ring1Ref} rotation={[-Math.PI / 2.5, Math.PI / 8, 0]}>
                 <torusGeometry args={[2.5, 0.002, 16, 128]} />
                 <meshBasicMaterial
-                    color="#00ffff"
+                    color={initialColor}
                     transparent
                     opacity={0.3}
                     blending={THREE.AdditiveBlending}
@@ -102,7 +106,7 @@ export default function AbstractCore({
             <mesh ref={ring2Ref} rotation={[-Math.PI / 2.2, -Math.PI / 10, 0]}>
                 <torusGeometry args={[3.0, 0.005, 16, 128]} />
                 <meshBasicMaterial
-                    color="#00ffff"
+                    color={initialColor}
                     transparent
                     opacity={0.15}
                     blending={THREE.AdditiveBlending}
@@ -116,7 +120,7 @@ export default function AbstractCore({
                 </bufferGeometry>
                 <pointsMaterial
                     size={0.025}
-                    color="#00ffff"
+                    color={initialColor}
                     transparent
                     opacity={0.85}
                     blending={THREE.AdditiveBlending}

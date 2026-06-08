@@ -14,9 +14,9 @@ export type CoreVisualProfile = {
 
 export const CORE_VISUALS: Record<WeatherType, CoreVisualProfile> = {
     Clear: {
-        baseColor: '#00ecff',
-        hoverColor: '#64f3ff',
-        activeColor: '#d4fdff',
+        baseColor: '#ffb26b',
+        hoverColor: '#ffd18f',
+        activeColor: '#ffe7bf',
         meshOpacity: 0.18,
         wireOpacity: 0.14,
         innerOpacity: 0.08,
