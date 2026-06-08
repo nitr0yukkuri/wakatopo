@@ -115,10 +115,7 @@ export default function SunraysCanvas({ variant = 'default' }: { variant?: Sunra
                 p.life += isSpringClear ? 0.002 : isAutumnClear ? 0.0021 : 0.0035;
                 if (p.life > 1) {
                     p.life = 0;
-                    if (isAutumnClear) {
-                        p.y = -8;
-                        p.x = Math.random() * canvas.width;
-                    } else if (!isSpringClear) {
+                    if (!isSpringClear && !isAutumnClear) {
                         p.y = canvas.height + 5;
                         p.x = Math.random() * canvas.width;
                     }
@@ -138,24 +135,31 @@ export default function SunraysCanvas({ variant = 'default' }: { variant?: Sunra
                     ctx.restore();
                 } else if (isAutumnClear) {
                     const leafColor = p.tone > 0.72
-                        ? `rgba(202,146,66,${a * 0.5})`
+                        ? `rgba(205,126,52,${a * 0.72})`
                         : p.tone > 0.38
-                            ? `rgba(222,185,82,${a * 0.56})`
-                            : `rgba(238,215,116,${a * 0.52})`;
+                            ? `rgba(222,172,55,${a * 0.72})`
+                            : `rgba(238,207,82,${a * 0.66})`;
                     ctx.save();
                     ctx.translate(p.x, p.y);
                     ctx.rotate(Math.sin(t * 1.1 + p.phase) * 0.5 + p.phase);
                     ctx.beginPath();
-                    ctx.moveTo(0, -p.r * 1.25);
-                    ctx.bezierCurveTo(p.r * 1.45, -p.r * 0.6, p.r * 1.2, p.r * 0.72, 0, p.r * 1.25);
-                    ctx.bezierCurveTo(-p.r * 1.2, p.r * 0.72, -p.r * 1.45, -p.r * 0.6, 0, -p.r * 1.25);
+                    ctx.moveTo(0, -p.r * 1.55);
+                    ctx.bezierCurveTo(p.r * 1.55, -p.r * 1.0, p.r * 1.35, p.r * 0.72, p.r * 0.18, p.r * 1.45);
+                    ctx.bezierCurveTo(-p.r * 1.05, p.r * 0.9, -p.r * 1.62, -p.r * 0.62, 0, -p.r * 1.55);
                     ctx.fillStyle = leafColor;
                     ctx.fill();
-                    ctx.strokeStyle = `rgba(255,242,184,${a * 0.24})`;
-                    ctx.lineWidth = Math.max(0.4, p.r * 0.18);
+                    ctx.strokeStyle = `rgba(132,92,42,${a * 0.24})`;
+                    ctx.lineWidth = Math.max(0.45, p.r * 0.2);
+                    ctx.stroke();
+                    ctx.strokeStyle = `rgba(255,239,166,${a * 0.36})`;
+                    ctx.lineWidth = Math.max(0.38, p.r * 0.15);
                     ctx.beginPath();
-                    ctx.moveTo(0, -p.r * 0.88);
-                    ctx.lineTo(0, p.r * 0.88);
+                    ctx.moveTo(0, -p.r * 1.05);
+                    ctx.lineTo(p.r * 0.1, p.r * 1.05);
+                    ctx.stroke();
+                    ctx.beginPath();
+                    ctx.moveTo(p.r * 0.06, p.r * 1.04);
+                    ctx.lineTo(p.r * 0.42, p.r * 1.55);
                     ctx.stroke();
                     ctx.restore();
                 } else {
