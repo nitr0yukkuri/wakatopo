@@ -75,6 +75,24 @@ GLSLにより「呼吸する惑星」を表現。
 ## 🌦️ Immersive Weather System
 天気APIと連動した環境変化。
 
+## 🕹️ 隠しCLIコマンド
+`sudo make rain` などの隠しコマンドで、天気や季節の状態を切り替えられる実験的な操作体験。
+
+## 🌸 季節の隠しエフェクト
+春・夏・秋・冬に応じて、惑星の色・粒子・空気感が静かに変化する隠しビジュアルエフェクト。
+
+## 🔊 プロシージャル・サウンドスケープ
+天気・作品・遷移に合わせて、BGMや効果音が変化する音の演出システム。
+
+## 🚪 作品ごとの専用トランジション
+GitHub Planet、Otenkigurashi、ColdKeep、reCAPTCHA Game、Denshouo それぞれに合わせた遷移演出。
+
+## 🎥 ライブプレビュー自動生成
+GitHub Actions と Playwright でポートフォリオを録画し、README用の `preview.gif` を自動更新。
+
+## 📱 PWA対応
+Service Worker と Manifest により、インストール可能なWebアプリとして動作。
+
 ## ⚡ Next-Gen Performance
 RSC・GPU最適化で高速描画。
 
@@ -131,12 +149,6 @@ npm run dev
 ```
 
 Open: http://localhost:3000
-
----
-
-# 季節の隠しエフェクト
-
-春・夏・秋・冬に応じて、惑星の空気感が静かに変化する隠しビジュアルエフェクトを追加しています。
 
 ---
 
