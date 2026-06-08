@@ -992,6 +992,7 @@ export default function OtenkiGurashiPage() {
                         lang={lang}
                         section={activeSection}
                         weather={weather}
+                        showUmbrella={false}
                         overrideDialog={overrideDialog}
                         onClick={handleTenchanClick}
                     />

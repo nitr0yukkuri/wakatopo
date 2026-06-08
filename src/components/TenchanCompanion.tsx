@@ -139,11 +139,12 @@ type TenchanCompanionProps = {
     section: 'hero' | 'concept' | 'features' | 'tech' | 'bottom';
     lang?: 'ja' | 'en';
     weather?: TenchanWeather;
+    showUmbrella?: boolean;
     overrideDialog?: { text: string; mood: "happy" | "neutral" | "sad" | "scared" | "sleepy" | "looking" | "surprised" | "talking" } | null;
     onClick?: () => void;
 };
 
-export default function TenchanCompanion({ section, lang = 'ja', weather, overrideDialog, onClick }: TenchanCompanionProps) {
+export default function TenchanCompanion({ section, lang = 'ja', weather, showUmbrella = true, overrideDialog, onClick }: TenchanCompanionProps) {
     // セクションに応じたデフォルトメッセージと表情を設定
     const getDialogue = () => {
         const byLang = {
@@ -181,7 +182,7 @@ export default function TenchanCompanion({ section, lang = 'ja', weather, overri
 
     const defaultDialog = getDialogue();
     const activeDialog = overrideDialog || defaultDialog;
-    const hasUmbrella = weather === 'Rain' || weather === 'Thunder';
+    const hasUmbrella = showUmbrella && (weather === 'Rain' || weather === 'Thunder');
 
     return (
         <div className="fixed bottom-6 right-6 z-50 flex items-end gap-4 pointer-events-none">
@@ -216,14 +217,14 @@ export default function TenchanCompanion({ section, lang = 'ja', weather, overri
             >
                 {hasUmbrella && (
                     <svg
-                        className="absolute -right-3 -top-5 z-10 h-20 w-20 md:-right-4 md:-top-7 md:h-28 md:w-28"
+                        className="absolute -right-1 -top-8 z-10 h-24 w-24 rotate-[-12deg] md:-right-2 md:-top-11 md:h-32 md:w-32"
                         viewBox="0 0 120 120"
                         aria-hidden="true"
                     >
-                        <path d="M18 48 Q60 10 102 48 Z" fill={weather === 'Thunder' ? '#7c83ff' : '#79d8ff'} stroke="#4f6f83" strokeWidth="4" strokeLinejoin="round" />
-                        <path d="M18 48 Q38 36 60 48 Q82 36 102 48" fill="none" stroke="#eefaff" strokeWidth="3" strokeLinecap="round" />
-                        <path d="M60 48 V92" fill="none" stroke="#6b4a3a" strokeWidth="5" strokeLinecap="round" />
-                        <path d="M60 92 Q60 108 74 104" fill="none" stroke="#6b4a3a" strokeWidth="5" strokeLinecap="round" />
+                        <path d="M14 50 Q58 8 106 50 Z" fill={weather === 'Thunder' ? '#7c83ff' : '#79d8ff'} stroke="#4f6f83" strokeWidth="4" strokeLinejoin="round" />
+                        <path d="M14 50 Q36 37 58 50 Q82 37 106 50" fill="none" stroke="#eefaff" strokeWidth="3" strokeLinecap="round" />
+                        <path d="M58 50 L43 104" fill="none" stroke="#6b4a3a" strokeWidth="5" strokeLinecap="round" />
+                        <path d="M43 104 Q38 116 52 116" fill="none" stroke="#6b4a3a" strokeWidth="5" strokeLinecap="round" />
                     </svg>
                 )}
                 <CharacterFace mood={activeDialog.mood} />
