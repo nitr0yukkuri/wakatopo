@@ -587,8 +587,12 @@ export default function SoundDirector() {
 
     if (isCardPage || pathname === '/otenkigurashi') return null;
 
+    const soundButtonPositionClass = pathname === '/'
+        ? 'right-4 bottom-24 sm:right-6 sm:bottom-6'
+        : 'right-4 bottom-6 sm:right-6 sm:bottom-6';
+
     return (
-        <div className="fixed right-4 bottom-6 z-70 pointer-events-auto sm:right-6 sm:bottom-6">
+        <div className={`fixed ${soundButtonPositionClass} z-70 pointer-events-auto`}>
             <button
                 type="button"
                 onClick={() => {
