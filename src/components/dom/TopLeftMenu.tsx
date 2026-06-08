@@ -172,7 +172,7 @@ export default function TopLeftMenu() {
         appendHistory({ tone: 'info', text: `$ ${command}` });
 
         if (command.toLowerCase() === 'help') {
-            appendHistory({ tone: 'info', text: 'Available: sudo make rain|snow|clear|thunder|night|spring|summer|autumn|winter|season-clear, help, exit' });
+            appendHistory({ tone: 'info', text: 'Available: sudo make rain|snow|clouds|clear|thunder|night|spring|summer|autumn|winter|season-clear, help, exit' });
             return;
         }
 
@@ -195,6 +195,7 @@ export default function TopLeftMenu() {
             const weatherMap: Record<string, WeatherType> = {
                 rain: 'Rain',
                 snow: 'Snow',
+                clouds: 'Clouds',
                 clear: 'Clear',
                 thunder: 'Thunder',
                 night: 'Night',
