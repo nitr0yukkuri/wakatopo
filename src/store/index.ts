@@ -13,6 +13,7 @@ interface AppState {
     setTransitionType: (type: 'none' | 'warp' | 'cloud' | 'freeze' | 'rain' | 'snow' | 'sunburst' | 'flash' | 'heavy-cloud' | 'wave' | 'moonrise' | 'captcha-lock') => void;
 }
 
+
 export const useStore = create<AppState>((set) => ({
     weather: 'Clear',
     githubActivityLevel: 0.5,
