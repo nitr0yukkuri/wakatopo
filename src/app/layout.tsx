@@ -91,8 +91,6 @@ export default function RootLayout({
   return (
     <html lang="ja" suppressHydrationWarning>
       <head>
-        <link rel="preconnect" href="https://image.thum.io" />
-        <link rel="dns-prefetch" href="https://image.thum.io" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{

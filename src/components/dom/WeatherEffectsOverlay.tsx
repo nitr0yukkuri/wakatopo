@@ -2,8 +2,8 @@
 import dynamic from 'next/dynamic';
 import { AnimatePresence } from 'framer-motion';
 import { useStore, type WeatherType } from '@/store';
-import { RainParticles } from '@/components/canvas/RainTransitionCanvas';
 
+const RainParticles = dynamic(() => import('@/components/canvas/RainTransitionCanvas').then((m) => m.RainParticles), { ssr: false });
 const SunraysCanvas = dynamic(() => import('@/components/canvas/effects/SunraysCanvas'), { ssr: false });
 const CloudsOverlayCanvas = dynamic(() => import('@/components/canvas/effects/CloudsOverlayCanvas'), { ssr: false });
 const ThunderCanvas = dynamic(() => import('@/components/canvas/effects/ThunderCanvas'), { ssr: false });

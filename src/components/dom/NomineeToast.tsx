@@ -1,5 +1,3 @@
-'use client';
-
 import Image from 'next/image';
 
 type NomineeToastProps = {
@@ -25,7 +23,6 @@ export default function NomineeToast({ href, label, title, description, cta }: N
                 width={136}
                 height={97}
                 className="h-auto w-[136px] max-w-full"
-                priority
             />
             <div className="mt-4 w-full">
                 <span className="text-[9px] font-mono tracking-[0.18em] text-cyan-300">{label}</span>

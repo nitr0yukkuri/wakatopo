@@ -22,40 +22,6 @@ export default function GlobalTransitionOverlay() {
     const transitionType = useStore((state) => state.transitionType);
 
     useEffect(() => {
-        const warmup = () => {
-            const safeImport = (loader: () => Promise<unknown>) => {
-                void loader().catch(() => {
-                    // Ignore warmup failures; real transition loading will retry on demand.
-                });
-            };
-
-            safeImport(() => import('@/components/canvas/RainTransitionCanvas'));
-            safeImport(() => import('@/components/canvas/SnowTransitionCanvas'));
-            safeImport(() => import('@/components/canvas/ThunderTransitionCanvas'));
-            safeImport(() => import('@/components/canvas/HeavyCloudTransitionCanvas'));
-            safeImport(() => import('@/components/canvas/SunburstTransitionCanvas'));
-            safeImport(() => import('@/components/canvas/MoonriseTransitionCanvas'));
-        };
-
-        const w = window as typeof window & {
-            requestIdleCallback?: (cb: () => void, options?: { timeout: number }) => number;
-            cancelIdleCallback?: (id: number) => void;
-        };
-
-        if (w.requestIdleCallback) {
-            const idleId = w.requestIdleCallback(warmup, { timeout: 1200 });
-            return () => {
-                if (w.cancelIdleCallback) {
-                    w.cancelIdleCallback(idleId);
-                }
-            };
-        }
-
-        const timer = window.setTimeout(warmup, 400);
-        return () => window.clearTimeout(timer);
-    }, []);
-
-    useEffect(() => {
         // トランジション中はスクロールを無効化
         if (transitionType !== 'none') {
             document.body.classList.add('overflow-hidden');
