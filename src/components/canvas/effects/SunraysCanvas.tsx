@@ -26,20 +26,20 @@ export default function SunraysCanvas({ variant = 'default' }: { variant?: Sunra
         window.addEventListener('resize', resize);
 
         // 浮遊ダスト粒子
-        const particles: Particle[] = Array.from({ length: isSummerClear ? 128 : isSpringClear ? 124 : isAutumnClear ? 86 : 90 }, () => ({
+        const particles: Particle[] = Array.from({ length: isSummerClear ? 128 : isSpringClear ? 124 : isAutumnClear ? 128 : 90 }, () => ({
             x: Math.random() * window.innerWidth,
             y: Math.random() * window.innerHeight,
             vx: isSpringClear
                 ? Math.random() * 0.22 + 0.04
                 : isAutumnClear
-                    ? Math.random() * 0.18 + 0.05
+                    ? Math.random() * 0.24 + 0.06
                     : (Math.random() - 0.5) * (isSummerClear ? 0.42 : 0.25),
             vy: isSpringClear
                 ? Math.random() * 0.34 + 0.16
                 : isAutumnClear
-                    ? Math.random() * 0.2 + 0.04
+                    ? Math.random() * 0.28 + 0.1
                     : -(Math.random() * (isSummerClear ? 0.58 : 0.45) + 0.08),
-            r: Math.random() * (isSummerClear ? 2.2 : isSpringClear ? 2.6 : isAutumnClear ? 2.1 : 1.8) + 0.3,
+            r: Math.random() * (isSummerClear ? 2.2 : isSpringClear ? 2.6 : isAutumnClear ? 2.6 : 1.8) + 0.3,
             life: Math.random(),
             phase: Math.random() * Math.PI * 2,
             tone: Math.random(),
@@ -69,9 +69,9 @@ export default function SunraysCanvas({ variant = 'default' }: { variant?: Sunra
                 sunAura.addColorStop(0.48, 'rgba(255,176,205,0.2)');
                 sunAura.addColorStop(1, 'rgba(255,176,205,0)');
             } else if (isAutumnClear) {
-                sunAura.addColorStop(0, 'rgba(255,252,232,0.42)');
-                sunAura.addColorStop(0.34, 'rgba(232,209,146,0.18)');
-                sunAura.addColorStop(0.68, 'rgba(204,176,108,0.08)');
+                sunAura.addColorStop(0, 'rgba(255,255,246,0.5)');
+                sunAura.addColorStop(0.24, 'rgba(246,228,170,0.22)');
+                sunAura.addColorStop(0.62, 'rgba(204,176,108,0.08)');
                 sunAura.addColorStop(1, 'rgba(204,176,108,0)');
             } else {
                 sunAura.addColorStop(0, 'rgba(255,238,188,0.4)');
@@ -94,10 +94,10 @@ export default function SunraysCanvas({ variant = 'default' }: { variant?: Sunra
                 sunBody.addColorStop(0.58, 'rgba(255,220,215,0.96)');
                 sunBody.addColorStop(1, 'rgba(255,184,210,0.88)');
             } else if (isAutumnClear) {
-                sunBody.addColorStop(0, 'rgba(255,252,238,0.98)');
-                sunBody.addColorStop(0.42, 'rgba(255,243,190,0.94)');
-                sunBody.addColorStop(0.78, 'rgba(224,199,128,0.76)');
-                sunBody.addColorStop(1, 'rgba(190,160,94,0.56)');
+                sunBody.addColorStop(0, 'rgba(255,255,255,1)');
+                sunBody.addColorStop(0.28, 'rgba(255,252,226,0.99)');
+                sunBody.addColorStop(0.58, 'rgba(238,213,138,0.86)');
+                sunBody.addColorStop(1, 'rgba(190,160,94,0.5)');
             } else {
                 sunBody.addColorStop(0, 'rgba(255,252,236,0.98)');
                 sunBody.addColorStop(0.45, 'rgba(255,236,180,0.98)');
@@ -110,9 +110,9 @@ export default function SunraysCanvas({ variant = 'default' }: { variant?: Sunra
 
             // ダストパーティクル
             for (const p of particles) {
-                p.x += p.vx + Math.sin(t * (isSpringClear ? 0.9 : isAutumnClear ? 0.72 : 0.55) + p.phase) * (isSpringClear ? 0.18 : isAutumnClear ? 0.13 : 0.1);
+                p.x += p.vx + Math.sin(t * (isSpringClear ? 0.9 : isAutumnClear ? 0.82 : 0.55) + p.phase) * (isSpringClear ? 0.18 : isAutumnClear ? 0.2 : 0.1);
                 p.y += isSpringClear || isAutumnClear ? p.vy : p.vy * 0.85;
-                p.life += isSpringClear ? 0.002 : isAutumnClear ? 0.0026 : 0.0035;
+                p.life += isSpringClear ? 0.002 : isAutumnClear ? 0.0021 : 0.0035;
                 if (p.life > 1) {
                     p.life = 0;
                     if (isAutumnClear) {
@@ -126,7 +126,7 @@ export default function SunraysCanvas({ variant = 'default' }: { variant?: Sunra
                 if (isSpringClear && (p.y > canvas.height + 8 || p.x > canvas.width + 8)) { p.y = -8; p.x = Math.random() * canvas.width; }
                 if (isAutumnClear && (p.y > canvas.height + 8 || p.x > canvas.width + 8)) { p.y = -8; p.x = Math.random() * canvas.width; }
                 if (!isSpringClear && p.y < -5) { p.y = canvas.height + 5; }
-                const a = Math.sin(p.life * Math.PI) * (isSummerClear ? 0.52 : isSpringClear ? 0.36 : isAutumnClear ? 0.34 : 0.42);
+                const a = Math.sin(p.life * Math.PI) * (isSummerClear ? 0.52 : isSpringClear ? 0.36 : isAutumnClear ? 0.38 : 0.42);
                 if (isSpringClear) {
                     ctx.save();
                     ctx.translate(p.x, p.y);
