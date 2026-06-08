@@ -33,6 +33,7 @@ export default function WeatherEffectsOverlay({
                 ? 'autumn-clear'
                 : 'default';
     const cloudsVariant = season === 'spring' && weather === 'Clouds' ? 'spring-clouds' : 'default';
+    const nightVariant = season === 'autumn' && weather === 'Night' ? 'autumn-night' : 'default';
 
     return (
         <>
@@ -43,7 +44,7 @@ export default function WeatherEffectsOverlay({
                 {weather === 'Thunder' && <RainParticles key="thunder-rain" />}
                 {weather === 'Thunder' && <ThunderCanvas key="thunder" />}
                 {weather === 'Snow' && <SnowCanvas key="snow" density={0.72} />}
-                {weather === 'Night' && <NightGlowOverlay key="night" />}
+                {weather === 'Night' && <NightGlowOverlay key={`night-${nightVariant}`} variant={nightVariant} />}
             </AnimatePresence>
 
             {/* Sun / Moon overlay anchors: open X in a new tab. Position tuned to match canvases. */}

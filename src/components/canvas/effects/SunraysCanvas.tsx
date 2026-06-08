@@ -69,9 +69,9 @@ export default function SunraysCanvas({ variant = 'default' }: { variant?: Sunra
                 sunAura.addColorStop(0.48, 'rgba(255,176,205,0.2)');
                 sunAura.addColorStop(1, 'rgba(255,176,205,0)');
             } else if (isAutumnClear) {
-                sunAura.addColorStop(0, 'rgba(255,255,246,0.5)');
-                sunAura.addColorStop(0.24, 'rgba(246,228,170,0.22)');
-                sunAura.addColorStop(0.62, 'rgba(204,176,108,0.08)');
+                sunAura.addColorStop(0, 'rgba(255,255,248,0.52)');
+                sunAura.addColorStop(0.26, 'rgba(246,228,170,0.2)');
+                sunAura.addColorStop(0.68, 'rgba(204,176,108,0.055)');
                 sunAura.addColorStop(1, 'rgba(204,176,108,0)');
             } else {
                 sunAura.addColorStop(0, 'rgba(255,238,188,0.4)');
@@ -95,9 +95,9 @@ export default function SunraysCanvas({ variant = 'default' }: { variant?: Sunra
                 sunBody.addColorStop(1, 'rgba(255,184,210,0.88)');
             } else if (isAutumnClear) {
                 sunBody.addColorStop(0, 'rgba(255,255,255,1)');
-                sunBody.addColorStop(0.28, 'rgba(255,252,226,0.99)');
-                sunBody.addColorStop(0.58, 'rgba(238,213,138,0.86)');
-                sunBody.addColorStop(1, 'rgba(190,160,94,0.5)');
+                sunBody.addColorStop(0.24, 'rgba(255,253,230,0.98)');
+                sunBody.addColorStop(0.56, 'rgba(239,216,148,0.82)');
+                sunBody.addColorStop(1, 'rgba(190,160,94,0.42)');
             } else {
                 sunBody.addColorStop(0, 'rgba(255,252,236,0.98)');
                 sunBody.addColorStop(0.45, 'rgba(255,236,180,0.98)');

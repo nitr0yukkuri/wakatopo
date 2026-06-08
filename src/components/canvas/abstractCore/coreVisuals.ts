@@ -126,6 +126,16 @@ const AUTUMN_CLEAR_VISUAL: CoreVisualProfile = {
     innerOpacity: 0.075,
 };
 
+const AUTUMN_NIGHT_VISUAL: CoreVisualProfile = {
+    ...CORE_VISUALS.Night,
+    baseColor: '#1b2d68',
+    hoverColor: '#5f6f9e',
+    activeColor: '#d8bc7a',
+    meshOpacity: 0.25,
+    wireOpacity: 0.21,
+    innerOpacity: 0.12,
+};
+
 export const getCoreVisualProfile = (weather: WeatherType, season: SeasonType): CoreVisualProfile => {
     const defaultVisual = CORE_VISUALS[weather] ?? CORE_VISUALS.Clear;
 
@@ -137,7 +147,9 @@ export const getCoreVisualProfile = (weather: WeatherType, season: SeasonType): 
         case 'summer':
             return weather === 'Clear' ? SUMMER_CLEAR_VISUAL : defaultVisual;
         case 'autumn':
-            return weather === 'Clear' ? AUTUMN_CLEAR_VISUAL : defaultVisual;
+            if (weather === 'Clear') return AUTUMN_CLEAR_VISUAL;
+            if (weather === 'Night') return AUTUMN_NIGHT_VISUAL;
+            return defaultVisual;
         case 'winter':
         case 'none':
         default:
