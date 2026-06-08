@@ -53,10 +53,10 @@ export default function SunraysCanvas({ variant = 'default' }: { variant?: Sunra
                 sunAura.addColorStop(0.58, 'rgba(68,176,255,0.16)');
                 sunAura.addColorStop(1, 'rgba(21,128,220,0)');
             } else if (isSpringClear) {
-                sunAura.addColorStop(0, 'rgba(255,255,248,0.48)');
-                sunAura.addColorStop(0.24, 'rgba(255,237,194,0.24)');
-                sunAura.addColorStop(0.62, 'rgba(255,194,212,0.1)');
-                sunAura.addColorStop(1, 'rgba(255,194,212,0)');
+                sunAura.addColorStop(0, 'rgba(255,252,250,0.5)');
+                sunAura.addColorStop(0.24, 'rgba(255,224,226,0.26)');
+                sunAura.addColorStop(0.62, 'rgba(255,178,205,0.13)');
+                sunAura.addColorStop(1, 'rgba(255,178,205,0)');
             } else {
                 sunAura.addColorStop(0, 'rgba(255,238,188,0.32)');
                 sunAura.addColorStop(0.5, 'rgba(255,214,146,0.16)');
@@ -74,9 +74,9 @@ export default function SunraysCanvas({ variant = 'default' }: { variant?: Sunra
                 sunBody.addColorStop(1, 'rgba(255,232,156,0.9)');
             } else if (isSpringClear) {
                 sunBody.addColorStop(0, 'rgba(255,255,255,1)');
-                sunBody.addColorStop(0.34, 'rgba(255,253,236,0.99)');
-                sunBody.addColorStop(0.72, 'rgba(255,232,178,0.95)');
-                sunBody.addColorStop(1, 'rgba(255,206,214,0.82)');
+                sunBody.addColorStop(0.34, 'rgba(255,248,242,0.99)');
+                sunBody.addColorStop(0.72, 'rgba(255,221,206,0.95)');
+                sunBody.addColorStop(1, 'rgba(255,190,211,0.84)');
             } else {
                 sunBody.addColorStop(0, 'rgba(255,252,236,0.98)');
                 sunBody.addColorStop(0.45, 'rgba(255,236,180,0.98)');
