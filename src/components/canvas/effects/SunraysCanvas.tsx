@@ -25,11 +25,11 @@ export default function SunraysCanvas({ variant = 'default' }: { variant?: Sunra
         window.addEventListener('resize', resize);
 
         // 浮遊ダスト粒子
-        const particles: Particle[] = Array.from({ length: isSummerClear ? 128 : isSpringClear ? 76 : 90 }, () => ({
+        const particles: Particle[] = Array.from({ length: isSummerClear ? 128 : isSpringClear ? 92 : 90 }, () => ({
             x: Math.random() * window.innerWidth,
             y: Math.random() * window.innerHeight,
             vx: isSpringClear ? Math.random() * 0.22 + 0.04 : (Math.random() - 0.5) * (isSummerClear ? 0.42 : 0.25),
-            vy: isSpringClear ? Math.random() * 0.28 + 0.12 : -(Math.random() * (isSummerClear ? 0.58 : 0.45) + 0.08),
+            vy: isSpringClear ? Math.random() * 0.34 + 0.16 : -(Math.random() * (isSummerClear ? 0.58 : 0.45) + 0.08),
             r: Math.random() * (isSummerClear ? 2.2 : isSpringClear ? 2.6 : 1.8) + 0.3,
             life: Math.random(),
             phase: Math.random() * Math.PI * 2,
@@ -91,11 +91,13 @@ export default function SunraysCanvas({ variant = 'default' }: { variant?: Sunra
             for (const p of particles) {
                 p.x += p.vx + Math.sin(t * (isSpringClear ? 0.9 : 0.55) + p.phase) * (isSpringClear ? 0.18 : 0.1);
                 p.y += isSpringClear ? p.vy : p.vy * 0.85;
-                p.life += 0.0035;
+                p.life += isSpringClear ? 0.002 : 0.0035;
                 if (p.life > 1) {
                     p.life = 0;
-                    p.y = isSpringClear ? -8 : canvas.height + 5;
-                    p.x = Math.random() * canvas.width;
+                    if (!isSpringClear) {
+                        p.y = canvas.height + 5;
+                        p.x = Math.random() * canvas.width;
+                    }
                 }
                 if (isSpringClear && (p.y > canvas.height + 8 || p.x > canvas.width + 8)) { p.y = -8; p.x = Math.random() * canvas.width; }
                 if (!isSpringClear && p.y < -5) { p.y = canvas.height + 5; }
