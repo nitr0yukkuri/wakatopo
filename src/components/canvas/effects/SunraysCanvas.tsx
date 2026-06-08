@@ -2,14 +2,15 @@
 import { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 
-interface Particle { x: number; y: number; vx: number; vy: number; r: number; life: number; phase: number; }
+interface Particle { x: number; y: number; vx: number; vy: number; r: number; life: number; phase: number; tone: number; }
 
-type SunraysVariant = 'default' | 'summer-clear' | 'spring-clear';
+type SunraysVariant = 'default' | 'summer-clear' | 'spring-clear' | 'autumn-clear';
 
 export default function SunraysCanvas({ variant = 'default' }: { variant?: SunraysVariant }) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const isSummerClear = variant === 'summer-clear';
     const isSpringClear = variant === 'spring-clear';
+    const isAutumnClear = variant === 'autumn-clear';
 
     useEffect(() => {
         const canvas = canvasRef.current!;
@@ -25,14 +26,23 @@ export default function SunraysCanvas({ variant = 'default' }: { variant?: Sunra
         window.addEventListener('resize', resize);
 
         // 浮遊ダスト粒子
-        const particles: Particle[] = Array.from({ length: isSummerClear ? 128 : isSpringClear ? 124 : 90 }, () => ({
+        const particles: Particle[] = Array.from({ length: isSummerClear ? 128 : isSpringClear ? 124 : isAutumnClear ? 86 : 90 }, () => ({
             x: Math.random() * window.innerWidth,
             y: Math.random() * window.innerHeight,
-            vx: isSpringClear ? Math.random() * 0.22 + 0.04 : (Math.random() - 0.5) * (isSummerClear ? 0.42 : 0.25),
-            vy: isSpringClear ? Math.random() * 0.34 + 0.16 : -(Math.random() * (isSummerClear ? 0.58 : 0.45) + 0.08),
-            r: Math.random() * (isSummerClear ? 2.2 : isSpringClear ? 2.6 : 1.8) + 0.3,
+            vx: isSpringClear
+                ? Math.random() * 0.22 + 0.04
+                : isAutumnClear
+                    ? Math.random() * 0.18 + 0.05
+                    : (Math.random() - 0.5) * (isSummerClear ? 0.42 : 0.25),
+            vy: isSpringClear
+                ? Math.random() * 0.34 + 0.16
+                : isAutumnClear
+                    ? Math.random() * 0.2 + 0.04
+                    : -(Math.random() * (isSummerClear ? 0.58 : 0.45) + 0.08),
+            r: Math.random() * (isSummerClear ? 2.2 : isSpringClear ? 2.6 : isAutumnClear ? 2.1 : 1.8) + 0.3,
             life: Math.random(),
             phase: Math.random() * Math.PI * 2,
+            tone: Math.random(),
         }));
 
         function draw() {
@@ -57,6 +67,11 @@ export default function SunraysCanvas({ variant = 'default' }: { variant?: Sunra
                 sunAura.addColorStop(0.2, 'rgba(255,214,224,0.3)');
                 sunAura.addColorStop(0.48, 'rgba(255,176,205,0.17)');
                 sunAura.addColorStop(1, 'rgba(255,176,205,0)');
+            } else if (isAutumnClear) {
+                sunAura.addColorStop(0, 'rgba(255,252,232,0.34)');
+                sunAura.addColorStop(0.34, 'rgba(232,209,146,0.14)');
+                sunAura.addColorStop(0.68, 'rgba(204,176,108,0.06)');
+                sunAura.addColorStop(1, 'rgba(204,176,108,0)');
             } else {
                 sunAura.addColorStop(0, 'rgba(255,238,188,0.32)');
                 sunAura.addColorStop(0.5, 'rgba(255,214,146,0.16)');
@@ -77,6 +92,11 @@ export default function SunraysCanvas({ variant = 'default' }: { variant?: Sunra
                 sunBody.addColorStop(0.28, 'rgba(255,248,244,0.99)');
                 sunBody.addColorStop(0.58, 'rgba(255,220,215,0.96)');
                 sunBody.addColorStop(1, 'rgba(255,184,210,0.88)');
+            } else if (isAutumnClear) {
+                sunBody.addColorStop(0, 'rgba(255,252,238,0.98)');
+                sunBody.addColorStop(0.42, 'rgba(255,243,190,0.94)');
+                sunBody.addColorStop(0.78, 'rgba(224,199,128,0.76)');
+                sunBody.addColorStop(1, 'rgba(190,160,94,0.56)');
             } else {
                 sunBody.addColorStop(0, 'rgba(255,252,236,0.98)');
                 sunBody.addColorStop(0.45, 'rgba(255,236,180,0.98)');
@@ -89,19 +109,23 @@ export default function SunraysCanvas({ variant = 'default' }: { variant?: Sunra
 
             // ダストパーティクル
             for (const p of particles) {
-                p.x += p.vx + Math.sin(t * (isSpringClear ? 0.9 : 0.55) + p.phase) * (isSpringClear ? 0.18 : 0.1);
-                p.y += isSpringClear ? p.vy : p.vy * 0.85;
-                p.life += isSpringClear ? 0.002 : 0.0035;
+                p.x += p.vx + Math.sin(t * (isSpringClear ? 0.9 : isAutumnClear ? 0.72 : 0.55) + p.phase) * (isSpringClear ? 0.18 : isAutumnClear ? 0.13 : 0.1);
+                p.y += isSpringClear || isAutumnClear ? p.vy : p.vy * 0.85;
+                p.life += isSpringClear ? 0.002 : isAutumnClear ? 0.0026 : 0.0035;
                 if (p.life > 1) {
                     p.life = 0;
-                    if (!isSpringClear) {
+                    if (isAutumnClear) {
+                        p.y = -8;
+                        p.x = Math.random() * canvas.width;
+                    } else if (!isSpringClear) {
                         p.y = canvas.height + 5;
                         p.x = Math.random() * canvas.width;
                     }
                 }
                 if (isSpringClear && (p.y > canvas.height + 8 || p.x > canvas.width + 8)) { p.y = -8; p.x = Math.random() * canvas.width; }
+                if (isAutumnClear && (p.y > canvas.height + 8 || p.x > canvas.width + 8)) { p.y = -8; p.x = Math.random() * canvas.width; }
                 if (!isSpringClear && p.y < -5) { p.y = canvas.height + 5; }
-                const a = Math.sin(p.life * Math.PI) * (isSummerClear ? 0.52 : isSpringClear ? 0.36 : 0.42);
+                const a = Math.sin(p.life * Math.PI) * (isSummerClear ? 0.52 : isSpringClear ? 0.36 : isAutumnClear ? 0.34 : 0.42);
                 if (isSpringClear) {
                     ctx.save();
                     ctx.translate(p.x, p.y);
@@ -110,6 +134,28 @@ export default function SunraysCanvas({ variant = 'default' }: { variant?: Sunra
                     ctx.ellipse(0, 0, p.r * 1.8, p.r * 0.72, 0, 0, Math.PI * 2);
                     ctx.fillStyle = `rgba(255,198,216,${a * 0.74})`;
                     ctx.fill();
+                    ctx.restore();
+                } else if (isAutumnClear) {
+                    const leafColor = p.tone > 0.72
+                        ? `rgba(202,146,66,${a * 0.5})`
+                        : p.tone > 0.38
+                            ? `rgba(222,185,82,${a * 0.56})`
+                            : `rgba(238,215,116,${a * 0.52})`;
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate(Math.sin(t * 1.1 + p.phase) * 0.5 + p.phase);
+                    ctx.beginPath();
+                    ctx.moveTo(0, -p.r * 1.25);
+                    ctx.bezierCurveTo(p.r * 1.45, -p.r * 0.6, p.r * 1.2, p.r * 0.72, 0, p.r * 1.25);
+                    ctx.bezierCurveTo(-p.r * 1.2, p.r * 0.72, -p.r * 1.45, -p.r * 0.6, 0, -p.r * 1.25);
+                    ctx.fillStyle = leafColor;
+                    ctx.fill();
+                    ctx.strokeStyle = `rgba(255,242,184,${a * 0.24})`;
+                    ctx.lineWidth = Math.max(0.4, p.r * 0.18);
+                    ctx.beginPath();
+                    ctx.moveTo(0, -p.r * 0.88);
+                    ctx.lineTo(0, p.r * 0.88);
+                    ctx.stroke();
                     ctx.restore();
                 } else {
                     ctx.beginPath();
@@ -126,25 +172,32 @@ export default function SunraysCanvas({ variant = 'default' }: { variant?: Sunra
         draw();
 
         return () => { cancelAnimationFrame(raf); window.removeEventListener('resize', resize); };
-    }, [isSpringClear, isSummerClear]);
+    }, [variant]);
 
     const baseGlow = isSummerClear
         ? 'radial-gradient(ellipse 66% 54% at 86% -10%, rgba(84,183,255,0.22) 0%, rgba(255,230,156,0.08) 24%, rgba(40,153,238,0.11) 44%, transparent 74%)'
         : isSpringClear
             ? 'radial-gradient(ellipse 62% 50% at 86% -10%, rgba(255,232,214,0.2) 0%, rgba(255,196,214,0.12) 34%, transparent 72%)'
+        : isAutumnClear
+            ? 'radial-gradient(ellipse 62% 50% at 86% -10%, rgba(255,238,172,0.16) 0%, rgba(218,184,94,0.08) 38%, transparent 74%)'
         : 'radial-gradient(ellipse 62% 50% at 86% -10%, rgba(255,228,172,0.18) 0%, rgba(255,205,150,0.08) 38%, transparent 72%)';
     const pulseGlow = isSummerClear
         ? 'radial-gradient(ellipse 58% 46% at 86% -14%, rgba(255,248,216,0.18) 0%, rgba(91,195,255,0.12) 44%, transparent 76%)'
         : isSpringClear
             ? 'radial-gradient(ellipse 58% 46% at 86% -14%, rgba(255,244,228,0.16) 0%, rgba(255,190,210,0.1) 44%, transparent 76%)'
+        : isAutumnClear
+            ? 'radial-gradient(ellipse 58% 46% at 86% -14%, rgba(255,242,190,0.12) 0%, rgba(214,178,88,0.075) 46%, transparent 76%)'
         : 'radial-gradient(ellipse 56% 44% at 86% -14%, rgba(255,236,188,0.16) 0%, rgba(255,214,160,0.06) 44%, transparent 76%)';
     const wash = isSummerClear
         ? 'linear-gradient(to bottom, rgba(39,157,245,0.11) 0%, rgba(98,192,255,0.055) 34%, transparent 72%)'
         : isSpringClear
             ? 'linear-gradient(to bottom, rgba(255,215,225,0.07) 0%, rgba(255,236,216,0.035) 34%, transparent 72%)'
+        : isAutumnClear
+            ? 'linear-gradient(to bottom, rgba(214,178,86,0.052) 0%, rgba(238,214,140,0.028) 36%, transparent 74%)'
         : 'linear-gradient(to bottom, rgba(255,222,180,0.07) 0%, rgba(255,215,170,0.03) 34%, transparent 72%)';
     const summerAtmosphere = 'radial-gradient(ellipse 78% 46% at 48% 4%, rgba(90,184,255,0.14) 0%, rgba(92,177,235,0.08) 42%, rgba(92,177,235,0) 72%), linear-gradient(to bottom, rgba(71,165,235,0.08) 0%, rgba(71,165,235,0.03) 38%, transparent 66%)';
     const springGroundHaze = 'radial-gradient(ellipse 78% 34% at 50% 100%, rgba(255,236,242,0.18) 0%, rgba(255,198,218,0.12) 32%, rgba(255,244,236,0.07) 58%, transparent 82%), linear-gradient(to top, rgba(255,216,228,0.09) 0%, rgba(255,239,232,0.045) 38%, transparent 76%)';
+    const autumnGroundHaze = 'radial-gradient(ellipse 78% 32% at 50% 100%, rgba(232,202,112,0.12) 0%, rgba(196,151,74,0.07) 34%, rgba(248,226,154,0.045) 60%, transparent 84%), linear-gradient(to top, rgba(199,157,78,0.06) 0%, rgba(238,213,139,0.028) 40%, transparent 78%)';
 
     return (
         <motion.div
@@ -179,6 +232,14 @@ export default function SunraysCanvas({ variant = 'default' }: { variant?: Sunra
                     style={{ background: springGroundHaze }}
                     animate={{ opacity: [0.62, 0.86, 0.7] }}
                     transition={{ duration: 7.2, repeat: Infinity, ease: 'easeInOut' }}
+                />
+            )}
+            {isAutumnClear && (
+                <motion.div
+                    className="absolute inset-x-0 bottom-0 h-[30%]"
+                    style={{ background: autumnGroundHaze }}
+                    animate={{ opacity: [0.54, 0.78, 0.6] }}
+                    transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
                 />
             )}
             <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />

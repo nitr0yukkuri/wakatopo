@@ -116,6 +116,16 @@ const SPRING_CLOUDS_VISUAL: CoreVisualProfile = {
     activeColor: '#fff1f5',
 };
 
+const AUTUMN_CLEAR_VISUAL: CoreVisualProfile = {
+    ...CORE_VISUALS.Clear,
+    baseColor: '#d8bd68',
+    hoverColor: '#ead68f',
+    activeColor: '#fff2c4',
+    meshOpacity: 0.17,
+    wireOpacity: 0.13,
+    innerOpacity: 0.075,
+};
+
 export const getCoreVisualProfile = (weather: WeatherType, season: SeasonType): CoreVisualProfile => {
     const defaultVisual = CORE_VISUALS[weather] ?? CORE_VISUALS.Clear;
 
@@ -127,6 +137,7 @@ export const getCoreVisualProfile = (weather: WeatherType, season: SeasonType): 
         case 'summer':
             return weather === 'Clear' ? SUMMER_CLEAR_VISUAL : defaultVisual;
         case 'autumn':
+            return weather === 'Clear' ? AUTUMN_CLEAR_VISUAL : defaultVisual;
         case 'winter':
         case 'none':
         default:

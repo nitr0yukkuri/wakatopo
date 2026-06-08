@@ -29,7 +29,9 @@ export default function WeatherEffectsOverlay({
         ? 'summer-clear'
         : season === 'spring' && weather === 'Clear'
             ? 'spring-clear'
-            : 'default';
+            : season === 'autumn' && weather === 'Clear'
+                ? 'autumn-clear'
+                : 'default';
     const cloudsVariant = season === 'spring' && weather === 'Clouds' ? 'spring-clouds' : 'default';
 
     return (
