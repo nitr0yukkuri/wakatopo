@@ -1,6 +1,9 @@
 name: Update Live Weather GIF
 
 on:
+  push:
+    branches:
+      - main
   schedule:
     - cron: '0 */3 * * *'
   workflow_dispatch:
@@ -47,15 +50,27 @@ jobs:
           ffmpeg -y -i "$WEBM_FILE" -ss 15 -t 5 -vf "setpts=1.25*PTS,fps=18,scale=720:-1:flags=lanczos,split[s0][s1];[s0]palettegen=stats_mode=diff[p];[s1][p]paletteuse=dither=sierra2_4a:diff_mode=rectangle" -loop 0 preview.gif
           rm -rf videos/
 
-      - name: Commit and Push
+      - name: Commit GIF to assets branch
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          ASSET_BRANCH="preview-assets"
+          TMP_DIR="$(mktemp -d)"
+          cp preview.gif "$TMP_DIR/preview.gif"
+
+          git fetch origin "$ASSET_BRANCH" || true
+          if git show-ref --verify --quiet "refs/remotes/origin/$ASSET_BRANCH"; then
+            git switch --force-create "$ASSET_BRANCH" "origin/$ASSET_BRANCH"
+          else
+            git switch --orphan "$ASSET_BRANCH"
+            git rm -rf . || true
+          fi
+
+          cp "$TMP_DIR/preview.gif" preview.gif
           git add preview.gif
           if git diff --cached --quiet; then
             echo "preview.gif is unchanged."
             exit 0
           fi
           git commit -m "chore: update live weather gif [skip ci]"
-          git pull --rebase origin main
-          git push
+          git push origin "$ASSET_BRANCH"
