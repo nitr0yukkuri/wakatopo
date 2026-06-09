@@ -11,8 +11,8 @@ const routes = [
     '/card',
 ];
 
-const iphone13 = { ...devices['iPhone 13'] };
-delete (iphone13 as typeof iphone13 & { defaultBrowserType?: unknown }).defaultBrowserType;
+const { defaultBrowserType, ...iphone13 } = devices['iPhone 13'];
+void defaultBrowserType;
 
 test.use(iphone13);
 

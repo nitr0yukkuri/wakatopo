@@ -172,7 +172,7 @@ export default function TopLeftMenu() {
         appendHistory({ tone: 'info', text: `$ ${command}` });
 
         if (command.toLowerCase() === 'help') {
-            appendHistory({ tone: 'info', text: 'Available: sudo make rain|snow|clouds|clear|thunder|night|spring|summer|autumn|winter|sakura|hanagumori|momiji|tsukimi|season-clear, help, exit' });
+            appendHistory({ tone: 'info', text: 'Available: sudo make rain|snow|clouds|clear|thunder|night|spring|summer|autumn|winter|sakura|hanagumori|momiji|tsukimi|yukigeshiki|season-clear, help, exit' });
             return;
         }
 
@@ -192,6 +192,7 @@ export default function TopLeftMenu() {
                 momizi: { season: 'autumn', weather: 'Clear' },
                 tsukimi: { season: 'autumn', weather: 'Night' },
                 tukimi: { season: 'autumn', weather: 'Night' },
+                yukigeshiki: { season: 'winter', weather: 'Snow' },
             };
             const seasonMap: Record<string, SeasonType> = {
                 spring: 'spring',
