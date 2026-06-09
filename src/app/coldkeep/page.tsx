@@ -476,7 +476,24 @@ export default function ColdKeepPage() {
             <div className="relative z-10 container mx-auto px-6 md:px-12 pt-40 pb-32 max-w-4xl">
                 {/* Hero */}
                 <motion.div className="mb-32 md:mb-48 text-center" style={{ y: yTransform, opacity: opacityTransform }}>
-                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1 }}>
+                    <motion.div className="relative isolate mx-auto max-w-3xl pt-8 pb-12" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1 }}>
+                        <div
+                            className="absolute inset-x-4 -top-10 bottom-0 -z-10 rounded-[45%] opacity-80"
+                            style={{
+                                background: 'radial-gradient(ellipse 34% 82% at 50% 48%, rgba(202,242,255,0.18) 0%, rgba(90,180,218,0.10) 36%, rgba(1,6,12,0) 72%)',
+                            }}
+                        />
+                        <div
+                            className="absolute left-1/2 top-6 -z-10 h-72 w-[52%] -translate-x-1/2 rounded-[50%] border-x border-cyan-100/10 opacity-70 blur-[0.2px]"
+                            style={{
+                                background: 'linear-gradient(90deg, rgba(255,255,255,0.0) 0%, rgba(210,244,255,0.06) 50%, rgba(255,255,255,0.0) 100%)',
+                            }}
+                        />
+                        <div className="absolute inset-x-[18%] bottom-0 -z-10 h-20 rounded-[50%] border border-cyan-100/18 bg-cyan-100/[0.035] shadow-[0_0_42px_rgba(165,243,252,0.14)]" />
+                        <div className="absolute inset-x-[24%] bottom-9 -z-10 h-px bg-gradient-to-r from-transparent via-cyan-100/45 to-transparent" />
+                        <div className="absolute left-[25%] bottom-4 -z-10 h-px w-[18%] rotate-[-8deg] bg-cyan-100/28" />
+                        <div className="absolute right-[27%] bottom-7 -z-10 h-px w-[14%] rotate-[10deg] bg-cyan-100/22" />
+
                         <span className="inline-block border border-[#38bdf8]/30 backdrop-blur-md bg-white/5 text-[#7dd3fc] px-4 py-1.5 rounded-full text-xs font-mono tracking-widest mb-10 shadow-[0_0_15px_rgba(56,189,248,0.3)]">
                             STATUS: R&amp;D PHASE
                         </span>
@@ -493,6 +510,10 @@ export default function ColdKeepPage() {
                         <p className="text-xl md:text-3xl font-light text-[#e0f2fe] tracking-widest">
                             AI Water Bottle Assistant
                         </p>
+                        <div className="mt-8 flex flex-wrap items-center justify-center gap-3 font-mono text-[9px] tracking-[0.24em] text-cyan-100/55">
+                            <span className="border border-cyan-100/15 bg-cyan-100/[0.03] px-3 py-1">THERMAL HOLD</span>
+                            <span className="border border-cyan-100/15 bg-cyan-100/[0.03] px-3 py-1">ICE PRESENCE</span>
+                        </div>
                     </motion.div>
                 </motion.div>
 

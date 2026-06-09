@@ -136,6 +136,18 @@ const AUTUMN_NIGHT_VISUAL: CoreVisualProfile = {
     innerOpacity: 0.16,
 };
 
+const WINTER_SNOW_VISUAL: CoreVisualProfile = {
+    ...CORE_VISUALS.Snow,
+    baseColor: '#c9eeff',
+    hoverColor: '#eefaff',
+    activeColor: '#ffffff',
+    meshOpacity: 0.18,
+    wireOpacity: 0.15,
+    innerOpacity: 0.075,
+    ringPulse: 0.44,
+    particleSize: 0.027,
+};
+
 export const getCoreVisualProfile = (weather: WeatherType, season: SeasonType): CoreVisualProfile => {
     const defaultVisual = CORE_VISUALS[weather] ?? CORE_VISUALS.Clear;
 
@@ -151,6 +163,8 @@ export const getCoreVisualProfile = (weather: WeatherType, season: SeasonType): 
             if (weather === 'Night') return AUTUMN_NIGHT_VISUAL;
             return defaultVisual;
         case 'winter':
+            if (weather === 'Snow') return WINTER_SNOW_VISUAL;
+            return defaultVisual;
         case 'none':
         default:
             return defaultVisual;

@@ -63,11 +63,25 @@ jobs:
             git switch --force-create "$ASSET_BRANCH" "origin/$ASSET_BRANCH"
           else
             git switch --orphan "$ASSET_BRANCH"
-            git rm -rf . || true
           fi
 
+          git rm -rf . || true
           cp "$TMP_DIR/preview.gif" preview.gif
+          cat > index.html <<'HTML'
+          <!doctype html>
+          <html lang="en">
+            <head>
+              <meta charset="utf-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1">
+              <title>Wakato Preview Assets</title>
+            </head>
+            <body>
+              <img src="./preview.gif" alt="Live Weather Preview">
+            </body>
+          </html>
+          HTML
           git add preview.gif
+          git add index.html
           if git diff --cached --quiet; then
             echo "preview.gif is unchanged."
             exit 0

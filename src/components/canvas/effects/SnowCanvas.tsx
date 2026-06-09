@@ -8,7 +8,9 @@ interface Flake {
     r: number; alpha: number; phase: number;
 }
 
-export default function SnowCanvas({ density = 1 }: { density?: number }) {
+type SnowVariant = 'default' | 'winter-snow';
+
+export default function SnowCanvas({ density = 1, variant = 'default' }: { density?: number; variant?: SnowVariant }) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
 
     useEffect(() => {
@@ -29,12 +31,18 @@ export default function SnowCanvas({ density = 1 }: { density?: number }) {
         resize();
         window.addEventListener('resize', resize);
 
+        const isWinterSnow = variant === 'winter-snow';
+
         // 3レイヤー: 遠景(小・薄)・中景・近景(大・濃)
-        const layers = [
+        const layers = (isWinterSnow ? [
+            { count: 95, rMin: 0.8, rMax: 1.8, vyMin: 0.24, vyMax: 0.72, alphaMax: 0.28, drift: 0.10 },
+            { count: 62, rMin: 1.2, rMax: 2.5, vyMin: 0.48, vyMax: 1.18, alphaMax: 0.38, drift: 0.14 },
+            { count: 36, rMin: 1.8, rMax: 3.2, vyMin: 0.75, vyMax: 1.55, alphaMax: 0.46, drift: 0.18 },
+        ] : [
             { count: 60, rMin: 1.0, rMax: 2.0, vyMin: 0.35, vyMax: 1.0, alphaMax: 0.30, drift: 0.18 },
             { count: 40, rMin: 1.6, rMax: 3.0, vyMin: 0.8, vyMax: 1.8, alphaMax: 0.42, drift: 0.24 },
             { count: 25, rMin: 2.2, rMax: 4.0, vyMin: 1.2, vyMax: 2.3, alphaMax: 0.55, drift: 0.30 },
-        ].map((layer) => ({ ...layer, count: Math.max(1, Math.round(layer.count * density)) }));
+        ]).map((layer) => ({ ...layer, count: Math.max(1, Math.round(layer.count * density)) }));
 
         const flakes: Flake[] = [];
         for (const l of layers) {
@@ -42,7 +50,7 @@ export default function SnowCanvas({ density = 1 }: { density?: number }) {
                 flakes.push({
                     x: Math.random() * window.innerWidth,
                     y: Math.random() * window.innerHeight,
-                    vx: (Math.random() - 0.5) * 0.3,
+                    vx: (Math.random() - 0.5) * (isWinterSnow ? 0.16 : 0.3),
                     vy: Math.random() * (l.vyMax - l.vyMin) + l.vyMin,
                     r: Math.random() * (l.rMax - l.rMin) + l.rMin,
                     alpha: Math.random() * l.alphaMax + 0.1,
@@ -83,6 +91,15 @@ export default function SnowCanvas({ density = 1 }: { density?: number }) {
             const h = window.innerHeight;
             ctx.clearRect(0, 0, w, h);
 
+            if (isWinterSnow) {
+                const air = ctx.createLinearGradient(0, 0, 0, h);
+                air.addColorStop(0, 'rgba(205, 234, 255, 0.055)');
+                air.addColorStop(0.48, 'rgba(226, 244, 255, 0.035)');
+                air.addColorStop(1, 'rgba(235, 249, 255, 0.075)');
+                ctx.fillStyle = air;
+                ctx.fillRect(0, 0, w, h);
+            }
+
             for (let i = 0; i < flakes.length; i++) {
                 const f = flakes[i];
                 const drift = driftMap[i];
@@ -98,12 +115,21 @@ export default function SnowCanvas({ density = 1 }: { density?: number }) {
                 ctx.drawImage(flakeCanvases[i], f.x - rOffset, f.y - rOffset);
             }
 
+            if (isWinterSnow) {
+                const haze = ctx.createLinearGradient(0, h * 0.62, 0, h);
+                haze.addColorStop(0, 'rgba(238, 249, 255, 0)');
+                haze.addColorStop(0.7, 'rgba(232, 247, 255, 0.08)');
+                haze.addColorStop(1, 'rgba(246, 252, 255, 0.16)');
+                ctx.fillStyle = haze;
+                ctx.fillRect(0, h * 0.62, w, h * 0.38);
+            }
+
             raf = requestAnimationFrame(draw);
         }
         draw();
 
         return () => { cancelAnimationFrame(raf); window.removeEventListener('resize', resize); };
-    }, [density]);
+    }, [density, variant]);
 
     return (
         <motion.div
