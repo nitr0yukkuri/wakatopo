@@ -154,13 +154,27 @@ export default function NightGlowOverlay({ variant = 'default' }: { variant?: Ni
         >
             {/* Moon */}
             <div
-                className="absolute right-[8%] top-[10%] w-20 h-20 md:w-28 md:h-28 rounded-full opacity-90"
+                className="absolute right-[8%] top-[10%] w-20 h-20 md:w-28 md:h-28 rounded-full opacity-90 overflow-hidden"
                 style={{ backgroundColor: moonBase, boxShadow: moonGlow }}
-            />
-            <div
-                className="absolute right-[6.4%] top-[8.8%] w-20 h-20 md:w-28 md:h-28 rounded-full opacity-95"
-                style={{ backgroundColor: moonShadow }}
-            />
+            >
+                {isAutumnNight && (
+                    <>
+                        <div className="absolute left-[50%] top-[18%] h-[28%] w-[10%] rotate-[54deg] rounded-full bg-[#7f6c50]/16 blur-[1px]" />
+                        <div className="absolute left-[59%] top-[20%] h-[26%] w-[9%] rotate-[76deg] rounded-full bg-[#7f6c50]/14 blur-[1px]" />
+                        <div className="absolute left-[44%] top-[34%] h-[18%] w-[22%] rotate-[-10deg] rounded-full bg-[#7f6c50]/16 blur-[1px]" />
+                        <div className="absolute left-[31%] top-[48%] h-[30%] w-[34%] rotate-[-18deg] rounded-full bg-[#7f6c50]/15 blur-[1px]" />
+                        <div className="absolute left-[47%] top-[54%] h-[9%] w-[24%] rotate-[38deg] rounded-full bg-[#7f6c50]/17 blur-[1px]" />
+                        <div className="absolute left-[60%] top-[65%] h-[22%] w-[24%] rotate-[10deg] rounded-sm bg-[#7f6c50]/13 blur-[1px]" />
+                        <div className="absolute left-[32%] top-[70%] h-[13%] w-[12%] rotate-[-18deg] rounded-full bg-[#7f6c50]/12 blur-[1px]" />
+                    </>
+                )}
+            </div>
+            {!isAutumnNight && (
+                <div
+                    className="absolute right-[6.4%] top-[8.8%] w-20 h-20 md:w-28 md:h-28 rounded-full opacity-95"
+                    style={{ backgroundColor: moonShadow }}
+                />
+            )}
 
             {/* 上部から深い紺色グラデーション */}
             <div

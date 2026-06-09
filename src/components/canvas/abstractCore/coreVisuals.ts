@@ -128,12 +128,12 @@ const AUTUMN_CLEAR_VISUAL: CoreVisualProfile = {
 
 const AUTUMN_NIGHT_VISUAL: CoreVisualProfile = {
     ...CORE_VISUALS.Night,
-    baseColor: '#1b2d68',
-    hoverColor: '#5f6f9e',
-    activeColor: '#d8bc7a',
-    meshOpacity: 0.25,
-    wireOpacity: 0.21,
-    innerOpacity: 0.12,
+    baseColor: '#334070',
+    hoverColor: '#d6c884',
+    activeColor: '#fff0b8',
+    meshOpacity: 0.26,
+    wireOpacity: 0.22,
+    innerOpacity: 0.13,
 };
 
 export const getCoreVisualProfile = (weather: WeatherType, season: SeasonType): CoreVisualProfile => {
