@@ -1,30 +1,37 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 
 type RainIntensity = 'default' | 'heavy';
 
+const RAIN_TILT_DEGREES = 10;
+const RAIN_FALL_DISTANCE_VH = 138;
+
+const seededRandom = (index: number, salt: number) => {
+    const x = Math.sin(index * 12.9898 + salt * 78.233) * 43758.5453;
+    return x - Math.floor(x);
+};
+
+const getPrefersLightRainMode = () => {
+    if (typeof window === 'undefined') return false;
+
+    const nav = navigator as Navigator & {
+        connection?: { saveData?: boolean };
+        deviceMemory?: number;
+        standalone?: boolean;
+    };
+
+    const isStandalonePwa = window.matchMedia('(display-mode: standalone)').matches || nav.standalone === true;
+    const saveData = nav.connection?.saveData === true;
+    const lowCore = typeof nav.hardwareConcurrency === 'number' && nav.hardwareConcurrency <= 4;
+    const lowMemory = typeof nav.deviceMemory === 'number' && nav.deviceMemory <= 4;
+
+    return isStandalonePwa || saveData || lowCore || lowMemory;
+};
+
 export function RainParticles({ intensity = 'default' }: { intensity?: RainIntensity }) {
-    const [mounted, setMounted] = useState(false);
-    const [isLightMode, setIsLightMode] = useState(false);
-
-    useEffect(() => {
-        setMounted(true);
-
-        const nav = navigator as Navigator & {
-            connection?: { saveData?: boolean };
-            deviceMemory?: number;
-            standalone?: boolean;
-        };
-
-        const isStandalonePwa = window.matchMedia('(display-mode: standalone)').matches || nav.standalone === true;
-        const saveData = nav.connection?.saveData === true;
-        const lowCore = typeof nav.hardwareConcurrency === 'number' && nav.hardwareConcurrency <= 4;
-        const lowMemory = typeof nav.deviceMemory === 'number' && nav.deviceMemory <= 4;
-
-        setIsLightMode(isStandalonePwa || saveData || lowCore || lowMemory);
-    }, []);
+    const [isLightMode] = useState(getPrefersLightRainMode);
 
     const drops = useMemo(() => {
         const heavy = intensity === 'heavy';
@@ -35,27 +42,29 @@ export function RainParticles({ intensity = 'default' }: { intensity?: RainInten
         const maxHeightAdd = heavy ? 28 : isLightMode ? 14 : 22;
         const minOpacity = heavy ? 0.24 : isLightMode ? 0.14 : 0.16;
         const maxOpacityAdd = heavy ? 0.34 : isLightMode ? 0.18 : 0.28;
-        const minDrift = heavy ? 18 : isLightMode ? 20 : 26;
-        const maxDriftAdd = heavy ? 36 : isLightMode ? 40 : 64;
+        const minDrift = heavy ? 6.6 : 6.2;
+        const maxDriftAdd = heavy ? 1.9 : 2.4;
         const minWidth = heavy ? 1.2 : isLightMode ? 0.9 : 1;
         const maxWidthAdd = heavy ? 1.8 : isLightMode ? 0.8 : 1.2;
 
-        return Array.from({ length: count }).map((_, i) => ({
-            id: i,
-            left: `${Math.random() * 100}%`,
-            delay: Math.random() * 1.2,
-            duration: baseDuration + Math.random() * maxDurationAdd,
-            height: minHeight + Math.random() * maxHeightAdd,
-            opacity: minOpacity + Math.random() * maxOpacityAdd,
-            drift: minDrift + Math.random() * maxDriftAdd,
-            width: minWidth + Math.random() * maxWidthAdd,
-        }));
+        return Array.from({ length: count }).map((_, i) => {
+            const random = (salt: number) => seededRandom(i, salt + (heavy ? 100 : 0) + (isLightMode ? 200 : 0));
+
+            return {
+                id: i,
+                left: `${random(1) * 100}%`,
+                delay: random(2) * 1.2,
+                duration: baseDuration + random(3) * maxDurationAdd,
+                height: minHeight + random(4) * maxHeightAdd,
+                opacity: minOpacity + random(5) * maxOpacityAdd,
+                drift: minDrift + random(6) * maxDriftAdd,
+                width: minWidth + random(7) * maxWidthAdd,
+            };
+        });
     }, [intensity, isLightMode]);
 
-    if (!mounted) return null;
-
     return (
-        <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
+        <div className="absolute inset-0 pointer-events-none overflow-hidden z-0" aria-hidden="true">
             {drops.map((drop) => (
                 <motion.div
                     key={drop.id}
@@ -67,13 +76,13 @@ export function RainParticles({ intensity = 'default' }: { intensity?: RainInten
                         top: '-24vh',
                         background: `linear-gradient(to bottom, rgba(240,247,255,0), rgba(220,235,255,${drop.opacity}), rgba(198,219,244,0))`,
                         filter: isLightMode ? 'none' : 'blur(0.3px)',
-                        rotate: '10deg',
+                        rotate: `${RAIN_TILT_DEGREES}deg`,
                         willChange: 'transform, opacity',
                     }}
                     initial={{ opacity: 0, y: '-8vh', x: 0 }}
                     animate={{
-                        y: '138vh',
-                        x: `${drop.drift}px`,
+                        y: `${RAIN_FALL_DISTANCE_VH}vh`,
+                        x: `${drop.drift}vh`,
                         opacity: [0, drop.opacity, drop.opacity * 0.9, 0],
                     }}
                     transition={{
@@ -118,7 +127,7 @@ export default function RainTransitionCanvas() {
                 animate={{ opacity: [0.1, 0.34, 0.28] }}
                 transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
             />
-            <RainParticles />
+            <RainParticles intensity="heavy" />
         </motion.div>
     );
 }

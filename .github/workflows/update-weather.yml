@@ -80,8 +80,23 @@ jobs:
             </body>
           </html>
           HTML
+          cat > package.json <<'JSON'
+          {
+            "private": true,
+            "scripts": {
+              "vercel-build": "mkdir -p public && cp preview.gif public/preview.gif && cp index.html public/index.html"
+            }
+          }
+          JSON
+          cat > vercel.json <<'JSON'
+          {
+            "outputDirectory": "public"
+          }
+          JSON
           git add preview.gif
           git add index.html
+          git add package.json
+          git add vercel.json
           if git diff --cached --quiet; then
             echo "preview.gif is unchanged."
             exit 0

@@ -59,7 +59,7 @@ export default function TopLeftMenu() {
         if (href === '/otenkigurashi') {
             setActiveWork('02');
             const currentWeather = useStore.getState().weather;
-            const otenkiHref = `/otenkigurashi?lang=${lang}&weather=Rain`;
+            const otenkiHref = `/otenkigurashi?lang=${lang}&weather=${encodeURIComponent(currentWeather)}`;
 
             if (currentWeather === 'Rain') {
                 setTransitionType('rain');
@@ -255,7 +255,7 @@ export default function TopLeftMenu() {
                 className="group inline-flex w-fit max-w-[92vw] items-center gap-2.5 rounded-lg border border-cyan-400/35 bg-[#05080d]/90 px-3 py-2 text-left transition-colors hover:border-cyan-300 sm:gap-3 sm:px-3.5 sm:py-2.5"
             >
                 <span className="text-white font-bold text-[11px] sm:text-sm tracking-[0.16em] sm:tracking-widest group-hover:text-cyan-300 transition-colors whitespace-nowrap">
-                    WAKATO <span className="text-cyan-500 group-hover:text-white transition-colors">//</span> PORTFOLIO
+                    WAKATO <span className="text-cyan-500 group-hover:text-white transition-colors">{'//'}</span> PORTFOLIO
                 </span>
                 <span
                     aria-hidden="true"
