@@ -145,6 +145,7 @@ export default function NightGlowOverlay({ variant = 'default' }: { variant?: Ni
     const lowerGlow = isAutumnNight
         ? 'radial-gradient(ellipse 120% 80% at 50% 120%, rgba(150,104,42,0.12) 0%, rgba(40,42,95,0.04) 42%, transparent 78%)'
         : 'radial-gradient(ellipse 120% 80% at 50% 120%, rgba(75,110,210,0.10) 0%, rgba(25,45,120,0.04) 42%, transparent 78%)';
+    const moonlightWash = 'radial-gradient(ellipse 82% 58% at 88% 12%, rgba(238,218,164,0.16) 0%, rgba(212,178,104,0.075) 34%, rgba(212,178,104,0) 72%), linear-gradient(150deg, rgba(238,220,170,0.075) 0%, rgba(210,176,108,0.035) 38%, transparent 72%)';
 
     return (
         <motion.div
@@ -173,6 +174,14 @@ export default function NightGlowOverlay({ variant = 'default' }: { variant?: Ni
                 <div
                     className="absolute right-[6.4%] top-[8.8%] w-20 h-20 md:w-28 md:h-28 rounded-full opacity-95"
                     style={{ backgroundColor: moonShadow }}
+                />
+            )}
+            {isAutumnNight && (
+                <motion.div
+                    className="absolute inset-0"
+                    style={{ background: moonlightWash }}
+                    animate={{ opacity: [0.68, 0.92, 0.74] }}
+                    transition={{ duration: 8.8, repeat: Infinity, ease: 'easeInOut' }}
                 />
             )}
 
