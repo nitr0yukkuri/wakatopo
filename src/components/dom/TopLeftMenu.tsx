@@ -172,7 +172,7 @@ export default function TopLeftMenu() {
         appendHistory({ tone: 'info', text: `$ ${command}` });
 
         if (command.toLowerCase() === 'help') {
-            appendHistory({ tone: 'info', text: 'Available: sudo make rain|snow|clouds|clear|thunder|night|spring|summer|autumn|winter|season-clear, help, exit' });
+            appendHistory({ tone: 'info', text: 'Available: sudo make rain|snow|clouds|clear|thunder|night|spring|summer|autumn|winter|sakura|hanagumori|momiji|tsukimi|season-clear, help, exit' });
             return;
         }
 
@@ -185,6 +185,14 @@ export default function TopLeftMenu() {
         const sudoMatch = command.match(/^sudo\s+make\s+([a-z-]+)$/i);
         if (sudoMatch) {
             const token = sudoMatch[1].toLowerCase();
+            const presetMap: Record<string, { season: SeasonType; weather: WeatherType }> = {
+                sakura: { season: 'spring', weather: 'Clear' },
+                hanagumori: { season: 'spring', weather: 'Clouds' },
+                momiji: { season: 'autumn', weather: 'Clear' },
+                momizi: { season: 'autumn', weather: 'Clear' },
+                tsukimi: { season: 'autumn', weather: 'Night' },
+                tukimi: { season: 'autumn', weather: 'Night' },
+            };
             const seasonMap: Record<string, SeasonType> = {
                 spring: 'spring',
                 summer: 'summer',
@@ -200,6 +208,14 @@ export default function TopLeftMenu() {
                 thunder: 'Thunder',
                 night: 'Night',
             };
+
+            const nextPreset = presetMap[token];
+            if (nextPreset) {
+                setSeason(nextPreset.season);
+                setWeather(nextPreset.weather);
+                appendHistory({ tone: 'ok', text: `[ok] preset switched to ${token.toUpperCase()}` });
+                return;
+            }
 
             const nextSeason = seasonMap[token];
             if (nextSeason) {
