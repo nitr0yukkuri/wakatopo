@@ -83,15 +83,16 @@ jobs:
           HTML
           cat > package.json <<'JSON'
           {
-            "private": true,
-            "scripts": {
-              "vercel-build": "mkdir -p public && cp preview.gif public/preview.gif && cp index.html public/index.html"
-            }
+            "private": true
           }
           JSON
           cat > vercel.json <<'JSON'
           {
-            "outputDirectory": "public"
+            "$schema": "https://openapi.vercel.sh/vercel.json",
+            "framework": null,
+            "installCommand": "",
+            "buildCommand": null,
+            "outputDirectory": "."
           }
           JSON
           git add preview.gif
