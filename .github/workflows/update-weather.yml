@@ -57,6 +57,7 @@ jobs:
           ASSET_BRANCH="preview-assets"
           TMP_DIR="$(mktemp -d)"
           cp preview.gif "$TMP_DIR/preview.gif"
+          rm -f preview.gif
 
           git fetch origin "$ASSET_BRANCH" || true
           if git show-ref --verify --quiet "refs/remotes/origin/$ASSET_BRANCH"; then
