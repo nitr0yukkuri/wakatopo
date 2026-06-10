@@ -1,6 +1,3 @@
 {
-  "private": true,
-  "scripts": {
-    "vercel-build": "mkdir -p public && cp preview.gif public/preview.gif && cp index.html public/index.html"
-  }
+  "private": true
 }
