@@ -4,11 +4,13 @@ import { motion } from 'framer-motion';
 
 interface Particle { x: number; y: number; vx: number; vy: number; r: number; life: number; phase: number; tone: number; }
 
-type SunraysVariant = 'default' | 'summer-clear' | 'spring-clear' | 'autumn-clear';
+type SunraysVariant = 'default' | 'summer-clear' | 'geshi-clear' | 'spring-clear' | 'autumn-clear';
 
 export default function SunraysCanvas({ variant = 'default' }: { variant?: SunraysVariant }) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const isSummerClear = variant === 'summer-clear';
+    const isGeshiClear = variant === 'geshi-clear';
+    const isHotClear = isSummerClear || isGeshiClear;
     const isSpringClear = variant === 'spring-clear';
     const isAutumnClear = variant === 'autumn-clear';
 
@@ -26,20 +28,20 @@ export default function SunraysCanvas({ variant = 'default' }: { variant?: Sunra
         window.addEventListener('resize', resize);
 
         // 浮遊ダスト粒子
-        const particles: Particle[] = Array.from({ length: isSummerClear ? 128 : isSpringClear ? 124 : isAutumnClear ? 128 : 90 }, () => ({
+        const particles: Particle[] = Array.from({ length: isHotClear ? 128 : isSpringClear ? 124 : isAutumnClear ? 128 : 90 }, () => ({
             x: Math.random() * window.innerWidth,
             y: Math.random() * window.innerHeight,
             vx: isSpringClear
                 ? Math.random() * 0.22 + 0.04
                 : isAutumnClear
                     ? Math.random() * 0.24 + 0.06
-                    : (Math.random() - 0.5) * (isSummerClear ? 0.42 : 0.25),
+                    : (Math.random() - 0.5) * (isHotClear ? 0.42 : 0.25),
             vy: isSpringClear
                 ? Math.random() * 0.34 + 0.16
                 : isAutumnClear
                     ? Math.random() * 0.28 + 0.1
-                    : -(Math.random() * (isSummerClear ? 0.58 : 0.45) + 0.08),
-            r: Math.random() * (isSummerClear ? 2.2 : isSpringClear ? 2.6 : isAutumnClear ? 2.6 : 1.8) + 0.3,
+                    : -(Math.random() * (isHotClear ? 0.58 : 0.45) + 0.08),
+            r: Math.random() * (isHotClear ? 2.2 : isSpringClear ? 2.6 : isAutumnClear ? 2.6 : 1.8) + 0.3,
             life: Math.random(),
             phase: Math.random() * Math.PI * 2,
             tone: Math.random(),
@@ -55,10 +57,15 @@ export default function SunraysCanvas({ variant = 'default' }: { variant?: Sunra
             const sunX = w * 0.88;
             const sunY = h * 0.08;
             const sunR = Math.max(34, Math.min(w, h) * 0.055);
-            const sunAuraScale = isSummerClear ? 3.45 : isSpringClear ? 2.75 : isAutumnClear ? 2.75 : 2.65;
+            const sunAuraScale = isGeshiClear ? 3.85 : isSummerClear ? 3.45 : isSpringClear ? 2.75 : isAutumnClear ? 2.75 : 2.65;
 
             const sunAura = ctx.createRadialGradient(sunX, sunY, sunR * 0.16, sunX, sunY, sunR * sunAuraScale);
-            if (isSummerClear) {
+            if (isGeshiClear) {
+                sunAura.addColorStop(0, 'rgba(255,255,255,0.68)');
+                sunAura.addColorStop(0.22, 'rgba(255,244,188,0.3)');
+                sunAura.addColorStop(0.58, 'rgba(255,226,126,0.13)');
+                sunAura.addColorStop(1, 'rgba(255,226,126,0)');
+            } else if (isSummerClear) {
                 sunAura.addColorStop(0, 'rgba(255,255,255,0.62)');
                 sunAura.addColorStop(0.24, 'rgba(255,238,168,0.28)');
                 sunAura.addColorStop(0.58, 'rgba(68,176,255,0.19)');
@@ -84,7 +91,11 @@ export default function SunraysCanvas({ variant = 'default' }: { variant?: Sunra
             ctx.fill();
 
             const sunBody = ctx.createRadialGradient(sunX - sunR * 0.2, sunY - sunR * 0.2, sunR * 0.18, sunX, sunY, sunR);
-            if (isSummerClear) {
+            if (isGeshiClear) {
+                sunBody.addColorStop(0, 'rgba(255,255,255,1)');
+                sunBody.addColorStop(0.46, 'rgba(255,254,240,0.99)');
+                sunBody.addColorStop(1, 'rgba(255,235,152,0.92)');
+            } else if (isSummerClear) {
                 sunBody.addColorStop(0, 'rgba(255,255,255,1)');
                 sunBody.addColorStop(0.5, 'rgba(255,253,238,0.99)');
                 sunBody.addColorStop(1, 'rgba(255,232,156,0.9)');
@@ -123,7 +134,7 @@ export default function SunraysCanvas({ variant = 'default' }: { variant?: Sunra
                 if (isSpringClear && (p.y > canvas.height + 8 || p.x > canvas.width + 8)) { p.y = -8; p.x = Math.random() * canvas.width; }
                 if (isAutumnClear && (p.y > canvas.height + 8 || p.x > canvas.width + 8)) { p.y = -8; p.x = Math.random() * canvas.width; }
                 if (!isSpringClear && !isAutumnClear && p.y < -5) { p.y = canvas.height + 5; }
-                const a = Math.sin(p.life * Math.PI) * (isSummerClear ? 0.52 : isSpringClear ? 0.36 : isAutumnClear ? 0.38 : 0.42);
+                const a = Math.sin(p.life * Math.PI) * (isHotClear ? 0.52 : isSpringClear ? 0.36 : isAutumnClear ? 0.38 : 0.42);
                 if (isSpringClear) {
                     ctx.save();
                     ctx.translate(p.x, p.y);
@@ -165,9 +176,11 @@ export default function SunraysCanvas({ variant = 'default' }: { variant?: Sunra
                 } else {
                     ctx.beginPath();
                     ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-                    ctx.fillStyle = isSummerClear
-                        ? `rgba(248,253,255,${a * 0.76})`
-                        : `rgba(255,244,216,${a * 0.82})`;
+                    ctx.fillStyle = isGeshiClear
+                        ? `rgba(236,250,255,${a * 0.68})`
+                        : isSummerClear
+                            ? `rgba(248,253,255,${a * 0.76})`
+                            : `rgba(255,244,216,${a * 0.82})`;
                     ctx.fill();
                 }
             }
@@ -177,23 +190,29 @@ export default function SunraysCanvas({ variant = 'default' }: { variant?: Sunra
         draw();
 
         return () => { cancelAnimationFrame(raf); window.removeEventListener('resize', resize); };
-    }, [variant]);
+    }, [isAutumnClear, isGeshiClear, isHotClear, isSpringClear, isSummerClear]);
 
-    const baseGlow = isSummerClear
+    const baseGlow = isGeshiClear
+        ? 'radial-gradient(ellipse 70% 54% at 86% -10%, rgba(255,246,192,0.18) 0%, rgba(118,202,255,0.13) 30%, rgba(43,154,240,0.14) 54%, transparent 78%)'
+        : isSummerClear
         ? 'radial-gradient(ellipse 66% 54% at 86% -10%, rgba(84,183,255,0.22) 0%, rgba(255,230,156,0.08) 24%, rgba(40,153,238,0.11) 44%, transparent 74%)'
         : isSpringClear
             ? 'radial-gradient(ellipse 62% 50% at 86% -10%, rgba(255,232,214,0.2) 0%, rgba(255,196,214,0.12) 34%, transparent 72%)'
         : isAutumnClear
             ? 'radial-gradient(ellipse 62% 50% at 86% -10%, rgba(255,238,172,0.16) 0%, rgba(218,184,94,0.08) 38%, transparent 74%)'
         : 'radial-gradient(ellipse 62% 50% at 86% -10%, rgba(255,228,172,0.18) 0%, rgba(255,205,150,0.08) 38%, transparent 72%)';
-    const pulseGlow = isSummerClear
+    const pulseGlow = isGeshiClear
+        ? 'radial-gradient(ellipse 62% 48% at 86% -14%, rgba(255,252,224,0.16) 0%, rgba(105,199,255,0.13) 44%, transparent 76%)'
+        : isSummerClear
         ? 'radial-gradient(ellipse 58% 46% at 86% -14%, rgba(255,248,216,0.18) 0%, rgba(91,195,255,0.12) 44%, transparent 76%)'
         : isSpringClear
             ? 'radial-gradient(ellipse 58% 46% at 86% -14%, rgba(255,244,228,0.16) 0%, rgba(255,190,210,0.1) 44%, transparent 76%)'
         : isAutumnClear
             ? 'radial-gradient(ellipse 58% 46% at 86% -14%, rgba(255,242,190,0.12) 0%, rgba(214,178,88,0.075) 46%, transparent 76%)'
         : 'radial-gradient(ellipse 56% 44% at 86% -14%, rgba(255,236,188,0.16) 0%, rgba(255,214,160,0.06) 44%, transparent 76%)';
-    const wash = isSummerClear
+    const wash = isGeshiClear
+        ? 'linear-gradient(to bottom, rgba(56,166,245,0.12) 0%, rgba(118,205,255,0.065) 36%, transparent 74%)'
+        : isSummerClear
         ? 'linear-gradient(to bottom, rgba(39,157,245,0.11) 0%, rgba(98,192,255,0.055) 34%, transparent 72%)'
         : isSpringClear
             ? 'linear-gradient(to bottom, rgba(255,215,225,0.07) 0%, rgba(255,236,216,0.035) 34%, transparent 72%)'
@@ -201,6 +220,7 @@ export default function SunraysCanvas({ variant = 'default' }: { variant?: Sunra
             ? 'linear-gradient(to bottom, rgba(214,178,86,0.052) 0%, rgba(238,214,140,0.028) 36%, transparent 74%)'
         : 'linear-gradient(to bottom, rgba(255,222,180,0.07) 0%, rgba(255,215,170,0.03) 34%, transparent 72%)';
     const summerAtmosphere = 'radial-gradient(ellipse 78% 46% at 48% 4%, rgba(90,184,255,0.14) 0%, rgba(92,177,235,0.08) 42%, rgba(92,177,235,0) 72%), linear-gradient(to bottom, rgba(71,165,235,0.08) 0%, rgba(71,165,235,0.03) 38%, transparent 66%)';
+    const geshiAtmosphere = 'radial-gradient(ellipse 82% 48% at 48% 4%, rgba(98,196,255,0.16) 0%, rgba(72,174,245,0.095) 44%, rgba(72,174,245,0) 74%), linear-gradient(to bottom, rgba(54,163,240,0.09) 0%, rgba(118,205,255,0.045) 42%, transparent 70%)';
     const springGroundHaze = 'radial-gradient(ellipse 78% 34% at 50% 100%, rgba(255,236,242,0.18) 0%, rgba(255,198,218,0.12) 32%, rgba(255,244,236,0.07) 58%, transparent 82%), linear-gradient(to top, rgba(255,216,228,0.09) 0%, rgba(255,239,232,0.045) 38%, transparent 76%)';
     const autumnGroundHaze = 'radial-gradient(ellipse 78% 32% at 50% 100%, rgba(232,202,112,0.12) 0%, rgba(196,151,74,0.07) 34%, rgba(248,226,154,0.045) 60%, transparent 84%), linear-gradient(to top, rgba(199,157,78,0.06) 0%, rgba(238,213,139,0.028) 40%, transparent 78%)';
 
@@ -211,10 +231,10 @@ export default function SunraysCanvas({ variant = 'default' }: { variant?: Sunra
             transition={{ duration: 2 }}
         >
             {/* 朝日のやわらかい暖色グロー */}
-            {isSummerClear && (
+            {isHotClear && (
                 <div
                     className="absolute inset-0"
-                    style={{ background: summerAtmosphere }}
+                    style={{ background: isGeshiClear ? geshiAtmosphere : summerAtmosphere }}
                 />
             )}
             <div
@@ -231,6 +251,36 @@ export default function SunraysCanvas({ variant = 'default' }: { variant?: Sunra
                 className="absolute inset-0"
                 style={{ background: wash }}
             />
+            {isGeshiClear && (
+                <>
+                    <motion.div
+                        className="absolute left-[13%] top-[8%] h-[28%] w-[70%] rounded-[50%] border-t border-yellow-100/30"
+                        style={{
+                            transform: 'rotate(-7deg)',
+                            maskImage: 'linear-gradient(to right, transparent 0%, black 18%, black 82%, transparent 100%)',
+                            WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 18%, black 82%, transparent 100%)',
+                        }}
+                        animate={{ opacity: [0.28, 0.42, 0.3] }}
+                        transition={{ duration: 7.6, repeat: Infinity, ease: 'easeInOut' }}
+                    />
+                    {[0, 1, 2].map((index) => (
+                        <motion.div
+                            key={`geshi-heat-${index}`}
+                            className="absolute left-[-8%] h-[8%] w-[116%] blur-md"
+                            style={{
+                                bottom: `${12 + index * 8}%`,
+                                background: 'linear-gradient(90deg, transparent 0%, rgba(138,215,255,0.052) 18%, rgba(245,252,255,0.074) 46%, rgba(104,190,255,0.046) 70%, transparent 100%)',
+                            }}
+                            animate={{
+                                x: index % 2 === 0 ? ['-1.2%', '1.4%', '-0.8%'] : ['1.1%', '-1.3%', '0.9%'],
+                                opacity: index === 1 ? [0.34, 0.52, 0.38] : [0.24, 0.42, 0.28],
+                                scaleY: [0.88, 1.12, 0.94],
+                            }}
+                            transition={{ duration: 5.8 + index * 0.9, repeat: Infinity, ease: 'easeInOut' }}
+                        />
+                    ))}
+                </>
+            )}
             {isSpringClear && (
                 <motion.div
                     className="absolute inset-x-0 bottom-0 h-[32%]"

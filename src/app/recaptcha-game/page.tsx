@@ -4,7 +4,7 @@ import React from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useStore } from '@/store';
 import Image from 'next/image';
-import GameboyCursor from '@/components/dom/GameboyCursor';
+import CrosshairCursor from '@/components/dom/CrosshairCursor';
 import { motion } from 'framer-motion';
 
 export const dynamic = 'force-dynamic';
@@ -54,7 +54,7 @@ export default function RecaptchaGamePage() {
 
     return (
         <main className="relative min-h-[100dvh] overflow-x-hidden bg-[#02050c] text-white">
-            <GameboyCursor />
+            <CrosshairCursor />
             <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_50%_18%,rgba(34,211,238,0.16),transparent_34%),radial-gradient(ellipse_at_18%_54%,rgba(14,165,233,0.24),transparent_36%),radial-gradient(ellipse_at_82%_54%,rgba(244,63,94,0.18),transparent_34%),linear-gradient(180deg,#02050c_0%,#040918_44%,#02040a_100%)]" />
             <div className="pointer-events-none absolute left-1/2 top-[17%] h-44 w-[min(72vw,620px)] -translate-x-1/2 rounded-[1.5rem] border border-cyan-100/15 bg-[#020916]/55 shadow-[0_0_70px_rgba(34,211,238,0.14)]" />
             <div className="pointer-events-none absolute left-1/2 top-[21%] h-px w-[min(64vw,520px)] -translate-x-1/2 bg-gradient-to-r from-transparent via-cyan-100/45 to-transparent" />

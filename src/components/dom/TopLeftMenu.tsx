@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
-import { useStore, type SeasonType, type WeatherType } from '@/store';
+import { useStore, type SeasonEventType, type SeasonType, type WeatherType } from '@/store';
 
 const MENU_COMMANDS = {
     ja: [
@@ -39,7 +39,7 @@ export default function TopLeftMenu() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const lang = searchParams.get('lang') === 'en' ? 'en' : 'ja';
-    const { setActiveWork, setTransitionType, setWeather, setSeason } = useStore();
+    const { setActiveWork, setTransitionType, setWeather, setSeason, setSeasonEvent } = useStore();
     const commands = MENU_COMMANDS[lang];
     const withLang = (href: string) => `${href}?lang=${lang}`;
 
@@ -185,11 +185,11 @@ export default function TopLeftMenu() {
         const sudoMatch = command.match(/^sudo\s+make\s+([a-z-]+)$/i);
         if (sudoMatch) {
             const token = sudoMatch[1].toLowerCase();
-            const presetMap: Record<string, { season: SeasonType; weather: WeatherType }> = {
+            const presetMap: Record<string, { season: SeasonType; weather: WeatherType; seasonEvent?: SeasonEventType }> = {
                 sakura: { season: 'spring', weather: 'Clear' },
                 hanagumori: { season: 'spring', weather: 'Clouds' },
-                geshi: { season: 'summer', weather: 'Clear' },
-                gesi: { season: 'summer', weather: 'Clear' },
+                geshi: { season: 'summer', weather: 'Clear', seasonEvent: 'geshi' },
+                gesi: { season: 'summer', weather: 'Clear', seasonEvent: 'geshi' },
                 momiji: { season: 'autumn', weather: 'Clear' },
                 momizi: { season: 'autumn', weather: 'Clear' },
                 tsukimi: { season: 'autumn', weather: 'Night' },
@@ -215,6 +215,7 @@ export default function TopLeftMenu() {
             const nextPreset = presetMap[token];
             if (nextPreset) {
                 setSeason(nextPreset.season);
+                setSeasonEvent(nextPreset.seasonEvent ?? 'none');
                 setWeather(nextPreset.weather);
                 appendHistory({ tone: 'ok', text: `[ok] preset switched to ${token.toUpperCase()}` });
                 return;
@@ -223,6 +224,7 @@ export default function TopLeftMenu() {
             const nextSeason = seasonMap[token];
             if (nextSeason) {
                 setSeason(nextSeason);
+                setSeasonEvent('none');
                 appendHistory({ tone: 'ok', text: `[ok] season switched to ${nextSeason.toUpperCase()}` });
                 return;
             }
@@ -234,6 +236,7 @@ export default function TopLeftMenu() {
             }
 
             setWeather(nextWeather);
+            setSeasonEvent('none');
             appendHistory({ tone: 'ok', text: `[ok] weather switched to ${nextWeather.toUpperCase()}` });
             return;
         }
