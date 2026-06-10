@@ -55,20 +55,38 @@ export default function RecaptchaGamePage() {
     return (
         <main className="relative min-h-[100dvh] overflow-x-hidden bg-[#02050c] text-white">
             <GameboyCursor />
-            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_20%,rgba(59,130,246,0.2),transparent_33%),radial-gradient(circle_at_82%_12%,rgba(56,189,248,0.15),transparent_30%),radial-gradient(circle_at_50%_85%,rgba(14,165,233,0.2),transparent_40%)]" />
+            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_50%_18%,rgba(34,211,238,0.16),transparent_34%),radial-gradient(ellipse_at_18%_54%,rgba(14,165,233,0.24),transparent_36%),radial-gradient(ellipse_at_82%_54%,rgba(244,63,94,0.18),transparent_34%),linear-gradient(180deg,#02050c_0%,#040918_44%,#02040a_100%)]" />
+            <div className="pointer-events-none absolute left-1/2 top-[17%] h-44 w-[min(72vw,620px)] -translate-x-1/2 rounded-[1.5rem] border border-cyan-100/15 bg-[#020916]/55 shadow-[0_0_70px_rgba(34,211,238,0.14)]" />
+            <div className="pointer-events-none absolute left-1/2 top-[21%] h-px w-[min(64vw,520px)] -translate-x-1/2 bg-gradient-to-r from-transparent via-cyan-100/45 to-transparent" />
+            <div className="pointer-events-none absolute left-1/2 top-[25%] h-14 w-[min(36vw,260px)] -translate-x-1/2 rounded-full bg-cyan-100/10 blur-2xl" />
+            <div className="pointer-events-none absolute left-1/2 top-[24%] -translate-x-1/2 font-mono text-[clamp(3rem,10vw,8rem)] font-black tracking-[0.08em] text-white/[0.035]">
+                VS
+            </div>
+            <div className="pointer-events-none absolute left-0 top-0 h-full w-[48%] bg-[radial-gradient(ellipse_at_0%_54%,rgba(34,211,238,0.24),transparent_58%)]" />
+            <div className="pointer-events-none absolute right-0 top-0 h-full w-[48%] bg-[radial-gradient(ellipse_at_100%_54%,rgba(244,63,94,0.18),transparent_58%)]" />
             <motion.div
-                className="pointer-events-none absolute inset-0 opacity-20 [background:linear-gradient(rgba(125,211,252,0.15)_1px,transparent_1px),linear-gradient(90deg,rgba(125,211,252,0.1)_1px,transparent_1px)] [background-size:40px_40px]"
-                animate={{ backgroundPosition: ['0px 0px', '0px 40px'] }}
-                transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
+                className="pointer-events-none absolute left-1/2 bottom-[-20%] h-[58%] w-[140%] -translate-x-1/2 origin-bottom opacity-45"
+                style={{
+                    transform: 'translateX(-50%) perspective(760px) rotateX(62deg)',
+                    backgroundImage: 'linear-gradient(rgba(125,211,252,0.22) 1px, transparent 1px), linear-gradient(90deg, rgba(125,211,252,0.16) 1px, transparent 1px)',
+                    backgroundSize: '64px 38px',
+                    maskImage: 'linear-gradient(to top, rgba(0,0,0,0.95), rgba(0,0,0,0.62) 45%, transparent 100%)',
+                }}
+                animate={{ backgroundPosition: ['0px 0px', '0px 38px'] }}
+                transition={{ duration: 1.8, repeat: Infinity, ease: 'linear' }}
             />
-            <div className="pointer-events-none absolute inset-0 opacity-20 [background:repeating-linear-gradient(0deg,rgba(255,255,255,0.06)_0px,rgba(255,255,255,0.06)_1px,transparent_1px,transparent_3px)]" />
-            <div className="pointer-events-none absolute -top-44 left-1/2 h-[700px] w-[700px] -translate-x-1/2 rounded-full border border-cyan-300/20" />
-            <div className="pointer-events-none absolute -top-28 left-1/2 h-[480px] w-[480px] -translate-x-1/2 rounded-full border border-sky-300/15" />
-
-            <div className="pointer-events-none absolute top-[18%] left-[8%] hidden h-36 w-56 rounded-xl border border-cyan-200/20 bg-[#031123]/45 md:block" />
-            <div className="pointer-events-none absolute top-[24%] left-[10%] hidden h-[1px] w-40 bg-cyan-300/40 md:block" />
-            <div className="pointer-events-none absolute top-[22%] right-[8%] hidden h-44 w-64 rounded-xl border border-sky-200/20 bg-[#030d1c]/45 md:block" />
-            <div className="pointer-events-none absolute bottom-[14%] right-[10%] hidden h-28 w-48 rounded-xl border border-blue-200/20 bg-[#020a17]/50 md:block" />
+            <motion.div
+                className="pointer-events-none absolute left-[8%] top-[28%] hidden h-32 w-44 rounded-lg border border-cyan-200/20 bg-[#031123]/40 shadow-[0_0_34px_rgba(34,211,238,0.10)] md:block"
+                animate={{ y: [0, -6, 0], opacity: [0.42, 0.66, 0.42] }}
+                transition={{ duration: 3.2, repeat: Infinity, ease: 'easeInOut' }}
+            />
+            <motion.div
+                className="pointer-events-none absolute right-[9%] top-[30%] hidden h-36 w-48 rounded-lg border border-rose-200/20 bg-[#160814]/35 shadow-[0_0_34px_rgba(244,63,94,0.10)] md:block"
+                animate={{ y: [0, 7, 0], opacity: [0.36, 0.58, 0.36] }}
+                transition={{ duration: 3.4, repeat: Infinity, ease: 'easeInOut' }}
+            />
+            <div className="pointer-events-none absolute inset-0 opacity-[0.14] [background:repeating-linear-gradient(0deg,rgba(255,255,255,0.09)_0px,rgba(255,255,255,0.09)_1px,transparent_1px,transparent_4px)]" />
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[38%] bg-gradient-to-t from-black via-[#02040a]/78 to-transparent" />
 
             <nav className="fixed top-0 left-0 w-full z-50 px-5 py-5 md:px-10 md:py-8 border-b border-cyan-400/20 bg-[#030711]/60 backdrop-blur-xl">
                 <div className="mx-auto max-w-6xl flex items-center justify-between gap-4">
