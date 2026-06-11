@@ -28,7 +28,7 @@ export default function SunraysCanvas({ variant = 'default' }: { variant?: Sunra
         window.addEventListener('resize', resize);
 
         // 浮遊ダスト粒子
-        const particles: Particle[] = Array.from({ length: isGeshiClear ? 0 : isHotClear ? 128 : isSpringClear ? 124 : isAutumnClear ? 128 : 90 }, () => ({
+        const particles: Particle[] = Array.from({ length: isHotClear ? 128 : isSpringClear ? 124 : isAutumnClear ? 128 : 90 }, () => ({
             x: Math.random() * window.innerWidth,
             y: Math.random() * window.innerHeight,
             vx: isSpringClear
@@ -221,8 +221,6 @@ export default function SunraysCanvas({ variant = 'default' }: { variant?: Sunra
         : 'linear-gradient(to bottom, rgba(255,222,180,0.07) 0%, rgba(255,215,170,0.03) 34%, transparent 72%)';
     const summerAtmosphere = 'radial-gradient(ellipse 78% 46% at 48% 4%, rgba(90,184,255,0.14) 0%, rgba(92,177,235,0.08) 42%, rgba(92,177,235,0) 72%), linear-gradient(to bottom, rgba(71,165,235,0.08) 0%, rgba(71,165,235,0.03) 38%, transparent 66%)';
     const geshiAtmosphere = 'radial-gradient(ellipse 82% 48% at 48% 4%, rgba(98,196,255,0.16) 0%, rgba(72,174,245,0.095) 44%, rgba(72,174,245,0) 74%), linear-gradient(to bottom, rgba(54,163,240,0.09) 0%, rgba(118,205,255,0.045) 42%, transparent 70%)';
-    const geshiFarHaze = 'linear-gradient(90deg, transparent 0%, rgba(245,252,255,0.032) 18%, rgba(150,220,255,0.044) 46%, rgba(245,252,255,0.028) 72%, transparent 100%)';
-    const geshiSunHaze = 'radial-gradient(ellipse at center, rgba(255,255,255,0.036) 0%, rgba(168,226,255,0.052) 36%, rgba(168,226,255,0.018) 62%, transparent 78%)';
     const springGroundHaze = 'radial-gradient(ellipse 78% 34% at 50% 100%, rgba(255,236,242,0.18) 0%, rgba(255,198,218,0.12) 32%, rgba(255,244,236,0.07) 58%, transparent 82%), linear-gradient(to top, rgba(255,216,228,0.09) 0%, rgba(255,239,232,0.045) 38%, transparent 76%)';
     const autumnGroundHaze = 'radial-gradient(ellipse 78% 32% at 50% 100%, rgba(232,202,112,0.12) 0%, rgba(196,151,74,0.07) 34%, rgba(248,226,154,0.045) 60%, transparent 84%), linear-gradient(to top, rgba(199,157,78,0.06) 0%, rgba(238,213,139,0.028) 40%, transparent 78%)';
 
@@ -256,55 +254,29 @@ export default function SunraysCanvas({ variant = 'default' }: { variant?: Sunra
             {isGeshiClear && (
                 <>
                     <motion.div
-                        className="absolute left-[18%] top-[14%] h-[18%] w-[58%] rounded-[50%] border-t border-sky-100/20"
+                        className="absolute left-[13%] top-[8%] h-[28%] w-[70%] rounded-[50%] border-t border-yellow-100/30"
                         style={{
-                            transform: 'rotate(-5deg)',
+                            transform: 'rotate(-7deg)',
                             maskImage: 'linear-gradient(to right, transparent 0%, black 18%, black 82%, transparent 100%)',
                             WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 18%, black 82%, transparent 100%)',
                         }}
-                        animate={{ opacity: [0.16, 0.3, 0.18] }}
-                        transition={{ duration: 8.4, repeat: Infinity, ease: 'easeInOut' }}
+                        animate={{ opacity: [0.28, 0.42, 0.3] }}
+                        transition={{ duration: 7.6, repeat: Infinity, ease: 'easeInOut' }}
                     />
                     {[0, 1, 2].map((index) => (
                         <motion.div
-                            key={`geshi-far-haze-${index}`}
-                            className="absolute left-[10%] h-[5%] w-[74%] blur-sm"
+                            key={`geshi-heat-${index}`}
+                            className="absolute left-[-8%] h-[8%] w-[116%] blur-md"
                             style={{
-                                top: `${30 + index * 7}%`,
-                                background: geshiFarHaze,
-                                backdropFilter: 'blur(1.6px)',
-                                WebkitBackdropFilter: 'blur(1.6px)',
-                                maskImage: 'linear-gradient(90deg, transparent 0%, black 22%, black 76%, transparent 100%)',
-                                WebkitMaskImage: 'linear-gradient(90deg, transparent 0%, black 22%, black 76%, transparent 100%)',
+                                bottom: `${12 + index * 8}%`,
+                                background: 'linear-gradient(90deg, transparent 0%, rgba(138,215,255,0.052) 18%, rgba(245,252,255,0.074) 46%, rgba(104,190,255,0.046) 70%, transparent 100%)',
                             }}
                             animate={{
-                                x: index % 2 === 0 ? ['-0.7%', '0.9%', '-0.45%'] : ['0.6%', '-0.8%', '0.5%'],
-                                opacity: index === 1 ? [0.16, 0.28, 0.18] : [0.1, 0.22, 0.13],
-                                scaleY: [0.82, 1.18, 0.9],
+                                x: index % 2 === 0 ? ['-1.2%', '1.4%', '-0.8%'] : ['1.1%', '-1.3%', '0.9%'],
+                                opacity: index === 1 ? [0.34, 0.52, 0.38] : [0.24, 0.42, 0.28],
+                                scaleY: [0.88, 1.12, 0.94],
                             }}
-                            transition={{ duration: 7.2 + index * 1.15, repeat: Infinity, ease: 'easeInOut' }}
-                        />
-                    ))}
-                    {[0, 1].map((index) => (
-                        <motion.div
-                            key={`geshi-sun-haze-${index}`}
-                            className="absolute rounded-full blur-sm"
-                            style={{
-                                right: `${3.8 + index * 2.6}%`,
-                                top: `${1.4 + index * 2.4}%`,
-                                width: `${18 - index * 3}%`,
-                                height: `${18 - index * 3}%`,
-                                background: geshiSunHaze,
-                                backdropFilter: 'blur(1.4px)',
-                                WebkitBackdropFilter: 'blur(1.4px)',
-                            }}
-                            animate={{
-                                x: index === 0 ? ['-0.4%', '0.65%', '-0.28%'] : ['0.5%', '-0.55%', '0.35%'],
-                                y: index === 0 ? ['0%', '0.35%', '-0.15%'] : ['0.2%', '-0.25%', '0.1%'],
-                                opacity: index === 0 ? [0.18, 0.34, 0.2] : [0.12, 0.26, 0.15],
-                                scaleX: [0.96, 1.04, 0.98],
-                            }}
-                            transition={{ duration: 6.8 + index * 1.1, repeat: Infinity, ease: 'easeInOut' }}
+                            transition={{ duration: 5.8 + index * 0.9, repeat: Infinity, ease: 'easeInOut' }}
                         />
                     ))}
                 </>
