@@ -116,13 +116,13 @@ function FishCursor() {
 
         // ── Drawing helpers ──────────────────────────────────────────────────
         const drawClownfish = (t: number, mouthOpen: boolean) => {
-            const SCALE = 1.5; const S = SCALE;
+            const SCALE = 1.45; const S = SCALE;
             const swingAmp = Math.max(0.18, Math.min(0.9, Math.hypot(s.vx, s.vy) * 0.04));
             const tailSwing = Math.sin(t * 7.0 + s.phase) * swingAmp;
             const bodyBend = Math.sin(t * 7.0 + s.phase + 0.8) * swingAmp * 0.35;
 
             ctx.save();
-            const tailAngle = tailSwing * 1.4; const tailLength = 13 * S; const tailRoot = -11 * S;
+            const tailAngle = tailSwing * 1.4; const tailLength = 12.1 * S; const tailRoot = -10.2 * S;
             ctx.save();
             ctx.rotate(bodyBend * 0.6);
             ctx.beginPath(); ctx.moveTo(tailRoot, 0);
@@ -136,7 +136,7 @@ function FishCursor() {
             ctx.restore();
 
             ctx.save(); ctx.rotate(bodyBend);
-            const bx = 0, by = 0; const rx = 13 * S, ry = 8 * S;
+            const bx = 0, by = 0; const rx = 11.4 * S, ry = 8.9 * S;
             const bodyGrad = ctx.createRadialGradient(-2*S, -3*S, 1, bx, by, rx);
             bodyGrad.addColorStop(0, '#FFB347'); bodyGrad.addColorStop(0.55, '#FF8C1A'); bodyGrad.addColorStop(1, '#C46200');
             ctx.beginPath(); ctx.ellipse(bx, by, rx, ry, 0, 0, Math.PI * 2);
@@ -147,11 +147,11 @@ function FishCursor() {
             ctx.fillStyle = 'rgba(255,255,255,0.68)'; ctx.beginPath(); ctx.ellipse(5*S, by, 1.1*S, ry * 0.87, 0, 0, Math.PI * 2); ctx.fill();
             ctx.restore();
 
-            const eyeX = 9 * S; const eyeY = -2.5 * S;
-            ctx.beginPath(); ctx.arc(eyeX, eyeY, 2.6 * S, 0, Math.PI * 2); ctx.fillStyle = '#111'; ctx.fill();
+            const eyeX = 7.8 * S; const eyeY = -2.8 * S;
+            ctx.beginPath(); ctx.arc(eyeX, eyeY, 3.0 * S, 0, Math.PI * 2); ctx.fillStyle = '#111'; ctx.fill();
             ctx.beginPath(); ctx.arc(eyeX + 0.7*S, eyeY - 0.7*S, 0.8*S, 0, Math.PI * 2); ctx.fillStyle = 'white'; ctx.fill();
 
-            const mouthX = 13 * S; const mouthY = 1.5 * S;
+            const mouthX = 11.2 * S; const mouthY = 1.5 * S;
             if (mouthOpen) {
                 ctx.beginPath(); ctx.moveTo(mouthX, mouthY); ctx.lineTo(mouthX - 5*S, mouthY - 4*S); ctx.lineTo(mouthX - 5*S, mouthY + 4*S); ctx.closePath();
                 ctx.fillStyle = 'rgba(26,5,0,0.95)'; ctx.fill(); ctx.strokeStyle = 'rgba(13,5,0,0.8)'; ctx.lineWidth = 0.8; ctx.stroke();

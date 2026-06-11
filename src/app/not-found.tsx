@@ -4,8 +4,6 @@ export default function NotFound() {
     return (
         <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#050505] px-6 text-white font-mono">
             <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_42%,rgba(34,211,238,0.16),transparent_28%),radial-gradient(circle_at_50%_42%,rgba(255,255,255,0.08),transparent_9%)]" />
-            <div className="pointer-events-none absolute left-1/2 top-1/2 h-[58vmin] w-[58vmin] -translate-x-1/2 -translate-y-1/2 rounded-full border border-cyan-200/15" />
-            <div className="pointer-events-none absolute left-1/2 top-1/2 h-[74vmin] w-[74vmin] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/8" />
             <div className="pointer-events-none absolute inset-0 opacity-[0.12] [background-image:linear-gradient(rgba(255,255,255,0.12)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.12)_1px,transparent_1px)] [background-size:72px_72px]" />
 
             <section className="relative z-10 text-center">
