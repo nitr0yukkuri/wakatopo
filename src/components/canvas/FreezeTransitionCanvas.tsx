@@ -31,7 +31,7 @@ void main() {
 
     vAlpha = smoothstep(-80.0, -20.0, mvPosition.z) * (1.0 - smoothstep(-5.0, 5.0, mvPosition.z));
     vDepth = clamp((-mvPosition.z - 3.0) / 32.0, 0.0, 1.0);
-    gl_PointSize = scale * (280.0 / max(0.1, -mvPosition.z));
+    gl_PointSize = scale * (330.0 / max(0.1, -mvPosition.z));
     gl_Position = projectionMatrix * mvPosition;
 }
 `;
@@ -77,24 +77,34 @@ void main() {
 
     float edgeDist = 1.0 - smoothstep(-0.045, 0.004, d);
     float innerBevel = 1.0 - smoothstep(-0.035, 0.018, bevel);
-    float crackA = lineMask(uv, vec2(-0.20, -0.16), vec2(0.17, 0.12), 0.006);
-    float crackB = lineMask(uv, vec2(-0.16, 0.15), vec2(0.20, -0.06), 0.004);
-    float cracks = max(crackA * 0.42, crackB * 0.34);
+    float cloudyCore = 1.0 - smoothstep(0.12, 0.46, length(uv / halfSize));
+    float frostPatch = 1.0 - smoothstep(0.06, 0.30, length((uv - vec2(-0.035, 0.018)) / halfSize));
+    float bubbleA = 1.0 - smoothstep(0.020, 0.040, length(uv - vec2(-0.085 + vRotation.y * 0.055, 0.050)));
+    float bubbleB = 1.0 - smoothstep(0.014, 0.030, length(uv - vec2(0.072 - vRotation.x * 0.040, -0.055)));
+    float bubbleC = 1.0 - smoothstep(0.010, 0.023, length(uv - vec2(0.015, 0.088 - vRotation.y * 0.035)));
+    float bubbles = bubbleA * 0.34 + bubbleB * 0.25 + bubbleC * 0.18;
+    float softLayerA = lineMask(uv, vec2(-0.18, -0.06), vec2(0.16, 0.07), 0.004);
+    float softLayerB = lineMask(uv, vec2(-0.14, 0.09), vec2(0.18, -0.02), 0.003);
+    float internalLayers = max(softLayerA * 0.16, softLayerB * 0.12);
+    float bottomDensity = smoothstep(-0.04, 0.16, uv.y);
 
-    vec3 iceBody = mix(vec3(0.70, 0.90, 0.98), vec3(0.35, 0.62, 0.78), length(n2d) * 0.75);
-    vec3 deepTint = mix(vec3(0.25, 0.54, 0.70), vec3(0.84, 0.97, 1.0), diffuse * 0.5 + 0.2);
-    vec3 lit = mix(iceBody, deepTint, innerBevel * 0.35);
+    vec3 iceBody = mix(vec3(0.84, 0.94, 0.96), vec3(0.52, 0.70, 0.76), length(n2d) * 0.62);
+    vec3 deepTint = mix(vec3(0.48, 0.66, 0.72), vec3(0.94, 0.98, 0.98), diffuse * 0.42 + 0.34);
+    vec3 lit = mix(iceBody, deepTint, innerBevel * 0.28);
 
-    lit *= 0.28 + diffuse * 0.42;
-    lit += vec3(0.96, 0.99, 1.0) * specular * 0.95;
-    lit += vec3(0.82, 0.93, 1.0) * edgeDist * 0.28;
-    lit += vec3(0.78, 0.90, 0.98) * cracks * 0.18;
+    lit *= 0.30 + diffuse * 0.34;
+    lit = mix(lit, vec3(0.92, 0.96, 0.95), cloudyCore * 0.44 + frostPatch * 0.22);
+    lit = mix(lit, vec3(0.68, 0.80, 0.84), bottomDensity * 0.10);
+    lit += vec3(0.98, 0.99, 0.98) * specular * 0.52;
+    lit += vec3(0.94, 0.98, 0.98) * edgeDist * 0.18;
+    lit += vec3(0.92, 0.97, 0.98) * bubbles * 0.20;
+    lit += vec3(0.82, 0.90, 0.92) * internalLayers * 0.10;
 
-    float baseTrans = mix(0.025, 0.075, vDepth);
+    float baseTrans = mix(0.045, 0.105, vDepth);
     float detectionPulse = 0.64 + 0.36 * sin(vRotation.x * 18.0);
-    float alpha = (baseTrans + edgeDist * 0.15 + innerBevel * 0.06 + cracks * 0.08 + specular * 0.10) * vAlpha * detectionPulse;
+    float alpha = (baseTrans + cloudyCore * 0.10 + frostPatch * 0.06 + edgeDist * 0.10 + innerBevel * 0.04 + bubbles * 0.07 + specular * 0.06) * vAlpha * detectionPulse;
 
-    gl_FragColor = vec4(lit, clamp(alpha, 0.0, 0.32));
+    gl_FragColor = vec4(lit, clamp(alpha, 0.0, 0.36));
 }
 `;
 
