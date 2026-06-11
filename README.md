@@ -1,169 +1,273 @@
-
+# WAKATO | Living Planet
 
 <div align="center">
   <a href="https://wakato.tech">
-    <img src="https://raw.githubusercontent.com/nitr0yukkuri/wakatopo/preview-assets/preview.gif" alt="Live Weather" width="800" style="border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);" />
+    <img src="https://raw.githubusercontent.com/nitr0yukkuri/wakatopo/preview-assets/preview.gif" alt="WAKATO | Living Planet preview" width="800" />
   </a>
 </div>
 
-# 🌍 WAKATO | Living Planet Portfolio
-
 <div align="center">
-  <img src="https://img.shields.io/badge/CSS_Winner-SOTD_WINNER-gold?style=for-the-badge&logo=trophy&logoColor=white" />
-  <img src="https://img.shields.io/badge/Status-In_Development-orange?style=for-the-badge&logo=git&logoColor=white" />
-  <img src="https://img.shields.io/badge/Stack-Next.js_16_×_R3F-000000?style=for-the-badge&logo=next.js&logoColor=white" />
-  <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/CSS_Winner-SOTD_WINNER-gold?style=for-the-badge&logo=trophy&logoColor=white" alt="CSS Winner SOTD Winner" />
+  <img src="https://img.shields.io/badge/Status-Live-brightgreen?style=for-the-badge" alt="Status Live" />
+  <img src="https://img.shields.io/badge/Stack-Next.js_16_/_R3F-black?style=for-the-badge&logo=next.js&logoColor=white" alt="Next.js and R3F" />
 </div>
-
-
-
-
 
 <br />
 
-<div align="center">
-  <h2>"Where Code Breathes with the Atmosphere."</h2>
-  <p>
-    開発者の<b>「活動の軌跡」</b>が大地となり、現実世界の<b>「空気」</b>が空を染める。<br/>
-    静的なポートフォリオを、有機的な「惑星」へと昇華させる実験的プロジェクト。
-  </p>
-</div>
+**WAKATO | Living Planet** は、自身の活動や作品群を「生きた世界」として再構築した、没入型の3Dグラフィック体験作品です。
+
+天候、時間、季節、音、作品ごとの遷移演出が連動し、訪問者は情報を読むだけではなく、世界を探索するように作品へ触れていきます。
+
+[https://wakato.tech](https://wakato.tech)
 
 ---
 
-# 🏆 Awards
+## Awards
 
-**[CSS Winner](https://www.csswinner.com/details/wakato-3d-portfolio/19159)**
-- **Site of the Day (SOTD)** - 2026/04/08
-
-
-
-# 🧬 Concept: Fusion of Two Origins
-
-このプロジェクトは、過去に開発された2つの代表作のコンセプトを融合し、  
-最新のWeb技術で再構築した **「技術と表現の集大成」** です。
-
-## 01. Structural DNA from GitHub Planet
-
-> **"Code as Terrain"**
-
-開発者のGitHub活動履歴（Contributions）を解析し、  
-3D空間上の惑星として可視化。
+- [CSS Winner - Site of the Day](https://www.csswinner.com/details/wakato-3d-portfolio/19159)
 
 ---
 
-## 02. Atmospheric DNA from Otenki Gurashi
+## Concept
 
-> **"Life synced with Weather"**
+この作品の中心にあるのは、普通の作品一覧を「情報」ではなく「体験」に変えることです。
 
-現実の気象と連動し、  
-空間内の天候（雨・光・夜）を変化させます。
-
----
-
-<div align="center">
-  <h3>GitHub Planet × Otenki Gurashi = <b>Wakato Portfolio</b></h3>
-</div>
+静的な自己紹介ではなく、天候や季節によって空気が変わり、作品を選ぶたびに別の世界へ移動する。コード、作品、音、グラフィック、インタラクションをひとつの環境として扱うことで、Webブラウザ上に自分自身の世界を作っています。
 
 ---
 
-# ✨ Features
+## Frontend Architecture
 
-## 🪐 Living Planet Core
-GLSLにより「呼吸する惑星」を表現。
+このプロジェクトは、画面をただ描画する構成ではなく、**状態を変えると世界が反応する** 形で設計しています。
 
-## 🌦️ Immersive Weather System
-天気APIと連動した環境変化。
+```text
+View
+  操作とページ構造
+  src/app
+  src/components/dom
 
-## 🕹️ 隠しCLIコマンド
-`sudo make rain` などの隠しコマンドで、天気や季節の状態を切り替えられる実験的な操作体験。
+State
+  世界の現在の状態
+  src/store
 
-## 🌸 季節の隠しエフェクト
-春・夏・秋・冬に応じて、惑星の色・粒子・空気感が静かに変化する隠しビジュアルエフェクト。
+Rendering / Effects
+  状態をもとに3D、天候、遷移、音を出す
+  src/components/canvas
+  src/components/GlobalTransitionOverlay.tsx
+  src/components/SoundDirector.tsx
+```
 
-## 🔊 プロシージャル・サウンドスケープ
-天気・作品・遷移に合わせて、BGMや効果音が変化する音の演出システム。
+### 1. View
 
-## 🚪 作品ごとの専用トランジション
-GitHub Planet、Otenkigurashi、ColdKeep、reCAPTCHA Game、Denshouo それぞれに合わせた遷移演出。
+`src/app` は Next.js App Router のページ層です。
 
-## 🎥 ライブプレビュー自動生成
-GitHub Actions と Playwright でポートフォリオを録画し、README用の `preview.gif` を自動更新。
+ホーム画面では、作品一覧、HUD、言語切り替え、技術スタック、フッターなどを構成しています。UIパーツは主に `src/components/dom` に分け、Canvas表現と混ざりすぎないようにしています。
 
-## 📱 PWA対応
-Service Worker と Manifest により、インストール可能なWebアプリとして動作。
+主なファイル:
 
-## ⚡ Next-Gen Performance
-RSC・GPU最適化で高速描画。
+- `src/app/page.tsx`
+- `src/components/dom/WorksList.tsx`
+- `src/components/dom/TopLeftMenu.tsx`
+- `src/components/dom/WeatherDebugSelector.tsx`
+
+### 2. State
+
+`src/store/index.ts` では Zustand を使って、作品全体で共有する状態を管理しています。
+
+ここにあるのは、単なるUI状態ではなく「今この世界がどういう状態か」です。
+
+```ts
+weather
+season
+seasonEvent
+githubActivityLevel
+activeWorkId
+transitionType
+```
+
+たとえば作品をクリックすると `transitionType` が変わり、それを見た遷移レイヤーが対応する演出を表示します。
+
+```text
+WorksList
+  -> transitionType = "freeze"
+  -> GlobalTransitionOverlay
+  -> FreezeTransitionCanvas
+  -> /coldkeep
+```
+
+### 3. Rendering / Effects
+
+`src/components/canvas` は、3D空間や演出を担当する層です。
+
+ホームの背景は `SceneClient` と `Scene` に分かれています。`SceneClient` はローディング制御、`Scene` は React Three Fiber の Canvas 本体を担当します。
+
+主なファイル:
+
+- `src/components/canvas/SceneClient.tsx`
+- `src/components/canvas/Scene.tsx`
+- `src/components/canvas/AbstractCore.tsx`
+- `src/components/canvas/Weather.tsx`
+- `src/components/canvas/effects/SunraysCanvas.tsx`
+- `src/components/canvas/effects/SnowCanvas.tsx`
+- `src/components/canvas/effects/ThunderCanvas.tsx`
 
 ---
 
-# 🛠 Tech Stack
+## Weather And Season System
 
-| Domain    | Technology                | Role                        |
-| --------- | ------------------------ | --------------------------- |
-| Framework | Next.js 16               | App Router                  |
-| Language  | TypeScript               | Strict Mode                 |
-| 3D Engine | React Three Fiber        | 3D Scene                    |
-| Shaders   | GLSL                     | Displacement                |
-| Styling   | Tailwind CSS v4          | UI                          |
-| Animation | Framer Motion / Anime.js | Motion                      |
-| State     | Zustand                  | Global State                |
+天候と季節の演出は `WeatherEffectsOverlay` に集約しています。
+
+```text
+weather + season + seasonEvent
+  -> SunraysCanvas
+  -> CloudsOverlayCanvas
+  -> SnowCanvas
+  -> ThunderCanvas
+  -> NightGlowOverlay
+```
+
+例:
+
+```text
+Clear + spring
+  -> spring-clear
+
+Clear + summer + geshi
+  -> geshi-clear
+
+Snow + winter
+  -> winter-snow
+```
+
+これにより、通常の天候だけでなく、桜、夏至、紅葉、雪景色のような隠しエフェクトも同じ流れで扱えます。
 
 ---
 
-# 📂 Architecture
+## Transition System
 
-```bash
-src/
-├── app/
-├── components/
-│   ├── canvas/
-│   │   ├── Planet.tsx
-│   │   ├── Weather.tsx
-│   │   └── Scene.tsx
-│   └── dom/
-├── lib/
-│   └── actions.ts
-├── shaders/
-└── store/
+作品ごとの遷移は `GlobalTransitionOverlay` が担当します。
+
+作品をクリックすると、まず Zustand の `transitionType` を変更し、そのあとページ遷移します。これにより、ただリンクで移動するのではなく、ホームの世界から各作品の世界へ移動するような体験にしています。
+
+```text
+GitHub Planet
+  -> warp
+
+Otenkigurashi
+  -> rain / snow / thunder / clouds / sunburst / moonrise
+
+ColdKeep
+  -> freeze
+
+reCAPTCHA Game
+  -> captcha-lock
+
+Denshouo
+  -> wave
 ```
 
 ---
 
-# 🚀 Getting Started
+## Features
+
+- Interactive 3D world built with React Three Fiber
+- Weather-aware visual effects
+- Seasonal hidden effects
+- Work-specific transition animations
+- Procedural sound direction
+- PWA support
+- Live README preview GIF generated by GitHub Actions
+
+---
+
+## Tech Stack
+
+| Area | Tech |
+| --- | --- |
+| Framework | Next.js 16 |
+| Language | TypeScript |
+| 3D | Three.js, React Three Fiber |
+| Shader / Graphics | WebGL, GLSL |
+| Styling | Tailwind CSS |
+| Animation | Framer Motion, Anime.js |
+| State | Zustand |
+| Audio | Tone.js |
+| Test / Automation | Playwright, GitHub Actions |
+| Deploy | Vercel |
+
+---
+
+## Directory Guide
+
+```text
+src/
+  app/
+    page.tsx              Home page
+    */page.tsx            Work detail pages
+
+  components/
+    canvas/               3D scenes, shaders, visual effects, transitions
+    dom/                  HUD, menus, work list, debug controls
+    GlobalTransitionOverlay.tsx
+    HomeBackgroundLayers.tsx
+    SoundDirector.tsx
+
+  lib/
+    actions.ts            Server-side weather/activity data
+    *Bgm.ts               Sound generation helpers
+
+  shaders/                GLSL shader modules
+  store/                  Global world state with Zustand
+```
+
+---
+
+## Getting Started
 
 ```bash
-# Clone
 git clone https://github.com/nitr0yukkuri/wakatopo.git
-
-# Install
+cd wakatopo
 npm install
-
-# Env (optional: GA4)
-# .env.local を作成して設定
-# NEXT_PUBLIC_GA_MEASUREMENT_ID=G-XXXXXXXXXX
-
-# Run
 npm run dev
 ```
 
-Open: http://localhost:3000
+Open [http://localhost:3000](http://localhost:3000).
+
+Optional:
+
+```bash
+NEXT_PUBLIC_GA_MEASUREMENT_ID=G-XXXXXXXXXX
+```
 
 ---
 
-# 🔮 Roadmap
+## Scripts
 
-- [ ] Mobile Gyro（スマホ傾きパララックス）
+```bash
+npm run dev
+npm run build
+npm run lint
+npm run test:e2e
+```
+
+---
+
+## Preview GIF
+
+The README preview is generated by GitHub Actions and stored on the `preview-assets` branch.
+
+```text
+main
+  source code
+
+preview-assets
+  preview.gif
+```
+
+This keeps generated media out of the main source branch while still allowing GitHub README embeds through `raw.githubusercontent.com`.
 
 ---
 
 <div align="center">
-
-Built with 
-by nitr0yukkuri  
-
-"This portfolio is a living organism."
-
+  <strong>Code breathes with the atmosphere.</strong>
 </div>
-
