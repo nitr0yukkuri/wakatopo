@@ -2,14 +2,23 @@ export const dynamic = 'force-dynamic';
 
 export default function NotFound() {
     return (
-        <div className="flex items-center justify-center min-h-screen bg-[#050505] text-white font-mono">
-            <div className="text-center">
-                <h1 className="text-6xl font-bold mb-4">404</h1>
-                <p className="text-gray-400 mb-6">Page not found</p>
-                <a href="/" className="text-cyan-400 hover:text-cyan-300 transition-colors">
-                    Return to orbit →
+        <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#050505] px-6 text-white font-mono">
+            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_42%,rgba(34,211,238,0.16),transparent_28%),radial-gradient(circle_at_50%_42%,rgba(255,255,255,0.08),transparent_9%)]" />
+            <div className="pointer-events-none absolute left-1/2 top-1/2 h-[58vmin] w-[58vmin] -translate-x-1/2 -translate-y-1/2 rounded-full border border-cyan-200/15" />
+            <div className="pointer-events-none absolute left-1/2 top-1/2 h-[74vmin] w-[74vmin] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/8" />
+            <div className="pointer-events-none absolute inset-0 opacity-[0.12] [background-image:linear-gradient(rgba(255,255,255,0.12)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.12)_1px,transparent_1px)] [background-size:72px_72px]" />
+
+            <section className="relative z-10 text-center">
+                <p className="mb-4 text-[10px] tracking-[0.42em] text-cyan-200/70">LOST COORDINATE</p>
+                <h1 className="mb-4 text-7xl font-bold tracking-[0.12em] text-white md:text-8xl">404</h1>
+                <p className="mb-8 text-sm tracking-[0.24em] text-gray-400">Page not found</p>
+                <a
+                    href="/"
+                    className="inline-flex items-center justify-center border border-cyan-300/40 bg-cyan-300/10 px-5 py-3 text-xs tracking-[0.24em] text-cyan-200 transition-colors hover:border-cyan-200 hover:bg-cyan-300/15 hover:text-white"
+                >
+                    Return to orbit
                 </a>
-            </div>
-        </div>
+            </section>
+        </main>
     );
 }
