@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "test:i18n": "node scripts/test_i18n_copy.mjs",
     "test:workflow": "node scripts/test_update_weather_workflow.mjs",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
