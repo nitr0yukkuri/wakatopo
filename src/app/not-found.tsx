@@ -14,7 +14,7 @@ export default function NotFound() {
                     href="/"
                     className="inline-flex items-center justify-center border border-cyan-300/40 bg-cyan-300/10 px-5 py-3 text-xs tracking-[0.24em] text-cyan-200 transition-colors hover:border-cyan-200 hover:bg-cyan-300/15 hover:text-white"
                 >
-                    Return to orbit
+                    Return to the world
                 </a>
             </section>
         </main>

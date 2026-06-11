@@ -136,15 +136,38 @@ function FishCursor() {
             ctx.restore();
 
             ctx.save(); ctx.rotate(bodyBend);
-            const bx = 0, by = 0; const rx = 11.4 * S, ry = 8.9 * S;
-            const bodyGrad = ctx.createRadialGradient(-2*S, -3*S, 1, bx, by, rx);
+            const bodyGrad = ctx.createRadialGradient(-2*S, -4*S, 1, 1*S, 0, 14*S);
             bodyGrad.addColorStop(0, '#FFB347'); bodyGrad.addColorStop(0.55, '#FF8C1A'); bodyGrad.addColorStop(1, '#C46200');
-            ctx.beginPath(); ctx.ellipse(bx, by, rx, ry, 0, 0, Math.PI * 2);
-            ctx.fillStyle = bodyGrad; ctx.fill(); ctx.strokeStyle = 'rgba(13,5,0,0.75)'; ctx.lineWidth = 1.3; ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(-11.2 * S, 0);
+            ctx.bezierCurveTo(-8.2 * S, -9.2 * S, 4.2 * S, -11.2 * S, 11.3 * S, -4.0 * S);
+            ctx.quadraticCurveTo(14.0 * S, -0.9 * S, 12.3 * S, 3.4 * S);
+            ctx.bezierCurveTo(6.0 * S, 11.4 * S, -7.4 * S, 9.8 * S, -11.2 * S, 0);
+            ctx.fillStyle = bodyGrad; ctx.fill(); ctx.strokeStyle = 'rgba(35,13,2,0.5)'; ctx.lineWidth = 1.15; ctx.stroke();
 
-            ctx.save(); ctx.clip(); ctx.beginPath(); ctx.ellipse(bx, by, rx, ry, 0, 0, Math.PI * 2); ctx.clip();
-            ctx.fillStyle = 'rgba(255,255,255,0.82)'; ctx.beginPath(); ctx.ellipse(-1*S, by, 1.6*S, ry * 0.92, 0, 0, Math.PI * 2); ctx.fill();
-            ctx.fillStyle = 'rgba(255,255,255,0.68)'; ctx.beginPath(); ctx.ellipse(5*S, by, 1.1*S, ry * 0.87, 0, 0, Math.PI * 2); ctx.fill();
+            ctx.save(); ctx.clip();
+            ctx.fillStyle = 'rgba(255,255,255,0.86)';
+            ctx.beginPath();
+            ctx.moveTo(-4.4 * S, -8.3 * S);
+            ctx.bezierCurveTo(-2.4 * S, -9.4 * S, -0.5 * S, -8.6 * S, 0.3 * S, -6.6 * S);
+            ctx.bezierCurveTo(-1.0 * S, -2.4 * S, -0.9 * S, 2.6 * S, 0.6 * S, 7.0 * S);
+            ctx.bezierCurveTo(-1.6 * S, 8.5 * S, -3.8 * S, 7.8 * S, -4.8 * S, 5.4 * S);
+            ctx.bezierCurveTo(-3.7 * S, 1.8 * S, -3.6 * S, -3.9 * S, -4.4 * S, -8.3 * S);
+            ctx.fill();
+            ctx.fillStyle = 'rgba(255,255,255,0.74)';
+            ctx.beginPath();
+            ctx.moveTo(4.2 * S, -7.3 * S);
+            ctx.bezierCurveTo(5.6 * S, -7.6 * S, 7.0 * S, -6.8 * S, 7.5 * S, -5.3 * S);
+            ctx.bezierCurveTo(6.5 * S, -1.8 * S, 6.6 * S, 2.7 * S, 7.8 * S, 6.0 * S);
+            ctx.bezierCurveTo(6.5 * S, 7.2 * S, 4.9 * S, 6.8 * S, 4.2 * S, 5.0 * S);
+            ctx.bezierCurveTo(5.0 * S, 1.3 * S, 5.0 * S, -3.4 * S, 4.2 * S, -7.3 * S);
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(40,17,4,0.24)';
+            ctx.lineWidth = 0.65;
+            ctx.beginPath();
+            ctx.moveTo(-5.2 * S, -7.6 * S); ctx.bezierCurveTo(-3.4 * S, -2.2 * S, -3.3 * S, 2.4 * S, -5.3 * S, 7.0 * S);
+            ctx.moveTo(3.5 * S, -6.7 * S); ctx.bezierCurveTo(5.0 * S, -2.0 * S, 5.1 * S, 2.4 * S, 3.8 * S, 6.2 * S);
+            ctx.stroke();
             ctx.restore();
 
             const eyeX = 7.8 * S; const eyeY = -2.8 * S;
@@ -155,6 +178,12 @@ function FishCursor() {
             if (mouthOpen) {
                 ctx.beginPath(); ctx.moveTo(mouthX, mouthY); ctx.lineTo(mouthX - 5*S, mouthY - 4*S); ctx.lineTo(mouthX - 5*S, mouthY + 4*S); ctx.closePath();
                 ctx.fillStyle = 'rgba(26,5,0,0.95)'; ctx.fill(); ctx.strokeStyle = 'rgba(13,5,0,0.8)'; ctx.lineWidth = 0.8; ctx.stroke();
+            } else {
+                ctx.beginPath();
+                ctx.quadraticCurveTo(11.4 * S, 2.1 * S, 10.2 * S, 2.6 * S);
+                ctx.strokeStyle = 'rgba(55,18,4,0.45)';
+                ctx.lineWidth = 0.7;
+                ctx.stroke();
             }
             ctx.restore(); ctx.restore();
         };
