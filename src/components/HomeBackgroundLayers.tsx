@@ -1,5 +1,14 @@
-import SceneClient from '@/components/canvas/SceneClient';
-import WeatherEffectsOverlay from '@/components/dom/WeatherEffectsOverlay';
+'use client';
+
+import dynamic from 'next/dynamic';
+
+const SceneClient = dynamic(() => import('@/components/canvas/SceneClient'), {
+    ssr: false,
+    loading: () => <div className="absolute inset-0 bg-black" />,
+});
+const WeatherEffectsOverlay = dynamic(() => import('@/components/dom/WeatherEffectsOverlay'), {
+    ssr: false,
+});
 
 export default function HomeBackgroundLayers() {
     return (

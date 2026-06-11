@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useMemo, useEffect, useState } from 'react';
+import { Suspense, useRef, useMemo, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useStore } from '@/store';
 import { motion, useScroll, useTransform } from 'framer-motion';
@@ -378,7 +378,7 @@ function IceCursor() {
     );
 }
 
-export default function ColdKeepPage() {
+function ColdKeepPageContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const lang = searchParams.get('lang') === 'en' ? 'en' : 'ja';
@@ -619,5 +619,13 @@ if (ice_mass > 0) {
                 </div>
             </div>
         </main>
+    );
+}
+
+export default function ColdKeepPage() {
+    return (
+        <Suspense fallback={null}>
+            <ColdKeepPageContent />
+        </Suspense>
     );
 }

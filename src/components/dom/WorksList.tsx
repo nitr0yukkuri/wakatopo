@@ -33,8 +33,8 @@ export default function WorksList({ works }: { works: Work[] }) {
             }, 1400);
         } else if (id === '02') {
             setActiveWork('02');
-            const currentWeather = useStore.getState().weather;
-            const otenkiHref = `/otenkigurashi?lang=${lang}&weather=${encodeURIComponent(currentWeather)}`;
+            const { weather: currentWeather, season: currentSeason, seasonEvent: currentSeasonEvent } = useStore.getState();
+            const otenkiHref = `/otenkigurashi?lang=${lang}&weather=${encodeURIComponent(currentWeather)}&season=${encodeURIComponent(currentSeason)}&seasonEvent=${encodeURIComponent(currentSeasonEvent)}`;
 
             // 天候に応じて遷移アニメーションを分岐
             if (currentWeather === 'Rain') {

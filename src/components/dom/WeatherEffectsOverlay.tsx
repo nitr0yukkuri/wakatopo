@@ -1,6 +1,5 @@
 'use client';
 import dynamic from 'next/dynamic';
-import { AnimatePresence } from 'framer-motion';
 import { useStore, type WeatherType } from '@/store';
 
 const RainParticles = dynamic(() => import('@/components/canvas/RainTransitionCanvas').then((m) => m.RainParticles), { ssr: false });
@@ -40,15 +39,13 @@ export default function WeatherEffectsOverlay({
 
     return (
         <>
-            <AnimatePresence mode="wait">
-                {(weather === 'Clear' || weather === 'Morning') && <SunraysCanvas key={`sunrays-${sunraysVariant}`} variant={sunraysVariant} />}
-                {weather === 'Clouds' && <CloudsOverlayCanvas key={`clouds-${cloudsVariant}`} variant={cloudsVariant} />}
-                {includeRain && weather === 'Rain' && <RainParticles key="rain" />}
-                {weather === 'Thunder' && <RainParticles key="thunder-rain" />}
-                {weather === 'Thunder' && <ThunderCanvas key="thunder" />}
-                {weather === 'Snow' && <SnowCanvas key={`snow-${snowVariant}`} density={0.72} variant={snowVariant} />}
-                {weather === 'Night' && <NightGlowOverlay key={`night-${nightVariant}`} variant={nightVariant} />}
-            </AnimatePresence>
+            {(weather === 'Clear' || weather === 'Morning') && <SunraysCanvas key={`sunrays-${sunraysVariant}`} variant={sunraysVariant} />}
+            {weather === 'Clouds' && <CloudsOverlayCanvas key={`clouds-${cloudsVariant}`} variant={cloudsVariant} />}
+            {includeRain && weather === 'Rain' && <RainParticles key="rain" />}
+            {weather === 'Thunder' && <RainParticles key="thunder-rain" />}
+            {weather === 'Thunder' && <ThunderCanvas key="thunder" />}
+            {weather === 'Snow' && <SnowCanvas key={`snow-${snowVariant}`} density={0.72} variant={snowVariant} />}
+            {weather === 'Night' && <NightGlowOverlay key={`night-${nightVariant}`} variant={nightVariant} />}
 
             {/* Sun / Moon overlay anchors: open X in a new tab. Position tuned to match canvases. */}
             {(weather === 'Clear' || weather === 'Morning') && (

@@ -6,6 +6,8 @@ import WorksList from '@/components/dom/WorksList';
 import WeatherDebugSelector from '@/components/dom/WeatherDebugSelector';
 import NomineeToast from '@/components/dom/NomineeToast';
 import TopLeftMenu from '../components/dom/TopLeftMenu';
+import Link from 'next/link';
+import type { WeatherType } from '@/store';
 
 type SupportedLang = 'ja' | 'en';
 
@@ -86,7 +88,7 @@ const copyByLang = {
   },
 } as const;
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 1800;
 
 export default async function Home({
   searchParams,
@@ -110,7 +112,7 @@ export default async function Home({
       style={{ userSelect: 'none', WebkitUserSelect: 'none', WebkitTouchCallout: 'none' }}
     >
       <ClientInitializer
-        initialWeather={data.weather as any}
+        initialWeather={data.weather as WeatherType}
         initialActivity={data.activityLevel}
       />
 
@@ -126,9 +128,9 @@ export default async function Home({
         {/* Top Right */}
         <div className="absolute top-6 right-4 sm:right-6 md:right-8 text-right flex flex-col gap-1 pointer-events-auto w-fit" style={{ touchAction: 'pan-y' }}>
           <div className="flex items-center justify-end gap-1.5 text-[10px] font-mono tracking-widest text-gray-400">
-            <a href="/?lang=ja" className={lang === 'ja' ? 'text-cyan-300' : 'hover:text-gray-200 transition-colors'}>JP</a>
+            <Link href="/?lang=ja" className={lang === 'ja' ? 'text-cyan-300' : 'hover:text-gray-200 transition-colors'}>JP</Link>
             <span className="text-gray-700">/</span>
-            <a href="/?lang=en" className={lang === 'en' ? 'text-cyan-300' : 'hover:text-gray-200 transition-colors'}>ENG</a>
+            <Link href="/?lang=en" className={lang === 'en' ? 'text-cyan-300' : 'hover:text-gray-200 transition-colors'}>ENG</Link>
           </div>
         </div>
 

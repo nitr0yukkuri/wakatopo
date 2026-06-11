@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useStore, WeatherType } from '@/store';
+import { useStore, type SeasonEventType, type SeasonType, WeatherType } from '@/store';
 import { useEffect, useRef, useState } from 'react';
 import dynamicImport from 'next/dynamic';
 import Image from 'next/image';
@@ -13,6 +13,8 @@ const RainParticles = dynamicImport(
 );
 const SnowCanvas = dynamicImport(() => import('@/components/canvas/effects/SnowCanvas'), { ssr: false });
 const ThunderCanvas = dynamicImport(() => import('@/components/canvas/ThunderTransitionCanvas'), { ssr: false });
+const OtenkiSeasonEffects = dynamicImport(() => import('./OtenkiSeasonEffects'), { ssr: false });
+const VALID_WEATHERS: WeatherType[] = ['Clear', 'Rain', 'Clouds', 'Snow', 'Night', 'Morning', 'Thunder'];
 
 export const dynamic = 'force-dynamic';
 
@@ -36,8 +38,9 @@ function CloudDecoration({ className, style, flip }: { className: string, style?
 // Reads weather from the Zustand store and draws a matching cursor motif.
 // Motifs: Cloud (bob+squish) / Sun+Morning (spinning rays) / Rain (teardrop)
 //         Snow (rotating snowflake) / Night (crescent moon) / Thunder (bolt)
-function WeatherCursor() {
-    const { weather } = useStore();
+function WeatherCursor({ weatherOverride }: { weatherOverride?: WeatherType } = {}) {
+    const storeWeather = useStore((state) => state.weather);
+    const weather = weatherOverride ?? storeWeather;
     const weatherRef = useRef(weather);
     useEffect(() => { weatherRef.current = weather; }, [weather]);
 
@@ -562,8 +565,20 @@ export default function OtenkiGurashiPage() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const lang = searchParams.get('lang') === 'en' ? 'en' : 'ja';
-    const { setActiveWork, setWeather, weather } = useStore();
+    const {
+        setActiveWork,
+        setWeather,
+        setSeason,
+        setSeasonEvent,
+        weather,
+        season: storeSeason,
+        seasonEvent: storeSeasonEvent,
+    } = useStore();
     const weatherParam = searchParams.get('weather');
+    const seasonParam = searchParams.get('season');
+    const seasonEventParam = searchParams.get('seasonEvent');
+    const weatherFromParam = VALID_WEATHERS.includes(weatherParam as WeatherType) ? weatherParam as WeatherType : null;
+    const displayedWeather = weatherFromParam ?? weather;
 
     const copy = {
         ja: {
@@ -626,6 +641,12 @@ export default function OtenkiGurashiPage() {
         },
     } as const;
     const t = copy[lang];
+    const validSeasons: SeasonType[] = ['none', 'spring', 'summer', 'autumn', 'winter'];
+    const validSeasonEvents: SeasonEventType[] = ['none', 'geshi'];
+    const seasonFromParam = validSeasons.includes(seasonParam as SeasonType) ? seasonParam as SeasonType : null;
+    const seasonEventFromParam = validSeasonEvents.includes(seasonEventParam as SeasonEventType) ? seasonEventParam as SeasonEventType : null;
+    const displayedSeason = seasonFromParam ?? storeSeason;
+    const displayedSeasonEvent = seasonEventFromParam ?? storeSeasonEvent;
 
     // スクロール検知用の状態とRef
     const [activeSection, setActiveSection] = useState<'hero' | 'concept' | 'features' | 'tech' | 'bottom'>('hero');
@@ -665,12 +686,19 @@ export default function OtenkiGurashiPage() {
     };
 
     useEffect(() => {
-        const weatherByParam = weatherParam as WeatherType | null;
-        const validWeather: WeatherType[] = ['Clear', 'Rain', 'Clouds', 'Snow', 'Night', 'Morning', 'Thunder'];
-        if (weatherByParam && validWeather.includes(weatherByParam)) {
-            setWeather(weatherByParam);
+        if (weatherFromParam && weather !== weatherFromParam) {
+            setWeather(weatherFromParam);
         }
-    }, [setWeather, weatherParam]);
+    }, [setWeather, weather, weatherFromParam]);
+
+    useEffect(() => {
+        if (seasonFromParam && storeSeason !== seasonFromParam) {
+            setSeason(seasonFromParam);
+        }
+        if (seasonEventFromParam && storeSeasonEvent !== seasonEventFromParam) {
+            setSeasonEvent(seasonEventFromParam);
+        }
+    }, [seasonEventFromParam, seasonFromParam, setSeason, setSeasonEvent, storeSeason, storeSeasonEvent]);
 
     useEffect(() => {
         const observerOptions = {
@@ -725,24 +753,25 @@ export default function OtenkiGurashiPage() {
     let bgGradient = "from-[#aee1f9] to-[#e0f4fc]"; // Default (Clear)
     let cardText = "text-gray-700";
 
-    if (weather === 'Clouds') {
+    if (displayedWeather === 'Clouds') {
         bgGradient = "from-[#6b7a8d] via-[#8fa0b0] to-[#b5c2ca]";
-    } else if (weather === 'Rain') {
+    } else if (displayedWeather === 'Rain') {
         bgGradient = "from-[#60a5fa] to-[#bfdbfe] bg-gradient-to-t"; // Original Rain Gradient
-    } else if (weather === 'Snow') {
+    } else if (displayedWeather === 'Snow') {
         bgGradient = "bg-[#eef7fd]";
-    } else if (weather === 'Thunder') {
+    } else if (displayedWeather === 'Thunder') {
         bgGradient = "from-[#1a1a2e] via-[#16213e] to-[#0f3460]";
         cardText = "text-gray-200";
-    } else if (weather === 'Night') {
+    } else if (displayedWeather === 'Night') {
         bgGradient = "from-[#030915] via-[#071428] to-[#0b1f36]";
         cardText = "text-gray-200";
     }
 
     return (
         <>
-            <WeatherCursor />
-            <main className={`relative w-full min-h-[120dvh] ${weather !== 'Rain' && weather !== 'Snow' ? 'bg-gradient-to-b' : ''} ${bgGradient} ${weather === 'Thunder' || weather === 'Night' ? 'text-gray-200' : 'text-gray-700'} overflow-hidden font-sans pb-32 transition-colors duration-1000`} style={{ cursor: isFinePointer ? 'none' : 'auto' }}>
+            <WeatherCursor weatherOverride={displayedWeather} />
+            <main className={`relative w-full min-h-[120dvh] ${displayedWeather !== 'Rain' && displayedWeather !== 'Snow' ? 'bg-gradient-to-b' : ''} ${bgGradient} ${displayedWeather === 'Thunder' || displayedWeather === 'Night' ? 'text-gray-200' : 'text-gray-700'} overflow-hidden font-sans pb-32 transition-colors duration-1000`} style={{ cursor: isFinePointer ? 'none' : 'auto' }}>
+                <OtenkiSeasonEffects season={displayedSeason} seasonEvent={displayedSeasonEvent} weather={displayedWeather} />
 
                 <nav className="fixed top-0 left-0 w-full z-50 p-6 md:p-10">
                     <button
@@ -755,7 +784,7 @@ export default function OtenkiGurashiPage() {
                 </nav>
 
                 {/* Background Parallax Clouds Layer */}
-                <div className={`absolute inset-0 pointer-events-none overflow-hidden z-0 transition-opacity duration-1000 ${weather === 'Rain' ? 'opacity-8' : weather === 'Thunder' ? 'opacity-35' : weather === 'Snow' ? 'opacity-0' : weather === 'Clouds' ? 'opacity-100' : weather === 'Night' ? 'opacity-45' : 'opacity-30'}`}>
+                <div className={`absolute inset-0 pointer-events-none overflow-hidden z-0 transition-opacity duration-1000 ${displayedWeather === 'Rain' ? 'opacity-8' : displayedWeather === 'Thunder' ? 'opacity-35' : displayedWeather === 'Snow' ? 'opacity-0' : displayedWeather === 'Clouds' ? 'opacity-100' : displayedWeather === 'Night' ? 'opacity-45' : 'opacity-30'}`}>
                     {/* --- 3. 奥のレイヤー（小さく、ゆっくり、薄い、左へ） --- */}
                     <CloudDecoration className="opacity-20 w-32 top-[5%] animate-cloud-scroll-left-slow" style={{ animationDelay: '-10s' }} />
                     <CloudDecoration className="opacity-30 w-40 top-[40%] animate-cloud-scroll-left-slow" style={{ animationDelay: '-40s' }} />
@@ -797,7 +826,7 @@ export default function OtenkiGurashiPage() {
                     </div>
 
                     {/* Fluffy White Content Card */}
-                    <div className={`${weather === 'Snow' ? 'bg-white/92' : 'bg-white/95'} ${weather === 'Snow' ? '' : 'backdrop-blur-sm'} border-4 ${weather === 'Snow' ? 'border-transparent' : 'border-white'} px-6 py-10 md:p-14 rounded-[2.5rem] md:rounded-[3rem] w-full ${weather === 'Snow' ? 'shadow-none' : 'shadow-[0_20px_60px_-15px_rgba(152,173,194,0.3)]'}`}>
+                    <div className={`${displayedWeather === 'Snow' ? 'bg-white/92' : 'bg-white/95'} ${displayedWeather === 'Snow' ? '' : 'backdrop-blur-sm'} border-4 ${displayedWeather === 'Snow' ? 'border-transparent' : 'border-white'} px-6 py-10 md:p-14 rounded-[2.5rem] md:rounded-[3rem] w-full ${displayedWeather === 'Snow' ? 'shadow-none' : 'shadow-[0_20px_60px_-15px_rgba(152,173,194,0.3)]'}`}>
 
                         <p className="text-lg md:text-2xl font-bold text-gray-600 mb-10 md:mb-12 leading-relaxed text-center">
                             {t.lead}<br className="md:hidden" />{t.lead2}<br />
@@ -899,7 +928,7 @@ export default function OtenkiGurashiPage() {
                 </div>
 
                 {/* Additional Screen Effects based on Weather */}
-                {(weather === 'Clear' || weather === 'Morning') && (
+                {(displayedWeather === 'Clear' || displayedWeather === 'Morning') && (
                     <>
                         <div className="fixed inset-0 pointer-events-none z-0">
                             <div
@@ -930,7 +959,7 @@ export default function OtenkiGurashiPage() {
                     `}</style>
                     </>
                 )}
-                {(weather === 'Rain' || weather === 'Thunder') && (
+                {(displayedWeather === 'Rain' || displayedWeather === 'Thunder') && (
                     <>
                         <div className="fixed inset-0 pointer-events-none z-20">
                             <RainParticles intensity="heavy" />
@@ -940,21 +969,21 @@ export default function OtenkiGurashiPage() {
                         }} />
                     </>
                 )}
-                {weather === 'Snow' && (
+                {displayedWeather === 'Snow' && (
                     <>
                         <div className="fixed inset-0 pointer-events-none z-20">
                             <SnowCanvas density={1.45} />
                         </div>
                     </>
                 )}
-                {weather === 'Clouds' && (
+                {displayedWeather === 'Clouds' && (
                     <div className="fixed inset-0 pointer-events-none z-0 opacity-30">
                         <div className="w-full h-full" style={{
                             background: 'radial-gradient(ellipse 80% 40% at 50% 10%, rgba(100,120,140,0.4), rgba(100,120,140,0))',
                         }} />
                     </div>
                 )}
-                {weather === 'Night' && (
+                {displayedWeather === 'Night' && (
                     <>
                         <div className="fixed inset-0 pointer-events-none z-0">
                             {/* 夜空の深み */}
@@ -980,7 +1009,7 @@ export default function OtenkiGurashiPage() {
                     `}</style>
                     </>
                 )}
-                {weather === 'Thunder' && (
+                {displayedWeather === 'Thunder' && (
                     <div className="fixed inset-0 pointer-events-none z-0">
                         <ThunderCanvas continuous={true} />
                     </div>
@@ -991,7 +1020,7 @@ export default function OtenkiGurashiPage() {
                     <TenchanCompanion
                         lang={lang}
                         section={activeSection}
-                        weather={weather}
+                        weather={displayedWeather}
                         showUmbrella={false}
                         overrideDialog={overrideDialog}
                         onClick={handleTenchanClick}
