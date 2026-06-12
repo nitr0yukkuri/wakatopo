@@ -2,10 +2,8 @@ import type { Metadata, Viewport } from "next";
 import { Suspense } from "react";
 import Script from "next/script";
 import "./globals.css";
-import GlobalTransitionOverlay from "@/components/GlobalTransitionOverlay";
-import PwaRegister from "@/components/PwaRegister";
-import SoundDirector from "@/components/SoundDirector";
 import LocaleSync from "@/components/LocaleSync";
+import ClientRuntime from "@/components/ClientRuntime";
 
 const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
 const isGaEnabled = process.env.NODE_ENV === "production" && !!GA_MEASUREMENT_ID;
@@ -100,9 +98,9 @@ export default function RootLayout({
           <>
             <Script
               src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
-              strategy="afterInteractive"
+              strategy="lazyOnload"
             />
-            <Script id="ga4-init" strategy="afterInteractive">
+            <Script id="ga4-init" strategy="lazyOnload">
               {`
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){dataLayer.push(arguments);}
@@ -115,9 +113,7 @@ export default function RootLayout({
         <Suspense fallback={null}>
           <LocaleSync />
         </Suspense>
-        <PwaRegister />
-        <SoundDirector />
-        <GlobalTransitionOverlay />
+        <ClientRuntime />
         <main className="overflow-x-clip">
           {children}
         </main>

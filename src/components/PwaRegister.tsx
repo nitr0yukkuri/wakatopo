@@ -11,9 +11,17 @@ export default function PwaRegister() {
                 // Ignore registration errors to keep UI stable.
             });
         };
+        const scheduleRegister = () => {
+            if ('requestIdleCallback' in window) {
+                window.requestIdleCallback(register, { timeout: 3000 });
+                return;
+            }
 
-        window.addEventListener('load', register, { once: true });
-        return () => window.removeEventListener('load', register);
+            globalThis.setTimeout(register, 1500);
+        };
+
+        window.addEventListener('load', scheduleRegister, { once: true });
+        return () => window.removeEventListener('load', scheduleRegister);
     }, []);
 
     return null;
