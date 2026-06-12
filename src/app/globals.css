@@ -3,6 +3,9 @@
 :root {
   --background: #050505; /* 限りなく黒に近いグレー */
   --foreground: #eeeeee;
+  --font-latin: "Outfit", "Segoe UI", system-ui, sans-serif;
+  --font-japanese: "Zen Kaku Gothic New", "Yu Gothic", "YuGothic", "Hiragino Kaku Gothic ProN", "Meiryo", system-ui, sans-serif;
+  --font-geist-mono: "Geist Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
   --font-base: var(--font-japanese);
   --tracking-body: 0.01em;
   --leading-body: 1.78;

@@ -1,31 +1,11 @@
 import type { Metadata, Viewport } from "next";
-import { Geist_Mono, Outfit, Zen_Kaku_Gothic_New } from "next/font/google";
+import { Suspense } from "react";
 import Script from "next/script";
 import "./globals.css";
 import GlobalTransitionOverlay from "@/components/GlobalTransitionOverlay";
 import PwaRegister from "@/components/PwaRegister";
 import SoundDirector from "@/components/SoundDirector";
 import LocaleSync from "@/components/LocaleSync";
-
-const outfit = Outfit({
-  variable: "--font-latin",
-  subsets: ["latin"],
-  display: "swap",
-});
-
-
-const zenKakuGothicNew = Zen_Kaku_Gothic_New({
-  variable: "--font-japanese",
-  subsets: ["latin"],
-  weight: ["400", "500", "700"],
-  display: "swap",
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-  display: "swap",
-});
 
 const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
 const isGaEnabled = process.env.NODE_ENV === "production" && !!GA_MEASUREMENT_ID;
@@ -113,7 +93,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${outfit.variable} ${zenKakuGothicNew.variable} ${geistMono.variable} antialiased`}
+        className="antialiased"
         suppressHydrationWarning
       >
         {isGaEnabled && (
@@ -132,7 +112,9 @@ export default function RootLayout({
             </Script>
           </>
         )}
-        <LocaleSync />
+        <Suspense fallback={null}>
+          <LocaleSync />
+        </Suspense>
         <PwaRegister />
         <SoundDirector />
         <GlobalTransitionOverlay />
