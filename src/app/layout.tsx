@@ -1,9 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import { Suspense } from "react";
-import Script from "next/script";
 import "./globals.css";
 import LocaleSync from "@/components/LocaleSync";
 import ClientRuntime from "@/components/ClientRuntime";
+import DelayedAnalytics from "@/components/DelayedAnalytics";
 
 const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
 const isGaEnabled = process.env.NODE_ENV === "production" && !!GA_MEASUREMENT_ID;
@@ -94,22 +94,7 @@ export default function RootLayout({
         className="antialiased"
         suppressHydrationWarning
       >
-        {isGaEnabled && (
-          <>
-            <Script
-              src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
-              strategy="lazyOnload"
-            />
-            <Script id="ga4-init" strategy="lazyOnload">
-              {`
-                window.dataLayer = window.dataLayer || [];
-                function gtag(){dataLayer.push(arguments);}
-                gtag('js', new Date());
-                gtag('config', '${GA_MEASUREMENT_ID}', { page_path: window.location.pathname });
-              `}
-            </Script>
-          </>
-        )}
+        {isGaEnabled && <DelayedAnalytics measurementId={GA_MEASUREMENT_ID} />}
         <Suspense fallback={null}>
           <LocaleSync />
         </Suspense>

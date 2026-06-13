@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./local-fonts.css";
 
 :root {
   --background: #050505; /* 限りなく黒に近いグレー */
