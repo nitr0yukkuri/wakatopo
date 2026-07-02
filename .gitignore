@@ -25,6 +25,8 @@
 .DS_Store
 *.pem
 /home-planet-2800x2100.png
+/applications/
+/.codex/
 
 # debug
 npm-debug.log*
