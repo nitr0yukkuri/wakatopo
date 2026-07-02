@@ -181,22 +181,6 @@ export default async function AboutPage({
                             Instagram
                         </a>
                         <a
-                            href="https://zenn.dev/0st_ts"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-mono tracking-widest text-gray-200 hover:border-cyan-400/40 hover:text-cyan-300 transition-colors"
-                        >
-                            Zenn
-                        </a>
-                        <a
-                            href="https://qiita.com/0ts_st"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-mono tracking-widest text-gray-200 hover:border-cyan-400/40 hover:text-cyan-300 transition-colors"
-                        >
-                            Qiita
-                        </a>
-                        <a
                             href="https://github.com/nitr0yukkuri"
                             target="_blank"
                             rel="noopener noreferrer"
