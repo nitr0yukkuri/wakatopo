@@ -24,7 +24,11 @@
 
 ## Awards
 
-- [CSS Winner - Site of the Day](https://www.csswinner.com/details/wakato-3d-portfolio/19159)
+<a href="https://www.csswinner.com/details/wakato-3d-portfolio/19159">
+  <img src="public/sotd-black.png" alt="CSS Winner - Site of the Day" width="136" />
+</a>
+
+[CSS Winner - Site of the Day](https://www.csswinner.com/details/wakato-3d-portfolio/19159)
 
 ---
 
