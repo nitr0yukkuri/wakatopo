@@ -24,6 +24,7 @@
 # misc
 .DS_Store
 *.pem
+/home-planet-2800x2100.png
 
 # debug
 npm-debug.log*

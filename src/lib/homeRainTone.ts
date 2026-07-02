@@ -13,6 +13,16 @@ let thunderVol: Tone.Volume | null = null;
 let thunderInterval: number | null = null;
 let currentWeather: WeatherType | null = null;
 
+type SuspendableAudioContext = {
+    suspend?: () => Promise<void>;
+    resume?: () => Promise<void>;
+};
+
+const getRawAudioContext = (): SuspendableAudioContext | null => {
+    const context = Tone.getContext().rawContext as SuspendableAudioContext | undefined;
+    return context ?? null;
+};
+
 const playThunder = () => {
     if (!isPlaying || currentWeather !== 'Thunder') return;
 
@@ -57,10 +67,16 @@ export const startHomeRain = async (weather: WeatherType) => {
         }).connect(thunderFilter);
 
         document.addEventListener("visibilitychange", () => {
+            const rawCtx = getRawAudioContext();
+
             if (document.hidden) {
-                if (isPlaying) void (Tone.context as any).suspend();
+                if (isPlaying && typeof rawCtx?.suspend === 'function') {
+                    void rawCtx.suspend();
+                }
             } else {
-                if (isPlaying) void (Tone.context as any).resume();
+                if (isPlaying && typeof rawCtx?.resume === 'function') {
+                    void rawCtx.resume();
+                }
             }
         });
 

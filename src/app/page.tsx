@@ -272,13 +272,15 @@ export default async function Home({
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 rounded-full border border-cyan-400/40 bg-cyan-400/10 px-4 py-2 text-xs font-mono tracking-widest text-cyan-300 hover:bg-cyan-400 hover:text-black transition-colors"
                   >
-                    X / Twitter
+                    X
                   </a>
                   <a
-                    href="mailto:nakatawakato@gmail.com"
-                    className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-mono tracking-widest text-gray-200 hover:border-cyan-400/40 hover:text-cyan-300 transition-colors"
+                    href="https://www.instagram.com/0ts_st/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 rounded-full border border-cyan-400/40 bg-cyan-400/10 px-4 py-2 text-xs font-mono tracking-widest text-cyan-300 hover:bg-cyan-400 hover:text-black transition-colors"
                   >
-                    CONTACT
+                    Instagram
                   </a>
                   <a
                     href="https://github.com/nitr0yukkuri"
@@ -287,6 +289,12 @@ export default async function Home({
                     className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-mono tracking-widest text-gray-200 hover:border-cyan-400/40 hover:text-cyan-300 transition-colors"
                   >
                     GitHub
+                  </a>
+                  <a
+                    href="mailto:nakatawakato@gmail.com"
+                    className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-mono tracking-widest text-gray-200 hover:border-cyan-400/40 hover:text-cyan-300 transition-colors"
+                  >
+                    Contact
                   </a>
                 </div>
               </div>
