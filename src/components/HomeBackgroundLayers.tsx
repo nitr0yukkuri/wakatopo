@@ -16,7 +16,7 @@ export default function HomeBackgroundLayers() {
             <div className="fixed inset-0 z-0 opacity-80 mix-blend-screen pointer-events-none">
                 <SceneClient />
             </div>
-            <WeatherEffectsOverlay />
+            <WeatherEffectsOverlay snowMobileScale={0.68} />
         </>
     );
 }

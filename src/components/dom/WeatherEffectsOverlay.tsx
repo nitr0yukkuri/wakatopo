@@ -18,9 +18,11 @@ type WindowWithDataLayer = Window & {
 export default function WeatherEffectsOverlay({
     weatherOverride,
     includeRain = false,
+    snowMobileScale = 1,
 }: {
     weatherOverride?: WeatherType;
     includeRain?: boolean;
+    snowMobileScale?: number;
 } = {}) {
     const { season, seasonEvent, weather: storeWeather } = useStore();
     const weather = weatherOverride ?? storeWeather;
@@ -44,7 +46,7 @@ export default function WeatherEffectsOverlay({
             {includeRain && weather === 'Rain' && <RainParticles key="rain" />}
             {weather === 'Thunder' && <RainParticles key="thunder-rain" />}
             {weather === 'Thunder' && <ThunderCanvas key="thunder" />}
-            {weather === 'Snow' && <SnowCanvas key={`snow-${snowVariant}`} density={0.72} variant={snowVariant} />}
+            {weather === 'Snow' && <SnowCanvas key={`snow-${snowVariant}`} density={0.72} variant={snowVariant} mobileScale={snowMobileScale} />}
             {weather === 'Night' && <NightGlowOverlay key={`night-${nightVariant}`} variant={nightVariant} />}
 
             {/* Sun / Moon overlay anchors: open X in a new tab. Position tuned to match canvases. */}
