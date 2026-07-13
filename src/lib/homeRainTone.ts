@@ -30,15 +30,20 @@ const getRawAudioContext = (): SuspendableAudioContext | null => {
 const playThunder = () => {
   if (!isPlaying || currentWeather !== "Thunder") return;
 
-  const now = Tone.now();
-  // High frequency crackle
-  thunderNoise?.triggerAttackRelease(2.0, now, 0.15);
-  // Deep heavy rumble initial strike (G2 = 98 Hz, audible on laptop speakers)
-  thunderMembrane?.triggerAttackRelease("G2", 2.5, now, 0.45);
-  // Long lingering secondary rumble (C2 = 65 Hz — lowest reliably audible pitch)
-  thunderMembrane?.triggerAttackRelease("C2", 4.0, now + 0.15, 0.36);
-  // Final distant rumble (E2 = 82 Hz)
-  thunderMembrane?.triggerAttackRelease("E2", 3.0, now + 0.4, 0.26);
+  try {
+    const now = Tone.now();
+    // High frequency crackle
+    thunderNoise?.triggerAttackRelease(2.0, now, 0.15);
+    // Deep heavy rumble initial strike (G2 = 98 Hz, audible on laptop speakers)
+    thunderMembrane?.triggerAttackRelease("G2", 2.5, now, 0.45);
+    // Long lingering secondary rumble (C2 = 65 Hz — lowest reliably audible pitch)
+    thunderMembrane?.triggerAttackRelease("C2", 4.0, now + 0.15, 0.36);
+    // Final distant rumble (E2 = 82 Hz)
+    thunderMembrane?.triggerAttackRelease("E2", 3.0, now + 0.4, 0.26);
+  } catch {
+    thunderInterval = null;
+    return;
+  }
 
   // Schedule next majestic random thunder between 6 and 14 seconds
   const nextMs = 6000 + Math.random() * 8000;
@@ -94,11 +99,11 @@ export const startHomeRain = async (weather: WeatherType) => {
 
       if (document.hidden) {
         if (isPlaying && typeof rawCtx?.suspend === "function") {
-          void rawCtx.suspend();
+          void rawCtx.suspend().catch(() => {});
         }
       } else {
         if (isPlaying && typeof rawCtx?.resume === "function") {
-          void rawCtx.resume();
+          void rawCtx.resume().catch(() => {});
         }
       }
     });
@@ -127,8 +132,12 @@ export const startHomeRain = async (weather: WeatherType) => {
 
 export const stopHomeRain = () => {
   if (isPlaying) {
-    rainNoise?.stop();
-    rainDropletNoise?.stop();
+    try {
+      rainNoise?.stop();
+    } catch {}
+    try {
+      rainDropletNoise?.stop();
+    } catch {}
     if (thunderInterval !== null) {
       window.clearTimeout(thunderInterval);
       thunderInterval = null;

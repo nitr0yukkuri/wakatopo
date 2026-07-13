@@ -84,6 +84,8 @@ export default function SoundDirector() {
   const ensureAudioGraph = async () => {
     if (typeof window === "undefined") return false;
 
+    let pendingContext: AudioContext | null = null;
+
     const createImpulseResponse = (
       ctx: AudioContext,
       seconds = 2.8,
@@ -104,82 +106,91 @@ export default function SoundDirector() {
       return impulse;
     };
 
-    if (!audioContextRef.current) {
-      const Ctx =
-        window.AudioContext ||
-        (window as typeof window & { webkitAudioContext?: typeof AudioContext })
-          .webkitAudioContext;
-      if (!Ctx) return false;
+    try {
+      if (!audioContextRef.current) {
+        const Ctx =
+          window.AudioContext ||
+          (window as typeof window & { webkitAudioContext?: typeof AudioContext })
+            .webkitAudioContext;
+        if (!Ctx) return false;
 
-      const ctx = new Ctx();
-      const master = ctx.createGain();
-      const outputLowpass = ctx.createBiquadFilter();
-      const outputConvolver = ctx.createConvolver();
-      const outputDryGain = ctx.createGain();
-      const outputWetGain = ctx.createGain();
-      const outputCompressor = ctx.createDynamicsCompressor();
+        const ctx = new Ctx();
+        pendingContext = ctx;
+        const master = ctx.createGain();
+        const outputLowpass = ctx.createBiquadFilter();
+        const outputConvolver = ctx.createConvolver();
+        const outputDryGain = ctx.createGain();
+        const outputWetGain = ctx.createGain();
+        const outputCompressor = ctx.createDynamicsCompressor();
 
       // Lo-fi shaping: allow overtones up to ~2.2 kHz so desktop speakers reproduce the tone.
       // (1050 Hz was too aggressive: it killed perceived loudness on desktop devices.)
-      outputLowpass.type = "lowpass";
-      outputLowpass.frequency.value = 2200;
-      outputLowpass.Q.value = 0.9;
+        outputLowpass.type = "lowpass";
+        outputLowpass.frequency.value = 2200;
+        outputLowpass.Q.value = 0.9;
 
-      outputConvolver.buffer = createImpulseResponse(ctx);
+        outputConvolver.buffer = createImpulseResponse(ctx);
 
       // Raised dry/wet gains so the signal chain reaches a hearable level on desktop speakers.
       // Previous values (0.32 / 0.24) + master (0.62) produced ~-45 dB effective output.
-      outputDryGain.gain.value = 0.64;
-      outputWetGain.gain.value = 0.42;
+        outputDryGain.gain.value = 0.64;
+        outputWetGain.gain.value = 0.42;
 
       // Compressor threshold lowered to -40 dB so it catches the quiet BGM signal.
       // Ratio reduced from 8 to 4 for a gentler lift rather than hard-limiting.
-      outputCompressor.threshold.value = -40;
-      outputCompressor.knee.value = 18;
-      outputCompressor.ratio.value = 4;
-      outputCompressor.attack.value = 0.003;
-      outputCompressor.release.value = 0.2;
+        outputCompressor.threshold.value = -40;
+        outputCompressor.knee.value = 18;
+        outputCompressor.ratio.value = 4;
+        outputCompressor.attack.value = 0.003;
+        outputCompressor.release.value = 0.2;
 
-      master.gain.value = 0.82;
-      master.connect(outputLowpass);
+        master.gain.value = 0.82;
+        master.connect(outputLowpass);
 
-      outputLowpass.connect(outputDryGain);
-      outputDryGain.connect(outputCompressor);
+        outputLowpass.connect(outputDryGain);
+        outputDryGain.connect(outputCompressor);
 
-      outputLowpass.connect(outputConvolver);
-      outputConvolver.connect(outputWetGain);
-      outputWetGain.connect(outputCompressor);
+        outputLowpass.connect(outputConvolver);
+        outputConvolver.connect(outputWetGain);
+        outputWetGain.connect(outputCompressor);
 
-      outputCompressor.connect(ctx.destination);
+        outputCompressor.connect(ctx.destination);
 
-      audioContextRef.current = ctx;
-      masterGainRef.current = master;
-      outputLowpassRef.current = outputLowpass;
-      outputConvolverRef.current = outputConvolver;
-      outputDryGainRef.current = outputDryGain;
-      outputWetGainRef.current = outputWetGain;
-      outputCompressorRef.current = outputCompressor;
+        audioContextRef.current = ctx;
+        pendingContext = null;
+        masterGainRef.current = master;
+        outputLowpassRef.current = outputLowpass;
+        outputConvolverRef.current = outputConvolver;
+        outputDryGainRef.current = outputDryGain;
+        outputWetGainRef.current = outputWetGain;
+        outputCompressorRef.current = outputCompressor;
 
       // Expose key chain values for automated volume-level tests.
-      (
-        window as typeof window & {
-          __lpAudioGraphConfig?: Record<string, number>;
-        }
-      ).__lpAudioGraphConfig = {
-        masterGain: master.gain.value,
-        outputLowpassHz: outputLowpass.frequency.value,
-        outputDryGain: outputDryGain.gain.value,
-        outputWetGain: outputWetGain.gain.value,
-        compressorThreshold: outputCompressor.threshold.value,
-        compressorRatio: outputCompressor.ratio.value,
-      };
-    }
+        (
+          window as typeof window & {
+            __lpAudioGraphConfig?: Record<string, number>;
+          }
+        ).__lpAudioGraphConfig = {
+          masterGain: master.gain.value,
+          outputLowpassHz: outputLowpass.frequency.value,
+          outputDryGain: outputDryGain.gain.value,
+          outputWetGain: outputWetGain.gain.value,
+          compressorThreshold: outputCompressor.threshold.value,
+          compressorRatio: outputCompressor.ratio.value,
+        };
+      }
 
-    if (audioContextRef.current.state === "suspended") {
-      await audioContextRef.current.resume();
-    }
+      if (audioContextRef.current.state === "suspended") {
+        await audioContextRef.current.resume();
+      }
 
-    return true;
+      return true;
+    } catch {
+      if (pendingContext && pendingContext.state !== "closed") {
+        void pendingContext.close().catch(() => {});
+      }
+      return false;
+    }
   };
 
   const createVoice = (
@@ -501,17 +512,19 @@ export default function SoundDirector() {
       currentPathname === "/" &&
       (currentWeather === "Rain" || currentWeather === "Thunder")
     ) {
-      import("@/lib/homeRainTone").then(({ startHomeRain, stopHomeRain }) => {
-        if (
-          session !== bgmSessionRef.current ||
-          isMutedRef.current ||
-          latestAudioStateRef.current.pathname !== "/"
-        ) {
-          stopHomeRain();
-          return;
-        }
-        void startHomeRain(latestAudioStateRef.current.weather);
-      });
+      import("@/lib/homeRainTone")
+        .then(({ startHomeRain, stopHomeRain }) => {
+          if (
+            session !== bgmSessionRef.current ||
+            isMutedRef.current ||
+            latestAudioStateRef.current.pathname !== "/"
+          ) {
+            stopHomeRain();
+            return;
+          }
+          void startHomeRain(latestAudioStateRef.current.weather).catch(() => {});
+        })
+        .catch(() => {});
     }
 
     const profile = getLofiBgmProfile(
