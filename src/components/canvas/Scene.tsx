@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Environment, Stars, useProgress } from '@react-three/drei';
+import { Stars, useProgress } from '@react-three/drei';
 import { EffectComposer, Bloom } from '@react-three/postprocessing';
 import AbstractCore from './AbstractCore';
 import Weather from './Weather';
@@ -84,7 +84,7 @@ export default function Scene({ onSceneReady }: { onSceneReady?: () => void }) {
                     {/* 星の密度を調整 */}
                     <Stars radius={100} depth={50} count={640} factor={1.5} saturation={0} fade speed={0.35} />
 
-                    <Environment preset="city" environmentIntensity={0.18} />
+                    <hemisphereLight args={['#b8d8ff', '#080808', 0.18]} />
 
                     {/* Bloom エフェクト: 発光をより劇的に */}
                     <EffectComposer multisampling={isMobile ? 0 : 8}>
