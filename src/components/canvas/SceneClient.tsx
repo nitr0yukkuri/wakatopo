@@ -53,6 +53,16 @@ export default function SceneClient() {
         };
     }, [isSceneReady, progress]);
 
+    useEffect(() => {
+        if (!showLoader) return;
+
+        const timeout = window.setTimeout(() => {
+            setShowLoader(false);
+        }, 12000);
+
+        return () => window.clearTimeout(timeout);
+    }, [showLoader]);
+
     return (
         <>
             <div className={`transition-opacity duration-200 ${showLoader ? 'opacity-0' : 'opacity-100'}`}>

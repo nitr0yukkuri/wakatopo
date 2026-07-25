@@ -2,7 +2,7 @@
 
 import { useEffect, useState, Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, Environment, Stars } from '@react-three/drei';
+import { OrbitControls, Stars } from '@react-three/drei';
 import Planet from './Planet';
 import Meteors from './Meteors';
 
@@ -41,8 +41,6 @@ export default function RealisticPlanetScene() {
                     <Stars radius={100} depth={50} count={1000} factor={2.2} saturation={0} fade speed={0.8} />
 
                     {/* 背景光 */}
-                    <Environment preset="city" environmentIntensity={0.1} />
-
                     {/* マウスで少しだけ視点を動かせるようにする */}
                     <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={0.5} maxPolarAngle={Math.PI / 1.5} minPolarAngle={Math.PI / 3} />
                 </Suspense>

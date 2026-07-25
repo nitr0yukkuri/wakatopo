@@ -8,15 +8,15 @@ const SELECT_SEQUENCE = [0, 3, 7] as const;
 const SELECTED_CELLS = new Set<number>(SELECT_SEQUENCE);
 const TARGET_LABEL = 'TRAFFIC LIGHT';
 const TILE_IMAGES = [
-    'https://raw.githubusercontent.com/nitr0yukkuri/recaptchgame/main/frontend/public/images/shingouki1.jpg',
-    'https://raw.githubusercontent.com/nitr0yukkuri/recaptchgame/main/frontend/public/images/car2.jpg',
-    'https://raw.githubusercontent.com/nitr0yukkuri/recaptchgame/main/frontend/public/images/kaidan1.jpg',
-    'https://raw.githubusercontent.com/nitr0yukkuri/recaptchgame/main/frontend/public/images/shingouki3.jpg',
-    'https://raw.githubusercontent.com/nitr0yukkuri/recaptchgame/main/frontend/public/images/shoukasen1.jpg',
-    'https://raw.githubusercontent.com/nitr0yukkuri/recaptchgame/main/frontend/public/images/car4.jpg',
-    'https://raw.githubusercontent.com/nitr0yukkuri/recaptchgame/main/frontend/public/images/kaidan2.jpg',
-    'https://raw.githubusercontent.com/nitr0yukkuri/recaptchgame/main/frontend/public/images/shingouki4.jpg',
-    'https://raw.githubusercontent.com/nitr0yukkuri/recaptchgame/main/frontend/public/images/shoukasen2.jpg',
+    '/captcha-transition/shingouki1.jpg',
+    '/captcha-transition/car2.jpg',
+    '/captcha-transition/kaidan1.jpg',
+    '/captcha-transition/shingouki3.jpg',
+    '/captcha-transition/shoukasen1.jpg',
+    '/captcha-transition/car4.jpg',
+    '/captcha-transition/kaidan2.jpg',
+    '/captcha-transition/shingouki4.jpg',
+    '/captcha-transition/shoukasen2.jpg',
 ];
 
 export default function CaptchaLockTransitionCanvas() {

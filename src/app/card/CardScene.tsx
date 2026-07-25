@@ -1,7 +1,7 @@
 'use client';
 
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Environment, Stars } from '@react-three/drei';
+import { Stars } from '@react-three/drei';
 import { EffectComposer, Bloom } from '@react-three/postprocessing';
 import { Suspense } from 'react';
 import AbstractCore from '@/components/canvas/AbstractCore';
@@ -48,8 +48,6 @@ export default function CardScene({
                 <Weather weatherOverride={weather} />
 
                 <Stars radius={100} depth={50} count={640} factor={1.5} saturation={0} fade speed={0.35} />
-
-                <Environment preset="city" environmentIntensity={0.18} />
 
                 <EffectComposer multisampling={8}>
                     <Bloom

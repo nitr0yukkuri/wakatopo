@@ -19,7 +19,7 @@ export default function Image() {
                 }}
             >
                 <img
-                    src="https://wakatopo.vercel.app/wakato_gemini_logo.png"
+                    src="https://wakato.tech/wakato_gemini_logo.png"
                     alt="WAKATO Portfolio"
                     width={1200}
                     height={630}
