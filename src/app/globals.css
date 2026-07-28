@@ -4,10 +4,10 @@
 :root {
   --background: #050505; /* 限りなく黒に近いグレー */
   --foreground: #eeeeee;
-  --font-latin: "Outfit", "Segoe UI", system-ui, sans-serif;
+  --font-latin: "Outfit", "Zen Kaku Gothic New", "Yu Gothic", "YuGothic", "Hiragino Kaku Gothic ProN", "Meiryo", system-ui, sans-serif;
   --font-japanese: "Zen Kaku Gothic New", "Yu Gothic", "YuGothic", "Hiragino Kaku Gothic ProN", "Meiryo", system-ui, sans-serif;
   --font-geist-mono: "Geist Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
-  --font-base: var(--font-japanese);
+  --font-base: var(--font-latin);
   --tracking-body: 0.01em;
   --leading-body: 1.78;
   --tracking-heading: 0.005em;

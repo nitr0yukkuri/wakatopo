@@ -761,7 +761,7 @@ export default function SoundDirector() {
         className="group inline-flex items-center gap-2 rounded-md border border-cyan-400/30 bg-[#05080d]/80 px-3 py-2 text-[10px] font-mono tracking-[0.22em] text-cyan-200/90 backdrop-blur transition-colors hover:border-cyan-300 hover:text-white"
       >
         <span
-          className={`h-1.5 w-1.5 rounded-full ${isMuted || !hasUnlockedAudio ? "bg-gray-500" : "bg-cyan-300 animate-pulse"}`}
+          className={`h-1.5 w-1.5 rounded-full ${isMuted ? "bg-gray-500" : "bg-cyan-300 animate-pulse"}`}
         />
         <span>{isMuted ? "SOUND OFF" : "SOUND ON"}</span>
       </button>
