@@ -9,12 +9,12 @@ import Weather from './Weather';
 import { Suspense } from 'react';
 
 function SceneReadySignal({ onReady }: { onReady?: () => void }) {
-    const { active, progress } = useProgress();
+    const { active, progress, total } = useProgress();
     const firedRef = useRef(false);
 
     useEffect(() => {
         if (!onReady || firedRef.current) return;
-        if (active || progress < 100) return;
+        if (active || (total > 0 && progress < 100)) return;
 
         let raf1 = 0;
         let raf2 = 0;
@@ -31,7 +31,7 @@ function SceneReadySignal({ onReady }: { onReady?: () => void }) {
             if (raf1) window.cancelAnimationFrame(raf1);
             if (raf2) window.cancelAnimationFrame(raf2);
         };
-    }, [active, onReady, progress]);
+    }, [active, onReady, progress, total]);
 
     return null;
 }
