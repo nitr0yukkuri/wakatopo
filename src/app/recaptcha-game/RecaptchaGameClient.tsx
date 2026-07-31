@@ -86,23 +86,14 @@ export default function RecaptchaGameClient() {
             <div className="pointer-events-none absolute inset-0 opacity-[0.14] [background:repeating-linear-gradient(0deg,rgba(255,255,255,0.09)_0px,rgba(255,255,255,0.09)_1px,transparent_1px,transparent_4px)]" />
             <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[38%] bg-gradient-to-t from-black via-[#02040a]/78 to-transparent" />
 
-            <nav className="fixed top-0 left-0 w-full z-50 px-5 py-5 md:px-10 md:py-8 border-b border-cyan-400/20 bg-[#030711]/60 backdrop-blur-xl">
-                <div className="mx-auto max-w-6xl flex items-center justify-between gap-4">
-                    <button
-                        onClick={handleReturn}
-                        className="inline-flex items-center gap-3 text-xs md:text-sm font-mono tracking-[0.22em] text-cyan-100/90 hover:text-cyan-300 transition-colors group"
-                    >
-                        <span className="w-6 h-[1px] bg-cyan-100/90 group-hover:bg-cyan-300 transition-colors" />
-                        {copy.returnToOrbit}
-                    </button>
-                    <div className="hidden md:flex items-center gap-4 text-[10px] font-mono tracking-[0.24em] text-cyan-200/70">
-                        <span>MODE / MULTIPLAYER</span>
-                        <span className="inline-flex items-center gap-2">
-                            <span className="h-1.5 w-1.5 rounded-full bg-cyan-300 animate-pulse" />
-                            LIVE
-                        </span>
-                    </div>
-                </div>
+            <nav className="fixed left-5 top-5 z-50 md:left-10 md:top-8">
+                <button
+                    onClick={handleReturn}
+                    className="group inline-flex items-center gap-3 rounded-full border border-cyan-300/20 bg-[#030711]/70 px-4 py-3 font-mono text-[11px] tracking-[0.18em] text-cyan-100/90 shadow-[0_8px_30px_rgba(2,5,12,0.45)] backdrop-blur-xl transition-colors hover:border-cyan-300/45 hover:text-cyan-300 md:text-xs"
+                >
+                    <span className="h-px w-5 bg-cyan-100/90 transition-colors group-hover:bg-cyan-300" />
+                    {copy.returnToOrbit}
+                </button>
             </nav>
 
             <div className="relative z-10 mx-auto max-w-6xl px-5 pt-28 pb-20 md:px-10 md:pt-36 md:pb-24">
