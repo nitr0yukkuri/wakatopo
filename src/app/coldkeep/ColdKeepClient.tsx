@@ -585,7 +585,7 @@ export default function ColdKeepClient() {
 
                             <div>
                                 <h3 className="text-3xl font-bold text-white mb-2">Passive Simulation</h3>
-                                <p className="text-[#38bdf8] font-mono text-sm mb-6 bg-[#0369a1]/20 inline-block px-3 py-1 rounded-full">Newton's Law of Cooling</p>
+                                <p className="text-[#38bdf8] font-mono text-sm mb-6 bg-[#0369a1]/20 inline-block px-3 py-1 rounded-full">Newton&apos;s Law of Cooling</p>
                                 <p className="text-[#e0f2fe] leading-relaxed mb-8 opacity-90">
                                     {t.passive1}
                                     {t.passive2}

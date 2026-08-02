@@ -99,9 +99,9 @@ export default function RootLayout({
           <LocaleSync />
         </Suspense>
         <ClientRuntime />
-        <main className="overflow-x-clip">
+        <div className="overflow-x-clip">
           {children}
-        </main>
+        </div>
         <div
           className="landscape-lock-overlay"
           role="alert"

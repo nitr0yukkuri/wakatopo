@@ -99,7 +99,7 @@ export default function ThunderTransitionCanvas({ continuous = false }: { contin
         
         let raf: number;
         let lastTime = performance.now();
-        let bolts: Lightning[] = [];
+        const bolts: Lightning[] = [];
         
         let dpr = window.devicePixelRatio || 1;
         

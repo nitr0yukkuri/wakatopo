@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 export const dynamic = 'force-dynamic';
 
 export default function NotFound() {
@@ -10,12 +12,12 @@ export default function NotFound() {
                 <p className="mb-4 text-[10px] tracking-[0.42em] text-cyan-200/70">LOST COORDINATE</p>
                 <h1 className="mb-4 text-7xl font-bold tracking-[0.12em] text-white md:text-8xl">404</h1>
                 <p className="mb-8 text-sm tracking-[0.24em] text-gray-400">Page not found</p>
-                <a
+                <Link
                     href="/"
                     className="inline-flex items-center justify-center border border-cyan-300/40 bg-cyan-300/10 px-5 py-3 text-xs tracking-[0.24em] text-cyan-200 transition-colors hover:border-cyan-200 hover:bg-cyan-300/15 hover:text-white"
                 >
                     Return to the world
-                </a>
+                </Link>
             </section>
         </main>
     );

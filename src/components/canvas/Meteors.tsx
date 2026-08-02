@@ -3,7 +3,20 @@ import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
 // 1つの流星コンポーネント
-function Meteor({ startPos, endPos, color = '#ffffff', scale = 1.0, duration = 2.0, onComplete }: any) {
+type MeteorSpec = {
+    id: number;
+    startPos: THREE.Vector3;
+    endPos: THREE.Vector3;
+    color: string;
+    scale: number;
+    duration: number;
+};
+
+type MeteorProps = Omit<MeteorSpec, 'id'> & {
+    onComplete: () => void;
+};
+
+function Meteor({ startPos, endPos, color = '#ffffff', scale = 1.0, duration = 2.0, onComplete }: MeteorProps) {
     const meteorRef = useRef<THREE.Group>(null);
     const headMaterialRef = useRef<THREE.MeshBasicMaterial>(null);
     const tailMaterialRef = useRef<THREE.MeshBasicMaterial>(null);
@@ -97,7 +110,7 @@ function Meteor({ startPos, endPos, color = '#ffffff', scale = 1.0, duration = 2
 
 // Manager component that spawns meteors randomly over time
 export default function Meteors() {
-    const [meteors, setMeteors] = useState<any[]>([]);
+    const [meteors, setMeteors] = useState<MeteorSpec[]>([]);
     const nextId = useRef(0);
     const timeSinceLastSpawn = useRef(0);
 
