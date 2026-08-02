@@ -179,7 +179,7 @@ export const startOtenkiBgm = async (weather: WeatherType) => {
     Tone.Transport.bpm.value = 72; // Classic Lofi Hip Hop tempo (70-80)
     let chords: string[][] = [];
     let arpPattern: number[] = [];
-    let lofiVolume = -10;
+    let lofiVolume = -12;
 
     // Define jazzy, beautiful lofi chord progressions
     switch (weather) {
@@ -226,7 +226,7 @@ export const startOtenkiBgm = async (weather: WeatherType) => {
             arpPattern = []; // No arps
             Tone.Transport.bpm.value = 64;
             filter!.frequency.value = 1000; // Dark
-            lofiVolume = -10;
+            lofiVolume = -12;
             break;
         case 'Night':
             chords = [
