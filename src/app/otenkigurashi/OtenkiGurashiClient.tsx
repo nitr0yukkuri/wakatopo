@@ -905,7 +905,7 @@ export default function OtenkiGurashiClient() {
                         {/* Pop Buttons */}
                         <div id="bottom" ref={bottomRef} className="mt-16 pt-10 border-t border-[#e0f4fc] flex flex-col sm:flex-row items-center justify-center gap-4 scroll-mt-32">
                             <a
-                                href="https://otenki-gurashi.vercel.app/"
+                                href="https://weather-live-ochre.vercel.app/"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="bg-[#ffb03a] text-white px-8 py-4 rounded-full font-bold text-base shadow-[0_6px_0_#e69a2e] hover:translate-y-[2px] hover:shadow-[0_4px_0_#e69a2e] active:translate-y-[6px] active:shadow-none transition-all flex items-center gap-2"

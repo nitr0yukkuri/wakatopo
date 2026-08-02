@@ -128,19 +128,6 @@ export const getLofiBgmProfile = (
         accentAt: 0.44,
         tickMs: 5180 + tempoOffset,
       };
-    case "04":
-      // Raised one octave (208–312 Hz).
-      return {
-        notes: [207.65, 246.94, 311.13, 277.18],
-        highRatio: 1.28,
-        pulseRatio: 1.16,
-        waveform: "triangle",
-        accentWaveform: "triangle",
-        accentRatio: 1.28,
-        accentVolume: 0.012,
-        accentAt: 0.4,
-        tickMs: 3360 + tempoOffset,
-      };
     case "05":
       return {
         notes: [82.41, 98.0, 92.5],
