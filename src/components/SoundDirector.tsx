@@ -23,8 +23,7 @@ const MUTE_KEY = "lp-audio-muted";
 const OUTPUT_BOOST = 2.2;
 const OTENKI_BGM_FLAG = -1;
 const DENSHOUO_BGM_FLAG = -2;
-const COLDKEEP_BGM_FLAG = -3;
-const EXCLUSIVE_BGM_WORK_IDS = new Set(["02", "03", "05"]);
+const EXCLUSIVE_BGM_WORK_IDS = new Set(["02", "05"]);
 
 type AudioStateSnapshot = {
   pathname: string;
@@ -58,10 +57,10 @@ export default function SoundDirector() {
     githubActivityLevel: 0.5,
   });
   const previousTransitionRef = useRef<TransitionType>("none");
-  const isMutedRef = useRef(false);
+  const isMutedRef = useRef(true);
   const hasUnlockedAudioRef = useRef(false);
   const bgmStepRef = useRef(0);
-  const [isMuted, setIsMuted] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
   const [hasUnlockedAudio, setHasUnlockedAudio] = useState(false);
   const isCardPage = pathname === "/card";
 
@@ -482,29 +481,6 @@ export default function SoundDirector() {
       return;
     }
 
-    if (currentWorkId === "03") {
-      const ctx = audioContextRef.current;
-      if (!ctx) return;
-
-      bgmTimerRef.current = COLDKEEP_BGM_FLAG;
-      import("@/lib/coldkeepIceBgm")
-        .then(({ startColdkeepIceBgm, stopColdkeepIceBgm }) => {
-          if (
-            session !== bgmSessionRef.current ||
-            isMutedRef.current ||
-            latestAudioStateRef.current.resolvedWorkId !== "03"
-          ) {
-            stopColdkeepIceBgm();
-            return;
-          }
-          startColdkeepIceBgm(ctx);
-        })
-        .catch(() => {
-          bgmTimerRef.current = null;
-        });
-      return;
-    }
-
     if (currentWorkId && EXCLUSIVE_BGM_WORK_IDS.has(currentWorkId)) return;
 
     // Home screen Tone.js rain/thunder effect
@@ -522,7 +498,8 @@ export default function SoundDirector() {
             stopHomeRain();
             return;
           }
-          void startHomeRain(latestAudioStateRef.current.weather).catch(() => {});
+          const ambientWeather = latestAudioStateRef.current.weather === "Thunder" ? "Rain" : latestAudioStateRef.current.weather;
+          void startHomeRain(ambientWeather).catch(() => {});
         })
         .catch(() => {});
     }
@@ -545,20 +522,17 @@ export default function SoundDirector() {
 
       const index = bgmStepRef.current % profile.notes.length;
       const base = profile.notes[index];
-      const sway = 1 + Math.sin(bgmStepRef.current * 0.63) * 0.08;
+      const isHomeBgm = latestState.pathname === "/" && !latestState.resolvedWorkId;
+      const swayAmount = isHomeBgm ? 0.015 : 0.08;
+      const sway = 1 + Math.sin(bgmStepRef.current * 0.63) * swayAmount;
       const deepBed = base * 0.5;
       const top = base * profile.highRatio;
       const pulse = base * profile.pulseRatio;
-      const isHomeBgm = latestState.pathname === "/" && !latestState.resolvedWorkId;
-      const isDesktopHomeBgm = isHomeBgm && window.innerWidth >= 768;
-      const homeGain = isHomeBgm ? 1.9 : 1;
+      const homeGain = 1;
 
       playTone(base * sway, 2.9, 0.055 * homeGain, profile.waveform);
       playTone(deepBed, 2.4, 0.028 * homeGain, "sine", 0.08);
       playTone(top * sway, 1.6, 0.015 * homeGain, "sine", 0.34);
-      if (isDesktopHomeBgm) {
-        playTone(base * 2 * sway, 2.2, 0.017 * homeGain, "sine", 0.18);
-      }
       playTone(pulse, 0.36, 0.022 * homeGain, "triangle", 0.62);
       playTone(
         base * profile.accentRatio,
@@ -606,10 +580,6 @@ export default function SoundDirector() {
         import("@/lib/denshouoSeaBgm").then(({ stopDenshouoSeaBgm }) => {
           stopDenshouoSeaBgm();
         });
-      } else if (bgmTimerRef.current === COLDKEEP_BGM_FLAG) {
-        import("@/lib/coldkeepIceBgm").then(({ stopColdkeepIceBgm }) => {
-          stopColdkeepIceBgm();
-        });
       } else {
         window.clearInterval(bgmTimerRef.current);
       }
@@ -653,7 +623,7 @@ export default function SoundDirector() {
     if (typeof window === "undefined") return;
 
     const savedMuted = window.localStorage.getItem(MUTE_KEY);
-    isMutedRef.current = savedMuted === "1";
+    isMutedRef.current = savedMuted === null ? true : savedMuted === "1";
     setIsMuted(isMutedRef.current);
 
     const unlockAudio = async (event?: Event) => {

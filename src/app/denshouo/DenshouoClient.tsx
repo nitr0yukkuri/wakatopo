@@ -656,7 +656,7 @@ export default function DenshouoClient() {
     const searchParams = useSearchParams();
     const lang = searchParams.get('lang') === 'en' ? 'en' : 'ja';
     const { setActiveWork } = useStore();
-    const [showBackdrop, setShowBackdrop] = useState(false);
+    const [showBackdrop, setShowBackdrop] = useState(true);
     const [ripples, setRipples] = useState<Array<{ id: number; x: number; y: number; size: number; isHover: boolean }>>([]);
     const rippleIdRef = useRef(0);
     const lastHoverRippleAtRef = useRef(0);
