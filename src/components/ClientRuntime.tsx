@@ -1,6 +1,7 @@
 'use client';
 
 import dynamic from 'next/dynamic';
+import ConsoleWelcome from '@/components/ConsoleWelcome';
 
 const PwaRegister = dynamic(() => import('@/components/PwaRegister'), { ssr: false });
 const SoundDirector = dynamic(() => import('@/components/SoundDirector'), { ssr: false });
@@ -10,6 +11,7 @@ export default function ClientRuntime() {
     return (
         <>
             <PwaRegister />
+            <ConsoleWelcome />
             <SoundDirector />
             <GlobalTransitionOverlay />
         </>
