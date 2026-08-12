@@ -33,6 +33,7 @@
 /tmp/*.js
 /tmp/*.mjs
 /tmp/*.gif
+/tmp/*.log
 /tmp/**/*.png
 /tmp/**/*.jpg
 /tmp/**/*.jpeg
