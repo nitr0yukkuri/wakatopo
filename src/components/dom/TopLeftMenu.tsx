@@ -104,8 +104,12 @@ export default function TopLeftMenu() {
         if (href === '/denshouo') {
             setActiveWork('05');
             setTransitionType('wave');
+            const { weather: currentWeather } = useStore.getState();
+            const denshouoHref = currentWeather === 'Rain'
+                ? `/denshouo?lang=${lang}&weather=Rain`
+                : withLang('/denshouo');
             setTimeout(() => {
-                router.push(withLang('/denshouo'));
+                router.push(denshouoHref);
                 setTimeout(() => setTransitionType('none'), 900);
             }, 1800);
             return;

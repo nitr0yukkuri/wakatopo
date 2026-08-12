@@ -601,62 +601,23 @@ function OceanBubbles() {
 }
 
 function OceanRainEffects() {
-    const rainRippleSpecs = useMemo(
-        () => Array.from({ length: 12 }, (_, index) => {
-            const seeded = (salt: number) => {
-                const value = Math.sin(index * 12.9898 + salt * 78.233) * 43758.5453123;
-                return value - Math.floor(value);
-            };
-
-            return {
-                left: `${8 + seeded(1) * 84}%`,
-                top: `${14 + seeded(2) * 68}%`,
-                width: 42 + seeded(3) * 72,
-                height: 10 + seeded(4) * 12,
-                delay: seeded(5) * 6,
-                duration: 4.8 + seeded(6) * 3.4,
-            };
-        }),
-        []
-    );
-
     return (
-        <>
-            <div className="fixed inset-0 pointer-events-none z-2 overflow-hidden" aria-hidden="true">
-                {rainLightSpecs.map((light, index) => (
-                    <motion.div
-                        key={`rain-light-column-${index}`}
-                        className="absolute -top-[12%] h-[84%] rounded-full blur-2xl mix-blend-screen"
-                        style={{
-                            left: light.left,
-                            width: `${light.width}%`,
-                            transform: `rotate(${light.rotate}deg)`,
-                            background: 'linear-gradient(to bottom, rgba(95,196,220,0) 0%, rgba(95,196,220,0.08) 45%, rgba(147,205,255,0.025) 72%, rgba(95,196,220,0) 100%)',
-                        }}
-                        animate={{ opacity: [0.10, 0.28, 0.10], x: ['-2%', '2%', '-2%'] }}
-                        transition={{ duration: light.duration, delay: light.delay, repeat: Infinity, ease: 'easeInOut' }}
-                    />
-                ))}
-            </div>
-
-            <div className="fixed inset-0 pointer-events-none z-2 overflow-hidden" aria-hidden="true">
-                {rainRippleSpecs.map((ripple, index) => (
-                    <motion.div
-                        key={`rain-surface-ripple-${index}`}
-                        className="absolute rounded-[50%] border border-cyan-100/20"
-                        style={{
-                            left: ripple.left,
-                            top: ripple.top,
-                            width: ripple.width,
-                            height: ripple.height,
-                            boxShadow: '0 0 12px rgba(94,234,212,0.08)',
-                        }}
-                        animate={{ scale: [0.42, 1.0, 1.35], opacity: [0, 0.22, 0] }}
-                        transition={{ duration: ripple.duration, delay: ripple.delay, repeat: Infinity, ease: 'easeOut' }}
-                    />
-                ))}
-            </div>
-        </>
+        <div className="fixed inset-0 pointer-events-none z-2 overflow-hidden" aria-hidden="true">
+            {rainLightSpecs.map((light, index) => (
+                <motion.div
+                    key={`rain-light-column-${index}`}
+                    className="absolute -top-[12%] h-[84%] rounded-full blur-2xl mix-blend-screen"
+                    style={{
+                        left: light.left,
+                        width: `${light.width}%`,
+                        transform: `rotate(${light.rotate}deg)`,
+                        background: 'linear-gradient(to bottom, rgba(95,196,220,0) 0%, rgba(95,196,220,0.08) 45%, rgba(147,205,255,0.025) 72%, rgba(95,196,220,0) 100%)',
+                    }}
+                    animate={{ opacity: [0.10, 0.28, 0.10], x: ['-2%', '2%', '-2%'] }}
+                    transition={{ duration: light.duration, delay: light.delay, repeat: Infinity, ease: 'easeInOut' }}
+                />
+            ))}
+        </div>
     );
 }
 
@@ -762,6 +723,15 @@ export default function DenshouoClient() {
     const displayedWeather = VALID_WEATHERS.includes(weatherParam as WeatherType)
         ? weatherParam as WeatherType
         : weather;
+
+    useEffect(() => {
+        if (weather !== 'Rain' || weatherParam) return;
+
+        const params = new URLSearchParams(searchParams.toString());
+        params.set('weather', 'Rain');
+        router.replace(`/denshouo?${params.toString()}`, { scroll: false });
+    }, [router, searchParams, weather, weatherParam]);
+
     const [showBackdrop, setShowBackdrop] = useState(true);
     const [ripples, setRipples] = useState<Array<{ id: number; x: number; y: number; size: number; isHover: boolean }>>([]);
     const rippleIdRef = useRef(0);
@@ -816,6 +786,40 @@ export default function DenshouoClient() {
             window.clearTimeout(timer);
         };
     }, []);
+
+    useEffect(() => {
+        if (displayedWeather !== 'Rain') return;
+
+        let cancelled = false;
+        let timer = 0;
+
+        const scheduleRainRipple = () => {
+            timer = window.setTimeout(() => {
+                if (cancelled) return;
+
+                const id = rippleIdRef.current;
+                rippleIdRef.current += 1;
+                setRipples((current) => [
+                    ...current,
+                    {
+                        id,
+                        x: 8 + Math.random() * 84,
+                        y: 18 + Math.random() * 64,
+                        size: 82 + Math.random() * 26,
+                        isHover: true,
+                    },
+                ]);
+
+                scheduleRainRipple();
+            }, 2000 + Math.random() * 2200);
+        };
+
+        scheduleRainRipple();
+        return () => {
+            cancelled = true;
+            window.clearTimeout(timer);
+        };
+    }, [displayedWeather]);
 
 
 

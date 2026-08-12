@@ -72,8 +72,12 @@ export default function WorksList({ works }: { works: Work[] }) {
         } else if (id === '05') {
             setActiveWork('05');
             setTransitionType('wave');
+            const { weather: currentWeather } = useStore.getState();
+            const denshouoHref = currentWeather === 'Rain'
+                ? `/denshouo?lang=${lang}&weather=Rain`
+                : withLang('/denshouo');
             setTimeout(() => {
-                router.push(withLang('/denshouo'));
+                router.push(denshouoHref);
                 setTimeout(() => setTransitionType('none'), 900);
             }, 1800);
         } else {
