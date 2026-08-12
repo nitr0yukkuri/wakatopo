@@ -1,14 +1,21 @@
 'use client'
 
 import { motion } from 'framer-motion';
+import { useStore } from '@/store';
 
 // 晴れの遷移: 下から昇る太陽と斜めの層状ゴッドレイ
 
 export default function SunburstTransitionCanvas() {
+    const season = useStore((state) => state.season);
+    const isSpringSun = season === 'spring';
+    const background = isSpringSun
+        ? 'linear-gradient(180deg, #f6e8ee 0%, #fdf3f7 42%, #fffafc 74%, #ffffff 100%)'
+        : 'linear-gradient(180deg, #82cbf6 0%, #dff2ff 42%, #fff3d8 74%, #ffefcf 100%)';
+
     return (
         <div
             className="w-full h-full overflow-hidden relative flex items-center justify-center"
-            style={{ background: 'linear-gradient(180deg, #82cbf6 0%, #dff2ff 42%, #fff3d8 74%, #ffefcf 100%)' }}
+            style={{ background }}
         >
             {/* 空気の露出変化（白フラッシュではなく空気の明度で見せる） */}
             <motion.div
@@ -25,8 +32,12 @@ export default function SunburstTransitionCanvas() {
             <motion.div
                 className="absolute right-[8%] top-[9%] w-24 h-24 md:w-32 md:h-32 rounded-full pointer-events-none"
                 style={{
-                    background: 'radial-gradient(circle at 35% 35%, rgba(255,245,180,0.96) 0%, rgba(255,213,112,0.92) 38%, rgba(255,170,58,0.92) 100%)',
-                    boxShadow: '0 0 45px rgba(255,205,110,0.55), 0 0 110px rgba(255,187,82,0.35)',
+                    background: isSpringSun
+                        ? 'radial-gradient(circle at 35% 35%, rgba(255,244,214,0.98) 0%, rgba(241,157,188,0.96) 38%, rgba(205,100,139,0.94) 100%)'
+                        : 'radial-gradient(circle at 35% 35%, rgba(255,245,180,0.96) 0%, rgba(255,213,112,0.92) 38%, rgba(255,170,58,0.92) 100%)',
+                    boxShadow: isSpringSun
+                        ? '0 0 45px rgba(224,122,159,0.32), 0 0 110px rgba(205,100,139,0.16)'
+                        : '0 0 45px rgba(255,205,110,0.55), 0 0 110px rgba(255,187,82,0.35)',
                 }}
                 initial={{ opacity: 0, scale: 0.86 }}
                 animate={{ opacity: [0, 0.94, 1], scale: [0.86, 1.04, 1.0] }}
@@ -36,7 +47,9 @@ export default function SunburstTransitionCanvas() {
             <motion.div
                 className="absolute right-[3%] top-[2%] w-44 h-44 md:w-64 md:h-64 rounded-full pointer-events-none"
                 style={{
-                    background: 'radial-gradient(circle, rgba(255,220,150,0.36) 0%, rgba(255,220,150,0.08) 42%, rgba(255,220,150,0.0) 74%)',
+                    background: isSpringSun
+                        ? 'radial-gradient(circle, rgba(255,205,219,0.22) 0%, rgba(229,128,166,0.07) 42%, rgba(229,128,166,0.0) 74%)'
+                        : 'radial-gradient(circle, rgba(255,220,150,0.36) 0%, rgba(255,220,150,0.08) 42%, rgba(255,220,150,0.0) 74%)',
                 }}
                 initial={{ opacity: 0, rotate: -10, scale: 0.86 }}
                 animate={{ opacity: [0, 0.42, 0.3], rotate: [-10, 10, 20], scale: [0.86, 1.0, 1.03] }}

@@ -23,14 +23,22 @@ export default function ConsoleWelcome() {
         );
         console.log(
             `%c${WAKATO_ASCII}`,
-            'font-size: 13px; line-height: 1.05; font-weight: 900; color: #86efac; text-shadow: 0 0 8px rgba(74, 222, 128, 0.55);',
+            'font-size: 13px; line-height: 1.05; font-weight: 900; color: #7dd3fc; text-shadow: 0 0 8px rgba(56, 189, 248, 0.55);',
         );
         console.log(
-            '%c\u{1F30D} The world changes with weather, time, and you.',
+            '%c----------------------------------------',
+            'font-size: 12px; color: #475569;',
+        );
+        console.log(
+            '%c\u{1F680} Built with Next.js, React, Three.js & WebGL.',
             'font-size: 14px; color: #94a3b8;',
         );
         console.log(
-            '%c\u{1F440} Looking for bugs? Nice. GitHub \u2192 https://github.com/nitr0yukkuri/wakatopo',
+            '%cLooking for bugs? Nice.',
+            'font-size: 13px; color: #7dd3fc;',
+        );
+        console.log(
+            '%cThanks for visiting! GitHub \u2192 https://github.com/nitr0yukkuri/wakatopo',
             'font-size: 12px; color: #64748b;',
         );
     }, []);

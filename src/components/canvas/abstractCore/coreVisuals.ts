@@ -1,4 +1,4 @@
-import type { SeasonType, WeatherType } from '@/store';
+import type { SeasonEventType, SeasonType, WeatherType } from '@/store';
 
 export type CoreVisualProfile = {
     baseColor: string;
@@ -136,6 +136,18 @@ const AUTUMN_NIGHT_VISUAL: CoreVisualProfile = {
     innerOpacity: 0.16,
 };
 
+const GESHI_CLEAR_VISUAL: CoreVisualProfile = {
+    ...SUMMER_CLEAR_VISUAL,
+    baseColor: '#18b7d9',
+    hoverColor: '#8cecff',
+    activeColor: '#fff0ad',
+    meshOpacity: 0.23,
+    wireOpacity: 0.2,
+    innerOpacity: 0.11,
+    ringPulse: 0.78,
+    particleSize: 0.034,
+};
+
 const WINTER_SNOW_VISUAL: CoreVisualProfile = {
     ...CORE_VISUALS.Snow,
     baseColor: '#c9eeff',
@@ -148,8 +160,16 @@ const WINTER_SNOW_VISUAL: CoreVisualProfile = {
     particleSize: 0.027,
 };
 
-export const getCoreVisualProfile = (weather: WeatherType, season: SeasonType): CoreVisualProfile => {
+export const getCoreVisualProfile = (
+    weather: WeatherType,
+    season: SeasonType,
+    seasonEvent: SeasonEventType = 'none',
+): CoreVisualProfile => {
     const defaultVisual = CORE_VISUALS[weather] ?? CORE_VISUALS.Clear;
+
+    if (season === 'summer' && seasonEvent === 'geshi' && (weather === 'Clear' || weather === 'Morning')) {
+        return GESHI_CLEAR_VISUAL;
+    }
 
     switch (season) {
         case 'spring':

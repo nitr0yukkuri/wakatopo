@@ -36,11 +36,16 @@ function CloudDecoration({ className, style, flip }: { className: string, style?
 // Reads weather from the Zustand store and draws a matching cursor motif.
 // Motifs: Cloud (bob+squish) / Sun+Morning (spinning rays) / Rain (teardrop)
 //         Snow (rotating snowflake) / Night (crescent moon) / Thunder (bolt)
-function WeatherCursor({ weatherOverride }: { weatherOverride?: WeatherType } = {}) {
+//         Spring + Clear/Morning swaps the sun for a five-petal sakura mark.
+function WeatherCursor({ weatherOverride, seasonOverride }: { weatherOverride?: WeatherType; seasonOverride?: SeasonType } = {}) {
     const storeWeather = useStore((state) => state.weather);
+    const storeSeason = useStore((state) => state.season);
     const weather = weatherOverride ?? storeWeather;
+    const season = seasonOverride ?? storeSeason;
     const weatherRef = useRef(weather);
+    const seasonRef = useRef(season);
     useEffect(() => { weatherRef.current = weather; }, [weather]);
+    useEffect(() => { seasonRef.current = season; }, [season]);
 
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const stateRef = useRef({
@@ -50,6 +55,8 @@ function WeatherCursor({ weatherOverride }: { weatherOverride?: WeatherType } = 
         bobPhase: 0, squishX: 1.0, squishY: 1.0, lean: 0,
         // Clear / Morning
         sunRot: 0,
+        // Spring / Clear
+        sakuraRot: 0,
         // Snow
         snowRot: 0,
         // Rain
@@ -168,6 +175,55 @@ function WeatherCursor({ weatherOverride }: { weatherOverride?: WeatherType } = 
             ctx.beginPath(); ctx.arc(0, 0, BODY_R, 0, Math.PI * 2);
             ctx.fillStyle = bodyG; ctx.fill();
             ctx.strokeStyle = 'rgba(190,125,50,0.65)'; ctx.lineWidth = 1.1; ctx.stroke();
+            ctx.restore();
+        };
+
+        //  SAKURA  ・five soft petals with a warm center for spring cursor
+        const drawSakura = (t: number, sakuraRot: number) => {
+            const pulse = 1 + Math.sin(t * 2.2) * 0.05;
+            ctx.save();
+            ctx.rotate(sakuraRot);
+            ctx.scale(pulse, pulse);
+            ctx.shadowBlur = 7;
+            ctx.shadowColor = 'rgba(231,139,176,0.34)';
+
+            for (let i = 0; i < 5; i++) {
+                ctx.save();
+                ctx.rotate((i / 5) * Math.PI * 2);
+                ctx.beginPath();
+                ctx.ellipse(0, -7.2, 4.2, 6.2, 0, 0, Math.PI * 2);
+                const petal = ctx.createLinearGradient(0, -13, 0, -1);
+                petal.addColorStop(0, 'rgba(255,244,249,0.98)');
+                petal.addColorStop(0.68, 'rgba(247,181,207,0.96)');
+                petal.addColorStop(1, 'rgba(231,139,176,0.92)');
+                ctx.fillStyle = petal;
+                ctx.fill();
+                ctx.strokeStyle = 'rgba(180,102,139,0.58)';
+                ctx.lineWidth = 0.8;
+                ctx.stroke();
+                ctx.restore();
+            }
+
+            ctx.shadowBlur = 2;
+            ctx.shadowColor = 'rgba(239,166,77,0.28)';
+            ctx.beginPath();
+            ctx.arc(0, 0, 2.8, 0, Math.PI * 2);
+            ctx.fillStyle = '#ffd784';
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(190,125,50,0.62)';
+            ctx.lineWidth = 0.75;
+            ctx.stroke();
+
+            // Two tiny drifting petals make the cursor read as sakura in motion.
+            const drift = Math.sin(t * 1.8) * 1.8;
+            ctx.shadowBlur = 0;
+            ctx.fillStyle = 'rgba(244,164,197,0.82)';
+            ctx.beginPath();
+            ctx.ellipse(-15 + drift, -8, 1.8, 2.8, -0.45, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.ellipse(14 - drift, 9, 1.5, 2.3, 0.5, 0, Math.PI * 2);
+            ctx.fill();
             ctx.restore();
         };
 
@@ -470,6 +526,7 @@ function WeatherCursor({ weatherOverride }: { weatherOverride?: WeatherType } = 
             const speed = Math.hypot(s.vx, s.vy);
 
             // ── per-weather state update ────────────────────────────────────
+            const isSpringClear = seasonRef.current === 'spring' && (w === 'Clear' || w === 'Morning');
             if (w === 'Clouds') {
                 s.bobPhase += 0.038 * dt;
                 const tSqX = 1 + Math.min(speed * 0.013, 0.22);
@@ -479,6 +536,7 @@ function WeatherCursor({ weatherOverride }: { weatherOverride?: WeatherType } = 
                 s.lean += (tL - s.lean) * 0.10 * dt;
             } else if (w === 'Clear' || w === 'Morning') {
                 s.sunRot += 0.018 * dt;
+                if (isSpringClear) s.sakuraRot += 0.012 * dt;
             } else if (w === 'Snow') {
                 s.snowRot += 0.012 * dt;
             } else if (w === 'Rain') {
@@ -529,7 +587,11 @@ function WeatherCursor({ weatherOverride }: { weatherOverride?: WeatherType } = 
                 const bobAmp = Math.max(1.2, 4.5 - speed * 0.5);
                 drawCloud(s.squishX, s.squishY, s.lean, Math.sin(s.bobPhase * 1.6) * bobAmp);
             } else if (w === 'Clear' || w === 'Morning') {
-                drawSun(t, s.sunRot);
+                if (isSpringClear) {
+                    drawSakura(t, s.sakuraRot);
+                } else {
+                    drawSun(t, s.sunRot);
+                }
             } else if (w === 'Snow') {
                 drawSnow(s.snowRot, t);
             } else if (w === 'Rain') {
@@ -765,9 +827,18 @@ export default function OtenkiGurashiClient() {
         cardText = "text-gray-200";
     }
 
+    if (displayedSeason === 'spring' && (displayedWeather === 'Clear' || displayedWeather === 'Morning')) {
+        bgGradient = "from-[#fcedf3] via-[#fff5f9] to-[#fffdfd]";
+    }
+
+    const springCardStyle = displayedSeason === 'spring' && (displayedWeather === 'Clear' || displayedWeather === 'Morning')
+        ? 'border-white shadow-[0_20px_60px_-15px_rgba(152,173,194,0.3)]'
+        : 'border-white shadow-[0_20px_60px_-15px_rgba(152,173,194,0.3)]';
+    const isSpringSun = displayedSeason === 'spring' && (displayedWeather === 'Clear' || displayedWeather === 'Morning');
+
     return (
         <>
-            <WeatherCursor weatherOverride={displayedWeather} />
+            <WeatherCursor weatherOverride={displayedWeather} seasonOverride={displayedSeason} />
             <main className={`relative w-full min-h-[120dvh] ${displayedWeather !== 'Rain' && displayedWeather !== 'Snow' ? 'bg-gradient-to-b' : ''} ${bgGradient} ${displayedWeather === 'Thunder' || displayedWeather === 'Night' ? 'text-gray-200' : 'text-gray-700'} overflow-hidden font-sans pb-32 transition-colors duration-1000`} style={{ cursor: isFinePointer ? 'none' : 'auto' }}>
                 <OtenkiSeasonEffects season={displayedSeason} seasonEvent={displayedSeasonEvent} weather={displayedWeather} />
 
@@ -824,7 +895,7 @@ export default function OtenkiGurashiClient() {
                     </div>
 
                     {/* Fluffy White Content Card */}
-                    <div className={`${displayedWeather === 'Snow' ? 'bg-white/92' : 'bg-white/95'} ${displayedWeather === 'Snow' ? '' : 'backdrop-blur-sm'} border-4 ${displayedWeather === 'Snow' ? 'border-transparent' : 'border-white'} px-6 py-10 md:p-14 rounded-[2.5rem] md:rounded-[3rem] w-full ${displayedWeather === 'Snow' ? 'shadow-none' : 'shadow-[0_20px_60px_-15px_rgba(152,173,194,0.3)]'}`}>
+                    <div className={`${displayedWeather === 'Snow' ? 'bg-white/92' : 'bg-white/95'} ${displayedWeather === 'Snow' ? '' : 'backdrop-blur-sm'} border-4 ${displayedWeather === 'Snow' ? 'border-transparent' : springCardStyle} px-6 py-10 md:p-14 rounded-[2.5rem] md:rounded-[3rem] w-full ${displayedWeather === 'Snow' ? 'shadow-none' : ''}`}>
 
                         <p className="text-lg md:text-2xl font-bold text-gray-600 mb-10 md:mb-12 leading-relaxed text-center">
                             {t.lead}<br className="md:hidden" />{t.lead2}<br />
@@ -932,15 +1003,21 @@ export default function OtenkiGurashiClient() {
                             <div
                                 className="absolute right-[8%] top-[9%] w-24 h-24 md:w-32 md:h-32 rounded-full"
                                 style={{
-                                    background: 'radial-gradient(circle at 35% 35%, rgba(255,245,180,0.96) 0%, rgba(255,213,112,0.92) 38%, rgba(255,170,58,0.92) 100%)',
-                                    boxShadow: '0 0 45px rgba(255,205,110,0.55), 0 0 110px rgba(255,187,82,0.35)',
+                                    background: isSpringSun
+                                        ? 'radial-gradient(circle at 35% 35%, rgba(255,244,214,0.98) 0%, rgba(241,157,188,0.96) 38%, rgba(205,100,139,0.94) 100%)'
+                                        : 'radial-gradient(circle at 35% 35%, rgba(255,245,180,0.96) 0%, rgba(255,213,112,0.92) 38%, rgba(255,170,58,0.92) 100%)',
+                                    boxShadow: isSpringSun
+                                        ? '0 0 45px rgba(224,122,159,0.32), 0 0 110px rgba(205,100,139,0.16)'
+                                        : '0 0 45px rgba(255,205,110,0.55), 0 0 110px rgba(255,187,82,0.35)',
                                     animation: 'sun-soft-pulse 4.6s ease-in-out infinite',
                                 }}
                             />
                             <div
                                 className="absolute right-[3%] top-[2%] w-44 h-44 md:w-64 md:h-64 rounded-full"
                                 style={{
-                                    background: 'radial-gradient(circle, rgba(255,220,150,0.36) 0%, rgba(255,220,150,0.08) 42%, rgba(255,220,150,0.0) 74%)',
+                                    background: isSpringSun
+                                        ? 'radial-gradient(circle, rgba(255,205,219,0.22) 0%, rgba(229,128,166,0.07) 42%, rgba(229,128,166,0.0) 74%)'
+                                        : 'radial-gradient(circle, rgba(255,220,150,0.36) 0%, rgba(255,220,150,0.08) 42%, rgba(255,220,150,0.0) 74%)',
                                     animation: 'sun-aura-spin 16s linear infinite',
                                 }}
                             />

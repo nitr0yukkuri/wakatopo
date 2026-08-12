@@ -1,13 +1,15 @@
 'use client'
 
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useStore } from '@/store';
+import { useStore, type WeatherType } from '@/store';
 import { motion } from 'framer-motion';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { useMemo, useRef, useEffect, useState, useCallback } from 'react';
 import * as THREE from 'three';
 import { waveVertexShader, waveFragmentShader } from '@/shaders/wave';
 import Image from 'next/image';
+
+const VALID_WEATHERS: WeatherType[] = ['Clear', 'Rain', 'Clouds', 'Snow', 'Night', 'Morning', 'Thunder'];
 
 const bubbleSpecs = [
     { left: '8%', top: '18%', size: 16, delay: 0.0, duration: 8.0 },
@@ -23,6 +25,12 @@ const fishSpecs = [
     { top: '20%', left: '12%', width: 72, delay: 0.0, duration: 18 },
     { top: '58%', left: '68%', width: 56, delay: 1.4, duration: 16 },
     { top: '74%', left: '24%', width: 42, delay: 2.1, duration: 14 },
+];
+
+const rainLightSpecs = [
+    { left: '18%', width: 6, rotate: -9, delay: 0.0, duration: 9.5 },
+    { left: '43%', width: 9, rotate: 5, delay: 1.8, duration: 11.0 },
+    { left: '70%', width: 7, rotate: -4, delay: 0.9, duration: 10.2 },
 ];
 
 const overviewFishSpecs = [
@@ -563,7 +571,68 @@ function OceanBubbles() {
     );
 }
 
-function OceanBackdrop() {
+function OceanRainEffects() {
+    const rainRippleSpecs = useMemo(
+        () => Array.from({ length: 12 }, (_, index) => {
+            const seeded = (salt: number) => {
+                const value = Math.sin(index * 12.9898 + salt * 78.233) * 43758.5453123;
+                return value - Math.floor(value);
+            };
+
+            return {
+                left: `${8 + seeded(1) * 84}%`,
+                top: `${14 + seeded(2) * 68}%`,
+                width: 42 + seeded(3) * 72,
+                height: 10 + seeded(4) * 12,
+                delay: seeded(5) * 6,
+                duration: 4.8 + seeded(6) * 3.4,
+            };
+        }),
+        []
+    );
+
+    return (
+        <>
+            <div className="fixed inset-0 pointer-events-none z-2 overflow-hidden" aria-hidden="true">
+                {rainLightSpecs.map((light, index) => (
+                    <motion.div
+                        key={`rain-light-column-${index}`}
+                        className="absolute -top-[12%] h-[84%] rounded-full blur-2xl mix-blend-screen"
+                        style={{
+                            left: light.left,
+                            width: `${light.width}%`,
+                            transform: `rotate(${light.rotate}deg)`,
+                            background: 'linear-gradient(to bottom, rgba(95,196,220,0) 0%, rgba(95,196,220,0.08) 45%, rgba(147,205,255,0.025) 72%, rgba(95,196,220,0) 100%)',
+                        }}
+                        animate={{ opacity: [0.10, 0.28, 0.10], x: ['-2%', '2%', '-2%'] }}
+                        transition={{ duration: light.duration, delay: light.delay, repeat: Infinity, ease: 'easeInOut' }}
+                    />
+                ))}
+            </div>
+
+            <div className="fixed inset-0 pointer-events-none z-2 overflow-hidden" aria-hidden="true">
+                {rainRippleSpecs.map((ripple, index) => (
+                    <motion.div
+                        key={`rain-surface-ripple-${index}`}
+                        className="absolute rounded-[50%] border border-cyan-100/20"
+                        style={{
+                            left: ripple.left,
+                            top: ripple.top,
+                            width: ripple.width,
+                            height: ripple.height,
+                            boxShadow: '0 0 12px rgba(94,234,212,0.08)',
+                        }}
+                        animate={{ scale: [0.42, 1.0, 1.35], opacity: [0, 0.22, 0] }}
+                        transition={{ duration: ripple.duration, delay: ripple.delay, repeat: Infinity, ease: 'easeOut' }}
+                    />
+                ))}
+            </div>
+        </>
+    );
+}
+
+function OceanBackdrop({ weather }: { weather: WeatherType }) {
+    const isRain = weather === 'Rain';
     return (
         <>
             <div className="fixed inset-0 pointer-events-none z-0 bg-[#041116]" />
@@ -604,13 +673,15 @@ function OceanBackdrop() {
             {bubbleSpecs.map((bubble, index) => (
                 <motion.div
                     key={index}
-                    className="fixed pointer-events-none z-2 rounded-full border border-white/20 bg-white/5 backdrop-blur-sm"
+                    className={`fixed pointer-events-none z-2 rounded-full bg-white/5 backdrop-blur-sm ${isRain ? 'border border-blue-100/35' : 'border border-white/20'}`}
                     style={{
                         left: bubble.left,
                         top: bubble.top,
                         width: bubble.size,
                         height: bubble.size,
-                        boxShadow: 'inset 0 0 18px rgba(255,255,255,0.12), 0 0 24px rgba(94,234,212,0.08)',
+                        boxShadow: isRain
+                            ? 'inset 0 0 18px rgba(191,219,254,0.17), 0 0 24px rgba(96,165,250,0.12)'
+                            : 'inset 0 0 18px rgba(255,255,255,0.12), 0 0 24px rgba(94,234,212,0.08)',
                     }}
                     animate={{
                         y: [-6, -34, -6],
@@ -625,6 +696,8 @@ function OceanBackdrop() {
                     }}
                 />
             ))}
+
+            {isRain && <OceanRainEffects />}
 
             {fishSpecs.map((fish, index) => (
                 <motion.div
@@ -655,7 +728,11 @@ export default function DenshouoClient() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const lang = searchParams.get('lang') === 'en' ? 'en' : 'ja';
-    const { setActiveWork } = useStore();
+    const { setActiveWork, weather } = useStore();
+    const weatherParam = searchParams.get('weather');
+    const displayedWeather = VALID_WEATHERS.includes(weatherParam as WeatherType)
+        ? weatherParam as WeatherType
+        : weather;
     const [showBackdrop, setShowBackdrop] = useState(true);
     const [ripples, setRipples] = useState<Array<{ id: number; x: number; y: number; size: number; isHover: boolean }>>([]);
     const rippleIdRef = useRef(0);
@@ -780,7 +857,7 @@ export default function DenshouoClient() {
             className="relative min-h-dvh bg-[radial-gradient(circle_at_top_left,rgba(56,189,248,0.10),transparent_28%),radial-gradient(circle_at_bottom,rgba(20,184,166,0.12),transparent_35%),#041116] text-white overflow-x-hidden"
             style={{ cursor: isFinePointer ? 'none' : 'auto' }}
         >
-            {showBackdrop && <OceanBackdrop />}
+            {showBackdrop && <OceanBackdrop weather={displayedWeather} />}
 
             <div className="pointer-events-none fixed inset-0 z-4 overflow-hidden" aria-hidden="true">
                 {ripples.map((ripple) => (

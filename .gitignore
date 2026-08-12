@@ -28,6 +28,12 @@
 /applications/
 /.codex/
 
+# local GIF capture/build artifacts
+/tmp/*.py
+/tmp/*.js
+/tmp/*.mjs
+/tmp/*.gif
+
 # debug
 npm-debug.log*
 yarn-debug.log*
