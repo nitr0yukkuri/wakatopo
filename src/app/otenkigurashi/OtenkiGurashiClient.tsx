@@ -831,10 +831,19 @@ export default function OtenkiGurashiClient() {
         bgGradient = "from-[#fcedf3] via-[#fff5f9] to-[#fffdfd]";
     }
 
+    if (displayedSeason === 'autumn' && (displayedWeather === 'Clear' || displayedWeather === 'Morning')) {
+        bgGradient = "from-[#c7ded9] via-[#f1e6ce] to-[#e4b36f]";
+    }
+
+    if (displayedSeason === 'summer' && displayedSeasonEvent === 'geshi' && (displayedWeather === 'Clear' || displayedWeather === 'Morning')) {
+        bgGradient = "from-[#bddfeb] via-[#e0eef0] to-[#fff0cf]";
+    }
+
     const springCardStyle = displayedSeason === 'spring' && (displayedWeather === 'Clear' || displayedWeather === 'Morning')
         ? 'border-white shadow-[0_20px_60px_-15px_rgba(152,173,194,0.3)]'
         : 'border-white shadow-[0_20px_60px_-15px_rgba(152,173,194,0.3)]';
     const isSpringSun = displayedSeason === 'spring' && (displayedWeather === 'Clear' || displayedWeather === 'Morning');
+    const isGeshiSun = displayedSeason === 'summer' && displayedSeasonEvent === 'geshi' && (displayedWeather === 'Clear' || displayedWeather === 'Morning');
 
     return (
         <>
@@ -1008,8 +1017,12 @@ export default function OtenkiGurashiClient() {
                                         : 'radial-gradient(circle at 35% 35%, rgba(255,245,180,0.96) 0%, rgba(255,213,112,0.92) 38%, rgba(255,170,58,0.92) 100%)',
                                     boxShadow: isSpringSun
                                         ? '0 0 45px rgba(224,122,159,0.32), 0 0 110px rgba(205,100,139,0.16)'
+                                        : isGeshiSun
+                                            ? '0 0 28px rgba(150,211,240,0.22), 0 0 72px rgba(124,190,226,0.09)'
                                         : '0 0 45px rgba(255,205,110,0.55), 0 0 110px rgba(255,187,82,0.35)',
-                                    animation: 'sun-soft-pulse 4.6s ease-in-out infinite',
+                                    animation: isGeshiSun
+                                        ? 'geshi-sun-soft-pulse 4.6s ease-in-out infinite'
+                                        : 'sun-soft-pulse 4.6s ease-in-out infinite',
                                 }}
                             />
                             <div
@@ -1017,6 +1030,8 @@ export default function OtenkiGurashiClient() {
                                 style={{
                                     background: isSpringSun
                                         ? 'radial-gradient(circle, rgba(255,205,219,0.22) 0%, rgba(229,128,166,0.07) 42%, rgba(229,128,166,0.0) 74%)'
+                                        : isGeshiSun
+                                            ? 'radial-gradient(circle, rgba(185,228,246,0.13) 0%, rgba(145,207,235,0.035) 42%, rgba(145,207,235,0.0) 74%)'
                                         : 'radial-gradient(circle, rgba(255,220,150,0.36) 0%, rgba(255,220,150,0.08) 42%, rgba(255,220,150,0.0) 74%)',
                                     animation: 'sun-aura-spin 16s linear infinite',
                                 }}
@@ -1026,6 +1041,10 @@ export default function OtenkiGurashiClient() {
                         @keyframes sun-soft-pulse {
                             0%, 100% { transform: scale(1); opacity: 0.94; }
                             50% { transform: scale(1.05); opacity: 1; }
+                        }
+                        @keyframes geshi-sun-soft-pulse {
+                            0%, 100% { transform: scale(1); opacity: 0.84; }
+                            50% { transform: scale(1.035); opacity: 0.9; }
                         }
                         @keyframes sun-aura-spin {
                             from { transform: rotate(0deg); }

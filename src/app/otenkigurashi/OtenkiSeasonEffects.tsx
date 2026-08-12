@@ -19,9 +19,10 @@ export default function OtenkiSeasonEffects({
 }) {
     const isClear = weather === 'Clear' || weather === 'Morning';
     const showSpring = season === 'spring' && isClear;
-    const showSummer = season === 'summer' && isClear;
-    const showGeshi = showSummer && seasonEvent === 'geshi';
+    const showGeshi = season === 'summer' && isClear && seasonEvent === 'geshi';
+    const showSummer = season === 'summer' && isClear && !showGeshi;
     const showAutumn = season === 'autumn';
+    const showAutumnLeaves = showAutumn && isClear;
     const showWinter = season === 'winter';
     const springPetals = useMemo(
         () => Array.from({ length: 24 }, (_, index) => ({
@@ -37,11 +38,11 @@ export default function OtenkiSeasonEffects({
         []
     );
     const autumnLeaves = useMemo(
-        () => Array.from({ length: 14 }, (_, index) => ({
+        () => Array.from({ length: 20 }, (_, index) => ({
             left: seasonalValue(index, 11) * 100,
-            delay: seasonalValue(index, 12) * 8,
-            duration: 12 + seasonalValue(index, 13) * 8,
-            size: 9 + seasonalValue(index, 14) * 8,
+            duration: 9 + seasonalValue(index, 13) * 7,
+            delay: -(seasonalValue(index, 12) * (9 + seasonalValue(index, 13) * 7)),
+            size: 13 + seasonalValue(index, 14) * 11,
             drift: -42 + seasonalValue(index, 15) * 84,
             rotate: seasonalValue(index, 16) * 360,
             tone: seasonalValue(index, 17),
@@ -49,7 +50,7 @@ export default function OtenkiSeasonEffects({
         []
     );
 
-    if (!showSpring && !showSummer && !showAutumn && !showWinter) return null;
+    if (!showSpring && !showSummer && !showGeshi && !showAutumn && !showWinter) return null;
 
     return (
         <div className="fixed inset-0 pointer-events-none z-10 overflow-hidden" aria-hidden="true">
@@ -75,7 +76,7 @@ export default function OtenkiSeasonEffects({
                 />
             ))}
 
-            {showAutumn && autumnLeaves.map((leaf, index) => (
+            {showAutumnLeaves && autumnLeaves.map((leaf, index) => (
                 <span
                     key={`otenki-momiji-${index}`}
                     className="absolute"
@@ -83,23 +84,40 @@ export default function OtenkiSeasonEffects({
                         left: `${leaf.left}%`,
                         top: '-8%',
                         width: leaf.size,
-                        height: leaf.size * 0.72,
-                        borderRadius: '70% 30% 70% 30%',
+                        height: leaf.size * 0.92,
+                        display: 'block',
+                        clipPath: 'polygon(50% 2%, 57% 34%, 79% 20%, 67% 47%, 93% 48%, 68% 62%, 70% 91%, 51% 71%, 32% 93%, 34% 64%, 8% 69%, 31% 49%, 19% 25%, 43% 34%)',
                         background: leaf.tone > 0.6
-                            ? 'linear-gradient(135deg, rgba(220,121,48,0.82), rgba(150,76,31,0.52))'
-                            : 'linear-gradient(135deg, rgba(236,178,67,0.78), rgba(184,104,38,0.50))',
+                            ? 'linear-gradient(135deg, rgba(224,96,40,0.90), rgba(143,48,28,0.72))'
+                            : leaf.tone > 0.28
+                                ? 'linear-gradient(135deg, rgba(238,156,39,0.88), rgba(181,81,30,0.68))'
+                                : 'linear-gradient(135deg, rgba(247,191,54,0.86), rgba(194,105,30,0.64))',
+                        filter: 'drop-shadow(0 2px 3px rgba(105,55,29,0.18))',
                         transform: `rotate(${leaf.rotate}deg)`,
-                        opacity: 0.54,
+                        opacity: 0.86,
                         zIndex: 30,
                         animation: `otenki-autumn-fall ${leaf.duration}s linear ${leaf.delay}s infinite`,
                         ['--autumn-drift' as string]: `${leaf.drift}px`,
                     }}
-                />
+                >
+                    <span
+                        className="absolute left-1/2 top-[14%] h-[72%] w-px -translate-x-1/2 rotate-[8deg] bg-amber-100/45"
+                        aria-hidden="true"
+                    />
+                </span>
             ))}
+
+            {showAutumnLeaves && <div className="absolute inset-x-0 bottom-0 z-20 h-[14%] otenki-momiji-ground" />}
 
             {showSummer && <div className="absolute inset-0 otenki-season-summer" />}
 
-            {showGeshi && <div className="absolute inset-0 otenki-season-geshi" />}
+            {showGeshi && (
+                <>
+                    <div className="absolute inset-0 otenki-season-geshi" />
+                    <div className="absolute inset-0 otenki-season-geshi-rays" />
+                    <div className="absolute inset-0 otenki-season-geshi-longday" />
+                </>
+            )}
 
             {showAutumn && <div className="absolute inset-0 otenki-season-autumn" />}
 
@@ -126,18 +144,49 @@ export default function OtenkiSeasonEffects({
 
                 .otenki-season-geshi {
                     background:
-                        radial-gradient(circle at 82% 10%, rgba(255,237,148,0.30) 0%, transparent 34%),
-                        linear-gradient(to bottom, rgba(255,245,193,0.13), transparent 58%);
+                        radial-gradient(circle at 82% 10%, rgba(202,231,236,0.16) 0%, rgba(170,215,226,0.035) 27%, transparent 40%),
+                        linear-gradient(to bottom, rgba(238,239,216,0.055), transparent 58%);
                     animation: otenki-sun-breathe 4s ease-in-out infinite alternate;
+                }
+
+                .otenki-season-geshi-rays {
+                    background: repeating-conic-gradient(
+                        from 198deg at 82% 10%,
+                        rgba(220,243,251,0.09) 0deg 3deg,
+                        transparent 3deg 15deg
+                    );
+                    mask-image: linear-gradient(to bottom, #000 0%, rgba(0,0,0,0.72) 34%, transparent 76%);
+                    mix-blend-mode: screen;
+                    opacity: 0.24;
+                    transform-origin: 82% 10%;
+                    animation: otenki-geshi-rays 15s ease-in-out infinite alternate;
+                }
+
+                .otenki-season-geshi-longday {
+                    background:
+                        linear-gradient(174deg, rgba(219,242,251,0.07) 0%, transparent 32%),
+                        radial-gradient(ellipse at 50% 100%, rgba(169,220,241,0.07) 0%, transparent 58%);
+                    mix-blend-mode: soft-light;
+                    opacity: 0.46;
+                    animation: otenki-geshi-longday 11s ease-in-out infinite alternate;
                 }
 
                 .otenki-season-autumn {
                     background:
-                        radial-gradient(ellipse at 12% 84%, rgba(224,133,47,0.44) 0%, transparent 42%),
-                        linear-gradient(116deg, rgba(255,194,101,0.30), transparent 42%, rgba(104,47,30,0.24)),
-                        radial-gradient(ellipse at 50% 50%, transparent 42%, rgba(111,50,29,0.24) 100%);
+                        radial-gradient(ellipse at 12% 84%, rgba(224,133,47,0.34) 0%, transparent 42%),
+                        linear-gradient(116deg, rgba(255,194,101,0.24), transparent 42%, rgba(104,47,30,0.16)),
+                        radial-gradient(ellipse at 50% 50%, transparent 42%, rgba(111,50,29,0.16) 100%);
                     mix-blend-mode: normal;
                     animation: otenki-autumn-light 12s ease-in-out infinite alternate;
+                }
+
+                .otenki-momiji-ground {
+                    background:
+                        radial-gradient(ellipse at 12% 100%, rgba(177,71,29,0.34) 0%, transparent 34%),
+                        radial-gradient(ellipse at 52% 112%, rgba(222,145,38,0.32) 0%, transparent 44%),
+                        linear-gradient(to top, rgba(130,65,28,0.18), transparent 72%);
+                    filter: blur(1px);
+                    opacity: 0.78;
                 }
 
                 .otenki-season-winter {
@@ -171,7 +220,7 @@ export default function OtenkiSeasonEffects({
                         transform: translate3d(0, -10vh, 0) rotate(0deg);
                         opacity: 0;
                     }
-                    12% { opacity: 0.54; }
+                    12% { opacity: 0.86; }
                     100% {
                         transform: translate3d(var(--autumn-drift), 112vh, 0) rotate(460deg);
                         opacity: 0;
@@ -184,8 +233,18 @@ export default function OtenkiSeasonEffects({
                 }
 
                 @keyframes otenki-sun-breathe {
-                    from { opacity: 0.58; transform: scale(1); }
-                    to { opacity: 0.96; transform: scale(1.04); }
+                    from { opacity: 0.46; transform: scale(1); }
+                    to { opacity: 0.72; transform: scale(1.04); }
+                }
+
+                @keyframes otenki-geshi-rays {
+                    from { transform: rotate(-1deg) scale(1.02); opacity: 0.16; }
+                    to { transform: rotate(2deg) scale(1.08); opacity: 0.30; }
+                }
+
+                @keyframes otenki-geshi-longday {
+                    from { transform: translate3d(-1%, 0, 0) scale(1.02); opacity: 0.32; }
+                    to { transform: translate3d(1%, -0.5%, 0) scale(1.06); opacity: 0.52; }
                 }
 
                 @keyframes otenki-autumn-light {

@@ -24,6 +24,8 @@ const seasonalValue = (index: number, salt: number) => {
 };
 
 function SeasonalTransitionAtmosphere({ season, seasonEvent }: { season: SeasonType; seasonEvent: SeasonEventType }) {
+    const weather = useStore((state) => state.weather);
+    const showAutumnLeaves = season === 'autumn' && (weather === 'Clear' || weather === 'Morning');
     const springPetals = useMemo(
         () => Array.from({ length: 18 }, (_, index) => ({
             left: seasonalValue(index, 21) * 100,
@@ -35,18 +37,32 @@ function SeasonalTransitionAtmosphere({ season, seasonEvent }: { season: SeasonT
         })),
         []
     );
+    const autumnLeaves = useMemo(
+        () => Array.from({ length: 18 }, (_, index) => ({
+            left: seasonalValue(index, 31) * 100,
+            duration: 9 + seasonalValue(index, 33) * 7,
+            delay: -(seasonalValue(index, 32) * (9 + seasonalValue(index, 33) * 7)),
+            size: 12 + seasonalValue(index, 34) * 9,
+            drift: -34 + seasonalValue(index, 35) * 68,
+            rotate: seasonalValue(index, 36) * 360,
+            tone: seasonalValue(index, 37),
+        })),
+        []
+    );
 
     if (season === 'none') return null;
+
+    const isGeshi = season === 'summer' && seasonEvent === 'geshi';
 
     const backgroundBySeason: Record<SeasonType, string> = {
         none: 'transparent',
         spring: 'radial-gradient(ellipse at 18% 12%, rgba(255,255,255,0.20), transparent 48%)',
-        summer: 'radial-gradient(ellipse at 82% 8%, rgba(255,220,115,0.42), transparent 48%), linear-gradient(180deg, rgba(255,201,79,0.12), transparent 62%)',
-        autumn: 'radial-gradient(ellipse at 15% 84%, rgba(237,148,54,0.36), transparent 46%), linear-gradient(115deg, rgba(255,190,93,0.18), transparent 62%)',
+        summer: isGeshi
+            ? 'radial-gradient(ellipse at 82% 8%, rgba(181,224,243,0.18), transparent 48%), linear-gradient(180deg, rgba(160,211,235,0.08), transparent 62%)'
+            : 'radial-gradient(ellipse at 82% 8%, rgba(255,220,115,0.42), transparent 48%), linear-gradient(180deg, rgba(255,201,79,0.12), transparent 62%)',
+        autumn: 'linear-gradient(180deg, #c7ded9 0%, #f1e6ce 50%, #e4b36f 100%)',
         winter: 'linear-gradient(110deg, rgba(193,228,249,0.28), transparent 34%, transparent 68%, rgba(175,215,242,0.24)), radial-gradient(ellipse at 50% 100%, rgba(255,255,255,0.34), transparent 65%)',
     };
-
-    const isGeshi = season === 'summer' && seasonEvent === 'geshi';
 
     return (
         <motion.div
@@ -54,11 +70,18 @@ function SeasonalTransitionAtmosphere({ season, seasonEvent }: { season: SeasonT
             className="fixed inset-0 z-[10000] pointer-events-none overflow-hidden"
             style={{
                 background: backgroundBySeason[season],
-                mixBlendMode: season === 'autumn' ? 'multiply' : 'normal',
+                mixBlendMode: 'normal',
                 boxShadow: season === 'winter' ? 'inset 0 0 80px rgba(199,230,249,0.36)' : undefined,
             }}
             initial={{ opacity: 0, scale: 1.04 }}
-            animate={{ opacity: isGeshi ? [0.18, 0.36, 0.24] : [0.10, 0.20, 0.14], scale: [1.04, 1, 1.02] }}
+            animate={{
+                opacity: season === 'autumn'
+                    ? [0.34, 0.58, 0.44]
+                    : isGeshi
+                        ? [0.18, 0.36, 0.24]
+                        : [0.10, 0.20, 0.14],
+                scale: [1.04, 1, 1.02],
+            }}
             exit={{ opacity: 0, scale: 1.06 }}
             transition={{ duration: 1.15, ease: [0.22, 1, 0.36, 1] }}
         >
@@ -80,11 +103,35 @@ function SeasonalTransitionAtmosphere({ season, seasonEvent }: { season: SeasonT
                     }}
                 />
             ))}
+            {showAutumnLeaves && autumnLeaves.map((leaf, index) => (
+                <span
+                    key={`transition-momiji-leaf-${index}`}
+                    className="absolute"
+                    style={{
+                        left: `${leaf.left}%`,
+                        top: '-8%',
+                        width: leaf.size,
+                        height: leaf.size * 0.92,
+                        clipPath: 'polygon(50% 2%, 57% 34%, 79% 20%, 67% 47%, 93% 48%, 68% 62%, 70% 91%, 51% 71%, 32% 93%, 34% 64%, 8% 69%, 31% 49%, 19% 25%, 43% 34%)',
+                        background: 'linear-gradient(135deg, rgba(247,191,54,0.86), rgba(194,105,30,0.64))',
+                        filter: 'drop-shadow(0 2px 3px rgba(105,55,29,0.16))',
+                        transform: `rotate(${leaf.rotate}deg)`,
+                        opacity: 0.92,
+                        animation: `otenki-transition-momiji-fall ${leaf.duration}s linear ${leaf.delay}s infinite`,
+                        ['--transition-momiji-drift' as string]: `${leaf.drift}px`,
+                    }}
+                />
+            ))}
             <style>{`
                 @keyframes otenki-transition-sakura-fall {
                     0% { transform: translate3d(0, -10vh, 0) rotate(0deg); opacity: 0; }
                     14% { opacity: 0.74; }
                     100% { transform: translate3d(var(--transition-sakura-drift), 116vh, 0) rotate(420deg); opacity: 0; }
+                }
+                @keyframes otenki-transition-momiji-fall {
+                    0% { transform: translate3d(0, -10vh, 0) rotate(0deg); opacity: 0; }
+                    12% { opacity: 0.86; }
+                    100% { transform: translate3d(var(--transition-momiji-drift), 116vh, 0) rotate(400deg); opacity: 0; }
                 }
             `}</style>
         </motion.div>
