@@ -298,17 +298,46 @@ function FishCursor() {
         };
 
         const drawFish = (t: number, mouthOpen: boolean, depthPhase: number) => {
-            if (depthPhase < 1.0) {
-                ctx.save();
-                ctx.globalAlpha = 1.0 - depthPhase;
+            // Keep one silhouette at a time. Only the colour/light changes
+            // through the middle so the two complete fish never overlap.
+            const clamp01 = (value: number) => Math.max(0, Math.min(1, value));
+            const deepeningPhase = clamp01((depthPhase - 0.08) / 0.72);
+            const anglerfishStart = 0.9;
+
+            if (depthPhase < anglerfishStart) {
+                // A faint lamp grows in behind the clownfish as it gets deeper.
+                if (deepeningPhase > 0) {
+                    ctx.save();
+                    ctx.globalAlpha = 0.18 * deepeningPhase;
+                    const glow = ctx.createRadialGradient(19, -20, 0, 19, -20, 11);
+                    glow.addColorStop(0, 'rgba(207,250,254,0.95)');
+                    glow.addColorStop(1, 'rgba(103,232,249,0)');
+                    ctx.fillStyle = glow;
+                    ctx.beginPath(); ctx.arc(19, -20, 11, 0, Math.PI * 2); ctx.fill();
+
+                    ctx.globalAlpha = 0.28 * deepeningPhase;
+                    ctx.strokeStyle = '#312e81'; ctx.lineWidth = 1.2;
+                    ctx.beginPath(); ctx.moveTo(4, -11); ctx.quadraticCurveTo(10, -17, 19, -20); ctx.stroke();
+                    ctx.restore();
+                }
+
                 drawClownfish(t, mouthOpen);
-                ctx.restore();
-            }
-            if (depthPhase > 0.0) {
-                ctx.save();
-                ctx.globalAlpha = depthPhase;
+
+                // Gradually shift the existing fish towards a darker blue-purple
+                // without changing its shape or drawing a second fish over it.
+                if (deepeningPhase > 0) {
+                    ctx.save();
+                    ctx.globalCompositeOperation = 'source-atop';
+                    ctx.fillStyle = `rgba(45, 76, 164, ${0.22 * deepeningPhase})`;
+                    ctx.fillRect(-38, -24, 66, 48);
+                    ctx.fillStyle = `rgba(5, 12, 36, ${0.10 * deepeningPhase})`;
+                    ctx.fillRect(-38, -24, 66, 48);
+                    ctx.restore();
+                }
+            } else {
+                // Switch only once the cursor is already deep, keeping the
+                // anglerfish drawing itself unchanged.
                 drawAnglerfish(t, mouthOpen);
-                ctx.restore();
             }
         };
 
