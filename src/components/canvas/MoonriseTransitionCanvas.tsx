@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import MoonPhase from '@/components/dom/MoonPhase';
 
 // Night transition aligned with sunny style: layered atmosphere + rising moonlight.
 export default function MoonriseTransitionCanvas() {
@@ -68,13 +69,14 @@ export default function MoonriseTransitionCanvas() {
                     top: '7%',
                     width: '122px',
                     height: '122px',
-                    background: 'radial-gradient(circle, #f8fbff 0%, #dfeeff 34%, #b9d1ff 60%, #8db2ec 82%, rgba(128,164,222,0) 100%)',
-                    boxShadow: '0 0 96px 32px rgba(156,194,252,0.34), 0 0 196px 112px rgba(90,130,198,0.22)',
+                    boxShadow: 'none',
                 }}
                 initial={{ y: 24, scale: 0.88, opacity: 0.08 }}
                 animate={{ y: [24, 6, 0], scale: [0.88, 1.0, 1.0], opacity: [0.08, 0.62, 0.7] }}
                 transition={{ duration: 1.35, ease: [0.22, 1, 0.36, 1] }}
-            />
+            >
+                <MoonPhase className="absolute inset-0" />
+            </motion.div>
 
             <motion.div
                 className="absolute rounded-full pointer-events-none border border-slate-100/40"

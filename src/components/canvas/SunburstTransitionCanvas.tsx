@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { useStore } from '@/store';
+import { AUTUMN_BACKGROUND_GRADIENT } from '@/lib/otenkigurashiSeasonal';
 
 // 晴れの遷移: 下から昇る太陽と斜めの層状ゴッドレイ
 
@@ -14,7 +15,7 @@ export default function SunburstTransitionCanvas() {
     const background = isSpringSun
         ? 'linear-gradient(180deg, #f6e8ee 0%, #fdf3f7 42%, #fffafc 74%, #ffffff 100%)'
         : isAutumnSun
-            ? 'linear-gradient(180deg, #c7ded9 0%, #f1e6ce 50%, #e4b36f 100%)'
+            ? AUTUMN_BACKGROUND_GRADIENT
         : isGeshiSun
             ? 'linear-gradient(180deg, #a9d6e8 0%, #cfe8ee 42%, #e8f0e8 74%, #f7edcf 100%)'
         : 'linear-gradient(180deg, #82cbf6 0%, #dff2ff 42%, #fff3d8 74%, #ffefcf 100%)';
@@ -42,12 +43,12 @@ export default function SunburstTransitionCanvas() {
                 className="absolute right-[8%] top-[9%] w-24 h-24 md:w-32 md:h-32 rounded-full pointer-events-none"
                 style={{
                     background: isSpringSun
-                        ? 'radial-gradient(circle at 35% 35%, rgba(255,244,214,0.98) 0%, rgba(241,157,188,0.96) 38%, rgba(205,100,139,0.94) 100%)'
+                        ? 'radial-gradient(circle at 35% 35%, rgba(255,248,214,0.98) 0%, rgba(255,218,133,0.92) 38%, rgba(242,176,76,0.88) 100%)'
                     : isGeshiSun
                         ? 'radial-gradient(circle at 35% 35%, rgba(255,248,211,0.96) 0%, rgba(255,220,133,0.90) 38%, rgba(246,181,70,0.84) 100%)'
                         : 'radial-gradient(circle at 35% 35%, rgba(255,245,180,0.96) 0%, rgba(255,213,112,0.92) 38%, rgba(255,170,58,0.92) 100%)',
                     boxShadow: isSpringSun
-                        ? '0 0 45px rgba(224,122,159,0.32), 0 0 110px rgba(205,100,139,0.16)'
+                        ? '0 0 45px rgba(247,190,101,0.28), 0 0 110px rgba(236,163,80,0.12)'
                         : isGeshiSun
                             ? '0 0 24px rgba(151,211,238,0.18), 0 0 66px rgba(120,190,224,0.07)'
                         : '0 0 45px rgba(255,205,110,0.55), 0 0 110px rgba(255,187,82,0.35)',
@@ -61,8 +62,8 @@ export default function SunburstTransitionCanvas() {
                 className="absolute right-[3%] top-[2%] w-44 h-44 md:w-64 md:h-64 rounded-full pointer-events-none"
                 style={{
                     background: isSpringSun
-                        ? 'radial-gradient(circle, rgba(255,205,219,0.22) 0%, rgba(229,128,166,0.07) 42%, rgba(229,128,166,0.0) 74%)'
-                    : isGeshiSun
+                        ? 'radial-gradient(circle, rgba(255,224,157,0.20) 0%, rgba(245,183,97,0.06) 42%, rgba(245,183,97,0.0) 74%)'
+                        : isGeshiSun
                         ? 'radial-gradient(circle, rgba(188,228,245,0.10) 0%, rgba(151,208,234,0.025) 42%, rgba(151,208,234,0.0) 74%)'
                         : 'radial-gradient(circle, rgba(255,220,150,0.36) 0%, rgba(255,220,150,0.08) 42%, rgba(255,220,150,0.0) 74%)',
                 }}

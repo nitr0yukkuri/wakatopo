@@ -1,6 +1,10 @@
 'use client'
 
 import { type SeasonEventType, type SeasonType, type WeatherType } from '@/store';
+import {
+    AUTUMN_LEAF_SPECS,
+    autumnLeafStyle,
+} from '@/lib/otenkigurashiSeasonal';
 import { useMemo } from 'react';
 
 const seasonalValue = (index: number, salt: number) => {
@@ -21,8 +25,7 @@ export default function OtenkiSeasonEffects({
     const showSpring = season === 'spring' && isClear;
     const showGeshi = season === 'summer' && isClear && seasonEvent === 'geshi';
     const showSummer = season === 'summer' && isClear && !showGeshi;
-    const showAutumn = season === 'autumn';
-    const showAutumnLeaves = showAutumn && isClear;
+    const showAutumn = season === 'autumn' && isClear;
     const showWinter = season === 'winter';
     const springPetals = useMemo(
         () => Array.from({ length: 24 }, (_, index) => ({
@@ -37,19 +40,6 @@ export default function OtenkiSeasonEffects({
         })),
         []
     );
-    const autumnLeaves = useMemo(
-        () => Array.from({ length: 20 }, (_, index) => ({
-            left: seasonalValue(index, 11) * 100,
-            duration: 9 + seasonalValue(index, 13) * 7,
-            delay: -(seasonalValue(index, 12) * (9 + seasonalValue(index, 13) * 7)),
-            size: 13 + seasonalValue(index, 14) * 11,
-            drift: -42 + seasonalValue(index, 15) * 84,
-            rotate: seasonalValue(index, 16) * 360,
-            tone: seasonalValue(index, 17),
-        })),
-        []
-    );
-
     if (!showSpring && !showSummer && !showGeshi && !showAutumn && !showWinter) return null;
 
     return (
@@ -76,28 +66,13 @@ export default function OtenkiSeasonEffects({
                 />
             ))}
 
-            {showAutumnLeaves && autumnLeaves.map((leaf, index) => (
+            {showAutumn && AUTUMN_LEAF_SPECS.map((leaf, index) => (
                 <span
                     key={`otenki-momiji-${index}`}
                     className="absolute"
                     style={{
-                        left: `${leaf.left}%`,
-                        top: '-8%',
-                        width: leaf.size,
-                        height: leaf.size * 0.92,
-                        display: 'block',
-                        clipPath: 'polygon(50% 2%, 57% 34%, 79% 20%, 67% 47%, 93% 48%, 68% 62%, 70% 91%, 51% 71%, 32% 93%, 34% 64%, 8% 69%, 31% 49%, 19% 25%, 43% 34%)',
-                        background: leaf.tone > 0.6
-                            ? 'linear-gradient(135deg, rgba(224,96,40,0.90), rgba(143,48,28,0.72))'
-                            : leaf.tone > 0.28
-                                ? 'linear-gradient(135deg, rgba(238,156,39,0.88), rgba(181,81,30,0.68))'
-                                : 'linear-gradient(135deg, rgba(247,191,54,0.86), rgba(194,105,30,0.64))',
-                        filter: 'drop-shadow(0 2px 3px rgba(105,55,29,0.18))',
-                        transform: `rotate(${leaf.rotate}deg)`,
-                        opacity: 0.86,
+                        ...autumnLeafStyle(leaf),
                         zIndex: 30,
-                        animation: `otenki-autumn-fall ${leaf.duration}s linear ${leaf.delay}s infinite`,
-                        ['--autumn-drift' as string]: `${leaf.drift}px`,
                     }}
                 >
                     <span
@@ -107,7 +82,7 @@ export default function OtenkiSeasonEffects({
                 </span>
             ))}
 
-            {showAutumnLeaves && <div className="absolute inset-x-0 bottom-0 z-20 h-[14%] otenki-momiji-ground" />}
+            {showAutumn && <div className="absolute inset-x-0 bottom-0 z-20 h-[14%] otenki-momiji-ground" />}
 
             {showSummer && <div className="absolute inset-0 otenki-season-summer" />}
 
@@ -173,18 +148,18 @@ export default function OtenkiSeasonEffects({
 
                 .otenki-season-autumn {
                     background:
-                        radial-gradient(ellipse at 12% 84%, rgba(224,133,47,0.34) 0%, transparent 42%),
-                        linear-gradient(116deg, rgba(255,194,101,0.24), transparent 42%, rgba(104,47,30,0.16)),
-                        radial-gradient(ellipse at 50% 50%, transparent 42%, rgba(111,50,29,0.16) 100%);
+                        radial-gradient(ellipse at 12% 84%, rgba(232,155,61,0.24) 0%, transparent 42%),
+                        linear-gradient(116deg, rgba(255,209,123,0.18), transparent 42%, rgba(150,93,61,0.08)),
+                        radial-gradient(ellipse at 50% 50%, transparent 42%, rgba(144,87,61,0.08) 100%);
                     mix-blend-mode: normal;
                     animation: otenki-autumn-light 12s ease-in-out infinite alternate;
                 }
 
                 .otenki-momiji-ground {
                     background:
-                        radial-gradient(ellipse at 12% 100%, rgba(177,71,29,0.34) 0%, transparent 34%),
-                        radial-gradient(ellipse at 52% 112%, rgba(222,145,38,0.32) 0%, transparent 44%),
-                        linear-gradient(to top, rgba(130,65,28,0.18), transparent 72%);
+                        radial-gradient(ellipse at 12% 100%, rgba(194,108,55,0.20) 0%, transparent 34%),
+                        radial-gradient(ellipse at 52% 112%, rgba(235,168,61,0.24) 0%, transparent 44%),
+                        linear-gradient(to top, rgba(161,98,57,0.10), transparent 72%);
                     filter: blur(1px);
                     opacity: 0.78;
                 }
@@ -215,7 +190,7 @@ export default function OtenkiSeasonEffects({
                     }
                 }
 
-                @keyframes otenki-autumn-fall {
+                @keyframes otenki-momiji-fall {
                     0% {
                         transform: translate3d(0, -10vh, 0) rotate(0deg);
                         opacity: 0;

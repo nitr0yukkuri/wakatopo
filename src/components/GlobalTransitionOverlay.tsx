@@ -4,6 +4,11 @@ import { useStore, type SeasonEventType, type SeasonType } from '@/store';
 import { useEffect, useMemo } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import dynamic from 'next/dynamic';
+import {
+    AUTUMN_BACKGROUND_GRADIENT,
+    AUTUMN_LEAF_SPECS,
+    autumnLeafStyle,
+} from '@/lib/otenkigurashiSeasonal';
 
 // Lazy load all transition canvases — only loaded when triggered
 const WarpEffectCanvas = dynamic(() => import('@/components/canvas/WarpEffectCanvas'), { ssr: false });
@@ -25,7 +30,9 @@ const seasonalValue = (index: number, salt: number) => {
 
 function SeasonalTransitionAtmosphere({ season, seasonEvent }: { season: SeasonType; seasonEvent: SeasonEventType }) {
     const weather = useStore((state) => state.weather);
-    const showAutumnLeaves = season === 'autumn' && (weather === 'Clear' || weather === 'Morning');
+    const isClear = weather === 'Clear' || weather === 'Morning';
+    const showSpring = season === 'spring' && isClear;
+    const showAutumn = season === 'autumn' && isClear;
     const springPetals = useMemo(
         () => Array.from({ length: 18 }, (_, index) => ({
             left: seasonalValue(index, 21) * 100,
@@ -37,30 +44,21 @@ function SeasonalTransitionAtmosphere({ season, seasonEvent }: { season: SeasonT
         })),
         []
     );
-    const autumnLeaves = useMemo(
-        () => Array.from({ length: 18 }, (_, index) => ({
-            left: seasonalValue(index, 31) * 100,
-            duration: 9 + seasonalValue(index, 33) * 7,
-            delay: -(seasonalValue(index, 32) * (9 + seasonalValue(index, 33) * 7)),
-            size: 12 + seasonalValue(index, 34) * 9,
-            drift: -34 + seasonalValue(index, 35) * 68,
-            rotate: seasonalValue(index, 36) * 360,
-            tone: seasonalValue(index, 37),
-        })),
-        []
-    );
-
     if (season === 'none') return null;
 
     const isGeshi = season === 'summer' && seasonEvent === 'geshi';
 
     const backgroundBySeason: Record<SeasonType, string> = {
         none: 'transparent',
-        spring: 'radial-gradient(ellipse at 18% 12%, rgba(255,255,255,0.20), transparent 48%)',
-        summer: isGeshi
+        spring: showSpring
+            ? 'radial-gradient(ellipse at 18% 12%, rgba(255,255,255,0.20), transparent 48%)'
+            : 'transparent',
+        summer: !isClear
+            ? 'transparent'
+            : isGeshi
             ? 'radial-gradient(ellipse at 82% 8%, rgba(181,224,243,0.18), transparent 48%), linear-gradient(180deg, rgba(160,211,235,0.08), transparent 62%)'
             : 'radial-gradient(ellipse at 82% 8%, rgba(255,220,115,0.42), transparent 48%), linear-gradient(180deg, rgba(255,201,79,0.12), transparent 62%)',
-        autumn: 'linear-gradient(180deg, #c7ded9 0%, #f1e6ce 50%, #e4b36f 100%)',
+        autumn: showAutumn ? AUTUMN_BACKGROUND_GRADIENT : 'transparent',
         winter: 'linear-gradient(110deg, rgba(193,228,249,0.28), transparent 34%, transparent 68%, rgba(175,215,242,0.24)), radial-gradient(ellipse at 50% 100%, rgba(255,255,255,0.34), transparent 65%)',
     };
 
@@ -75,7 +73,7 @@ function SeasonalTransitionAtmosphere({ season, seasonEvent }: { season: SeasonT
             }}
             initial={{ opacity: 0, scale: 1.04 }}
             animate={{
-                opacity: season === 'autumn'
+                opacity: showAutumn
                     ? [0.34, 0.58, 0.44]
                     : isGeshi
                         ? [0.18, 0.36, 0.24]
@@ -85,7 +83,7 @@ function SeasonalTransitionAtmosphere({ season, seasonEvent }: { season: SeasonT
             exit={{ opacity: 0, scale: 1.06 }}
             transition={{ duration: 1.15, ease: [0.22, 1, 0.36, 1] }}
         >
-            {season === 'spring' && springPetals.map((petal, index) => (
+            {showSpring && springPetals.map((petal, index) => (
                 <span
                     key={`transition-sakura-petal-${index}`}
                     className="absolute rounded-[70%_30%_70%_30%]"
@@ -103,24 +101,17 @@ function SeasonalTransitionAtmosphere({ season, seasonEvent }: { season: SeasonT
                     }}
                 />
             ))}
-            {showAutumnLeaves && autumnLeaves.map((leaf, index) => (
+            {showAutumn && AUTUMN_LEAF_SPECS.map((leaf, index) => (
                 <span
                     key={`transition-momiji-leaf-${index}`}
                     className="absolute"
-                    style={{
-                        left: `${leaf.left}%`,
-                        top: '-8%',
-                        width: leaf.size,
-                        height: leaf.size * 0.92,
-                        clipPath: 'polygon(50% 2%, 57% 34%, 79% 20%, 67% 47%, 93% 48%, 68% 62%, 70% 91%, 51% 71%, 32% 93%, 34% 64%, 8% 69%, 31% 49%, 19% 25%, 43% 34%)',
-                        background: 'linear-gradient(135deg, rgba(247,191,54,0.86), rgba(194,105,30,0.64))',
-                        filter: 'drop-shadow(0 2px 3px rgba(105,55,29,0.16))',
-                        transform: `rotate(${leaf.rotate}deg)`,
-                        opacity: 0.92,
-                        animation: `otenki-transition-momiji-fall ${leaf.duration}s linear ${leaf.delay}s infinite`,
-                        ['--transition-momiji-drift' as string]: `${leaf.drift}px`,
-                    }}
-                />
+                    style={{ ...autumnLeafStyle(leaf), zIndex: 30 }}
+                >
+                    <span
+                        className="absolute left-1/2 top-[14%] h-[72%] w-px -translate-x-1/2 rotate-[8deg] bg-amber-100/45"
+                        aria-hidden="true"
+                    />
+                </span>
             ))}
             <style>{`
                 @keyframes otenki-transition-sakura-fall {
@@ -128,10 +119,10 @@ function SeasonalTransitionAtmosphere({ season, seasonEvent }: { season: SeasonT
                     14% { opacity: 0.74; }
                     100% { transform: translate3d(var(--transition-sakura-drift), 116vh, 0) rotate(420deg); opacity: 0; }
                 }
-                @keyframes otenki-transition-momiji-fall {
+                @keyframes otenki-momiji-fall {
                     0% { transform: translate3d(0, -10vh, 0) rotate(0deg); opacity: 0; }
                     12% { opacity: 0.86; }
-                    100% { transform: translate3d(var(--transition-momiji-drift), 116vh, 0) rotate(400deg); opacity: 0; }
+                    100% { transform: translate3d(var(--autumn-drift), 112vh, 0) rotate(460deg); opacity: 0; }
                 }
             `}</style>
         </motion.div>
