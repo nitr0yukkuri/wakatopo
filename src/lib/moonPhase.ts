@@ -1,8 +1,16 @@
 const SYNODIC_MONTH_DAYS = 29.530588853;
 const DAY_MS = 24 * 60 * 60 * 1000;
 const KNOWN_NEW_MOON_UTC = Date.UTC(2000, 0, 6, 18, 14);
+const DECORATIVE_FULL_MOON_THRESHOLD = 0.08;
 
 const normalizePhase = (phase: number) => ((phase % 1) + 1) % 1;
+
+/** Avoids a visually broken sliver by using a simple round moon near new moon. */
+export const getDisplayMoonPhase = (phase: number) => {
+    const normalized = normalizePhase(phase);
+    const distanceFromNew = Math.min(normalized, 1 - normalized);
+    return distanceFromNew <= DECORATIVE_FULL_MOON_THRESHOLD ? 0.5 : normalized;
+};
 
 /** Returns the lunar phase in the range [0, 1): new moon = 0, full moon = 0.5. */
 export const getMoonPhase = (date = new Date()) => {

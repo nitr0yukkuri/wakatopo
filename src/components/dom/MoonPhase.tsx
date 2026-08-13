@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useId, useState, type CSSProperties } from 'react';
-import { getMoonPhase, getMoonPhaseMask } from '@/lib/moonPhase';
+import { getDisplayMoonPhase, getMoonPhase, getMoonPhaseMask } from '@/lib/moonPhase';
 
 type MoonPhaseProps = {
     phaseOverride?: number | null;
@@ -27,7 +27,7 @@ export default function MoonPhase({ phaseOverride, className = '', style }: Moon
         return () => window.clearInterval(timer);
     }, [phaseOverride]);
 
-    const phase = phaseOverride ?? livePhase;
+    const phase = getDisplayMoonPhase(phaseOverride ?? livePhase);
     const moonMask = getMoonPhaseMask(phase);
     const fadeWidth = 8;
     const fadeStart = Math.max(0, moonMask.boundaryPercent - fadeWidth);
