@@ -2,14 +2,13 @@
 
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useStore, type WeatherType } from '@/store';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { useMemo, useRef, useEffect, useState, useCallback } from 'react';
 import * as THREE from 'three';
 import { waveVertexShader, waveFragmentShader } from '@/shaders/wave';
 import Image from 'next/image';
-
-const VALID_WEATHERS: WeatherType[] = ['Clear', 'Rain', 'Clouds', 'Snow', 'Night', 'Morning', 'Thunder'];
+import { buildWorldStateQuery, parseWorldStateParams } from '@/lib/worldState';
 
 const bubbleSpecs = [
     { left: '8%', top: '18%', size: 16, delay: 0.0, duration: 8.0 },
@@ -32,6 +31,16 @@ const rainLightSpecs = [
     { left: '43%', width: 9, rotate: 5, delay: 1.8, duration: 11.0 },
     { left: '70%', width: 7, rotate: -4, delay: 0.9, duration: 10.2 },
 ];
+
+const marineSnowSpecs = Array.from({ length: 34 }, (_, index) => ({
+    left: 5 + ((index * 37) % 90),
+    size: 2 + ((index * 17) % 5),
+    drift: -24 + ((index * 29) % 49),
+    duration: 10 + ((index * 13) % 11),
+    delay: -((index * 7) % 16),
+    opacity: 0.20 + ((index * 11) % 25) / 100,
+    blur: index % 4 === 0 ? 2 : 0,
+}));
 
 const overviewFishSpecs = [
     { width: 84, duration: 18, src: '/clownfish.png', alt: 'clownfish' },
@@ -600,6 +609,36 @@ function OceanBubbles() {
     );
 }
 
+function MarineSnow() {
+    const reducedMotion = useReducedMotion();
+
+    return (
+        <div data-testid="marine-snow" className="fixed inset-0 pointer-events-none z-2 overflow-hidden" aria-hidden="true">
+            {marineSnowSpecs.map((particle, index) => (
+                <motion.span
+                    key={`marine-snow-${index}`}
+                    className="absolute rounded-full bg-cyan-50/75"
+                    style={{
+                        left: `${particle.left}%`,
+                        top: `${(index * 19) % 112 - 12}%`,
+                        width: particle.size,
+                        height: particle.size,
+                        opacity: particle.opacity,
+                        filter: particle.blur ? `blur(${particle.blur}px)` : undefined,
+                        boxShadow: '0 0 8px rgba(191,235,255,0.28)',
+                    }}
+                    animate={reducedMotion
+                        ? { x: 0, y: 0, opacity: particle.opacity }
+                        : { x: [0, particle.drift, particle.drift * -0.55, 0], y: ['-8vh', '38vh', '78vh', '116vh'], opacity: [0, particle.opacity, particle.opacity * 0.72, 0] }}
+                    transition={reducedMotion
+                        ? { duration: 0 }
+                        : { duration: particle.duration, delay: particle.delay, repeat: Infinity, ease: 'linear' }}
+                />
+            ))}
+        </div>
+    );
+}
+
 function OceanRainEffects() {
     return (
         <div className="fixed inset-0 pointer-events-none z-2 overflow-hidden" aria-hidden="true">
@@ -623,6 +662,7 @@ function OceanRainEffects() {
 
 function OceanBackdrop({ weather }: { weather: WeatherType }) {
     const isRain = weather === 'Rain';
+    const isSnow = weather === 'Snow';
     return (
         <>
             <div className="fixed inset-0 pointer-events-none z-0 bg-[#041116]" />
@@ -688,6 +728,7 @@ function OceanBackdrop({ weather }: { weather: WeatherType }) {
             ))}
 
             {isRain && <OceanRainEffects />}
+            {isSnow && <MarineSnow />}
 
             {fishSpecs.map((fish, index) => (
                 <motion.div
@@ -718,25 +759,31 @@ export default function DenshouoClient() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const lang = searchParams.get('lang') === 'en' ? 'en' : 'ja';
-    const { setActiveWork, setWeather, weather } = useStore();
-    const weatherParam = searchParams.get('weather');
-    const displayedWeather = VALID_WEATHERS.includes(weatherParam as WeatherType)
-        ? weatherParam as WeatherType
-        : weather;
+    const { setActiveWork, setSeason, setSeasonEvent, setWeather, season, seasonEvent, weather } = useStore();
+    const routeWorldState = parseWorldStateParams(searchParams);
+    const displayedWeather = routeWorldState.weather ?? weather;
+    const displayedSeason = routeWorldState.season ?? season;
+    const displayedSeasonEvent = routeWorldState.seasonEvent ?? seasonEvent;
 
     useEffect(() => {
-        if (weatherParam && VALID_WEATHERS.includes(weatherParam as WeatherType)) {
-            const nextWeather = weatherParam as WeatherType;
-            if (weather !== nextWeather) setWeather(nextWeather);
-            return;
+        if (routeWorldState.weather && weather !== routeWorldState.weather) {
+            setWeather(routeWorldState.weather);
+        }
+        if (routeWorldState.season && season !== routeWorldState.season) {
+            setSeason(routeWorldState.season);
+        }
+        if (routeWorldState.seasonEvent && seasonEvent !== routeWorldState.seasonEvent) {
+            setSeasonEvent(routeWorldState.seasonEvent);
         }
 
-        if (weather !== 'Rain') return;
+        if (routeWorldState.weather || routeWorldState.season || routeWorldState.seasonEvent || weather !== 'Rain') return;
 
         const params = new URLSearchParams(searchParams.toString());
-        params.set('weather', 'Rain');
+        params.set('weather', weather);
+        params.set('season', season);
+        params.set('seasonEvent', seasonEvent);
         router.replace(`/denshouo?${params.toString()}`, { scroll: false });
-    }, [router, searchParams, setWeather, weather, weatherParam]);
+    }, [routeWorldState.season, routeWorldState.seasonEvent, routeWorldState.weather, router, searchParams, season, seasonEvent, setSeason, setSeasonEvent, setWeather, weather]);
 
     const [showBackdrop, setShowBackdrop] = useState(true);
     const [ripples, setRipples] = useState<Array<{ id: number; x: number; y: number; size: number; isHover: boolean }>>([]);
@@ -886,7 +933,7 @@ export default function DenshouoClient() {
 
     const handleReturn = () => {
         setActiveWork(null);
-        router.push(`/?lang=${lang}`);
+        router.push(`/?${buildWorldStateQuery({ weather: displayedWeather, season: displayedSeason, seasonEvent: displayedSeasonEvent }, lang)}`);
     };
 
     return (
