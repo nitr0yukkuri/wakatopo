@@ -4,6 +4,8 @@ import { type SeasonEventType, type SeasonType, type WeatherType } from '@/store
 import {
     AUTUMN_LEAF_SPECS,
     autumnLeafStyle,
+    FLOWER_CLOUDY_PETAL_SPECS,
+    TSUYU_ATMOSPHERE_GRADIENT,
 } from '@/lib/otenkigurashiSeasonal';
 import { useMemo } from 'react';
 
@@ -22,11 +24,13 @@ export default function OtenkiSeasonEffects({
     weather: WeatherType;
 }) {
     const isClear = weather === 'Clear' || weather === 'Morning';
-    const showSpring = season === 'spring' && isClear;
+    const showTsuyu = seasonEvent === 'tsuyu' && (isClear || weather === 'Clouds' || weather === 'Rain');
+    const showSpring = season === 'spring' && isClear && !showTsuyu;
+    const showFlowerCloudy = season === 'spring' && weather === 'Clouds' && !showTsuyu;
     const showGeshi = season === 'summer' && isClear && seasonEvent === 'geshi';
-    const showSummer = season === 'summer' && isClear && !showGeshi;
-    const showAutumn = season === 'autumn' && isClear;
-    const showWinter = season === 'winter';
+    const showSummer = season === 'summer' && isClear && !showGeshi && !showTsuyu;
+    const showAutumn = season === 'autumn' && isClear && !showTsuyu;
+    const showWinter = season === 'winter' && weather === 'Snow' && !showTsuyu;
     const springPetals = useMemo(
         () => Array.from({ length: 24 }, (_, index) => ({
             left: seasonalValue(index, 1) * 100,
@@ -40,11 +44,20 @@ export default function OtenkiSeasonEffects({
         })),
         []
     );
-    if (!showSpring && !showSummer && !showGeshi && !showAutumn && !showWinter) return null;
+    if (!showTsuyu && !showSpring && !showFlowerCloudy && !showSummer && !showGeshi && !showAutumn && !showWinter) return null;
 
     return (
         <div className="fixed inset-0 pointer-events-none z-10 overflow-hidden" aria-hidden="true">
+            {showTsuyu && (
+                <>
+                    <div data-testid="tsuyu-atmosphere" className="absolute inset-0 otenki-season-tsuyu" />
+                    <div className={`absolute inset-0 otenki-season-tsuyu-${weather === 'Clouds' ? 'clouds' : weather === 'Rain' ? 'rain' : 'clear'}`} />
+                </>
+            )}
+
             {showSpring && <div className="absolute inset-0 otenki-season-spring" />}
+
+            {showFlowerCloudy && <div className="absolute inset-0 otenki-season-flower-cloudy" />}
 
             {showSpring && springPetals.map((petal, index) => (
                 <span
@@ -59,6 +72,26 @@ export default function OtenkiSeasonEffects({
                         boxShadow: '0 0 8px rgba(255,180,211,0.30)',
                         transform: `rotate(${petal.rotate}deg)`,
                         opacity: 0.68,
+                        zIndex: 30,
+                        animation: `otenki-sakura-fall ${petal.duration}s linear ${petal.delay}s infinite`,
+                        ['--sakura-drift' as string]: `${petal.drift}px`,
+                    }}
+                />
+            ))}
+
+            {showFlowerCloudy && FLOWER_CLOUDY_PETAL_SPECS.map((petal, index) => (
+                <span
+                    key={`otenki-flower-cloudy-petal-${index}`}
+                    className="absolute rounded-[70%_30%_70%_30%]"
+                    style={{
+                        left: `${petal.left}%`,
+                        top: '-8%',
+                        width: petal.size * 0.82,
+                        height: petal.size * 0.5,
+                        background: 'linear-gradient(135deg, rgba(255,250,252,0.74), rgba(232,170,195,0.42))',
+                        boxShadow: '0 0 6px rgba(248,193,214,0.16)',
+                        transform: `rotate(${petal.rotate}deg)`,
+                        opacity: 0.36,
                         zIndex: 30,
                         animation: `otenki-sakura-fall ${petal.duration}s linear ${petal.delay}s infinite`,
                         ['--sakura-drift' as string]: `${petal.drift}px`,
@@ -105,6 +138,36 @@ export default function OtenkiSeasonEffects({
                         linear-gradient(155deg, rgba(255,255,255,0.04), transparent 58%);
                     mix-blend-mode: normal;
                     animation: otenki-spring-breeze 10s ease-in-out infinite alternate;
+                }
+
+                .otenki-season-tsuyu {
+                    background: ${TSUYU_ATMOSPHERE_GRADIENT};
+                    mix-blend-mode: normal;
+                    opacity: 0.82;
+                    animation: otenki-tsuyu-air 10s ease-in-out infinite alternate;
+                }
+
+                .otenki-season-tsuyu-clear {
+                    background: radial-gradient(ellipse at 72% 12%, rgba(217,239,247,0.22), transparent 42%), linear-gradient(180deg, rgba(129,165,202,0.04), transparent 72%);
+                    opacity: 0.70;
+                }
+
+                .otenki-season-tsuyu-clouds {
+                    background: radial-gradient(ellipse at 50% 8%, rgba(210,220,232,0.20), transparent 54%), linear-gradient(180deg, rgba(113,139,175,0.12), rgba(121,101,151,0.06));
+                    opacity: 0.82;
+                }
+
+                .otenki-season-tsuyu-rain {
+                    background: radial-gradient(ellipse at 50% 35%, rgba(164,198,226,0.16), transparent 56%), repeating-linear-gradient(112deg, transparent 0 28px, rgba(180,205,229,0.035) 31px 33px, transparent 36px 66px);
+                    opacity: 0.78;
+                }
+
+                .otenki-season-flower-cloudy {
+                    background:
+                        radial-gradient(ellipse at 18% 12%, rgba(255,255,255,0.22) 0%, transparent 38%),
+                        linear-gradient(160deg, rgba(255,255,255,0.06), rgba(244,205,220,0.07) 68%, rgba(244,205,220,0.12));
+                    mix-blend-mode: normal;
+                    animation: otenki-flower-cloudy-haze 12s ease-in-out infinite alternate;
                 }
 
                 .otenki-season-summer {
@@ -176,6 +239,16 @@ export default function OtenkiSeasonEffects({
                 @keyframes otenki-spring-breeze {
                     from { transform: translate3d(-1.5%, 0, 0) scale(1.02); opacity: 0.68; }
                     to { transform: translate3d(1.5%, 1%, 0) scale(1.05); opacity: 0.92; }
+                }
+
+                @keyframes otenki-tsuyu-air {
+                    from { transform: translate3d(-0.5%, 0, 0) scale(1.02); opacity: 0.64; }
+                    to { transform: translate3d(0.5%, 0.5%, 0) scale(1.05); opacity: 0.86; }
+                }
+
+                @keyframes otenki-flower-cloudy-haze {
+                    from { transform: translate3d(-0.6%, 0, 0) scale(1.02); opacity: 0.66; }
+                    to { transform: translate3d(0.6%, 0.5%, 0) scale(1.04); opacity: 0.86; }
                 }
 
                 @keyframes otenki-sakura-fall {

@@ -1,14 +1,19 @@
 'use client';
 
-import { useStore, type SeasonEventType, type SeasonType } from '@/store';
+import { useStore, type SeasonEventType, type SeasonType, type WeatherType } from '@/store';
 import { useEffect, useMemo } from 'react';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { AnimatePresence, motion } from 'framer-motion';
 import dynamic from 'next/dynamic';
 import {
     AUTUMN_BACKGROUND_GRADIENT,
     AUTUMN_LEAF_SPECS,
     autumnLeafStyle,
+    FLOWER_CLOUDY_PETAL_SPECS,
+    SPRING_FLOWER_CLOUDY_BACKGROUND_GRADIENT,
+    TSUYU_ATMOSPHERE_GRADIENT,
 } from '@/lib/otenkigurashiSeasonal';
+import { VALID_SEASON_EVENTS, VALID_SEASONS, VALID_WEATHERS } from '@/lib/worldState';
 
 // Lazy load all transition canvases — only loaded when triggered
 const WarpEffectCanvas = dynamic(() => import('@/components/canvas/WarpEffectCanvas'), { ssr: false });
@@ -28,11 +33,13 @@ const seasonalValue = (index: number, salt: number) => {
     return value - Math.floor(value);
 };
 
-function SeasonalTransitionAtmosphere({ season, seasonEvent }: { season: SeasonType; seasonEvent: SeasonEventType }) {
-    const weather = useStore((state) => state.weather);
+function SeasonalTransitionAtmosphere({ season, seasonEvent, weather }: { season: SeasonType; seasonEvent: SeasonEventType; weather: WeatherType }) {
     const isClear = weather === 'Clear' || weather === 'Morning';
     const showSpring = season === 'spring' && isClear;
+    const showFlowerCloudy = season === 'spring' && weather === 'Clouds';
     const showAutumn = season === 'autumn' && isClear;
+    const showWinterSnow = season === 'winter' && weather === 'Snow';
+    const showTsuyu = seasonEvent === 'tsuyu' && (isClear || weather === 'Clouds' || weather === 'Rain');
     const springPetals = useMemo(
         () => Array.from({ length: 18 }, (_, index) => ({
             left: seasonalValue(index, 21) * 100,
@@ -52,6 +59,8 @@ function SeasonalTransitionAtmosphere({ season, seasonEvent }: { season: SeasonT
         none: 'transparent',
         spring: showSpring
             ? 'radial-gradient(ellipse at 18% 12%, rgba(255,255,255,0.20), transparent 48%)'
+            : showFlowerCloudy
+                ? SPRING_FLOWER_CLOUDY_BACKGROUND_GRADIENT
             : 'transparent',
         summer: !isClear
             ? 'transparent'
@@ -59,7 +68,9 @@ function SeasonalTransitionAtmosphere({ season, seasonEvent }: { season: SeasonT
             ? 'radial-gradient(ellipse at 82% 8%, rgba(181,224,243,0.18), transparent 48%), linear-gradient(180deg, rgba(160,211,235,0.08), transparent 62%)'
             : 'radial-gradient(ellipse at 82% 8%, rgba(255,220,115,0.42), transparent 48%), linear-gradient(180deg, rgba(255,201,79,0.12), transparent 62%)',
         autumn: showAutumn ? AUTUMN_BACKGROUND_GRADIENT : 'transparent',
-        winter: 'linear-gradient(110deg, rgba(193,228,249,0.28), transparent 34%, transparent 68%, rgba(175,215,242,0.24)), radial-gradient(ellipse at 50% 100%, rgba(255,255,255,0.34), transparent 65%)',
+        winter: showWinterSnow
+            ? 'linear-gradient(110deg, rgba(193,228,249,0.28), transparent 34%, transparent 68%, rgba(175,215,242,0.24)), radial-gradient(ellipse at 50% 100%, rgba(255,255,255,0.34), transparent 65%)'
+            : 'transparent',
     };
 
     return (
@@ -67,14 +78,18 @@ function SeasonalTransitionAtmosphere({ season, seasonEvent }: { season: SeasonT
             key={`season-atmosphere-${season}-${seasonEvent}`}
             className="fixed inset-0 z-[10000] pointer-events-none overflow-hidden"
             style={{
-                background: backgroundBySeason[season],
+                background: showTsuyu ? TSUYU_ATMOSPHERE_GRADIENT : backgroundBySeason[season],
                 mixBlendMode: 'normal',
-                boxShadow: season === 'winter' ? 'inset 0 0 80px rgba(199,230,249,0.36)' : undefined,
+                boxShadow: showWinterSnow ? 'inset 0 0 80px rgba(199,230,249,0.36)' : undefined,
             }}
             initial={{ opacity: 0, scale: 1.04 }}
             animate={{
-                opacity: showAutumn
+                opacity: showTsuyu
+                    ? [0.12, 0.24, 0.16]
+                    : showAutumn
                     ? [0.34, 0.58, 0.44]
+                    : showFlowerCloudy
+                        ? [0.06, 0.14, 0.10]
                     : isGeshi
                         ? [0.18, 0.36, 0.24]
                         : [0.10, 0.20, 0.14],
@@ -83,6 +98,30 @@ function SeasonalTransitionAtmosphere({ season, seasonEvent }: { season: SeasonT
             exit={{ opacity: 0, scale: 1.06 }}
             transition={{ duration: 1.15, ease: [0.22, 1, 0.36, 1] }}
         >
+            {showTsuyu && (
+                <>
+                    <div
+                        className="absolute inset-0"
+                        style={{
+                            background: weather === 'Clouds'
+                                ? 'radial-gradient(ellipse at 50% 8%, rgba(215,224,236,0.18), transparent 54%), linear-gradient(180deg, rgba(113,139,175,0.10), rgba(121,101,151,0.06))'
+                                : weather === 'Rain'
+                                    ? 'radial-gradient(ellipse at 50% 35%, rgba(164,198,226,0.14), transparent 56%)'
+                                    : 'radial-gradient(ellipse at 72% 12%, rgba(217,239,247,0.20), transparent 42%)',
+                            opacity: 0.82,
+                        }}
+                    />
+                    <div
+                        className="absolute inset-0"
+                        style={{
+                            background: 'linear-gradient(105deg, transparent 0%, rgba(162,177,211,0.08) 48%, transparent 76%)',
+                            filter: 'blur(12px)',
+                            animation: 'otenki-transition-tsuyu-air 8s ease-in-out infinite alternate',
+                        }}
+                    />
+                </>
+            )}
+
             {showSpring && springPetals.map((petal, index) => (
                 <span
                     key={`transition-sakura-petal-${index}`}
@@ -96,6 +135,24 @@ function SeasonalTransitionAtmosphere({ season, seasonEvent }: { season: SeasonT
                         boxShadow: '0 0 8px rgba(255,180,211,0.34)',
                         transform: `rotate(${petal.rotate}deg)`,
                         opacity: 0.74,
+                        animation: `otenki-transition-sakura-fall ${petal.duration}s linear ${petal.delay}s infinite`,
+                        ['--transition-sakura-drift' as string]: `${petal.drift}px`,
+                    }}
+                />
+            ))}
+            {showFlowerCloudy && FLOWER_CLOUDY_PETAL_SPECS.map((petal, index) => (
+                <span
+                    key={`transition-flower-cloudy-petal-${index}`}
+                    className="absolute rounded-[70%_30%_70%_30%]"
+                    style={{
+                        left: `${petal.left}%`,
+                        top: '-8%',
+                        width: petal.size * 0.82,
+                        height: petal.size * 0.5,
+                        background: 'linear-gradient(135deg, rgba(255,250,252,0.78), rgba(232,170,195,0.44))',
+                        boxShadow: '0 0 6px rgba(248,193,214,0.16)',
+                        transform: `rotate(${petal.rotate}deg)`,
+                        opacity: 0.38,
                         animation: `otenki-transition-sakura-fall ${petal.duration}s linear ${petal.delay}s infinite`,
                         ['--transition-sakura-drift' as string]: `${petal.drift}px`,
                     }}
@@ -116,13 +173,17 @@ function SeasonalTransitionAtmosphere({ season, seasonEvent }: { season: SeasonT
             <style>{`
                 @keyframes otenki-transition-sakura-fall {
                     0% { transform: translate3d(0, -10vh, 0) rotate(0deg); opacity: 0; }
-                    14% { opacity: 0.74; }
-                    100% { transform: translate3d(var(--transition-sakura-drift), 116vh, 0) rotate(420deg); opacity: 0; }
+                    12% { opacity: 0.68; }
+                    100% { transform: translate3d(var(--transition-sakura-drift), 112vh, 0) rotate(460deg); opacity: 0; }
                 }
                 @keyframes otenki-momiji-fall {
                     0% { transform: translate3d(0, -10vh, 0) rotate(0deg); opacity: 0; }
                     12% { opacity: 0.86; }
                     100% { transform: translate3d(var(--autumn-drift), 112vh, 0) rotate(460deg); opacity: 0; }
+                }
+                @keyframes otenki-transition-tsuyu-air {
+                    from { transform: translate3d(-1%, 0, 0) scale(1.02); opacity: 0.34; }
+                    to { transform: translate3d(1%, 0.5%, 0) scale(1.06); opacity: 0.72; }
                 }
             `}</style>
         </motion.div>
@@ -131,6 +192,21 @@ function SeasonalTransitionAtmosphere({ season, seasonEvent }: { season: SeasonT
 
 export default function GlobalTransitionOverlay() {
     const { transitionType, season, seasonEvent, setTransitionType } = useStore();
+    const storeWeather = useStore((state) => state.weather);
+    const pathname = usePathname();
+    const searchParams = useSearchParams();
+    const routeWeather = searchParams.get('weather');
+    const routeSeason = searchParams.get('season');
+    const routeSeasonEvent = searchParams.get('seasonEvent');
+    const effectiveWeather = pathname === '/otenkigurashi' && VALID_WEATHERS.includes(routeWeather as WeatherType)
+        ? routeWeather as WeatherType
+        : storeWeather;
+    const effectiveSeason = pathname === '/otenkigurashi' && VALID_SEASONS.includes(routeSeason as SeasonType)
+        ? routeSeason as SeasonType
+        : season;
+    const effectiveSeasonEvent = pathname === '/otenkigurashi' && VALID_SEASON_EVENTS.includes(routeSeasonEvent as SeasonEventType)
+        ? routeSeasonEvent as SeasonEventType
+        : seasonEvent;
     const isWeatherTransition = ['rain', 'snow', 'sunburst', 'flash', 'heavy-cloud', 'moonrise'].includes(transitionType);
 
     useEffect(() => {
@@ -308,7 +384,7 @@ export default function GlobalTransitionOverlay() {
             )}
 
             {isWeatherTransition && (
-                <SeasonalTransitionAtmosphere season={season} seasonEvent={seasonEvent} />
+                <SeasonalTransitionAtmosphere season={effectiveSeason} seasonEvent={effectiveSeasonEvent} weather={effectiveWeather} />
             )}
         </AnimatePresence>
     );

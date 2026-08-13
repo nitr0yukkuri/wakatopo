@@ -1,9 +1,18 @@
 'use client'
 
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useStore, type SeasonEventType, type SeasonType, WeatherType } from '@/store';
-import { AUTUMN_BACKGROUND_GRADIENT, WINTER_BACKGROUND_GRADIENT } from '@/lib/otenkigurashiSeasonal';
+import { useStore, type SeasonType, WeatherType } from '@/store';
+import {
+    AUTUMN_BACKGROUND_GRADIENT,
+    SPRING_FLOWER_CLOUDY_BACKGROUND_GRADIENT,
+    TSUYU_CLEAR_BACKGROUND_GRADIENT,
+    TSUYU_CLOUDS_BACKGROUND_GRADIENT,
+    TSUYU_RAIN_BACKGROUND_GRADIENT,
+    WINTER_BACKGROUND_GRADIENT,
+} from '@/lib/otenkigurashiSeasonal';
 import { parseMoonPhaseOverride } from '@/lib/moonPhase';
+import { resolveSeasonState } from '@/lib/seasonResolver';
+import { buildWorldStateQuery, parseWorldStateParams } from '@/lib/worldState';
 import { useEffect, useRef, useState } from 'react';
 import dynamicImport from 'next/dynamic';
 import Image from 'next/image';
@@ -17,8 +26,6 @@ const SnowCanvas = dynamicImport(() => import('@/components/canvas/effects/SnowC
 const ThunderCanvas = dynamicImport(() => import('@/components/canvas/ThunderTransitionCanvas'), { ssr: false });
 const MoonPhase = dynamicImport(() => import('@/components/dom/MoonPhase'), { ssr: false });
 const OtenkiSeasonEffects = dynamicImport(() => import('./OtenkiSeasonEffects'), { ssr: false });
-const VALID_WEATHERS: WeatherType[] = ['Clear', 'Rain', 'Clouds', 'Snow', 'Night', 'Morning', 'Thunder'];
-
 // A simple CSS cloud decoration component
 function CloudDecoration({ className, style, flip }: { className: string, style?: React.CSSProperties, flip?: boolean }) {
     return (
@@ -705,10 +712,9 @@ export default function OtenkiGurashiClient() {
         season: storeSeason,
         seasonEvent: storeSeasonEvent,
     } = useStore();
-    const weatherParam = searchParams.get('weather');
-    const seasonParam = searchParams.get('season');
-    const seasonEventParam = searchParams.get('seasonEvent');
-    const weatherFromParam = VALID_WEATHERS.includes(weatherParam as WeatherType) ? weatherParam as WeatherType : null;
+    const routeWorldState = parseWorldStateParams(searchParams);
+    const resolvedSeasonState = resolveSeasonState();
+    const weatherFromParam = routeWorldState.weather;
     const displayedWeather = weatherFromParam ?? weather;
 
     const copy = {
@@ -772,12 +778,10 @@ export default function OtenkiGurashiClient() {
         },
     } as const;
     const t = copy[lang];
-    const validSeasons: SeasonType[] = ['none', 'spring', 'summer', 'autumn', 'winter'];
-    const validSeasonEvents: SeasonEventType[] = ['none', 'geshi'];
-    const seasonFromParam = validSeasons.includes(seasonParam as SeasonType) ? seasonParam as SeasonType : null;
-    const seasonEventFromParam = validSeasonEvents.includes(seasonEventParam as SeasonEventType) ? seasonEventParam as SeasonEventType : null;
-    const displayedSeason = seasonFromParam ?? storeSeason;
-    const displayedSeasonEvent = seasonEventFromParam ?? storeSeasonEvent;
+    const seasonFromParam = routeWorldState.season;
+    const seasonEventFromParam = routeWorldState.seasonEvent;
+    const displayedSeason = seasonFromParam ?? (storeSeason === 'none' ? resolvedSeasonState.season : storeSeason);
+    const displayedSeasonEvent = seasonEventFromParam ?? (storeSeasonEvent === 'none' ? resolvedSeasonState.seasonEvent : storeSeasonEvent);
     const moonPhaseOverride = parseMoonPhaseOverride(searchParams.get('moonPhase'));
 
     // スクロール検知用の状態とRef
@@ -879,7 +883,7 @@ export default function OtenkiGurashiClient() {
 
     const handleReturn = () => {
         setActiveWork(null); // ワープ状態をリセット
-        router.push(`/?lang=${lang}`);
+        router.push(`/?${buildWorldStateQuery({ weather: displayedWeather, season: displayedSeason, seasonEvent: displayedSeasonEvent }, lang)}`);
     };
 
     let bgGradient = "from-[#aee1f9] to-[#e0f4fc]"; // Default (Clear)
@@ -903,6 +907,10 @@ export default function OtenkiGurashiClient() {
         bgGradient = "from-[#fcedf3] via-[#fff5f9] to-[#fffdfd]";
     }
 
+    if (displayedSeason === 'spring' && displayedWeather === 'Clouds') {
+        bgGradient = "from-[#c5d1d9] via-[#e6e9e7] to-[#f3e8ed]";
+    }
+
     if (displayedSeason === 'autumn' && (displayedWeather === 'Clear' || displayedWeather === 'Morning')) {
         bgGradient = "from-[#c7ded9] via-[#f1e6ce] to-[#e4b36f]";
     }
@@ -911,13 +919,24 @@ export default function OtenkiGurashiClient() {
         bgGradient = "from-[#bddfeb] via-[#e0eef0] to-[#fff0cf]";
     }
 
+    if (displayedSeasonEvent === 'tsuyu') {
+        bgGradient = displayedWeather === 'Rain'
+            ? TSUYU_RAIN_BACKGROUND_GRADIENT
+            : displayedWeather === 'Clouds'
+                ? TSUYU_CLOUDS_BACKGROUND_GRADIENT
+                : displayedWeather === 'Clear' || displayedWeather === 'Morning'
+                    ? TSUYU_CLEAR_BACKGROUND_GRADIENT
+                    : bgGradient;
+    }
+
     const springCardStyle = displayedSeason === 'spring' && (displayedWeather === 'Clear' || displayedWeather === 'Morning')
         ? 'border-white shadow-[0_20px_60px_-15px_rgba(152,173,194,0.3)]'
         : 'border-white shadow-[0_20px_60px_-15px_rgba(152,173,194,0.3)]';
     const isSpringSun = displayedSeason === 'spring' && (displayedWeather === 'Clear' || displayedWeather === 'Morning');
+    const isFlowerCloudy = displayedSeason === 'spring' && displayedWeather === 'Clouds';
     const isGeshiSun = displayedSeason === 'summer' && displayedSeasonEvent === 'geshi' && (displayedWeather === 'Clear' || displayedWeather === 'Morning');
-    const isWinterSnowScene = displayedSeason === 'winter'
-        && (displayedWeather === 'Clear' || displayedWeather === 'Morning' || displayedWeather === 'Snow');
+    const isTsuyu = displayedSeasonEvent === 'tsuyu';
+    const isWinterSnowScene = displayedSeason === 'winter' && displayedWeather === 'Snow';
 
     return (
         <>
@@ -926,6 +945,14 @@ export default function OtenkiGurashiClient() {
                 cursor: isFinePointer ? 'none' : 'auto',
                 background: displayedSeason === 'autumn' && (displayedWeather === 'Clear' || displayedWeather === 'Morning')
                     ? AUTUMN_BACKGROUND_GRADIENT
+                    : isTsuyu && (displayedWeather === 'Clear' || displayedWeather === 'Morning')
+                        ? TSUYU_CLEAR_BACKGROUND_GRADIENT
+                    : isTsuyu && displayedWeather === 'Clouds'
+                        ? TSUYU_CLOUDS_BACKGROUND_GRADIENT
+                    : isTsuyu && displayedWeather === 'Rain'
+                        ? TSUYU_RAIN_BACKGROUND_GRADIENT
+                    : isFlowerCloudy
+                        ? SPRING_FLOWER_CLOUDY_BACKGROUND_GRADIENT
                     : isWinterSnowScene
                         ? WINTER_BACKGROUND_GRADIENT
                     : undefined,
@@ -1199,9 +1226,12 @@ export default function OtenkiGurashiClient() {
                         section={activeSection}
                         weather={displayedWeather}
                         showUmbrella={false}
-                        showSakura={isSpringSun}
+                        showSakura={isSpringSun || isFlowerCloudy}
                         showMomiji={displayedSeason === 'autumn' && (displayedWeather === 'Clear' || displayedWeather === 'Morning')}
-                        showSnowflake={displayedSeason === 'winter' && displayedWeather === 'Snow'}
+                        showSnowflake={displayedWeather === 'Snow'}
+                        showRainDrop={displayedWeather === 'Rain'}
+                        showLightning={displayedWeather === 'Thunder'}
+                        showNightStar={displayedWeather === 'Night'}
                         overrideDialog={overrideDialog}
                         onClick={handleTenchanClick}
                     />
