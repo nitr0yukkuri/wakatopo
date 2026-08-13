@@ -20,13 +20,18 @@ export function parseWorldStateRecord(source: SearchRecord): Partial<WorldState>
     const weather = firstValue(source.weather);
     const season = firstValue(source.season);
     const seasonEvent = firstValue(source.seasonEvent);
+    const parsedSeason = season && VALID_SEASONS.includes(season as SeasonType) ? season as SeasonType : null;
+    const parsedSeasonEvent = seasonEvent && VALID_SEASON_EVENTS.includes(seasonEvent as SeasonEventType)
+        ? seasonEvent as SeasonEventType
+        : null;
+    const normalizedSeasonEvent = parsedSeasonEvent === 'tsuyu' && parsedSeason && parsedSeason !== 'summer'
+        ? 'none'
+        : parsedSeasonEvent;
 
     return {
         ...(weather && VALID_WEATHERS.includes(weather as WeatherType) ? { weather: weather as WeatherType } : {}),
-        ...(season && VALID_SEASONS.includes(season as SeasonType) ? { season: season as SeasonType } : {}),
-        ...(seasonEvent && VALID_SEASON_EVENTS.includes(seasonEvent as SeasonEventType)
-            ? { seasonEvent: seasonEvent as SeasonEventType }
-            : {}),
+        ...(parsedSeason ? { season: parsedSeason } : {}),
+        ...(normalizedSeasonEvent ? { seasonEvent: normalizedSeasonEvent } : {}),
     };
 }
 
