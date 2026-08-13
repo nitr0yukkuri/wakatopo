@@ -718,19 +718,25 @@ export default function DenshouoClient() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const lang = searchParams.get('lang') === 'en' ? 'en' : 'ja';
-    const { setActiveWork, weather } = useStore();
+    const { setActiveWork, setWeather, weather } = useStore();
     const weatherParam = searchParams.get('weather');
     const displayedWeather = VALID_WEATHERS.includes(weatherParam as WeatherType)
         ? weatherParam as WeatherType
         : weather;
 
     useEffect(() => {
-        if (weather !== 'Rain' || weatherParam) return;
+        if (weatherParam && VALID_WEATHERS.includes(weatherParam as WeatherType)) {
+            const nextWeather = weatherParam as WeatherType;
+            if (weather !== nextWeather) setWeather(nextWeather);
+            return;
+        }
+
+        if (weather !== 'Rain') return;
 
         const params = new URLSearchParams(searchParams.toString());
         params.set('weather', 'Rain');
         router.replace(`/denshouo?${params.toString()}`, { scroll: false });
-    }, [router, searchParams, weather, weatherParam]);
+    }, [router, searchParams, setWeather, weather, weatherParam]);
 
     const [showBackdrop, setShowBackdrop] = useState(true);
     const [ripples, setRipples] = useState<Array<{ id: number; x: number; y: number; size: number; isHover: boolean }>>([]);
