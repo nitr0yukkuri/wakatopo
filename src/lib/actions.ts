@@ -1,5 +1,7 @@
 'use server'
 
+import { resolveSeasonState } from '@/lib/seasonResolver';
+
 type WeatherType = 'Clear' | 'Rain' | 'Clouds' | 'Snow' | 'Night' | 'Morning' | 'Thunder';
 
 // Open-Meteo WMO weather code → WeatherType
@@ -17,7 +19,8 @@ function mapWeatherCode(code: number): WeatherType {
 
 export async function fetchPlanetData() {
     // サーバーのタイムゾーンに依存せず、常に日本時間(JST)で時刻を取得
-    const jstDate = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Tokyo' }));
+    const now = new Date();
+    const jstDate = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Tokyo' }));
     const hours = jstDate.getHours();
 
     let weather: WeatherType;
@@ -44,8 +47,12 @@ export async function fetchPlanetData() {
         }
     }
 
+    const { season, seasonEvent } = resolveSeasonState(now);
+
     return {
         weather,
+        season,
+        seasonEvent,
         contributions: 1240, // 年間コミット数
         activityLevel: 0.8,  // シェーダーに渡す「強さ」
     };
