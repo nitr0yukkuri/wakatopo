@@ -287,55 +287,6 @@ export default function SoundDirector() {
     source.stop(ctx.currentTime + at + duration + 0.01);
   };
 
-  const playSweep = (
-    from: number,
-    to: number,
-    duration: number,
-    type: OscillatorType = "sawtooth",
-    volume = 0.22,
-  ) => {
-    const ctx = audioContextRef.current;
-    const master = masterGainRef.current;
-    if (!ctx || !master || isMutedRef.current) return;
-
-    const osc = ctx.createOscillator();
-    const filter = ctx.createBiquadFilter();
-    const gain = ctx.createGain();
-
-    osc.type = type;
-    osc.frequency.setValueAtTime(from, ctx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(
-      Math.max(to, 25),
-      ctx.currentTime + duration,
-    );
-
-    filter.type = "bandpass";
-    filter.frequency.setValueAtTime(
-      Math.min(Math.max(from * 2.3, 140), 4600),
-      ctx.currentTime,
-    );
-    filter.frequency.exponentialRampToValueAtTime(
-      Math.min(Math.max(to * 2.6, 140), 4600),
-      ctx.currentTime + duration,
-    );
-    filter.Q.value = 1.1;
-
-    gain.gain.setValueAtTime(0.0001, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(volume, ctx.currentTime + 0.03);
-    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duration);
-
-    osc.connect(filter);
-    filter.connect(gain);
-    gain.connect(master);
-
-    activeAudioSourcesRef.current.add(osc);
-    osc.onended = () => {
-      activeAudioSourcesRef.current.delete(osc);
-    };
-
-    osc.start();
-    osc.stop(ctx.currentTime + duration + 0.05);
-  };
 
   const playTransitionSfx = (type: TransitionType) => {
     switch (type) {
@@ -658,6 +609,8 @@ export default function SoundDirector() {
       outputWetGainRef.current = null;
       outputCompressorRef.current = null;
     };
+  // Audio callbacks are intentionally scoped to the lifecycle effect; mutable refs carry the latest graph state.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isCardPage]);
 
   useEffect(() => {
@@ -675,6 +628,8 @@ export default function SoundDirector() {
       if (!ok) return;
       playTransitionSfx(transitionType);
     });
+  // SFX helpers read the current AudioContext through refs and should not retrigger the transition effect every render.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isCardPage, transitionType]);
 
   useEffect(() => {
@@ -684,6 +639,8 @@ export default function SoundDirector() {
 
     stopBgm();
     startBgm();
+  // BGM helpers use the latest audio state ref; only world/page changes should restart the loop.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeWorkId, githubActivityLevel, isCardPage, pathname, weather]);
 
   if (isCardPage || pathname === "/otenkigurashi") return null;
