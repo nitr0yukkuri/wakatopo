@@ -5,33 +5,16 @@ import { useStore } from "@/store";
 import { usePathname } from "next/navigation";
 import { getLofiBgmProfile } from "@/lib/lofiAudio";
 import { useWorldState } from "@/components/WorldStateProvider";
-
-type TransitionType =
-  | "none"
-  | "warp"
-  | "cloud"
-  | "freeze"
-  | "rain"
-  | "snow"
-  | "sunburst"
-  | "flash"
-  | "heavy-cloud"
-  | "wave"
-  | "moonrise"
-  | "captcha-lock";
-
-const MUTE_KEY = "lp-audio-muted";
-const OUTPUT_BOOST = 2.2;
-const OTENKI_BGM_FLAG = -1;
-const DENSHOUO_BGM_FLAG = -2;
-const EXCLUSIVE_BGM_WORK_IDS = new Set(["02", "05"]);
-
-type AudioStateSnapshot = {
-  pathname: string;
-  resolvedWorkId: string | null;
-  weather: ReturnType<typeof useStore.getState>["weather"];
-  githubActivityLevel: number;
-};
+import {
+  DENSHOUO_BGM_FLAG,
+  MUTE_KEY,
+  OTENKI_BGM_FLAG,
+  OUTPUT_BOOST,
+  type AudioStateSnapshot,
+  type TransitionType,
+  hasExclusiveBgm,
+  resolveAudioWorkId,
+} from "@/lib/soundProfile";
 
 export default function SoundDirector() {
   const pathname = usePathname();
@@ -65,14 +48,7 @@ export default function SoundDirector() {
   const [hasUnlockedAudio, setHasUnlockedAudio] = useState(false);
   const isCardPage = pathname === "/card";
 
-  const resolvedWorkId = (() => {
-    if (pathname === "/github-planet") return "01";
-    if (pathname === "/otenkigurashi") return "02";
-    if (pathname === "/coldkeep") return "03";
-    if (pathname === "/recaptcha-game") return "04";
-    if (pathname === "/denshouo") return "05";
-    return activeWorkId;
-  })();
+  const resolvedWorkId = resolveAudioWorkId(pathname, activeWorkId);
 
   latestAudioStateRef.current = {
     pathname,
@@ -482,7 +458,7 @@ export default function SoundDirector() {
       return;
     }
 
-    if (currentWorkId && EXCLUSIVE_BGM_WORK_IDS.has(currentWorkId)) return;
+    if (hasExclusiveBgm(currentWorkId)) return;
 
     // Home screen Tone.js rain/thunder effect
     if (
@@ -517,7 +493,7 @@ export default function SoundDirector() {
       const latestState = latestAudioStateRef.current;
       if (
         latestState.resolvedWorkId &&
-        EXCLUSIVE_BGM_WORK_IDS.has(latestState.resolvedWorkId)
+        hasExclusiveBgm(latestState.resolvedWorkId)
       )
         return;
 
@@ -689,7 +665,7 @@ export default function SoundDirector() {
     const previous = previousTransitionRef.current;
     previousTransitionRef.current = transitionType;
 
-    if (resolvedWorkId && EXCLUSIVE_BGM_WORK_IDS.has(resolvedWorkId)) return;
+    if (hasExclusiveBgm(resolvedWorkId)) return;
 
     if (transitionType === "none" || transitionType === previous) {
       return;
