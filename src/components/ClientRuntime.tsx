@@ -2,7 +2,6 @@
 
 import dynamic from 'next/dynamic';
 import ConsoleWelcome from '@/components/ConsoleWelcome';
-import WorldStateProvider from '@/components/WorldStateProvider';
 
 const PwaRegister = dynamic(() => import('@/components/PwaRegister'), { ssr: false });
 const SoundDirector = dynamic(() => import('@/components/SoundDirector'), { ssr: false });
@@ -13,10 +12,8 @@ export default function ClientRuntime() {
         <>
             <PwaRegister />
             <ConsoleWelcome />
-            <WorldStateProvider>
-                <SoundDirector />
-                <GlobalTransitionOverlay />
-            </WorldStateProvider>
+            <SoundDirector />
+            <GlobalTransitionOverlay />
         </>
     );
 }

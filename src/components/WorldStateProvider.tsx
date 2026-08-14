@@ -12,12 +12,10 @@ const WorldStateContext = createContext<WorldState | null>(null);
 export default function WorldStateProvider({ children }: { children: ReactNode }) {
     const searchParams = useSearchParams();
     const searchParamsKey = searchParams.toString();
-    const { storeWeather, storeSeason, storeSeasonEvent, setWorldState } = useStore((state) => ({
-        storeWeather: state.weather,
-        storeSeason: state.season,
-        storeSeasonEvent: state.seasonEvent,
-        setWorldState: state.setWorldState,
-    }));
+    const storeWeather = useStore((state) => state.weather);
+    const storeSeason = useStore((state) => state.season);
+    const storeSeasonEvent = useStore((state) => state.seasonEvent);
+    const setWorldState = useStore((state) => state.setWorldState);
     const routeWorldState = useMemo(
         () => parseWorldStateParams(new URLSearchParams(searchParamsKey)),
         [searchParamsKey],
