@@ -1,6 +1,9 @@
 'use client';
 import dynamic from 'next/dynamic';
 import { useStore, type WeatherType } from '@/store';
+import { usePathname, useSearchParams } from 'next/navigation';
+import { parseWorldStateParams, resolveWorldState } from '@/lib/worldState';
+import { getWorldVisualProfile } from '@/lib/worldVisualProfile';
 
 const RainParticles = dynamic(() => import('@/components/canvas/RainTransitionCanvas').then((m) => m.RainParticles), { ssr: false });
 const SunraysCanvas = dynamic(() => import('@/components/canvas/effects/SunraysCanvas'), { ssr: false });
@@ -25,19 +28,22 @@ export default function WeatherEffectsOverlay({
     snowMobileScale?: number;
 } = {}) {
     const { season, seasonEvent, weather: storeWeather } = useStore();
-    const weather = weatherOverride ?? storeWeather;
-    const sunraysVariant = !weatherOverride && seasonEvent === 'geshi' && season === 'summer' && weather === 'Clear'
-        ? 'geshi-clear'
-        : season === 'summer' && weather === 'Clear'
-        ? 'summer-clear'
-        : season === 'spring' && weather === 'Clear'
-            ? 'spring-clear'
-            : season === 'autumn' && weather === 'Clear'
-                ? 'autumn-clear'
-                : 'default';
-    const cloudsVariant = season === 'spring' && weather === 'Clouds' ? 'spring-clouds' : 'default';
-    const nightVariant = season === 'autumn' && weather === 'Night' ? 'autumn-night' : 'default';
-    const snowVariant = season === 'winter' && weather === 'Snow' ? 'winter-snow' : 'default';
+    const pathname = usePathname();
+    const searchParams = useSearchParams();
+    const routeWorldState = pathname === '/' || pathname === '/otenkigurashi'
+        ? parseWorldStateParams(searchParams)
+        : {};
+    const worldState = resolveWorldState(routeWorldState, {
+        weather: storeWeather,
+        season,
+        seasonEvent,
+    });
+    const weather = weatherOverride ?? worldState.weather;
+    const visualProfile = getWorldVisualProfile(
+        { ...worldState, weather },
+        { includeGeshiSun: !weatherOverride },
+    );
+    const { sunraysVariant, cloudsVariant, nightVariant, snowVariant } = visualProfile;
 
     return (
         <>

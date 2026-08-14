@@ -12,7 +12,7 @@ import {
 } from '@/lib/otenkigurashiSeasonal';
 import { parseMoonPhaseOverride } from '@/lib/moonPhase';
 import { resolveSeasonState } from '@/lib/seasonResolver';
-import { buildWorldStateQuery, parseWorldStateParams } from '@/lib/worldState';
+import { buildWorldStateQuery, canonicalizeWorldStateQuery, parseWorldStateParams, resolveWorldState } from '@/lib/worldState';
 import { useEffect, useRef, useState } from 'react';
 import dynamicImport from 'next/dynamic';
 import Image from 'next/image';
@@ -705,17 +705,19 @@ export default function OtenkiGurashiClient() {
     const lang = searchParams.get('lang') === 'en' ? 'en' : 'ja';
     const {
         setActiveWork,
-        setWeather,
-        setSeason,
-        setSeasonEvent,
+        setWorldState,
         weather,
         season: storeSeason,
         seasonEvent: storeSeasonEvent,
     } = useStore();
     const routeWorldState = parseWorldStateParams(searchParams);
     const resolvedSeasonState = resolveSeasonState();
-    const weatherFromParam = routeWorldState.weather;
-    const displayedWeather = weatherFromParam ?? weather;
+    const displayedWorldState = resolveWorldState(routeWorldState, {
+        weather,
+        season: storeSeason === 'none' ? resolvedSeasonState.season : storeSeason,
+        seasonEvent: storeSeasonEvent === 'none' ? resolvedSeasonState.seasonEvent : storeSeasonEvent,
+    });
+    const displayedWeather = displayedWorldState.weather;
 
     const copy = {
         ja: {
@@ -780,8 +782,9 @@ export default function OtenkiGurashiClient() {
     const t = copy[lang];
     const seasonFromParam = routeWorldState.season;
     const seasonEventFromParam = routeWorldState.seasonEvent;
-    const displayedSeason = seasonFromParam ?? (storeSeason === 'none' ? resolvedSeasonState.season : storeSeason);
-    const displayedSeasonEvent = seasonEventFromParam ?? (storeSeasonEvent === 'none' ? resolvedSeasonState.seasonEvent : storeSeasonEvent);
+    const displayedSeason = displayedWorldState.season;
+    const displayedSeasonEvent = displayedWorldState.seasonEvent;
+    const weatherFromParam = routeWorldState.weather;
     const moonPhaseOverride = parseMoonPhaseOverride(searchParams.get('moonPhase'));
 
     // スクロール検知用の状態とRef
@@ -822,19 +825,25 @@ export default function OtenkiGurashiClient() {
     };
 
     useEffect(() => {
-        if (weatherFromParam && weather !== weatherFromParam) {
-            setWeather(weatherFromParam);
+        const nextWorldState = {
+            ...(weatherFromParam && weather !== displayedWeather ? { weather: displayedWeather } : {}),
+            ...(seasonFromParam && storeSeason !== displayedSeason ? { season: displayedSeason } : {}),
+            ...(seasonEventFromParam && storeSeasonEvent !== displayedSeasonEvent ? { seasonEvent: displayedSeasonEvent } : {}),
+        };
+        if (Object.keys(nextWorldState).length > 0) {
+            setWorldState(nextWorldState);
         }
-    }, [setWeather, weather, weatherFromParam]);
+    }, [displayedSeason, displayedSeasonEvent, displayedWeather, seasonEventFromParam, seasonFromParam, setWorldState, storeSeason, storeSeasonEvent, weather, weatherFromParam]);
 
     useEffect(() => {
-        if (seasonFromParam && storeSeason !== seasonFromParam) {
-            setSeason(seasonFromParam);
+        const hasRouteWorldState = ['weather', 'season', 'seasonEvent'].some((key) => searchParams.has(key));
+        if (!hasRouteWorldState) return;
+
+        const canonicalQuery = canonicalizeWorldStateQuery(searchParams, displayedWorldState).toString();
+        if (canonicalQuery !== searchParams.toString()) {
+            router.replace(`/otenkigurashi?${canonicalQuery}`, { scroll: false });
         }
-        if (seasonEventFromParam && storeSeasonEvent !== seasonEventFromParam) {
-            setSeasonEvent(seasonEventFromParam);
-        }
-    }, [seasonEventFromParam, seasonFromParam, setSeason, setSeasonEvent, storeSeason, storeSeasonEvent]);
+    }, [displayedWorldState, router, searchParams]);
 
     useEffect(() => {
         const observerOptions = {
@@ -935,7 +944,7 @@ export default function OtenkiGurashiClient() {
     const isSpringSun = displayedSeason === 'spring' && (displayedWeather === 'Clear' || displayedWeather === 'Morning');
     const isFlowerCloudy = displayedSeason === 'spring' && displayedWeather === 'Clouds';
     const isGeshiSun = displayedSeason === 'summer' && displayedSeasonEvent === 'geshi' && (displayedWeather === 'Clear' || displayedWeather === 'Morning');
-    const isTsuyu = displayedSeasonEvent === 'tsuyu';
+    const isTsuyu = displayedSeason === 'summer' && displayedSeasonEvent === 'tsuyu';
     const isWinterSnowScene = displayedSeason === 'winter' && displayedWeather === 'Snow';
 
     return (
@@ -1228,8 +1237,9 @@ export default function OtenkiGurashiClient() {
                         showUmbrella={false}
                         showSakura={isSpringSun || isFlowerCloudy}
                         showMomiji={displayedSeason === 'autumn' && (displayedWeather === 'Clear' || displayedWeather === 'Morning')}
+                        showHydrangea={isTsuyu}
                         showSnowflake={displayedWeather === 'Snow'}
-                        showRainDrop={displayedWeather === 'Rain'}
+                        showRainDrop={displayedWeather === 'Rain' && !isTsuyu}
                         showLightning={displayedWeather === 'Thunder'}
                         showNightStar={displayedWeather === 'Night'}
                         overrideDialog={overrideDialog}
