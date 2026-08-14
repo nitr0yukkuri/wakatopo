@@ -16,6 +16,23 @@ import {
   resolveAudioWorkId,
 } from "@/lib/soundProfile";
 
+function readMutedPreference() {
+  try {
+    return window.localStorage.getItem(MUTE_KEY);
+  } catch {
+    // Storage can be unavailable in private browsing or locked-down embeds.
+    return null;
+  }
+}
+
+function writeMutedPreference(muted: boolean) {
+  try {
+    window.localStorage.setItem(MUTE_KEY, muted ? "1" : "0");
+  } catch {
+    // Audio should keep working even when the preference cannot be persisted.
+  }
+}
+
 export default function SoundDirector() {
   const pathname = usePathname();
   const transitionType = useStore((state) => state.transitionType);
@@ -518,7 +535,7 @@ export default function SoundDirector() {
   const setMutedState = async (nextMuted: boolean) => {
     isMutedRef.current = nextMuted;
     setIsMuted(nextMuted);
-    window.localStorage.setItem(MUTE_KEY, nextMuted ? "1" : "0");
+    writeMutedPreference(nextMuted);
 
     const ok = await ensureAudioGraph();
     if (!ok) return;
@@ -550,7 +567,7 @@ export default function SoundDirector() {
     if (isCardPage) return;
     if (typeof window === "undefined") return;
 
-    const savedMuted = window.localStorage.getItem(MUTE_KEY);
+    const savedMuted = readMutedPreference();
     isMutedRef.current = savedMuted === null ? true : savedMuted === "1";
     setIsMuted(isMutedRef.current);
 
