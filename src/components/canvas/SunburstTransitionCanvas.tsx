@@ -12,7 +12,7 @@ export default function SunburstTransitionCanvas() {
     const isSpringSun = season === 'spring';
     const isAutumnSun = season === 'autumn';
     const isGeshiSun = season === 'summer' && seasonEvent === 'geshi';
-    const isTsuyuSun = seasonEvent === 'tsuyu' && (season === 'summer' || season === 'spring');
+    const isTsuyuSun = season === 'summer' && seasonEvent === 'tsuyu';
     const isCoolSun = isGeshiSun || isTsuyuSun;
     const background = isSpringSun
         ? 'linear-gradient(180deg, #f6e8ee 0%, #fdf3f7 42%, #fffafc 74%, #ffffff 100%)'

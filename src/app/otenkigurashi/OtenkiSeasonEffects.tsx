@@ -24,7 +24,7 @@ export default function OtenkiSeasonEffects({
     weather: WeatherType;
 }) {
     const isClear = weather === 'Clear' || weather === 'Morning';
-    const showTsuyu = seasonEvent === 'tsuyu' && (isClear || weather === 'Clouds' || weather === 'Rain');
+    const showTsuyu = season === 'summer' && seasonEvent === 'tsuyu' && (isClear || weather === 'Clouds' || weather === 'Rain');
     const showSpring = season === 'spring' && isClear && !showTsuyu;
     const showFlowerCloudy = season === 'spring' && weather === 'Clouds' && !showTsuyu;
     const showGeshi = season === 'summer' && isClear && seasonEvent === 'geshi';

@@ -39,7 +39,7 @@ function SeasonalTransitionAtmosphere({ season, seasonEvent, weather }: { season
     const showFlowerCloudy = season === 'spring' && weather === 'Clouds';
     const showAutumn = season === 'autumn' && isClear;
     const showWinterSnow = season === 'winter' && weather === 'Snow';
-    const showTsuyu = seasonEvent === 'tsuyu' && (isClear || weather === 'Clouds' || weather === 'Rain');
+    const showTsuyu = season === 'summer' && seasonEvent === 'tsuyu' && (isClear || weather === 'Clouds' || weather === 'Rain');
     const springPetals = useMemo(
         () => Array.from({ length: 18 }, (_, index) => ({
             left: seasonalValue(index, 21) * 100,
