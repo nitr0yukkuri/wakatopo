@@ -1,7 +1,9 @@
 'use client'
 
-import { useEffect } from 'react';
+import { useEffect, useLayoutEffect } from 'react';
 import { useStore, type SeasonEventType, type SeasonType, type WeatherType } from '@/store';
+
+const useIsomorphicLayoutEffect = typeof window === 'undefined' ? useEffect : useLayoutEffect;
 
 export default function ClientInitializer({
     initialWeather,
@@ -14,15 +16,17 @@ export default function ClientInitializer({
     initialSeasonEvent?: SeasonEventType;
     initialActivity: number;
 }) {
-    const { setWeather, setSeason, setSeasonEvent, setActivity, setActiveWork } = useStore();
+    const { setWorldState, setActivity, setActiveWork } = useStore();
 
-    useEffect(() => {
-        setWeather(initialWeather);
-        if (initialSeason) setSeason(initialSeason);
-        if (initialSeasonEvent) setSeasonEvent(initialSeasonEvent);
+    useIsomorphicLayoutEffect(() => {
+        setWorldState({
+            weather: initialWeather,
+            ...(initialSeason ? { season: initialSeason } : {}),
+            ...(initialSeasonEvent ? { seasonEvent: initialSeasonEvent } : {}),
+        });
         setActivity(initialActivity);
         setActiveWork(null);
-    }, [initialActivity, initialSeason, initialSeasonEvent, initialWeather, setActiveWork, setActivity, setSeason, setSeasonEvent, setWeather]);
+    }, [initialActivity, initialSeason, initialSeasonEvent, initialWeather, setActiveWork, setActivity, setWorldState]);
 
     return null;
 }

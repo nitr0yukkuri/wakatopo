@@ -4,38 +4,22 @@ import { useEffect, useRef, useState } from "react";
 import { useStore } from "@/store";
 import { usePathname } from "next/navigation";
 import { getLofiBgmProfile } from "@/lib/lofiAudio";
-
-type TransitionType =
-  | "none"
-  | "warp"
-  | "cloud"
-  | "freeze"
-  | "rain"
-  | "snow"
-  | "sunburst"
-  | "flash"
-  | "heavy-cloud"
-  | "wave"
-  | "moonrise"
-  | "captcha-lock";
-
-const MUTE_KEY = "lp-audio-muted";
-const OUTPUT_BOOST = 2.2;
-const OTENKI_BGM_FLAG = -1;
-const DENSHOUO_BGM_FLAG = -2;
-const EXCLUSIVE_BGM_WORK_IDS = new Set(["02", "05"]);
-
-type AudioStateSnapshot = {
-  pathname: string;
-  resolvedWorkId: string | null;
-  weather: ReturnType<typeof useStore.getState>["weather"];
-  githubActivityLevel: number;
-};
+import { useWorldState } from "@/components/WorldStateProvider";
+import {
+  DENSHOUO_BGM_FLAG,
+  MUTE_KEY,
+  OTENKI_BGM_FLAG,
+  OUTPUT_BOOST,
+  type AudioStateSnapshot,
+  type TransitionType,
+  hasExclusiveBgm,
+  resolveAudioWorkId,
+} from "@/lib/soundProfile";
 
 export default function SoundDirector() {
   const pathname = usePathname();
   const transitionType = useStore((state) => state.transitionType);
-  const weather = useStore((state) => state.weather);
+  const { weather } = useWorldState();
   const githubActivityLevel = useStore((state) => state.githubActivityLevel);
   const activeWorkId = useStore((state) => state.activeWorkId);
   const audioContextRef = useRef<AudioContext | null>(null);
@@ -64,14 +48,7 @@ export default function SoundDirector() {
   const [hasUnlockedAudio, setHasUnlockedAudio] = useState(false);
   const isCardPage = pathname === "/card";
 
-  const resolvedWorkId = (() => {
-    if (pathname === "/github-planet") return "01";
-    if (pathname === "/otenkigurashi") return "02";
-    if (pathname === "/coldkeep") return "03";
-    if (pathname === "/recaptcha-game") return "04";
-    if (pathname === "/denshouo") return "05";
-    return activeWorkId;
-  })();
+  const resolvedWorkId = resolveAudioWorkId(pathname, activeWorkId);
 
   latestAudioStateRef.current = {
     pathname,
@@ -310,55 +287,6 @@ export default function SoundDirector() {
     source.stop(ctx.currentTime + at + duration + 0.01);
   };
 
-  const playSweep = (
-    from: number,
-    to: number,
-    duration: number,
-    type: OscillatorType = "sawtooth",
-    volume = 0.22,
-  ) => {
-    const ctx = audioContextRef.current;
-    const master = masterGainRef.current;
-    if (!ctx || !master || isMutedRef.current) return;
-
-    const osc = ctx.createOscillator();
-    const filter = ctx.createBiquadFilter();
-    const gain = ctx.createGain();
-
-    osc.type = type;
-    osc.frequency.setValueAtTime(from, ctx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(
-      Math.max(to, 25),
-      ctx.currentTime + duration,
-    );
-
-    filter.type = "bandpass";
-    filter.frequency.setValueAtTime(
-      Math.min(Math.max(from * 2.3, 140), 4600),
-      ctx.currentTime,
-    );
-    filter.frequency.exponentialRampToValueAtTime(
-      Math.min(Math.max(to * 2.6, 140), 4600),
-      ctx.currentTime + duration,
-    );
-    filter.Q.value = 1.1;
-
-    gain.gain.setValueAtTime(0.0001, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(volume, ctx.currentTime + 0.03);
-    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duration);
-
-    osc.connect(filter);
-    filter.connect(gain);
-    gain.connect(master);
-
-    activeAudioSourcesRef.current.add(osc);
-    osc.onended = () => {
-      activeAudioSourcesRef.current.delete(osc);
-    };
-
-    osc.start();
-    osc.stop(ctx.currentTime + duration + 0.05);
-  };
 
   const playTransitionSfx = (type: TransitionType) => {
     switch (type) {
@@ -481,7 +409,7 @@ export default function SoundDirector() {
       return;
     }
 
-    if (currentWorkId && EXCLUSIVE_BGM_WORK_IDS.has(currentWorkId)) return;
+    if (hasExclusiveBgm(currentWorkId)) return;
 
     // Home screen Tone.js rain/thunder effect
     if (
@@ -516,7 +444,7 @@ export default function SoundDirector() {
       const latestState = latestAudioStateRef.current;
       if (
         latestState.resolvedWorkId &&
-        EXCLUSIVE_BGM_WORK_IDS.has(latestState.resolvedWorkId)
+        hasExclusiveBgm(latestState.resolvedWorkId)
       )
         return;
 
@@ -681,6 +609,8 @@ export default function SoundDirector() {
       outputWetGainRef.current = null;
       outputCompressorRef.current = null;
     };
+  // Audio callbacks are intentionally scoped to the lifecycle effect; mutable refs carry the latest graph state.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isCardPage]);
 
   useEffect(() => {
@@ -688,7 +618,7 @@ export default function SoundDirector() {
     const previous = previousTransitionRef.current;
     previousTransitionRef.current = transitionType;
 
-    if (resolvedWorkId && EXCLUSIVE_BGM_WORK_IDS.has(resolvedWorkId)) return;
+    if (hasExclusiveBgm(resolvedWorkId)) return;
 
     if (transitionType === "none" || transitionType === previous) {
       return;
@@ -698,6 +628,8 @@ export default function SoundDirector() {
       if (!ok) return;
       playTransitionSfx(transitionType);
     });
+  // SFX helpers read the current AudioContext through refs and should not retrigger the transition effect every render.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isCardPage, transitionType]);
 
   useEffect(() => {
@@ -707,6 +639,8 @@ export default function SoundDirector() {
 
     stopBgm();
     startBgm();
+  // BGM helpers use the latest audio state ref; only world/page changes should restart the loop.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeWorkId, githubActivityLevel, isCardPage, pathname, weather]);
 
   if (isCardPage || pathname === "/otenkigurashi") return null;

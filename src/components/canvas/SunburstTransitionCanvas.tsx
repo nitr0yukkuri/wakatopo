@@ -1,18 +1,18 @@
 'use client'
 
 import { motion } from 'framer-motion';
-import { useStore } from '@/store';
 import { AUTUMN_BACKGROUND_GRADIENT, TSUYU_CLEAR_BACKGROUND_GRADIENT } from '@/lib/otenkigurashiSeasonal';
+import { getWorldVisualProfile } from '@/lib/worldVisualProfile';
+import type { WorldState } from '@/lib/worldState';
 
 // 晴れの遷移: 下から昇る太陽と斜めの層状ゴッドレイ
 
-export default function SunburstTransitionCanvas() {
-    const season = useStore((state) => state.season);
-    const seasonEvent = useStore((state) => state.seasonEvent);
-    const isSpringSun = season === 'spring';
-    const isAutumnSun = season === 'autumn';
-    const isGeshiSun = season === 'summer' && seasonEvent === 'geshi';
-    const isTsuyuSun = season === 'summer' && seasonEvent === 'tsuyu';
+export default function SunburstTransitionCanvas({ worldState }: { worldState: WorldState }) {
+    const profile = getWorldVisualProfile(worldState);
+    const isSpringSun = profile.showSpring;
+    const isAutumnSun = profile.showAutumn;
+    const isGeshiSun = profile.showGeshi;
+    const isTsuyuSun = profile.showTsuyu;
     const isCoolSun = isGeshiSun || isTsuyuSun;
     const background = isSpringSun
         ? 'linear-gradient(180deg, #f6e8ee 0%, #fdf3f7 42%, #fffafc 74%, #ffffff 100%)'

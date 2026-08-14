@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import "./globals.css";
 import LocaleSync from "@/components/LocaleSync";
 import ClientRuntime from "@/components/ClientRuntime";
+import WorldStateProvider from "@/components/WorldStateProvider";
 import DelayedAnalytics from "@/components/DelayedAnalytics";
 
 const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
@@ -98,10 +99,14 @@ export default function RootLayout({
         <Suspense fallback={null}>
           <LocaleSync />
         </Suspense>
-        <ClientRuntime />
-        <div className="overflow-x-clip">
-          {children}
-        </div>
+        <Suspense fallback={null}>
+          <WorldStateProvider>
+            <ClientRuntime />
+            <div className="overflow-x-clip">
+              {children}
+            </div>
+          </WorldStateProvider>
+        </Suspense>
         <div
           className="landscape-lock-overlay"
           role="alert"

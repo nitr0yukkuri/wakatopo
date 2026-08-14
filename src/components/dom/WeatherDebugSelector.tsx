@@ -25,7 +25,7 @@ const LABEL: Record<WeatherType, string> = {
 };
 
 export default function WeatherDebugSelector() {
-    const { weather, setWeather } = useStore();
+    const { weather, setWorldState } = useStore();
 
     return (
         <div className="flex flex-col gap-1 mt-2 border-l border-gray-800 pl-4 pointer-events-none">
@@ -34,7 +34,7 @@ export default function WeatherDebugSelector() {
                 {WEATHERS.map((w) => (
                     <button
                         key={w}
-                        onClick={() => setWeather(w)}
+                        onClick={() => setWorldState({ weather: w })}
                         className={`pointer-events-auto touch-manipulation text-[10px] font-mono tracking-wider px-1.5 py-0.5 border rounded-sm transition-all ${weather === w
                             ? `${COLOR[w]} bg-white/10`
                             : 'text-gray-600 border-gray-700 hover:text-gray-400 hover:border-gray-500'

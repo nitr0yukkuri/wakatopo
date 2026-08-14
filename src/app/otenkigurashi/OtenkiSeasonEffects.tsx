@@ -7,6 +7,7 @@ import {
     FLOWER_CLOUDY_PETAL_SPECS,
     TSUYU_ATMOSPHERE_GRADIENT,
 } from '@/lib/otenkigurashiSeasonal';
+import { getWorldVisualProfile } from '@/lib/worldVisualProfile';
 import { useMemo } from 'react';
 
 const seasonalValue = (index: number, salt: number) => {
@@ -23,14 +24,16 @@ export default function OtenkiSeasonEffects({
     seasonEvent: SeasonEventType;
     weather: WeatherType;
 }) {
-    const isClear = weather === 'Clear' || weather === 'Morning';
-    const showTsuyu = season === 'summer' && seasonEvent === 'tsuyu' && (isClear || weather === 'Clouds' || weather === 'Rain');
-    const showSpring = season === 'spring' && isClear && !showTsuyu;
-    const showFlowerCloudy = season === 'spring' && weather === 'Clouds' && !showTsuyu;
-    const showGeshi = season === 'summer' && isClear && seasonEvent === 'geshi';
-    const showSummer = season === 'summer' && isClear && !showGeshi && !showTsuyu;
-    const showAutumn = season === 'autumn' && isClear && !showTsuyu;
-    const showWinter = season === 'winter' && weather === 'Snow' && !showTsuyu;
+    const {
+        showTsuyu,
+        showSpring,
+        showFlowerCloudy,
+        showGeshi,
+        showSummer,
+        showAutumn,
+        showWinterSnow,
+    } = getWorldVisualProfile({ weather, season, seasonEvent });
+    const showWinter = showWinterSnow;
     const springPetals = useMemo(
         () => Array.from({ length: 24 }, (_, index) => ({
             left: seasonalValue(index, 1) * 100,

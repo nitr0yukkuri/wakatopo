@@ -8,7 +8,7 @@ import NomineeToast from '@/components/dom/NomineeToast';
 import TopLeftMenu from '../components/dom/TopLeftMenu';
 import Link from 'next/link';
 import type { SeasonEventType, SeasonType, WeatherType } from '@/store';
-import { parseWorldStateRecord } from '@/lib/worldState';
+import { parseWorldStateRecord, resolveWorldState } from '@/lib/worldState';
 
 type SupportedLang = 'ja' | 'en';
 
@@ -106,9 +106,14 @@ export default async function Home({
     : resolvedSearchParams.lang;
   const lang: SupportedLang = langParam === 'en' ? 'en' : 'ja';
   const routeWorldState = parseWorldStateRecord(resolvedSearchParams);
-  const initialWeather = routeWorldState.weather ?? data.weather;
-  const initialSeason = routeWorldState.season ?? data.season;
-  const initialSeasonEvent = routeWorldState.seasonEvent ?? data.seasonEvent;
+  const initialWorldState = resolveWorldState(routeWorldState, {
+    weather: data.weather,
+    season: data.season,
+    seasonEvent: data.seasonEvent,
+  });
+  const initialWeather = initialWorldState.weather;
+  const initialSeason = initialWorldState.season;
+  const initialSeasonEvent = initialWorldState.seasonEvent;
   const t = copyByLang[lang];
   const hudWeatherLabel = initialWeather === 'Morning' ? 'CLEAR' : initialWeather.toUpperCase();
 

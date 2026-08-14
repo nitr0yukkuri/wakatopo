@@ -2,7 +2,6 @@
 
 import { useStore, type SeasonEventType, type SeasonType, type WeatherType } from '@/store';
 import { useEffect, useMemo } from 'react';
-import { usePathname, useSearchParams } from 'next/navigation';
 import { AnimatePresence, motion } from 'framer-motion';
 import dynamic from 'next/dynamic';
 import {
@@ -13,7 +12,8 @@ import {
     SPRING_FLOWER_CLOUDY_BACKGROUND_GRADIENT,
     TSUYU_ATMOSPHERE_GRADIENT,
 } from '@/lib/otenkigurashiSeasonal';
-import { VALID_SEASON_EVENTS, VALID_SEASONS, VALID_WEATHERS } from '@/lib/worldState';
+import { getWorldVisualProfile } from '@/lib/worldVisualProfile';
+import { useWorldState } from '@/components/WorldStateProvider';
 
 // Lazy load all transition canvases — only loaded when triggered
 const WarpEffectCanvas = dynamic(() => import('@/components/canvas/WarpEffectCanvas'), { ssr: false });
@@ -34,12 +34,15 @@ const seasonalValue = (index: number, salt: number) => {
 };
 
 function SeasonalTransitionAtmosphere({ season, seasonEvent, weather }: { season: SeasonType; seasonEvent: SeasonEventType; weather: WeatherType }) {
-    const isClear = weather === 'Clear' || weather === 'Morning';
-    const showSpring = season === 'spring' && isClear;
-    const showFlowerCloudy = season === 'spring' && weather === 'Clouds';
-    const showAutumn = season === 'autumn' && isClear;
-    const showWinterSnow = season === 'winter' && weather === 'Snow';
-    const showTsuyu = season === 'summer' && seasonEvent === 'tsuyu' && (isClear || weather === 'Clouds' || weather === 'Rain');
+    const {
+        isClear,
+        isGeshiEvent,
+        showSpring,
+        showFlowerCloudy,
+        showAutumn,
+        showWinterSnow,
+        showTsuyu,
+    } = getWorldVisualProfile({ weather, season, seasonEvent });
     const springPetals = useMemo(
         () => Array.from({ length: 18 }, (_, index) => ({
             left: seasonalValue(index, 21) * 100,
@@ -53,7 +56,7 @@ function SeasonalTransitionAtmosphere({ season, seasonEvent, weather }: { season
     );
     if (season === 'none') return null;
 
-    const isGeshi = season === 'summer' && seasonEvent === 'geshi';
+    const isGeshi = isGeshiEvent;
 
     const backgroundBySeason: Record<SeasonType, string> = {
         none: 'transparent',
@@ -191,22 +194,11 @@ function SeasonalTransitionAtmosphere({ season, seasonEvent, weather }: { season
 }
 
 export default function GlobalTransitionOverlay() {
-    const { transitionType, season, seasonEvent, setTransitionType } = useStore();
-    const storeWeather = useStore((state) => state.weather);
-    const pathname = usePathname();
-    const searchParams = useSearchParams();
-    const routeWeather = searchParams.get('weather');
-    const routeSeason = searchParams.get('season');
-    const routeSeasonEvent = searchParams.get('seasonEvent');
-    const effectiveWeather = pathname === '/otenkigurashi' && VALID_WEATHERS.includes(routeWeather as WeatherType)
-        ? routeWeather as WeatherType
-        : storeWeather;
-    const effectiveSeason = pathname === '/otenkigurashi' && VALID_SEASONS.includes(routeSeason as SeasonType)
-        ? routeSeason as SeasonType
-        : season;
-    const effectiveSeasonEvent = pathname === '/otenkigurashi' && VALID_SEASON_EVENTS.includes(routeSeasonEvent as SeasonEventType)
-        ? routeSeasonEvent as SeasonEventType
-        : seasonEvent;
+    const { transitionType, setTransitionType } = useStore();
+    const effectiveWorldState = useWorldState();
+    const effectiveWeather = effectiveWorldState.weather;
+    const effectiveSeason = effectiveWorldState.season;
+    const effectiveSeasonEvent = effectiveWorldState.seasonEvent;
     const isWeatherTransition = ['rain', 'snow', 'sunburst', 'flash', 'heavy-cloud', 'moonrise'].includes(transitionType);
 
     useEffect(() => {
@@ -297,7 +289,7 @@ export default function GlobalTransitionOverlay() {
                     transition={{ duration: 0.9 }}
                     className="fixed inset-0 z-9999 pointer-events-auto"
                 >
-                    <SunburstTransitionCanvas />
+                    <SunburstTransitionCanvas worldState={effectiveWorldState} />
                 </motion.div>
             )}
 
