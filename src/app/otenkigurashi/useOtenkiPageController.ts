@@ -36,11 +36,9 @@ export function useOtenkiPageController({
     const [overrideDialog, setOverrideDialog] = useState<OtenkiDialog | null>(null);
     const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const [showHeavyEffects, setShowHeavyEffects] = useState(false);
-    const [isFinePointer, setIsFinePointer] = useState(false);
-
-    useEffect(() => {
-        setIsFinePointer(window.matchMedia('(pointer: fine)').matches);
-    }, []);
+    const [isFinePointer] = useState(() => (
+        typeof window !== 'undefined' && window.matchMedia('(pointer: fine)').matches
+    ));
 
     useEffect(() => {
         return () => {

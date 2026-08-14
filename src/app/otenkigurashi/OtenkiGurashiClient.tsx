@@ -53,8 +53,6 @@ export default function OtenkiGurashiClient() {
     const { activeSection, heroRef, conceptRef, featuresRef, techRef, bottomRef, overrideDialog, showHeavyEffects, isFinePointer, handleInteract, handleTenchanClick, handleReturn } = pageState;
     const t = OTENKI_COPY[lang];
     let bgGradient = "from-[#aee1f9] to-[#e0f4fc]"; // Default (Clear)
-    let cardText = "text-gray-700";
-
     if (displayedWeather === 'Clouds') {
         bgGradient = "from-[#6b7a8d] via-[#8fa0b0] to-[#b5c2ca]";
     } else if (displayedWeather === 'Rain') {
@@ -63,10 +61,8 @@ export default function OtenkiGurashiClient() {
         bgGradient = "bg-[#eef7fd]";
     } else if (displayedWeather === 'Thunder') {
         bgGradient = "from-[#1a1a2e] via-[#16213e] to-[#0f3460]";
-        cardText = "text-gray-200";
     } else if (displayedWeather === 'Night') {
         bgGradient = "from-[#030915] via-[#071428] to-[#0b1f36]";
-        cardText = "text-gray-200";
     }
 
     if (displayedSeason === 'spring' && (displayedWeather === 'Clear' || displayedWeather === 'Morning')) {

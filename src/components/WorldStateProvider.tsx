@@ -18,8 +18,11 @@ export default function WorldStateProvider({ children }: { children: ReactNode }
         storeSeasonEvent: state.seasonEvent,
         setWorldState: state.setWorldState,
     }));
-    const routeWorldState = useMemo(() => parseWorldStateParams(searchParams), [searchParamsKey]);
-    const fallbackSeasonState = useMemo(() => resolveSeasonState(), [searchParamsKey]);
+    const routeWorldState = useMemo(
+        () => parseWorldStateParams(new URLSearchParams(searchParamsKey)),
+        [searchParamsKey],
+    );
+    const fallbackSeasonState = useMemo(() => resolveSeasonState(), []);
 
     const worldState = useMemo(() => resolveWorldState(
         routeWorldState,
