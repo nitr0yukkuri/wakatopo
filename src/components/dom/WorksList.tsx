@@ -1,6 +1,7 @@
 'use client'
 
 import { useStore } from '@/store';
+import { buildWorldStateQuery } from '@/lib/worldState';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 
@@ -34,7 +35,7 @@ export default function WorksList({ works }: { works: Work[] }) {
         } else if (id === '02') {
             setActiveWork('02');
             const { weather: currentWeather, season: currentSeason, seasonEvent: currentSeasonEvent } = useStore.getState();
-            const otenkiHref = `/otenkigurashi?lang=${lang}&weather=${encodeURIComponent(currentWeather)}&season=${encodeURIComponent(currentSeason)}&seasonEvent=${encodeURIComponent(currentSeasonEvent)}`;
+            const otenkiHref = `/otenkigurashi?${buildWorldStateQuery({ weather: currentWeather, season: currentSeason, seasonEvent: currentSeasonEvent }, lang)}`;
 
             // 天候に応じて遷移アニメーションを分岐
             if (currentWeather === 'Rain') {
@@ -72,8 +73,11 @@ export default function WorksList({ works }: { works: Work[] }) {
         } else if (id === '05') {
             setActiveWork('05');
             setTransitionType('wave');
+            const { weather: currentWeather } = useStore.getState();
+            const { season: currentSeason, seasonEvent: currentSeasonEvent } = useStore.getState();
+            const denshouoHref = `/denshouo?${buildWorldStateQuery({ weather: currentWeather, season: currentSeason, seasonEvent: currentSeasonEvent }, lang)}`;
             setTimeout(() => {
-                router.push(withLang('/denshouo'));
+                router.push(denshouoHref);
                 setTimeout(() => setTransitionType('none'), 900);
             }, 1800);
         } else {

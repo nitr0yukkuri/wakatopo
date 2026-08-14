@@ -1,22 +1,28 @@
 'use client'
 
 import { useEffect } from 'react';
-import { useStore, WeatherType } from '@/store';
+import { useStore, type SeasonEventType, type SeasonType, type WeatherType } from '@/store';
 
 export default function ClientInitializer({
     initialWeather,
+    initialSeason,
+    initialSeasonEvent,
     initialActivity
 }: {
     initialWeather: WeatherType;
+    initialSeason?: SeasonType;
+    initialSeasonEvent?: SeasonEventType;
     initialActivity: number;
 }) {
-    const { setWeather, setActivity, setActiveWork } = useStore();
+    const { setWeather, setSeason, setSeasonEvent, setActivity, setActiveWork } = useStore();
 
     useEffect(() => {
         setWeather(initialWeather);
+        if (initialSeason) setSeason(initialSeason);
+        if (initialSeasonEvent) setSeasonEvent(initialSeasonEvent);
         setActivity(initialActivity);
         setActiveWork(null);
-    }, [initialWeather, initialActivity, setWeather, setActivity, setActiveWork]);
+    }, [initialActivity, initialSeason, initialSeasonEvent, initialWeather, setActiveWork, setActivity, setSeason, setSeasonEvent, setWeather]);
 
     return null;
 }

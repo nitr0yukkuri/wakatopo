@@ -9,13 +9,25 @@ type CharacterFaceProps = {
     petColor?: string;
     cheekColor?: string;
     isStatic?: boolean;
+    showSakura?: boolean;
+    showMomiji?: boolean;
+    showSnowflake?: boolean;
+    showRainDrop?: boolean;
+    showLightning?: boolean;
+    showNightStar?: boolean;
 };
 
 export function CharacterFace({
     mood = "happy",
     petColor = "white",
     cheekColor = "#F8BBD0",
-    isStatic = false
+    isStatic = false,
+    showSakura = false,
+    showMomiji = false,
+    showSnowflake = false,
+    showRainDrop = false,
+    showLightning = false,
+    showNightStar = false,
 }: CharacterFaceProps) {
 
     const getMouthPath = () => {
@@ -75,6 +87,79 @@ export function CharacterFace({
                     fill={isRainbow ? '#ff0000' : safePetColor}
                     animate={isStatic ? undefined : (isRainbow ? rainbowAnimation : { fill: safePetColor })}
                 />
+
+                {showSakura && (
+                    <g transform="translate(86 16) rotate(12)" aria-hidden="true">
+                        <ellipse cx="0" cy="-5" rx="3.8" ry="5" fill="#f5a9c4" stroke="#e58dab" strokeWidth="0.8" />
+                        <ellipse cx="4.8" cy="-1.5" rx="3.8" ry="5" transform="rotate(72 4.8 -1.5)" fill="#f7b6cc" stroke="#e58dab" strokeWidth="0.8" />
+                        <ellipse cx="3" cy="4.3" rx="3.8" ry="5" transform="rotate(144 3 4.3)" fill="#f5a9c4" stroke="#e58dab" strokeWidth="0.8" />
+                        <ellipse cx="-3" cy="4.3" rx="3.8" ry="5" transform="rotate(216 -3 4.3)" fill="#f7b6cc" stroke="#e58dab" strokeWidth="0.8" />
+                        <ellipse cx="-4.8" cy="-1.5" rx="3.8" ry="5" transform="rotate(288 -4.8 -1.5)" fill="#f5a9c4" stroke="#e58dab" strokeWidth="0.8" />
+                        <circle cx="0" cy="0" r="2.4" fill="#f4c45b" stroke="#d59b45" strokeWidth="0.7" />
+                    </g>
+                )}
+
+                {showMomiji && (
+                    <g transform="translate(88 16) rotate(12) scale(0.78)" aria-hidden="true">
+                        <path
+                            d="M0 14 C-1 10 -1 6 -1 3 C-5 6 -10 8 -14 7 C-12 4 -9 1 -6 -1 C-10 -1 -13 -3 -14 -5 C-11 -7 -7 -8 -4 -7 C-4 -11 -2 -14 0 -16 C2 -14 4 -11 4 -7 C7 -8 11 -7 14 -5 C13 -3 10 -1 6 -1 C9 1 12 4 14 7 C10 8 5 6 1 3 C1 6 1 10 0 14 Z"
+                            fill="#e6a14d"
+                            stroke="#b86f32"
+                            strokeWidth="1.2"
+                            strokeLinejoin="round"
+                        />
+                        <path d="M0 11 L0 -9 M0 1 L-6 -2 M0 1 L6 -2" fill="none" stroke="#f7d27d" strokeWidth="1.2" strokeLinecap="round" />
+                    </g>
+                )}
+
+                {showSnowflake && (
+                    <g transform="translate(88 16) rotate(12)" aria-hidden="true" data-weather-accessory="snow">
+                        <g stroke="#b9e8ff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M0 -10 L0 10 M-8.7 -5 L8.7 5 M-8.7 5 L8.7 -5" />
+                            <path d="M0 -10 L-2.5 -7 M0 -10 L2.5 -7 M0 10 L-2.5 7 M0 10 L2.5 7" />
+                            <path d="M-8.7 -5 L-5.2 -4.8 M-8.7 -5 L-7 -1.8 M8.7 5 L5.2 4.8 M8.7 5 L7 1.8" />
+                            <path d="M-8.7 5 L-5.2 4.8 M-8.7 5 L-7 1.8 M8.7 -5 L5.2 -4.8 M8.7 -5 L7 -1.8" />
+                        </g>
+                        <circle cx="0" cy="0" r="1.8" fill="#e9f8ff" stroke="#8acde9" strokeWidth="0.7" />
+                    </g>
+                )}
+
+                {showRainDrop && (
+                    <g transform="translate(88 15) rotate(10)" aria-hidden="true" data-weather-accessory="rain">
+                        <path
+                            d="M0 -10 C-2.6 -6 -6.2 -2.3 -6.2 1.4 A6.2 6.2 0 0 0 6.2 1.4 C6.2 -2.3 2.6 -6 0 -10 Z"
+                            fill="#9edcf2"
+                            stroke="#4f9fc3"
+                            strokeWidth="1.3"
+                            strokeLinejoin="round"
+                        />
+                        <path d="M-2.4 -1.2 C-2.1 -3.1 -1.2 -4.5 0 -5.9" fill="none" stroke="#eaffff" strokeWidth="1.2" strokeLinecap="round" opacity="0.82" />
+                    </g>
+                )}
+
+                {showLightning && (
+                    <g transform="translate(88 15) rotate(8)" aria-hidden="true" data-weather-accessory="thunder">
+                        <path
+                            d="M2 -12 L-6 1 L0 0 L-3 12 L8 -3 L2 -2 Z"
+                            fill="#f6d45f"
+                            stroke="#bd8b32"
+                            strokeWidth="1.2"
+                            strokeLinejoin="round"
+                        />
+                    </g>
+                )}
+
+                {showNightStar && (
+                    <g transform="translate(88 15)" aria-hidden="true" data-weather-accessory="night">
+                        <path
+                            d="M0 -11 L2.2 -3.1 L10.5 -3.1 L3.8 1.6 L6.2 9.5 L0 4.9 L-6.2 9.5 L-3.8 1.6 L-10.5 -3.1 L-2.2 -3.1 Z"
+                            fill="#f8e7a1"
+                            stroke="#c8a95c"
+                            strokeWidth="1"
+                            strokeLinejoin="round"
+                        />
+                    </g>
+                )}
 
                 {/* ほっぺ */}
                 <circle cx="20" cy="70" r="12" fill={cheekColor} />
@@ -140,11 +225,17 @@ type TenchanCompanionProps = {
     lang?: 'ja' | 'en';
     weather?: TenchanWeather;
     showUmbrella?: boolean;
+    showSakura?: boolean;
+    showMomiji?: boolean;
+    showSnowflake?: boolean;
+    showRainDrop?: boolean;
+    showLightning?: boolean;
+    showNightStar?: boolean;
     overrideDialog?: { text: string; mood: "happy" | "neutral" | "sad" | "scared" | "sleepy" | "looking" | "surprised" | "talking" } | null;
     onClick?: () => void;
 };
 
-export default function TenchanCompanion({ section, lang = 'ja', weather, showUmbrella = true, overrideDialog, onClick }: TenchanCompanionProps) {
+export default function TenchanCompanion({ section, lang = 'ja', weather, showUmbrella = true, showSakura = false, showMomiji = false, showSnowflake = false, showRainDrop = false, showLightning = false, showNightStar = false, overrideDialog, onClick }: TenchanCompanionProps) {
     // セクションに応じたデフォルトメッセージと表情を設定
     const getDialogue = () => {
         const byLang = {
@@ -207,6 +298,7 @@ export default function TenchanCompanion({ section, lang = 'ja', weather, showUm
 
             {/* てんちゃん本体 */}
             <motion.div
+                data-testid="tenchan-companion"
                 className={`relative w-24 h-24 md:w-32 md:h-32 ${onClick ? 'pointer-events-auto cursor-pointer' : ''}`}
                 initial={{ y: 100, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
@@ -227,7 +319,15 @@ export default function TenchanCompanion({ section, lang = 'ja', weather, showUm
                         <path d="M43 104 Q38 116 52 116" fill="none" stroke="#6b4a3a" strokeWidth="5" strokeLinecap="round" />
                     </svg>
                 )}
-                <CharacterFace mood={activeDialog.mood} />
+                <CharacterFace
+                    mood={activeDialog.mood}
+                    showSakura={showSakura}
+                    showMomiji={showMomiji}
+                    showSnowflake={showSnowflake}
+                    showRainDrop={showRainDrop}
+                    showLightning={showLightning}
+                    showNightStar={showNightStar}
+                />
             </motion.div>
         </div>
     );

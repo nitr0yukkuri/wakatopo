@@ -7,12 +7,16 @@ import WeatherDebugSelector from '@/components/dom/WeatherDebugSelector';
 import NomineeToast from '@/components/dom/NomineeToast';
 import TopLeftMenu from '../components/dom/TopLeftMenu';
 import Link from 'next/link';
-import type { WeatherType } from '@/store';
+import type { SeasonEventType, SeasonType, WeatherType } from '@/store';
+import { parseWorldStateRecord } from '@/lib/worldState';
 
 type SupportedLang = 'ja' | 'en';
 
 type SearchParams = {
   lang?: string | string[];
+  weather?: string | string[];
+  season?: string | string[];
+  seasonEvent?: string | string[];
 };
 
 const copyByLang = {
@@ -101,8 +105,12 @@ export default async function Home({
     ? resolvedSearchParams.lang[0]
     : resolvedSearchParams.lang;
   const lang: SupportedLang = langParam === 'en' ? 'en' : 'ja';
+  const routeWorldState = parseWorldStateRecord(resolvedSearchParams);
+  const initialWeather = routeWorldState.weather ?? data.weather;
+  const initialSeason = routeWorldState.season ?? data.season;
+  const initialSeasonEvent = routeWorldState.seasonEvent ?? data.seasonEvent;
   const t = copyByLang[lang];
-  const hudWeatherLabel = data.weather === 'Morning' ? 'CLEAR' : data.weather.toUpperCase();
+  const hudWeatherLabel = initialWeather === 'Morning' ? 'CLEAR' : initialWeather.toUpperCase();
 
   const works = t.works.map((work) => ({ ...work }));
 
@@ -112,7 +120,9 @@ export default async function Home({
       style={{ userSelect: 'none', WebkitUserSelect: 'none', WebkitTouchCallout: 'none' }}
     >
       <ClientInitializer
-        initialWeather={data.weather as WeatherType}
+        initialWeather={initialWeather as WeatherType}
+        initialSeason={initialSeason as SeasonType}
+        initialSeasonEvent={initialSeasonEvent as SeasonEventType}
         initialActivity={data.activityLevel}
       />
 
@@ -145,7 +155,7 @@ export default async function Home({
               </div>
               <div className="flex gap-4">
                 <span className="w-12">WTHR</span>
-                <span className={data.weather === 'Rain' ? 'text-blue-400' : 'text-orange-400'}>
+                <span className={initialWeather === 'Rain' ? 'text-blue-400' : 'text-orange-400'}>
                   {hudWeatherLabel}
                 </span>
               </div>

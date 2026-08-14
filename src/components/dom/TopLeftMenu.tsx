@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import { useStore, type SeasonEventType, type SeasonType, type WeatherType } from '@/store';
+import { buildWorldStateQuery } from '@/lib/worldState';
 
 const MENU_COMMANDS = {
     ja: [
@@ -59,7 +60,7 @@ export default function TopLeftMenu() {
         if (href === '/otenkigurashi') {
             setActiveWork('02');
             const { weather: currentWeather, season: currentSeason, seasonEvent: currentSeasonEvent } = useStore.getState();
-            const otenkiHref = `/otenkigurashi?lang=${lang}&weather=${encodeURIComponent(currentWeather)}&season=${encodeURIComponent(currentSeason)}&seasonEvent=${encodeURIComponent(currentSeasonEvent)}`;
+            const otenkiHref = `/otenkigurashi?${buildWorldStateQuery({ weather: currentWeather, season: currentSeason, seasonEvent: currentSeasonEvent }, lang)}`;
 
             if (currentWeather === 'Rain') {
                 setTransitionType('rain');
@@ -104,8 +105,11 @@ export default function TopLeftMenu() {
         if (href === '/denshouo') {
             setActiveWork('05');
             setTransitionType('wave');
+            const { weather: currentWeather } = useStore.getState();
+            const { season: currentSeason, seasonEvent: currentSeasonEvent } = useStore.getState();
+            const denshouoHref = `/denshouo?${buildWorldStateQuery({ weather: currentWeather, season: currentSeason, seasonEvent: currentSeasonEvent }, lang)}`;
             setTimeout(() => {
-                router.push(withLang('/denshouo'));
+                router.push(denshouoHref);
                 setTimeout(() => setTransitionType('none'), 900);
             }, 1800);
             return;
@@ -172,7 +176,7 @@ export default function TopLeftMenu() {
         appendHistory({ tone: 'info', text: `$ ${command}` });
 
         if (command.toLowerCase() === 'help') {
-            appendHistory({ tone: 'info', text: 'Available: sudo make rain|snow|clouds|clear|thunder|night|spring|summer|autumn|winter|sakura|hanagumori|geshi|momiji|tsukimi|yukigeshiki|season-clear, help, exit' });
+            appendHistory({ tone: 'info', text: 'Available: sudo make rain|snow|clouds|clear|thunder|night|spring|summer|autumn|winter|sakura|hanagumori|geshi|tsuyu|momiji|tsukimi|yukigeshiki|season-clear, help, exit' });
             return;
         }
 
@@ -190,6 +194,7 @@ export default function TopLeftMenu() {
                 hanagumori: { season: 'spring', weather: 'Clouds' },
                 geshi: { season: 'summer', weather: 'Clear', seasonEvent: 'geshi' },
                 gesi: { season: 'summer', weather: 'Clear', seasonEvent: 'geshi' },
+                tsuyu: { season: 'summer', weather: 'Clouds', seasonEvent: 'tsuyu' },
                 momiji: { season: 'autumn', weather: 'Clear' },
                 momizi: { season: 'autumn', weather: 'Clear' },
                 tsukimi: { season: 'autumn', weather: 'Night' },

@@ -2,14 +2,13 @@
 
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useStore, type WeatherType } from '@/store';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { useMemo, useRef, useEffect, useState, useCallback } from 'react';
 import * as THREE from 'three';
 import { waveVertexShader, waveFragmentShader } from '@/shaders/wave';
 import Image from 'next/image';
-
-const VALID_WEATHERS: WeatherType[] = ['Clear', 'Rain', 'Clouds', 'Snow', 'Night', 'Morning', 'Thunder'];
+import { buildWorldStateQuery, parseWorldStateParams } from '@/lib/worldState';
 
 const bubbleSpecs = [
     { left: '8%', top: '18%', size: 16, delay: 0.0, duration: 8.0 },
@@ -32,6 +31,16 @@ const rainLightSpecs = [
     { left: '43%', width: 9, rotate: 5, delay: 1.8, duration: 11.0 },
     { left: '70%', width: 7, rotate: -4, delay: 0.9, duration: 10.2 },
 ];
+
+const marineSnowSpecs = Array.from({ length: 34 }, (_, index) => ({
+    left: 5 + ((index * 37) % 90),
+    size: 2 + ((index * 17) % 5),
+    drift: -24 + ((index * 29) % 49),
+    duration: 10 + ((index * 13) % 11),
+    delay: -((index * 7) % 16),
+    opacity: 0.20 + ((index * 11) % 25) / 100,
+    blur: index % 4 === 0 ? 2 : 0,
+}));
 
 const overviewFishSpecs = [
     { width: 84, duration: 18, src: '/clownfish.png', alt: 'clownfish' },
@@ -600,68 +609,60 @@ function OceanBubbles() {
     );
 }
 
-function OceanRainEffects() {
-    const rainRippleSpecs = useMemo(
-        () => Array.from({ length: 12 }, (_, index) => {
-            const seeded = (salt: number) => {
-                const value = Math.sin(index * 12.9898 + salt * 78.233) * 43758.5453123;
-                return value - Math.floor(value);
-            };
-
-            return {
-                left: `${8 + seeded(1) * 84}%`,
-                top: `${14 + seeded(2) * 68}%`,
-                width: 42 + seeded(3) * 72,
-                height: 10 + seeded(4) * 12,
-                delay: seeded(5) * 6,
-                duration: 4.8 + seeded(6) * 3.4,
-            };
-        }),
-        []
-    );
+function MarineSnow() {
+    const reducedMotion = useReducedMotion();
 
     return (
-        <>
-            <div className="fixed inset-0 pointer-events-none z-2 overflow-hidden" aria-hidden="true">
-                {rainLightSpecs.map((light, index) => (
-                    <motion.div
-                        key={`rain-light-column-${index}`}
-                        className="absolute -top-[12%] h-[84%] rounded-full blur-2xl mix-blend-screen"
-                        style={{
-                            left: light.left,
-                            width: `${light.width}%`,
-                            transform: `rotate(${light.rotate}deg)`,
-                            background: 'linear-gradient(to bottom, rgba(95,196,220,0) 0%, rgba(95,196,220,0.08) 45%, rgba(147,205,255,0.025) 72%, rgba(95,196,220,0) 100%)',
-                        }}
-                        animate={{ opacity: [0.10, 0.28, 0.10], x: ['-2%', '2%', '-2%'] }}
-                        transition={{ duration: light.duration, delay: light.delay, repeat: Infinity, ease: 'easeInOut' }}
-                    />
-                ))}
-            </div>
+        <div data-testid="marine-snow" className="fixed inset-0 pointer-events-none z-2 overflow-hidden" aria-hidden="true">
+            {marineSnowSpecs.map((particle, index) => (
+                <motion.span
+                    key={`marine-snow-${index}`}
+                    className="absolute rounded-full bg-cyan-50/75"
+                    style={{
+                        left: `${particle.left}%`,
+                        top: `${(index * 19) % 112 - 12}%`,
+                        width: particle.size,
+                        height: particle.size,
+                        opacity: particle.opacity,
+                        filter: particle.blur ? `blur(${particle.blur}px)` : undefined,
+                        boxShadow: '0 0 8px rgba(191,235,255,0.28)',
+                    }}
+                    animate={reducedMotion
+                        ? { x: 0, y: 0, opacity: particle.opacity }
+                        : { x: [0, particle.drift, particle.drift * -0.55, 0], y: ['-8vh', '38vh', '78vh', '116vh'], opacity: [0, particle.opacity, particle.opacity * 0.72, 0] }}
+                    transition={reducedMotion
+                        ? { duration: 0 }
+                        : { duration: particle.duration, delay: particle.delay, repeat: Infinity, ease: 'linear' }}
+                />
+            ))}
+        </div>
+    );
+}
 
-            <div className="fixed inset-0 pointer-events-none z-2 overflow-hidden" aria-hidden="true">
-                {rainRippleSpecs.map((ripple, index) => (
-                    <motion.div
-                        key={`rain-surface-ripple-${index}`}
-                        className="absolute rounded-[50%] border border-cyan-100/20"
-                        style={{
-                            left: ripple.left,
-                            top: ripple.top,
-                            width: ripple.width,
-                            height: ripple.height,
-                            boxShadow: '0 0 12px rgba(94,234,212,0.08)',
-                        }}
-                        animate={{ scale: [0.42, 1.0, 1.35], opacity: [0, 0.22, 0] }}
-                        transition={{ duration: ripple.duration, delay: ripple.delay, repeat: Infinity, ease: 'easeOut' }}
-                    />
-                ))}
-            </div>
-        </>
+function OceanRainEffects() {
+    return (
+        <div className="fixed inset-0 pointer-events-none z-2 overflow-hidden" aria-hidden="true">
+            {rainLightSpecs.map((light, index) => (
+                <motion.div
+                    key={`rain-light-column-${index}`}
+                    className="absolute -top-[12%] h-[84%] rounded-full blur-2xl mix-blend-screen"
+                    style={{
+                        left: light.left,
+                        width: `${light.width}%`,
+                        transform: `rotate(${light.rotate}deg)`,
+                        background: 'linear-gradient(to bottom, rgba(95,196,220,0) 0%, rgba(95,196,220,0.08) 45%, rgba(147,205,255,0.025) 72%, rgba(95,196,220,0) 100%)',
+                    }}
+                    animate={{ opacity: [0.10, 0.28, 0.10], x: ['-2%', '2%', '-2%'] }}
+                    transition={{ duration: light.duration, delay: light.delay, repeat: Infinity, ease: 'easeInOut' }}
+                />
+            ))}
+        </div>
     );
 }
 
 function OceanBackdrop({ weather }: { weather: WeatherType }) {
     const isRain = weather === 'Rain';
+    const isSnow = weather === 'Snow';
     return (
         <>
             <div className="fixed inset-0 pointer-events-none z-0 bg-[#041116]" />
@@ -727,6 +728,7 @@ function OceanBackdrop({ weather }: { weather: WeatherType }) {
             ))}
 
             {isRain && <OceanRainEffects />}
+            {isSnow && <MarineSnow />}
 
             {fishSpecs.map((fish, index) => (
                 <motion.div
@@ -757,11 +759,32 @@ export default function DenshouoClient() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const lang = searchParams.get('lang') === 'en' ? 'en' : 'ja';
-    const { setActiveWork, weather } = useStore();
-    const weatherParam = searchParams.get('weather');
-    const displayedWeather = VALID_WEATHERS.includes(weatherParam as WeatherType)
-        ? weatherParam as WeatherType
-        : weather;
+    const { setActiveWork, setSeason, setSeasonEvent, setWeather, season, seasonEvent, weather } = useStore();
+    const routeWorldState = parseWorldStateParams(searchParams);
+    const displayedWeather = routeWorldState.weather ?? weather;
+    const displayedSeason = routeWorldState.season ?? season;
+    const displayedSeasonEvent = routeWorldState.seasonEvent ?? seasonEvent;
+
+    useEffect(() => {
+        if (routeWorldState.weather && weather !== routeWorldState.weather) {
+            setWeather(routeWorldState.weather);
+        }
+        if (routeWorldState.season && season !== routeWorldState.season) {
+            setSeason(routeWorldState.season);
+        }
+        if (routeWorldState.seasonEvent && seasonEvent !== routeWorldState.seasonEvent) {
+            setSeasonEvent(routeWorldState.seasonEvent);
+        }
+
+        if (routeWorldState.weather || routeWorldState.season || routeWorldState.seasonEvent || weather !== 'Rain') return;
+
+        const params = new URLSearchParams(searchParams.toString());
+        params.set('weather', weather);
+        params.set('season', season);
+        params.set('seasonEvent', seasonEvent);
+        router.replace(`/denshouo?${params.toString()}`, { scroll: false });
+    }, [routeWorldState.season, routeWorldState.seasonEvent, routeWorldState.weather, router, searchParams, season, seasonEvent, setSeason, setSeasonEvent, setWeather, weather]);
+
     const [showBackdrop, setShowBackdrop] = useState(true);
     const [ripples, setRipples] = useState<Array<{ id: number; x: number; y: number; size: number; isHover: boolean }>>([]);
     const rippleIdRef = useRef(0);
@@ -816,6 +839,40 @@ export default function DenshouoClient() {
             window.clearTimeout(timer);
         };
     }, []);
+
+    useEffect(() => {
+        if (displayedWeather !== 'Rain') return;
+
+        let cancelled = false;
+        let timer = 0;
+
+        const scheduleRainRipple = () => {
+            timer = window.setTimeout(() => {
+                if (cancelled) return;
+
+                const id = rippleIdRef.current;
+                rippleIdRef.current += 1;
+                setRipples((current) => [
+                    ...current,
+                    {
+                        id,
+                        x: 8 + Math.random() * 84,
+                        y: 18 + Math.random() * 64,
+                        size: 82 + Math.random() * 26,
+                        isHover: true,
+                    },
+                ]);
+
+                scheduleRainRipple();
+            }, 2000 + Math.random() * 2200);
+        };
+
+        scheduleRainRipple();
+        return () => {
+            cancelled = true;
+            window.clearTimeout(timer);
+        };
+    }, [displayedWeather]);
 
 
 
@@ -876,7 +933,7 @@ export default function DenshouoClient() {
 
     const handleReturn = () => {
         setActiveWork(null);
-        router.push(`/?lang=${lang}`);
+        router.push(`/?${buildWorldStateQuery({ weather: displayedWeather, season: displayedSeason, seasonEvent: displayedSeasonEvent }, lang)}`);
     };
 
     return (

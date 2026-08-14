@@ -1,7 +1,18 @@
 'use client'
 
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useStore, type SeasonEventType, type SeasonType, WeatherType } from '@/store';
+import { useStore, type SeasonType, WeatherType } from '@/store';
+import {
+    AUTUMN_BACKGROUND_GRADIENT,
+    SPRING_FLOWER_CLOUDY_BACKGROUND_GRADIENT,
+    TSUYU_CLEAR_BACKGROUND_GRADIENT,
+    TSUYU_CLOUDS_BACKGROUND_GRADIENT,
+    TSUYU_RAIN_BACKGROUND_GRADIENT,
+    WINTER_BACKGROUND_GRADIENT,
+} from '@/lib/otenkigurashiSeasonal';
+import { parseMoonPhaseOverride } from '@/lib/moonPhase';
+import { resolveSeasonState } from '@/lib/seasonResolver';
+import { buildWorldStateQuery, parseWorldStateParams } from '@/lib/worldState';
 import { useEffect, useRef, useState } from 'react';
 import dynamicImport from 'next/dynamic';
 import Image from 'next/image';
@@ -13,9 +24,8 @@ const RainParticles = dynamicImport(
 );
 const SnowCanvas = dynamicImport(() => import('@/components/canvas/effects/SnowCanvas'), { ssr: false });
 const ThunderCanvas = dynamicImport(() => import('@/components/canvas/ThunderTransitionCanvas'), { ssr: false });
+const MoonPhase = dynamicImport(() => import('@/components/dom/MoonPhase'), { ssr: false });
 const OtenkiSeasonEffects = dynamicImport(() => import('./OtenkiSeasonEffects'), { ssr: false });
-const VALID_WEATHERS: WeatherType[] = ['Clear', 'Rain', 'Clouds', 'Snow', 'Night', 'Morning', 'Thunder'];
-
 // A simple CSS cloud decoration component
 function CloudDecoration({ className, style, flip }: { className: string, style?: React.CSSProperties, flip?: boolean }) {
     return (
@@ -36,7 +46,7 @@ function CloudDecoration({ className, style, flip }: { className: string, style?
 // Reads weather from the Zustand store and draws a matching cursor motif.
 // Motifs: Cloud (bob+squish) / Sun+Morning (spinning rays) / Rain (teardrop)
 //         Snow (rotating snowflake) / Night (crescent moon) / Thunder (bolt)
-//         Spring + Clear/Morning swaps the sun for a five-petal sakura mark.
+//         Spring + Clear/Morning swaps the sun for sakura; Autumn + Clear/Morning uses a maple leaf.
 function WeatherCursor({ weatherOverride, seasonOverride }: { weatherOverride?: WeatherType; seasonOverride?: SeasonType } = {}) {
     const storeWeather = useStore((state) => state.weather);
     const storeSeason = useStore((state) => state.season);
@@ -57,6 +67,8 @@ function WeatherCursor({ weatherOverride, seasonOverride }: { weatherOverride?: 
         sunRot: 0,
         // Spring / Clear
         sakuraRot: 0,
+        // Autumn / Clear
+        momijiRot: 0,
         // Snow
         snowRot: 0,
         // Rain
@@ -223,6 +235,67 @@ function WeatherCursor({ weatherOverride, seasonOverride }: { weatherOverride?: 
             ctx.fill();
             ctx.beginPath();
             ctx.ellipse(14 - drift, 9, 1.5, 2.3, 0.5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+        };
+
+        //  MOMIJI — maple leaf with a warm amber palette for the autumn cursor
+        const drawMomiji = (t: number, momijiRot: number) => {
+            const pulse = 1 + Math.sin(t * 2.1) * 0.04;
+            ctx.save();
+            ctx.rotate(momijiRot);
+            ctx.scale(pulse, pulse);
+            ctx.shadowBlur = 7;
+            ctx.shadowColor = 'rgba(188,112,45,0.28)';
+
+            ctx.beginPath();
+            ctx.moveTo(0, -14);
+            ctx.quadraticCurveTo(1.4, -10.5, 2.8, -7.4);
+            ctx.quadraticCurveTo(5.8, -9.3, 8.5, -10.4);
+            ctx.quadraticCurveTo(7.6, -6.9, 6.4, -4.1);
+            ctx.quadraticCurveTo(10.5, -3.1, 13.8, -1.4);
+            ctx.quadraticCurveTo(10.1, 0.2, 6.8, 1.2);
+            ctx.quadraticCurveTo(8, 5.4, 8.8, 8.3);
+            ctx.quadraticCurveTo(4.2, 6.7, 1.8, 4.7);
+            ctx.quadraticCurveTo(1, 9, 1.2, 12.8);
+            ctx.quadraticCurveTo(0.3, 13.8, 0, 14.5);
+            ctx.quadraticCurveTo(-0.3, 13.8, -1.2, 12.8);
+            ctx.quadraticCurveTo(-1, 9, -1.8, 4.7);
+            ctx.quadraticCurveTo(-4.2, 6.7, -8.8, 8.3);
+            ctx.quadraticCurveTo(-8, 5.4, -6.8, 1.2);
+            ctx.quadraticCurveTo(-10.1, 0.2, -13.8, -1.4);
+            ctx.quadraticCurveTo(-10.5, -3.1, -6.4, -4.1);
+            ctx.quadraticCurveTo(-7.6, -6.9, -8.5, -10.4);
+            ctx.quadraticCurveTo(-5.8, -9.3, -2.8, -7.4);
+            ctx.quadraticCurveTo(-1.4, -10.5, 0, -14);
+            ctx.closePath();
+            const leaf = ctx.createLinearGradient(-8, -12, 8, 12);
+            leaf.addColorStop(0, '#ffd76f');
+            leaf.addColorStop(0.55, '#efa94d');
+            leaf.addColorStop(1, '#d8783e');
+            ctx.fillStyle = leaf;
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(173,91,39,0.68)';
+            ctx.lineWidth = 0.9;
+            ctx.stroke();
+
+            ctx.shadowBlur = 0;
+            ctx.strokeStyle = 'rgba(255,224,137,0.76)';
+            ctx.lineWidth = 0.9;
+            ctx.lineCap = 'round';
+            ctx.beginPath();
+            ctx.moveTo(0, 11); ctx.lineTo(0, -7);
+            ctx.moveTo(0, 0); ctx.lineTo(-6, -4.5);
+            ctx.moveTo(0, 0); ctx.lineTo(6, -4.5);
+            ctx.stroke();
+
+            const drift = Math.sin(t * 1.7) * 1.6;
+            ctx.fillStyle = 'rgba(233,153,69,0.78)';
+            ctx.beginPath();
+            ctx.moveTo(-17 + drift, -8); ctx.lineTo(-14 + drift, -12); ctx.lineTo(-11 + drift, -8); ctx.lineTo(-14 + drift, -4); ctx.closePath();
+            ctx.fill();
+            ctx.beginPath();
+            ctx.moveTo(15 - drift, 8); ctx.lineTo(18 - drift, 4); ctx.lineTo(21 - drift, 8); ctx.lineTo(18 - drift, 12); ctx.closePath();
             ctx.fill();
             ctx.restore();
         };
@@ -526,7 +599,9 @@ function WeatherCursor({ weatherOverride, seasonOverride }: { weatherOverride?: 
             const speed = Math.hypot(s.vx, s.vy);
 
             // ── per-weather state update ────────────────────────────────────
-            const isSpringClear = seasonRef.current === 'spring' && (w === 'Clear' || w === 'Morning');
+            const isClearOrMorning = w === 'Clear' || w === 'Morning';
+            const isSpringClear = seasonRef.current === 'spring' && isClearOrMorning;
+            const isAutumnClear = seasonRef.current === 'autumn' && isClearOrMorning;
             if (w === 'Clouds') {
                 s.bobPhase += 0.038 * dt;
                 const tSqX = 1 + Math.min(speed * 0.013, 0.22);
@@ -537,6 +612,7 @@ function WeatherCursor({ weatherOverride, seasonOverride }: { weatherOverride?: 
             } else if (w === 'Clear' || w === 'Morning') {
                 s.sunRot += 0.018 * dt;
                 if (isSpringClear) s.sakuraRot += 0.012 * dt;
+                if (isAutumnClear) s.momijiRot += 0.009 * dt;
             } else if (w === 'Snow') {
                 s.snowRot += 0.012 * dt;
             } else if (w === 'Rain') {
@@ -589,6 +665,8 @@ function WeatherCursor({ weatherOverride, seasonOverride }: { weatherOverride?: 
             } else if (w === 'Clear' || w === 'Morning') {
                 if (isSpringClear) {
                     drawSakura(t, s.sakuraRot);
+                } else if (isAutumnClear) {
+                    drawMomiji(t, s.momijiRot);
                 } else {
                     drawSun(t, s.sunRot);
                 }
@@ -634,10 +712,9 @@ export default function OtenkiGurashiClient() {
         season: storeSeason,
         seasonEvent: storeSeasonEvent,
     } = useStore();
-    const weatherParam = searchParams.get('weather');
-    const seasonParam = searchParams.get('season');
-    const seasonEventParam = searchParams.get('seasonEvent');
-    const weatherFromParam = VALID_WEATHERS.includes(weatherParam as WeatherType) ? weatherParam as WeatherType : null;
+    const routeWorldState = parseWorldStateParams(searchParams);
+    const resolvedSeasonState = resolveSeasonState();
+    const weatherFromParam = routeWorldState.weather;
     const displayedWeather = weatherFromParam ?? weather;
 
     const copy = {
@@ -701,12 +778,11 @@ export default function OtenkiGurashiClient() {
         },
     } as const;
     const t = copy[lang];
-    const validSeasons: SeasonType[] = ['none', 'spring', 'summer', 'autumn', 'winter'];
-    const validSeasonEvents: SeasonEventType[] = ['none', 'geshi'];
-    const seasonFromParam = validSeasons.includes(seasonParam as SeasonType) ? seasonParam as SeasonType : null;
-    const seasonEventFromParam = validSeasonEvents.includes(seasonEventParam as SeasonEventType) ? seasonEventParam as SeasonEventType : null;
-    const displayedSeason = seasonFromParam ?? storeSeason;
-    const displayedSeasonEvent = seasonEventFromParam ?? storeSeasonEvent;
+    const seasonFromParam = routeWorldState.season;
+    const seasonEventFromParam = routeWorldState.seasonEvent;
+    const displayedSeason = seasonFromParam ?? (storeSeason === 'none' ? resolvedSeasonState.season : storeSeason);
+    const displayedSeasonEvent = seasonEventFromParam ?? (storeSeasonEvent === 'none' ? resolvedSeasonState.seasonEvent : storeSeasonEvent);
+    const moonPhaseOverride = parseMoonPhaseOverride(searchParams.get('moonPhase'));
 
     // スクロール検知用の状態とRef
     const [activeSection, setActiveSection] = useState<'hero' | 'concept' | 'features' | 'tech' | 'bottom'>('hero');
@@ -807,7 +883,7 @@ export default function OtenkiGurashiClient() {
 
     const handleReturn = () => {
         setActiveWork(null); // ワープ状態をリセット
-        router.push(`/?lang=${lang}`);
+        router.push(`/?${buildWorldStateQuery({ weather: displayedWeather, season: displayedSeason, seasonEvent: displayedSeasonEvent }, lang)}`);
     };
 
     let bgGradient = "from-[#aee1f9] to-[#e0f4fc]"; // Default (Clear)
@@ -831,15 +907,56 @@ export default function OtenkiGurashiClient() {
         bgGradient = "from-[#fcedf3] via-[#fff5f9] to-[#fffdfd]";
     }
 
+    if (displayedSeason === 'spring' && displayedWeather === 'Clouds') {
+        bgGradient = "from-[#c5d1d9] via-[#e6e9e7] to-[#f3e8ed]";
+    }
+
+    if (displayedSeason === 'autumn' && (displayedWeather === 'Clear' || displayedWeather === 'Morning')) {
+        bgGradient = "from-[#c7ded9] via-[#f1e6ce] to-[#e4b36f]";
+    }
+
+    if (displayedSeason === 'summer' && displayedSeasonEvent === 'geshi' && (displayedWeather === 'Clear' || displayedWeather === 'Morning')) {
+        bgGradient = "from-[#bddfeb] via-[#e0eef0] to-[#fff0cf]";
+    }
+
+    if (displayedSeasonEvent === 'tsuyu') {
+        bgGradient = displayedWeather === 'Rain'
+            ? TSUYU_RAIN_BACKGROUND_GRADIENT
+            : displayedWeather === 'Clouds'
+                ? TSUYU_CLOUDS_BACKGROUND_GRADIENT
+                : displayedWeather === 'Clear' || displayedWeather === 'Morning'
+                    ? TSUYU_CLEAR_BACKGROUND_GRADIENT
+                    : bgGradient;
+    }
+
     const springCardStyle = displayedSeason === 'spring' && (displayedWeather === 'Clear' || displayedWeather === 'Morning')
         ? 'border-white shadow-[0_20px_60px_-15px_rgba(152,173,194,0.3)]'
         : 'border-white shadow-[0_20px_60px_-15px_rgba(152,173,194,0.3)]';
     const isSpringSun = displayedSeason === 'spring' && (displayedWeather === 'Clear' || displayedWeather === 'Morning');
+    const isFlowerCloudy = displayedSeason === 'spring' && displayedWeather === 'Clouds';
+    const isGeshiSun = displayedSeason === 'summer' && displayedSeasonEvent === 'geshi' && (displayedWeather === 'Clear' || displayedWeather === 'Morning');
+    const isTsuyu = displayedSeasonEvent === 'tsuyu';
+    const isWinterSnowScene = displayedSeason === 'winter' && displayedWeather === 'Snow';
 
     return (
         <>
             <WeatherCursor weatherOverride={displayedWeather} seasonOverride={displayedSeason} />
-            <main className={`relative w-full min-h-[120dvh] ${displayedWeather !== 'Rain' && displayedWeather !== 'Snow' ? 'bg-gradient-to-b' : ''} ${bgGradient} ${displayedWeather === 'Thunder' || displayedWeather === 'Night' ? 'text-gray-200' : 'text-gray-700'} overflow-hidden font-sans pb-32 transition-colors duration-1000`} style={{ cursor: isFinePointer ? 'none' : 'auto' }}>
+            <main className={`relative w-full min-h-[120dvh] ${displayedWeather !== 'Rain' && displayedWeather !== 'Snow' ? 'bg-gradient-to-b' : ''} ${bgGradient} ${displayedWeather === 'Thunder' || displayedWeather === 'Night' ? 'text-gray-200' : 'text-gray-700'} overflow-hidden font-sans pb-32 transition-colors duration-1000`} style={{
+                cursor: isFinePointer ? 'none' : 'auto',
+                background: displayedSeason === 'autumn' && (displayedWeather === 'Clear' || displayedWeather === 'Morning')
+                    ? AUTUMN_BACKGROUND_GRADIENT
+                    : isTsuyu && (displayedWeather === 'Clear' || displayedWeather === 'Morning')
+                        ? TSUYU_CLEAR_BACKGROUND_GRADIENT
+                    : isTsuyu && displayedWeather === 'Clouds'
+                        ? TSUYU_CLOUDS_BACKGROUND_GRADIENT
+                    : isTsuyu && displayedWeather === 'Rain'
+                        ? TSUYU_RAIN_BACKGROUND_GRADIENT
+                    : isFlowerCloudy
+                        ? SPRING_FLOWER_CLOUDY_BACKGROUND_GRADIENT
+                    : isWinterSnowScene
+                        ? WINTER_BACKGROUND_GRADIENT
+                    : undefined,
+            }}>
                 <OtenkiSeasonEffects season={displayedSeason} seasonEvent={displayedSeasonEvent} weather={displayedWeather} />
 
                 <nav className="fixed top-0 left-0 w-full z-50 p-6 md:p-10">
@@ -1004,19 +1121,25 @@ export default function OtenkiGurashiClient() {
                                 className="absolute right-[8%] top-[9%] w-24 h-24 md:w-32 md:h-32 rounded-full"
                                 style={{
                                     background: isSpringSun
-                                        ? 'radial-gradient(circle at 35% 35%, rgba(255,244,214,0.98) 0%, rgba(241,157,188,0.96) 38%, rgba(205,100,139,0.94) 100%)'
+                                        ? 'radial-gradient(circle at 35% 35%, rgba(255,248,214,0.98) 0%, rgba(255,218,133,0.92) 38%, rgba(242,176,76,0.88) 100%)'
                                         : 'radial-gradient(circle at 35% 35%, rgba(255,245,180,0.96) 0%, rgba(255,213,112,0.92) 38%, rgba(255,170,58,0.92) 100%)',
                                     boxShadow: isSpringSun
-                                        ? '0 0 45px rgba(224,122,159,0.32), 0 0 110px rgba(205,100,139,0.16)'
+                                        ? '0 0 45px rgba(247,190,101,0.28), 0 0 110px rgba(236,163,80,0.12)'
+                                        : isGeshiSun
+                                            ? '0 0 28px rgba(150,211,240,0.22), 0 0 72px rgba(124,190,226,0.09)'
                                         : '0 0 45px rgba(255,205,110,0.55), 0 0 110px rgba(255,187,82,0.35)',
-                                    animation: 'sun-soft-pulse 4.6s ease-in-out infinite',
+                                    animation: isGeshiSun
+                                        ? 'geshi-sun-soft-pulse 4.6s ease-in-out infinite'
+                                        : 'sun-soft-pulse 4.6s ease-in-out infinite',
                                 }}
                             />
                             <div
                                 className="absolute right-[3%] top-[2%] w-44 h-44 md:w-64 md:h-64 rounded-full"
                                 style={{
                                     background: isSpringSun
-                                        ? 'radial-gradient(circle, rgba(255,205,219,0.22) 0%, rgba(229,128,166,0.07) 42%, rgba(229,128,166,0.0) 74%)'
+                                        ? 'radial-gradient(circle, rgba(255,224,157,0.20) 0%, rgba(245,183,97,0.06) 42%, rgba(245,183,97,0.0) 74%)'
+                                        : isGeshiSun
+                                            ? 'radial-gradient(circle, rgba(185,228,246,0.13) 0%, rgba(145,207,235,0.035) 42%, rgba(145,207,235,0.0) 74%)'
                                         : 'radial-gradient(circle, rgba(255,220,150,0.36) 0%, rgba(255,220,150,0.08) 42%, rgba(255,220,150,0.0) 74%)',
                                     animation: 'sun-aura-spin 16s linear infinite',
                                 }}
@@ -1026,6 +1149,10 @@ export default function OtenkiGurashiClient() {
                         @keyframes sun-soft-pulse {
                             0%, 100% { transform: scale(1); opacity: 0.94; }
                             50% { transform: scale(1.05); opacity: 1; }
+                        }
+                        @keyframes geshi-sun-soft-pulse {
+                            0%, 100% { transform: scale(1); opacity: 0.84; }
+                            50% { transform: scale(1.035); opacity: 0.9; }
                         }
                         @keyframes sun-aura-spin {
                             from { transform: rotate(0deg); }
@@ -1067,8 +1194,10 @@ export default function OtenkiGurashiClient() {
                             }} />
 
                             {/* 右上の三日月 */}
-                            <div className="absolute right-[10%] top-[10%] w-24 h-24 md:w-32 md:h-32 rounded-full bg-[#dce8ff] opacity-90 shadow-[0_0_35px_rgba(167,196,245,0.38)]" />
-                            <div className="absolute right-[7.7%] top-[8.6%] w-24 h-24 md:w-32 md:h-32 rounded-full bg-[#081325] opacity-95" />
+                            <MoonPhase
+                                phaseOverride={moonPhaseOverride}
+                                className="absolute right-[10%] top-[10%] w-24 h-24 md:w-32 md:h-32 opacity-90"
+                            />
 
                             {/* 小さな星 */}
                             <div className="absolute inset-0 opacity-60" style={{
@@ -1097,6 +1226,12 @@ export default function OtenkiGurashiClient() {
                         section={activeSection}
                         weather={displayedWeather}
                         showUmbrella={false}
+                        showSakura={isSpringSun || isFlowerCloudy}
+                        showMomiji={displayedSeason === 'autumn' && (displayedWeather === 'Clear' || displayedWeather === 'Morning')}
+                        showSnowflake={displayedWeather === 'Snow'}
+                        showRainDrop={displayedWeather === 'Rain'}
+                        showLightning={displayedWeather === 'Thunder'}
+                        showNightStar={displayedWeather === 'Night'}
                         overrideDialog={overrideDialog}
                         onClick={handleTenchanClick}
                     />

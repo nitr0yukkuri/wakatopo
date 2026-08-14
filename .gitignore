@@ -33,6 +33,15 @@
 /tmp/*.js
 /tmp/*.mjs
 /tmp/*.gif
+/tmp/*.log
+/tmp/**/*.png
+/tmp/**/*.jpg
+/tmp/**/*.jpeg
+/tmp/**/*.webp
+/tmp/**/*.mp4
+/tmp/**/*.webm
+/tmp/**/*.mov
+/tmp/**/*.avi
 
 # debug
 npm-debug.log*
