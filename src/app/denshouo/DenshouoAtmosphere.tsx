@@ -2,7 +2,7 @@
 
 import { motion, useReducedMotion } from 'framer-motion';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { Component, useEffect, useMemo, useRef, useState, type ErrorInfo, type ReactNode } from 'react';
 import * as THREE from 'three';
 import type { WeatherType } from '@/store';
 import { waveVertexShader, waveFragmentShader } from '@/shaders/wave';
@@ -678,6 +678,25 @@ function OceanRainEffects() {
     );
 }
 
+type WebGLBoundaryProps = { children: ReactNode; fallback: ReactNode };
+type WebGLBoundaryState = { hasError: boolean };
+
+class WebGLBoundary extends Component<WebGLBoundaryProps, WebGLBoundaryState> {
+    state: WebGLBoundaryState = { hasError: false };
+
+    static getDerivedStateFromError(): WebGLBoundaryState {
+        return { hasError: true };
+    }
+
+    componentDidCatch(error: Error, info: ErrorInfo) {
+        console.warn('[Denshouo] WebGL disabled; using CSS fallback.', error, info);
+    }
+
+    render() {
+        return this.state.hasError ? this.props.fallback : this.props.children;
+    }
+}
+
 function OceanBackdrop({ weather }: { weather: WeatherType }) {
     const isRain = weather === 'Rain';
     const isSnow = weather === 'Snow';
@@ -688,11 +707,13 @@ function OceanBackdrop({ weather }: { weather: WeatherType }) {
 
             {webglSupported && (
                 <div className="fixed inset-0 pointer-events-none z-1">
-                    <Canvas camera={{ position: [0, 0, 0], fov: 75 }}>
-                        <color attach="background" args={['#041116']} />
-                        <OceanSurface />
-                        <OceanBubbles />
-                    </Canvas>
+                    <WebGLBoundary fallback={null}>
+                        <Canvas camera={{ position: [0, 0, 0], fov: 75 }}>
+                            <color attach="background" args={['#041116']} />
+                            <OceanSurface />
+                            <OceanBubbles />
+                        </Canvas>
+                    </WebGLBoundary>
                 </div>
             )}
 
@@ -777,4 +798,3 @@ function OceanBackdrop({ weather }: { weather: WeatherType }) {
 }
 
 export { FishCursor, OceanBackdrop };
-
