@@ -4,7 +4,11 @@ import { useStore } from './index';
 const DEFAULT_STATE = { weather: 'Clear' as const, season: 'none' as const, seasonEvent: 'none' as const };
 
 afterEach(() => {
-    useStore.getState().setWorldState(DEFAULT_STATE);
+    useStore.setState({
+        ...DEFAULT_STATE,
+        seasonResolution: 'auto',
+        seasonEventResolution: 'auto',
+    });
 });
 
 describe('world state store', () => {
@@ -33,5 +37,25 @@ describe('world state store', () => {
 
         useStore.getState().setWorldState({ weather: 'Rain' });
         expect(useStore.getState().seasonEvent).toBe('none');
+    });
+
+    it('keeps an explicit season clear separate from automatic resolution', () => {
+        useStore.getState().setWorldState({ season: 'none', seasonEvent: 'none' });
+
+        expect(useStore.getState()).toMatchObject({
+            season: 'none',
+            seasonEvent: 'none',
+            seasonResolution: 'manual',
+            seasonEventResolution: 'manual',
+        });
+    });
+
+    it('does not turn server initialization into a manual override', () => {
+        useStore.getState().initializeWorldState({ season: 'winter' });
+
+        expect(useStore.getState()).toMatchObject({
+            season: 'winter',
+            seasonResolution: 'auto',
+        });
     });
 });

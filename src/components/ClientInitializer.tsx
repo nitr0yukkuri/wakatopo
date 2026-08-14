@@ -16,17 +16,17 @@ export default function ClientInitializer({
     initialSeasonEvent?: SeasonEventType;
     initialActivity: number;
 }) {
-    const { setWorldState, setActivity, setActiveWork } = useStore();
+    const { initializeWorldState, setActivity, setActiveWork } = useStore();
 
     useIsomorphicLayoutEffect(() => {
-        setWorldState({
+        initializeWorldState({
             weather: initialWeather,
             ...(initialSeason ? { season: initialSeason } : {}),
             ...(initialSeasonEvent ? { seasonEvent: initialSeasonEvent } : {}),
         });
         setActivity(initialActivity);
         setActiveWork(null);
-    }, [initialActivity, initialSeason, initialSeasonEvent, initialWeather, setActiveWork, setActivity, setWorldState]);
+    }, [initialActivity, initialSeason, initialSeasonEvent, initialWeather, initializeWorldState, setActiveWork, setActivity]);
 
     return null;
 }
