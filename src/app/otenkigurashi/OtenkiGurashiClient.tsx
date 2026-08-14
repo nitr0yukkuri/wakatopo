@@ -1,7 +1,5 @@
 'use client'
 
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useStore } from '@/store';
 import {
     AUTUMN_BACKGROUND_GRADIENT,
     SPRING_FLOWER_CLOUDY_BACKGROUND_GRADIENT,
@@ -10,12 +8,10 @@ import {
     TSUYU_RAIN_BACKGROUND_GRADIENT,
     WINTER_BACKGROUND_GRADIENT,
 } from '@/lib/otenkigurashiSeasonal';
-import { parseMoonPhaseOverride } from '@/lib/moonPhase';
-import { buildWorldStateQuery, canonicalizeWorldStateQuery } from '@/lib/worldState';
 import { useWorldState } from '@/components/WorldStateProvider';
 import { OTENKI_COPY } from './otenkigurashiCopy';
 import WeatherCursor from './WeatherCursor';
-import { useEffect, useRef, useState } from 'react';
+import { useOtenkiPageController } from './useOtenkiPageController';
 import dynamicImport from 'next/dynamic';
 import Image from 'next/image';
 
@@ -45,115 +41,32 @@ function CloudDecoration({ className, style, flip }: { className: string, style?
 }
 
 export default function OtenkiGurashiClient() {
-    const router = useRouter();
-    const searchParams = useSearchParams();
-    const lang = searchParams.get('lang') === 'en' ? 'en' : 'ja';
-    const { setActiveWork } = useStore();
     const displayedWorldState = useWorldState();
     const displayedWeather = displayedWorldState.weather;
-
-    const t = OTENKI_COPY[lang];
     const displayedSeason = displayedWorldState.season;
     const displayedSeasonEvent = displayedWorldState.seasonEvent;
-    const moonPhaseOverride = parseMoonPhaseOverride(searchParams.get('moonPhase'));
-
-    // スクロール検知用の状態とRef
-    const [activeSection, setActiveSection] = useState<'hero' | 'concept' | 'features' | 'tech' | 'bottom'>('hero');
-    const heroRef = useRef<HTMLDivElement>(null);
-    const conceptRef = useRef<HTMLDivElement>(null);
-    const featuresRef = useRef<HTMLDivElement>(null);
-    const techRef = useRef<HTMLDivElement>(null);
-    const bottomRef = useRef<HTMLDivElement>(null);
-
-    // インタラクション（クリック）時のオーバーライド用状態
-    type DialogType = { text: string; mood: "happy" | "neutral" | "sad" | "scared" | "sleepy" | "looking" | "surprised" | "talking" };
-    const [overrideDialog, setOverrideDialog] = useState<DialogType | null>(null);
-    const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-    const [showHeavyEffects, setShowHeavyEffects] = useState(false);
-    // Hide native cursor on fine-pointer (mouse) devices — CloudCursor replaces it
-    const [isFinePointer, setIsFinePointer] = useState(false);
-    useEffect(() => { setIsFinePointer(window.matchMedia('(pointer: fine)').matches); }, []);
-
-    const handleInteract = (text: string, mood: DialogType['mood']) => {
-        setOverrideDialog({ text, mood });
-        if (timeoutRef.current) clearTimeout(timeoutRef.current);
-        timeoutRef.current = setTimeout(() => {
-            setOverrideDialog(null);
-        }, 4000); // 4秒後に元のセリフに戻る
-    };
-
-    const handleTenchanClick = () => {
-        const reactions: DialogType[] = [
-            { text: t.react1, mood: "happy" },
-            { text: t.react2, mood: "looking" },
-            { text: t.react3, mood: "sleepy" },
-            { text: t.react4, mood: "surprised" },
-            { text: t.react5, mood: "talking" }
-        ];
-        const random = reactions[Math.floor(Math.random() * reactions.length)];
-        handleInteract(random.text, random.mood);
-    };
-
-    useEffect(() => {
-        const hasRouteWorldState = ['weather', 'season', 'seasonEvent'].some((key) => searchParams.has(key));
-        if (!hasRouteWorldState) return;
-
-        const canonicalQuery = canonicalizeWorldStateQuery(searchParams, displayedWorldState).toString();
-        if (canonicalQuery !== searchParams.toString()) {
-            router.replace(`/otenkigurashi?${canonicalQuery}`, { scroll: false });
-        }
-    }, [displayedWorldState, router, searchParams]);
-
-    useEffect(() => {
-        const observerOptions = {
-            root: null,
-            rootMargin: '-30% 0px -40% 0px', // 画面の中央付近で検知する
-            threshold: 0
-        };
-
-        const observerCallback: IntersectionObserverCallback = (entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const id = entry.target.id as 'hero' | 'concept' | 'features' | 'tech' | 'bottom';
-                    setActiveSection(id);
-                }
-            });
-        };
-
-        const observer = new IntersectionObserver(observerCallback, observerOptions);
-
-        if (heroRef.current) observer.observe(heroRef.current);
-        if (conceptRef.current) observer.observe(conceptRef.current);
-        if (featuresRef.current) observer.observe(featuresRef.current);
-        if (techRef.current) observer.observe(techRef.current);
-        if (bottomRef.current) observer.observe(bottomRef.current);
-
-        return () => observer.disconnect();
-    }, []);
-
-    useEffect(() => {
-        const reveal = () => {
-            setShowHeavyEffects(true);
-        };
-
-        window.addEventListener('pointerdown', reveal, { once: true, passive: true });
-        window.addEventListener('keydown', reveal, { once: true });
-        window.addEventListener('scroll', reveal, { once: true, passive: true });
-        const timer = window.setTimeout(reveal, 15000);
-
-        return () => {
-            window.removeEventListener('pointerdown', reveal);
-            window.removeEventListener('keydown', reveal);
-            window.removeEventListener('scroll', reveal);
-            window.clearTimeout(timer);
-        };
-    }, []);
-
-    const handleReturn = () => {
-        setActiveWork(null); // ワープ状態をリセット
-        router.push(`/?${buildWorldStateQuery({ weather: displayedWeather, season: displayedSeason, seasonEvent: displayedSeasonEvent }, lang)}`);
-    };
-
+    const controller = useOtenkiPageController({
+        worldState: displayedWorldState,
+        reactionsByLang: {
+            ja: [
+                { text: OTENKI_COPY.ja.react1, mood: 'happy' },
+                { text: OTENKI_COPY.ja.react2, mood: 'looking' },
+                { text: OTENKI_COPY.ja.react3, mood: 'sleepy' },
+                { text: OTENKI_COPY.ja.react4, mood: 'surprised' },
+                { text: OTENKI_COPY.ja.react5, mood: 'talking' },
+            ],
+            en: [
+                { text: OTENKI_COPY.en.react1, mood: 'happy' },
+                { text: OTENKI_COPY.en.react2, mood: 'looking' },
+                { text: OTENKI_COPY.en.react3, mood: 'sleepy' },
+                { text: OTENKI_COPY.en.react4, mood: 'surprised' },
+                { text: OTENKI_COPY.en.react5, mood: 'talking' },
+            ],
+        },
+    });
+    const { lang, moonPhaseOverride, ...pageState } = controller;
+    const { activeSection, heroRef, conceptRef, featuresRef, techRef, bottomRef, overrideDialog, showHeavyEffects, isFinePointer, handleInteract, handleTenchanClick, handleReturn } = pageState;
+    const t = OTENKI_COPY[lang];
     let bgGradient = "from-[#aee1f9] to-[#e0f4fc]"; // Default (Clear)
     let cardText = "text-gray-700";
 
