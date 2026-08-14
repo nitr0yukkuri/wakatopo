@@ -57,4 +57,16 @@ test.describe('Denshouo weather presentation', () => {
         await page.goto('/denshouo?lang=ja&weather=Rain&season=summer&seasonEvent=none', { waitUntil: 'domcontentloaded' });
         await expect(page.locator('[data-testid="marine-snow"]')).toHaveCount(0);
     });
+
+    test('shows the rain drop-to-ripple demo only for Rain', async ({ page }) => {
+        await page.goto('/denshouo?lang=ja&weather=Rain&season=summer&seasonEvent=none', { waitUntil: 'domcontentloaded' });
+        await expect(page.locator('[data-testid="rain-demo-drop"]')).toHaveCount(1, { timeout: 8000 });
+        await expect(page.locator('[data-testid="rain-ripple"]')).toHaveCount(1, { timeout: 8000 });
+
+        await page.goto('/denshouo?lang=ja&weather=Clear&season=summer&seasonEvent=none', { waitUntil: 'domcontentloaded' });
+        await page.waitForTimeout(4500);
+        await expect(page.locator('[data-testid="rain-demo-drop"]')).toHaveCount(0);
+        await expect(page.locator('[data-testid="rain-ripple"]')).toHaveCount(0);
+    });
+
 });
