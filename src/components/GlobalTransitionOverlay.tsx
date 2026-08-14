@@ -2,7 +2,6 @@
 
 import { useStore, type SeasonEventType, type SeasonType, type WeatherType } from '@/store';
 import { useEffect, useMemo } from 'react';
-import { useSearchParams } from 'next/navigation';
 import { AnimatePresence, motion } from 'framer-motion';
 import dynamic from 'next/dynamic';
 import {
@@ -13,8 +12,8 @@ import {
     SPRING_FLOWER_CLOUDY_BACKGROUND_GRADIENT,
     TSUYU_ATMOSPHERE_GRADIENT,
 } from '@/lib/otenkigurashiSeasonal';
-import { parseWorldStateParams, resolveWorldState } from '@/lib/worldState';
 import { getWorldVisualProfile } from '@/lib/worldVisualProfile';
+import { useWorldState } from '@/components/WorldStateProvider';
 
 // Lazy load all transition canvases — only loaded when triggered
 const WarpEffectCanvas = dynamic(() => import('@/components/canvas/WarpEffectCanvas'), { ssr: false });
@@ -195,15 +194,8 @@ function SeasonalTransitionAtmosphere({ season, seasonEvent, weather }: { season
 }
 
 export default function GlobalTransitionOverlay() {
-    const { transitionType, season, seasonEvent, setTransitionType } = useStore();
-    const storeWeather = useStore((state) => state.weather);
-    const searchParams = useSearchParams();
-    const routeWorldState = parseWorldStateParams(searchParams);
-    const effectiveWorldState = resolveWorldState(routeWorldState, {
-        weather: storeWeather,
-        season,
-        seasonEvent,
-    });
+    const { transitionType, setTransitionType } = useStore();
+    const effectiveWorldState = useWorldState();
     const effectiveWeather = effectiveWorldState.weather;
     const effectiveSeason = effectiveWorldState.season;
     const effectiveSeasonEvent = effectiveWorldState.seasonEvent;

@@ -1,9 +1,8 @@
 import { create } from 'zustand';
 import { normalizeWorldState, type WorldState } from '../lib/worldState';
 
-export type WeatherType = 'Clear' | 'Rain' | 'Clouds' | 'Snow' | 'Night' | 'Morning' | 'Thunder';
-export type SeasonType = 'none' | 'spring' | 'summer' | 'autumn' | 'winter';
-export type SeasonEventType = 'none' | 'geshi' | 'tsuyu' | 'first_light';
+export type { SeasonEventType, SeasonType, WeatherType } from '../lib/worldStateTypes';
+import type { SeasonEventType, SeasonType, WeatherType } from '../lib/worldStateTypes';
 
 interface AppState {
     weather: WeatherType;

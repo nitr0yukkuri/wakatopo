@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useStore } from "@/store";
 import { usePathname } from "next/navigation";
 import { getLofiBgmProfile } from "@/lib/lofiAudio";
+import { useWorldState } from "@/components/WorldStateProvider";
 
 type TransitionType =
   | "none"
@@ -35,7 +36,7 @@ type AudioStateSnapshot = {
 export default function SoundDirector() {
   const pathname = usePathname();
   const transitionType = useStore((state) => state.transitionType);
-  const weather = useStore((state) => state.weather);
+  const { weather } = useWorldState();
   const githubActivityLevel = useStore((state) => state.githubActivityLevel);
   const activeWorkId = useStore((state) => state.activeWorkId);
   const audioContextRef = useRef<AudioContext | null>(null);

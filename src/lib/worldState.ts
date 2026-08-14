@@ -1,14 +1,10 @@
-import type { SeasonEventType, SeasonType, WeatherType } from '@/store';
+import type { SeasonEventType, SeasonType, WeatherType, WorldState } from './worldStateTypes';
+
+export type { SeasonEventType, SeasonType, WeatherType, WorldState } from './worldStateTypes';
 
 export const VALID_WEATHERS: WeatherType[] = ['Clear', 'Rain', 'Clouds', 'Snow', 'Night', 'Morning', 'Thunder'];
 export const VALID_SEASONS: SeasonType[] = ['none', 'spring', 'summer', 'autumn', 'winter'];
 export const VALID_SEASON_EVENTS: SeasonEventType[] = ['none', 'geshi', 'tsuyu', 'first_light'];
-
-export type WorldState = {
-    weather: WeatherType;
-    season: SeasonType;
-    seasonEvent: SeasonEventType;
-};
 
 export const DEFAULT_WORLD_STATE: WorldState = {
     weather: 'Clear',

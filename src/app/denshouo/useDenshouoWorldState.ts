@@ -3,12 +3,8 @@
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 import { useStore } from '@/store';
-import {
-    buildWorldStateQuery,
-    canonicalizeWorldStateQuery,
-    parseWorldStateParams,
-    resolveWorldState,
-} from '@/lib/worldState';
+import { buildWorldStateQuery, canonicalizeWorldStateQuery } from '@/lib/worldState';
+import { useWorldState } from '@/components/WorldStateProvider';
 
 export type DenshouoLang = 'ja' | 'en';
 
@@ -21,22 +17,12 @@ export function useDenshouoWorldState() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const lang: DenshouoLang = searchParams.get('lang') === 'en' ? 'en' : 'ja';
-    const { setActiveWork, setWorldState, season, seasonEvent, weather } = useStore();
-    const routeWorldState = parseWorldStateParams(searchParams);
-    const displayedWorldState = resolveWorldState(routeWorldState, { weather, season, seasonEvent });
+    const { setActiveWork } = useStore();
+    const displayedWorldState = useWorldState();
     const { weather: displayedWeather, season: displayedSeason, seasonEvent: displayedSeasonEvent } = displayedWorldState;
     const hasRouteWorldState = ['weather', 'season', 'seasonEvent'].some((key) => searchParams.has(key));
 
     useEffect(() => {
-        const nextWorldState = {
-            ...(weather !== displayedWeather && routeWorldState.weather ? { weather: displayedWeather } : {}),
-            ...(season !== displayedSeason && routeWorldState.season ? { season: displayedSeason } : {}),
-            ...(seasonEvent !== displayedSeasonEvent && routeWorldState.seasonEvent ? { seasonEvent: displayedSeasonEvent } : {}),
-        };
-        if (Object.keys(nextWorldState).length > 0) {
-            setWorldState(nextWorldState);
-        }
-
         const currentQuery = searchParams.toString();
         if (hasRouteWorldState) {
             const canonicalQuery = canonicalizeWorldStateQuery(searchParams, {
@@ -50,7 +36,7 @@ export function useDenshouoWorldState() {
             return;
         }
 
-        if (weather !== 'Rain') {
+        if (displayedWeather !== 'Rain') {
             router.replace(`/denshouo?${buildWorldStateQuery({
                 weather: displayedWeather,
                 season: displayedSeason,
@@ -63,15 +49,8 @@ export function useDenshouoWorldState() {
         displayedWeather,
         hasRouteWorldState,
         lang,
-        routeWorldState.season,
-        routeWorldState.seasonEvent,
-        routeWorldState.weather,
         router,
         searchParams,
-        season,
-        seasonEvent,
-        setWorldState,
-        weather,
     ]);
 
     return {

@@ -11,8 +11,8 @@ import {
     WINTER_BACKGROUND_GRADIENT,
 } from '@/lib/otenkigurashiSeasonal';
 import { parseMoonPhaseOverride } from '@/lib/moonPhase';
-import { resolveSeasonState } from '@/lib/seasonResolver';
-import { buildWorldStateQuery, canonicalizeWorldStateQuery, parseWorldStateParams, resolveWorldState } from '@/lib/worldState';
+import { buildWorldStateQuery, canonicalizeWorldStateQuery } from '@/lib/worldState';
+import { useWorldState } from '@/components/WorldStateProvider';
 import { useEffect, useRef, useState } from 'react';
 import dynamicImport from 'next/dynamic';
 import Image from 'next/image';
@@ -48,10 +48,9 @@ function CloudDecoration({ className, style, flip }: { className: string, style?
 //         Snow (rotating snowflake) / Night (crescent moon) / Thunder (bolt)
 //         Spring + Clear/Morning swaps the sun for sakura; Autumn + Clear/Morning uses a maple leaf.
 function WeatherCursor({ weatherOverride, seasonOverride }: { weatherOverride?: WeatherType; seasonOverride?: SeasonType } = {}) {
-    const storeWeather = useStore((state) => state.weather);
-    const storeSeason = useStore((state) => state.season);
-    const weather = weatherOverride ?? storeWeather;
-    const season = seasonOverride ?? storeSeason;
+    const worldState = useWorldState();
+    const weather = weatherOverride ?? worldState.weather;
+    const season = seasonOverride ?? worldState.season;
     const weatherRef = useRef(weather);
     const seasonRef = useRef(season);
     useEffect(() => { weatherRef.current = weather; }, [weather]);
@@ -703,20 +702,8 @@ export default function OtenkiGurashiClient() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const lang = searchParams.get('lang') === 'en' ? 'en' : 'ja';
-    const {
-        setActiveWork,
-        setWorldState,
-        weather,
-        season: storeSeason,
-        seasonEvent: storeSeasonEvent,
-    } = useStore();
-    const routeWorldState = parseWorldStateParams(searchParams);
-    const resolvedSeasonState = resolveSeasonState();
-    const displayedWorldState = resolveWorldState(routeWorldState, {
-        weather,
-        season: storeSeason === 'none' ? resolvedSeasonState.season : storeSeason,
-        seasonEvent: storeSeasonEvent === 'none' ? resolvedSeasonState.seasonEvent : storeSeasonEvent,
-    });
+    const { setActiveWork } = useStore();
+    const displayedWorldState = useWorldState();
     const displayedWeather = displayedWorldState.weather;
 
     const copy = {
@@ -780,11 +767,8 @@ export default function OtenkiGurashiClient() {
         },
     } as const;
     const t = copy[lang];
-    const seasonFromParam = routeWorldState.season;
-    const seasonEventFromParam = routeWorldState.seasonEvent;
     const displayedSeason = displayedWorldState.season;
     const displayedSeasonEvent = displayedWorldState.seasonEvent;
-    const weatherFromParam = routeWorldState.weather;
     const moonPhaseOverride = parseMoonPhaseOverride(searchParams.get('moonPhase'));
 
     // スクロール検知用の状態とRef
@@ -823,17 +807,6 @@ export default function OtenkiGurashiClient() {
         const random = reactions[Math.floor(Math.random() * reactions.length)];
         handleInteract(random.text, random.mood);
     };
-
-    useEffect(() => {
-        const nextWorldState = {
-            ...(weatherFromParam && weather !== displayedWeather ? { weather: displayedWeather } : {}),
-            ...(seasonFromParam && storeSeason !== displayedSeason ? { season: displayedSeason } : {}),
-            ...(seasonEventFromParam && storeSeasonEvent !== displayedSeasonEvent ? { seasonEvent: displayedSeasonEvent } : {}),
-        };
-        if (Object.keys(nextWorldState).length > 0) {
-            setWorldState(nextWorldState);
-        }
-    }, [displayedSeason, displayedSeasonEvent, displayedWeather, seasonEventFromParam, seasonFromParam, setWorldState, storeSeason, storeSeasonEvent, weather, weatherFromParam]);
 
     useEffect(() => {
         const hasRouteWorldState = ['weather', 'season', 'seasonEvent'].some((key) => searchParams.has(key));
