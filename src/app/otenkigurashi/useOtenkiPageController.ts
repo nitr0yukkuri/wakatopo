@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { useStore } from '@/store';
 import { buildWorldStateQuery, canonicalizeWorldStateQuery } from '@/lib/worldState';
 import { parseMoonPhaseOverride } from '@/lib/moonPhase';
@@ -13,6 +13,19 @@ export type OtenkiDialog = { text: string; mood: OtenkiDialogMood };
 
 type Reaction = OtenkiDialog;
 type ReactionMap = Record<'ja' | 'en', readonly Reaction[]>;
+
+const subscribeToFinePointer = (onStoreChange: () => void) => {
+    if (typeof window === 'undefined') return () => undefined;
+    const mediaQuery = window.matchMedia('(pointer: fine)');
+    mediaQuery.addEventListener('change', onStoreChange);
+    return () => mediaQuery.removeEventListener('change', onStoreChange);
+};
+
+const getFinePointerSnapshot = () => (
+    typeof window !== 'undefined' && window.matchMedia('(pointer: fine)').matches
+);
+
+const getFinePointerServerSnapshot = () => false;
 
 export function useOtenkiPageController({
     worldState,
@@ -36,9 +49,11 @@ export function useOtenkiPageController({
     const [overrideDialog, setOverrideDialog] = useState<OtenkiDialog | null>(null);
     const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const [showHeavyEffects, setShowHeavyEffects] = useState(false);
-    const [isFinePointer] = useState(() => (
-        typeof window !== 'undefined' && window.matchMedia('(pointer: fine)').matches
-    ));
+    const isFinePointer = useSyncExternalStore(
+        subscribeToFinePointer,
+        getFinePointerSnapshot,
+        getFinePointerServerSnapshot,
+    );
 
     useEffect(() => {
         return () => {
