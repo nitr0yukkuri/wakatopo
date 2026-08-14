@@ -1,9 +1,7 @@
 'use client'
 
-import { useStore } from '@/store';
-import { buildWorldStateQuery } from '@/lib/worldState';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { useWorkNavigation } from './useWorkNavigation';
 
 interface Work {
     id: string;
@@ -13,76 +11,12 @@ interface Work {
 }
 
 export default function WorksList({ works }: { works: Work[] }) {
-    const { setActiveWork, activeWorkId, setTransitionType } = useStore();
-    const router = useRouter();
     const searchParams = useSearchParams();
     const lang = searchParams.get('lang') === 'en' ? 'en' : 'ja';
-    const withLang = (path: string) => `${path}?lang=${lang}`;
-
-    useEffect(() => {
-        // ... (スクロール無効化はGlobalTransitionOverlayに移動したので削除)
-    }, []);
+    const navigateToWork = useWorkNavigation(lang);
 
     const handleWorkClick = (id: string) => {
-        if (id === '01') {
-            setActiveWork('01');
-            setTransitionType('warp');
-            setTimeout(() => {
-                router.push(withLang('/github-planet'));
-                // 次のページが表示され、オーバレイがフェードアウトする時間を確保するため少し長めに待つ
-                setTimeout(() => setTransitionType('none'), 1000);
-            }, 1400);
-        } else if (id === '02') {
-            setActiveWork('02');
-            const { weather: currentWeather, season: currentSeason, seasonEvent: currentSeasonEvent } = useStore.getState();
-            const otenkiHref = `/otenkigurashi?${buildWorldStateQuery({ weather: currentWeather, season: currentSeason, seasonEvent: currentSeasonEvent }, lang)}`;
-
-            // 天候に応じて遷移アニメーションを分岐
-            if (currentWeather === 'Rain') {
-                setTransitionType('rain');
-            } else if (currentWeather === 'Snow') {
-                setTransitionType('snow');
-            } else if (currentWeather === 'Thunder') {
-                setTransitionType('flash');
-            } else if (currentWeather === 'Clouds') {
-                setTransitionType('heavy-cloud');
-            } else if (currentWeather === 'Clear' || currentWeather === 'Morning') {
-                setTransitionType('sunburst');
-            } else {
-                setTransitionType('moonrise'); // Night
-            }
-
-            setTimeout(() => {
-                router.push(otenkiHref);
-                setTimeout(() => setTransitionType('none'), 1000);
-            }, 2000);
-        } else if (id === '03') {
-            setActiveWork('03');
-            setTransitionType('freeze');
-            setTimeout(() => {
-                router.push(withLang('/coldkeep'));
-                setTimeout(() => setTransitionType('none'), 1000);
-            }, 2000);
-        } else if (id === '04') {
-            setActiveWork('04');
-            setTransitionType('captcha-lock');
-            setTimeout(() => {
-                router.push(withLang('/recaptcha-game'));
-                setTimeout(() => setTransitionType('none'), 900);
-            }, 1650);
-        } else if (id === '05') {
-            setActiveWork('05');
-            setTransitionType('wave');
-            const { weather: currentWeather } = useStore.getState();
-            const { season: currentSeason, seasonEvent: currentSeasonEvent } = useStore.getState();
-            const denshouoHref = `/denshouo?${buildWorldStateQuery({ weather: currentWeather, season: currentSeason, seasonEvent: currentSeasonEvent }, lang)}`;
-            setTimeout(() => {
-                router.push(denshouoHref);
-                setTimeout(() => setTransitionType('none'), 900);
-            }, 1800);
-        } else {
-            setActiveWork(activeWorkId === id ? null : id);
-        }
+        navigateToWork(id);
     };
 
     return (

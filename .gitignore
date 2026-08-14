@@ -30,6 +30,8 @@
 /.codex/
 
 # local GIF capture/build artifacts
+/tmp/
+/output/
 /tmp/*.py
 /tmp/*.js
 /tmp/*.mjs

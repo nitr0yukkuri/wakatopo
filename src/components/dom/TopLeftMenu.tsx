@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import { useStore, type SeasonEventType, type SeasonType, type WeatherType } from '@/store';
-import { buildWorldStateQuery } from '@/lib/worldState';
+import { useWorkNavigation } from './useWorkNavigation';
 
 const MENU_COMMANDS = {
     ja: [
@@ -40,80 +40,23 @@ export default function TopLeftMenu() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const lang = searchParams.get('lang') === 'en' ? 'en' : 'ja';
-    const { setActiveWork, setTransitionType, setWorldState } = useStore();
+    const setWorldState = useStore((state) => state.setWorldState);
+    const navigateToWork = useWorkNavigation(lang);
     const commands = MENU_COMMANDS[lang];
     const withLang = (href: string) => `${href}?lang=${lang}`;
 
     const navigateWithTransition = (href: string) => {
         setOpen(false);
 
-        if (href === '/github-planet') {
-            setActiveWork('01');
-            setTransitionType('warp');
-            setTimeout(() => {
-                router.push(withLang('/github-planet'));
-                setTimeout(() => setTransitionType('none'), 1000);
-            }, 1400);
-            return;
-        }
-
-        if (href === '/otenkigurashi') {
-            setActiveWork('02');
-            const { weather: currentWeather, season: currentSeason, seasonEvent: currentSeasonEvent } = useStore.getState();
-            const otenkiHref = `/otenkigurashi?${buildWorldStateQuery({ weather: currentWeather, season: currentSeason, seasonEvent: currentSeasonEvent }, lang)}`;
-
-            if (currentWeather === 'Rain') {
-                setTransitionType('rain');
-            } else if (currentWeather === 'Snow') {
-                setTransitionType('snow');
-            } else if (currentWeather === 'Thunder') {
-                setTransitionType('flash');
-            } else if (currentWeather === 'Clouds') {
-                setTransitionType('heavy-cloud');
-            } else if (currentWeather === 'Clear' || currentWeather === 'Morning') {
-                setTransitionType('sunburst');
-            } else {
-                setTransitionType('moonrise');
-            }
-            setTimeout(() => {
-                router.push(otenkiHref);
-                setTimeout(() => setTransitionType('none'), 1000);
-            }, 2000);
-            return;
-        }
-
-        if (href === '/coldkeep') {
-            setActiveWork('03');
-            setTransitionType('freeze');
-            setTimeout(() => {
-                router.push(withLang('/coldkeep'));
-                setTimeout(() => setTransitionType('none'), 1000);
-            }, 2000);
-            return;
-        }
-
-        if (href === '/recaptcha-game') {
-            setActiveWork('04');
-            setTransitionType('captcha-lock');
-            setTimeout(() => {
-                router.push(withLang('/recaptcha-game'));
-                setTimeout(() => setTransitionType('none'), 900);
-            }, 1650);
-            return;
-        }
-
-        if (href === '/denshouo') {
-            setActiveWork('05');
-            setTransitionType('wave');
-            const { weather: currentWeather } = useStore.getState();
-            const { season: currentSeason, seasonEvent: currentSeasonEvent } = useStore.getState();
-            const denshouoHref = `/denshouo?${buildWorldStateQuery({ weather: currentWeather, season: currentSeason, seasonEvent: currentSeasonEvent }, lang)}`;
-            setTimeout(() => {
-                router.push(denshouoHref);
-                setTimeout(() => setTransitionType('none'), 900);
-            }, 1800);
-            return;
-        }
+        const workIds: Record<string, '01' | '02' | '03' | '04' | '05'> = {
+            '/github-planet': '01',
+            '/otenkigurashi': '02',
+            '/coldkeep': '03',
+            '/recaptcha-game': '04',
+            '/denshouo': '05',
+        };
+        const workId = workIds[href];
+        if (workId && navigateToWork(workId)) return;
 
         router.push(withLang(href));
     };
