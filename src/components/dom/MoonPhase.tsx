@@ -15,7 +15,6 @@ export default function MoonPhase({ phaseOverride, className = '', style }: Moon
     const gradientId = `moon-gradient-${idSuffix}`;
     const maskId = `moon-mask-${idSuffix}`;
     const maskGradientId = `moon-mask-gradient-${idSuffix}`;
-    const circleClipId = `moon-circle-${idSuffix}`;
 
     useEffect(() => {
         if (phaseOverride !== undefined && phaseOverride !== null) {
@@ -65,9 +64,6 @@ export default function MoonPhase({ phaseOverride, className = '', style }: Moon
                     <mask id={maskId} maskUnits="userSpaceOnUse" x="0" y="0" width="100" height="100">
                         <rect width="100" height="100" fill={`url(#${maskGradientId})`} />
                     </mask>
-                    <clipPath id={circleClipId}>
-                        <circle cx="50" cy="50" r="50" />
-                    </clipPath>
                 </defs>
                 {moonVisible && (
                     <>
@@ -78,12 +74,6 @@ export default function MoonPhase({ phaseOverride, className = '', style }: Moon
                             fill={`url(#${gradientId})`}
                             mask={`url(#${maskId})`}
                         />
-                        <g mask={`url(#${maskId})`} clipPath={`url(#${circleClipId})`} opacity="0.14">
-                            <circle cx="29" cy="33" r="7" fill="#8798b6" />
-                            <circle cx="62" cy="57" r="5" fill="#90a1bd" />
-                            <circle cx="46" cy="73" r="3.5" fill="#8193b1" />
-                            <circle cx="72" cy="27" r="2.5" fill="#8b9bb8" />
-                        </g>
                     </>
                 )}
             </svg>
