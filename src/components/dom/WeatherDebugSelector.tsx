@@ -1,6 +1,9 @@
 'use client';
 
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useStore, WeatherType } from '@/store';
+import { useWorldState } from '@/components/WorldStateProvider';
+import { buildWorldStateQuery } from '@/lib/worldState';
 
 const WEATHERS: WeatherType[] = ['Morning', 'Clouds', 'Rain', 'Thunder', 'Snow', 'Night'];
 
@@ -25,7 +28,13 @@ const LABEL: Record<WeatherType, string> = {
 };
 
 export default function WeatherDebugSelector() {
-    const { weather, setWorldState } = useStore();
+    const setWorldState = useStore((state) => state.setWorldState);
+    const worldState = useWorldState();
+    const { weather } = worldState;
+    const router = useRouter();
+    const pathname = usePathname();
+    const searchParams = useSearchParams();
+    const lang = searchParams.get('lang') === 'en' ? 'en' : 'ja';
 
     return (
         <div className="flex flex-col gap-1 mt-2 border-l border-gray-800 pl-4 pointer-events-none">
@@ -34,7 +43,11 @@ export default function WeatherDebugSelector() {
                 {WEATHERS.map((w) => (
                     <button
                         key={w}
-                        onClick={() => setWorldState({ weather: w })}
+                        onClick={() => {
+                            const nextState = { ...worldState, weather: w };
+                            setWorldState({ weather: w });
+                            router.replace(`${pathname}?${buildWorldStateQuery(nextState, lang)}`, { scroll: false });
+                        }}
                         className={`pointer-events-auto touch-manipulation text-[10px] font-mono tracking-wider px-1.5 py-0.5 border rounded-sm transition-all ${weather === w
                             ? `${COLOR[w]} bg-white/10`
                             : 'text-gray-600 border-gray-700 hover:text-gray-400 hover:border-gray-500'

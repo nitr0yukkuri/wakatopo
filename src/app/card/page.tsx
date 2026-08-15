@@ -1,20 +1,44 @@
 import ClientInitializer from '@/components/ClientInitializer';
 import { fetchPlanetData } from '@/lib/actions';
-import type { WeatherType } from '@/store';
+import type { SeasonEventType, SeasonType, WeatherType } from '@/store';
+import { parseWorldStateRecord, resolveWorldState } from '@/lib/worldState';
 import CardScene from './CardScene';
 import WeatherEffectsOverlay from '@/components/dom/WeatherEffectsOverlay';
 
 export const dynamic = 'force-dynamic';
 
-export default async function CardPage() {
+type SearchParams = {
+    weather?: string | string[];
+    season?: string | string[];
+    seasonEvent?: string | string[];
+};
+
+export default async function CardPage({
+    searchParams,
+}: {
+    searchParams?: SearchParams | Promise<SearchParams>;
+}) {
     const data = await fetchPlanetData();
-    const weather = data.weather as WeatherType;
+    const routeState = parseWorldStateRecord((await searchParams) ?? {});
+    const resolvedState = resolveWorldState(routeState, {
+        weather: data.weather as WeatherType,
+        season: data.season as SeasonType,
+        seasonEvent: data.seasonEvent as SeasonEventType,
+    });
+    const weather = resolvedState.weather;
     const visualWeather = weather === 'Clear' ? 'Morning' : weather;
 
     return (
-        <main className="card-capture-page relative flex h-[400px] w-[800px] select-none items-center justify-center overflow-hidden rounded-xl border border-cyan-100/10 bg-[#050505] text-white shadow-2xl">
+        <main
+            data-world-weather={visualWeather}
+            data-world-season={resolvedState.season}
+            data-world-season-event={resolvedState.seasonEvent}
+            className="card-capture-page relative flex h-[400px] w-[800px] select-none items-center justify-center overflow-hidden rounded-xl border border-cyan-100/10 bg-[#050505] text-white shadow-2xl"
+        >
             <ClientInitializer
                 initialWeather={visualWeather}
+                initialSeason={resolvedState.season}
+                initialSeasonEvent={resolvedState.seasonEvent}
                 initialActivity={data.activityLevel}
             />
 
@@ -35,7 +59,7 @@ export default async function CardPage() {
 
             <div className="absolute bottom-5 left-6 z-30 font-mono text-xs tracking-[0.18em] text-cyan-100/70">
                 <p className="mb-1 text-sm font-bold tracking-[0.2em] text-white">WAKATO | LIVING PLANET</p>
-                <p>STATUS: ACTIVE // WEATHER: {data.weather.toUpperCase()}</p>
+                <p>STATUS: ACTIVE // WEATHER: {weather.toUpperCase()}</p>
             </div>
 
             <div className="absolute right-6 top-5 z-30 font-mono text-[10px] tracking-[0.24em] text-cyan-100/45">

@@ -2,9 +2,9 @@
 
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useStore, type SeasonEventType, type SeasonType, type WeatherType } from '@/store';
+import { buildWorldStateQuery } from '@/lib/worldState';
 import { useWorkNavigation } from './useWorkNavigation';
 
 const MENU_COMMANDS = {
@@ -38,6 +38,7 @@ export default function TopLeftMenu() {
     const cliRef = useRef<HTMLDivElement>(null);
     const cliInputRef = useRef<HTMLInputElement>(null);
     const router = useRouter();
+    const pathname = usePathname();
     const searchParams = useSearchParams();
     const lang = searchParams.get('lang') === 'en' ? 'en' : 'ja';
     const setWorldState = useStore((state) => state.setWorldState);
@@ -112,6 +113,16 @@ export default function TopLeftMenu() {
         setCliHistory((prev) => [...prev, entry].slice(-8));
     };
 
+    const applyWorldState = (next: Partial<{ weather: WeatherType; season: SeasonType; seasonEvent: SeasonEventType }>) => {
+        setWorldState(next);
+        const resolved = useStore.getState();
+        router.replace(`${pathname}?${buildWorldStateQuery({
+            weather: resolved.weather,
+            season: resolved.season,
+            seasonEvent: resolved.seasonEvent,
+        }, lang)}`, { scroll: false });
+    };
+
     const handleCliCommand = (rawInput: string) => {
         const command = rawInput.trim();
         if (!command) return;
@@ -119,7 +130,7 @@ export default function TopLeftMenu() {
         appendHistory({ tone: 'info', text: `$ ${command}` });
 
         if (command.toLowerCase() === 'help') {
-            appendHistory({ tone: 'info', text: 'Available: sudo make rain|snow|clouds|clear|thunder|night|spring|summer|autumn|winter|sakura|hanagumori|geshi|tsuyu|momiji|tsukimi|yukigeshiki|season-clear, help, exit' });
+            appendHistory({ tone: 'info', text: 'Available: sudo make rain|snow|clouds|clear|thunder|night|spring|summer|autumn|winter|sakura|hanagumori|geshi|tsuyu|hatsuhinode|momiji|tsukimi|yukigeshiki|season-clear, help, exit' });
             return;
         }
 
@@ -164,7 +175,7 @@ export default function TopLeftMenu() {
 
             const nextPreset = presetMap[token];
             if (nextPreset) {
-                setWorldState({
+                applyWorldState({
                     season: nextPreset.season,
                     seasonEvent: nextPreset.seasonEvent ?? 'none',
                     weather: nextPreset.weather,
@@ -175,7 +186,7 @@ export default function TopLeftMenu() {
 
             const nextSeason = seasonMap[token];
             if (nextSeason) {
-                setWorldState({ season: nextSeason, seasonEvent: 'none' });
+                applyWorldState({ season: nextSeason, seasonEvent: 'none' });
                 appendHistory({ tone: 'ok', text: `[ok] season switched to ${nextSeason.toUpperCase()}` });
                 return;
             }
@@ -186,7 +197,7 @@ export default function TopLeftMenu() {
                 return;
             }
 
-            setWorldState({ weather: nextWeather, seasonEvent: 'none' });
+            applyWorldState({ weather: nextWeather, seasonEvent: 'none' });
             appendHistory({ tone: 'ok', text: `[ok] weather switched to ${nextWeather.toUpperCase()}` });
             return;
         }
