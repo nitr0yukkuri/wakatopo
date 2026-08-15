@@ -133,6 +133,9 @@ export default function DenshouoClient() {
         <>
         <FishCursor />
         <main
+            data-world-weather={displayedWeather}
+            data-world-season={displayedSeason}
+            data-world-season-event={displayedSeasonEvent}
             className="relative min-h-dvh bg-[radial-gradient(circle_at_top_left,rgba(56,189,248,0.10),transparent_28%),radial-gradient(circle_at_bottom,rgba(20,184,166,0.12),transparent_35%),#041116] text-white overflow-x-hidden"
             style={{ cursor: isFinePointer ? 'none' : 'auto' }}
         >

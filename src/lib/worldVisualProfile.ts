@@ -1,16 +1,17 @@
-import type { WorldState } from './worldState';
+import { isSeasonEventAllowed, type WorldState } from './worldState';
 
 export type WorldVisualProfile = WorldState & {
     isClear: boolean;
     isGeshiEvent: boolean;
     showTsuyu: boolean;
+    showFirstLight: boolean;
     showSpring: boolean;
     showFlowerCloudy: boolean;
     showGeshi: boolean;
     showSummer: boolean;
     showAutumn: boolean;
     showWinterSnow: boolean;
-    sunraysVariant: 'geshi-clear' | 'summer-clear' | 'spring-clear' | 'autumn-clear' | 'default';
+    sunraysVariant: 'geshi-clear' | 'summer-clear' | 'spring-clear' | 'autumn-clear' | 'first-light' | 'default';
     cloudsVariant: 'spring-clouds' | 'default';
     nightVariant: 'autumn-night' | 'default';
     snowVariant: 'winter-snow' | 'default';
@@ -27,32 +28,33 @@ export function getWorldVisualProfile(
     const { weather, season, seasonEvent } = worldState;
     const isClear = weather === 'Clear' || weather === 'Morning';
     const isGeshiEvent = season === 'summer' && seasonEvent === 'geshi';
-    const showTsuyu = season === 'summer'
-        && seasonEvent === 'tsuyu'
-        && (isClear || weather === 'Clouds' || weather === 'Rain');
+    const showTsuyu = isSeasonEventAllowed(season, seasonEvent, weather) && seasonEvent === 'tsuyu';
+    const showFirstLight = isSeasonEventAllowed(season, seasonEvent, weather) && seasonEvent === 'first_light';
     const showSpring = season === 'spring' && isClear && !showTsuyu;
     const showFlowerCloudy = season === 'spring' && weather === 'Clouds' && !showTsuyu;
-    const showGeshi = isGeshiEvent && isClear;
+    const showGeshi = isSeasonEventAllowed(season, seasonEvent, weather) && isGeshiEvent && isClear;
     const showSummer = season === 'summer' && isClear && !showGeshi && !showTsuyu;
     const showAutumn = season === 'autumn' && isClear && !showTsuyu;
     const showWinterSnow = season === 'winter' && weather === 'Snow' && !showTsuyu;
     const includeGeshiSun = options.includeGeshiSun !== false;
 
-    const sunraysVariant = !includeGeshiSun
-        ? season === 'summer' && weather === 'Clear'
+    const sunraysVariant = showFirstLight
+        ? 'first-light'
+        : !includeGeshiSun
+        ? season === 'summer' && isClear
             ? 'summer-clear'
-            : season === 'spring' && weather === 'Clear'
+            : season === 'spring' && isClear
                 ? 'spring-clear'
-                : season === 'autumn' && weather === 'Clear'
+                : season === 'autumn' && isClear
                     ? 'autumn-clear'
                     : 'default'
-        : isGeshiEvent && weather === 'Clear'
+        : showGeshi
             ? 'geshi-clear'
-            : season === 'summer' && weather === 'Clear'
+            : season === 'summer' && isClear
                 ? 'summer-clear'
-                : season === 'spring' && weather === 'Clear'
+                : season === 'spring' && isClear
                     ? 'spring-clear'
-                    : season === 'autumn' && weather === 'Clear'
+                    : season === 'autumn' && isClear
                         ? 'autumn-clear'
                         : 'default';
 
@@ -63,6 +65,7 @@ export function getWorldVisualProfile(
         isClear,
         isGeshiEvent,
         showTsuyu,
+        showFirstLight,
         showSpring,
         showFlowerCloudy,
         showGeshi,

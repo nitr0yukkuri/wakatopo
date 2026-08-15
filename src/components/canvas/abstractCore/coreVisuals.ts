@@ -160,6 +160,18 @@ const WINTER_SNOW_VISUAL: CoreVisualProfile = {
     particleSize: 0.027,
 };
 
+const FIRST_LIGHT_VISUAL: CoreVisualProfile = {
+    ...CORE_VISUALS.Morning,
+    baseColor: '#e9a568',
+    hoverColor: '#ffd19a',
+    activeColor: '#fff0c9',
+    meshOpacity: 0.18,
+    wireOpacity: 0.14,
+    innerOpacity: 0.07,
+    ringPulse: 0.48,
+    particleSize: 0.03,
+};
+
 export const getCoreVisualProfile = (
     weather: WeatherType,
     season: SeasonType,
@@ -167,19 +179,23 @@ export const getCoreVisualProfile = (
 ): CoreVisualProfile => {
     const defaultVisual = CORE_VISUALS[weather] ?? CORE_VISUALS.Clear;
 
+    if (season === 'winter' && seasonEvent === 'first_light' && weather === 'Morning') {
+        return FIRST_LIGHT_VISUAL;
+    }
+
     if (season === 'summer' && seasonEvent === 'geshi' && (weather === 'Clear' || weather === 'Morning')) {
         return GESHI_CLEAR_VISUAL;
     }
 
     switch (season) {
         case 'spring':
-            if (weather === 'Clear') return SPRING_CLEAR_VISUAL;
+            if (weather === 'Clear' || weather === 'Morning') return SPRING_CLEAR_VISUAL;
             if (weather === 'Clouds') return SPRING_CLOUDS_VISUAL;
             return defaultVisual;
         case 'summer':
-            return weather === 'Clear' ? SUMMER_CLEAR_VISUAL : defaultVisual;
+            return weather === 'Clear' || weather === 'Morning' ? SUMMER_CLEAR_VISUAL : defaultVisual;
         case 'autumn':
-            if (weather === 'Clear') return AUTUMN_CLEAR_VISUAL;
+            if (weather === 'Clear' || weather === 'Morning') return AUTUMN_CLEAR_VISUAL;
             if (weather === 'Night') return AUTUMN_NIGHT_VISUAL;
             return defaultVisual;
         case 'winter':

@@ -3,7 +3,8 @@
 import { useRef, useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
-import { useStore, type WeatherType } from '@/store';
+import { type WeatherType } from '@/store';
+import { useWorldState } from '@/components/WorldStateProvider';
 
 const seededRandom = (index: number, salt: number) => {
     const x = Math.sin(index * 12.9898 + salt * 78.233) * 43758.5453;
@@ -192,8 +193,8 @@ void main() {
 `;
 
 export default function Weather({ weatherOverride }: { weatherOverride?: WeatherType } = {}) {
-    const { weather: storeWeather } = useStore();
-    const weather = weatherOverride ?? storeWeather;
+    const worldState = useWorldState();
+    const weather = weatherOverride ?? worldState.weather;
 
     const linesRef = useRef<THREE.LineSegments>(null);
 

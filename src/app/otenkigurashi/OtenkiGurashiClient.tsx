@@ -2,6 +2,7 @@
 
 import {
     AUTUMN_BACKGROUND_GRADIENT,
+    FIRST_LIGHT_BACKGROUND_GRADIENT,
     SPRING_FLOWER_CLOUDY_BACKGROUND_GRADIENT,
     TSUYU_CLEAR_BACKGROUND_GRADIENT,
     TSUYU_CLOUDS_BACKGROUND_GRADIENT,
@@ -9,6 +10,7 @@ import {
     WINTER_BACKGROUND_GRADIENT,
 } from '@/lib/otenkigurashiSeasonal';
 import { useWorldState } from '@/components/WorldStateProvider';
+import { getWorldVisualProfile } from '@/lib/worldVisualProfile';
 import { OTENKI_COPY } from './otenkigurashiCopy';
 import WeatherCursor from './WeatherCursor';
 import { useOtenkiPageController } from './useOtenkiPageController';
@@ -52,6 +54,7 @@ export default function OtenkiGurashiClient() {
     const { lang, moonPhaseOverride, ...pageState } = controller;
     const { activeSection, heroRef, conceptRef, featuresRef, techRef, bottomRef, overrideDialog, showHeavyEffects, isFinePointer, handleInteract, handleTenchanClick, handleReturn } = pageState;
     const t = OTENKI_COPY[lang];
+    const visualProfile = getWorldVisualProfile(displayedWorldState);
     let bgGradient = "from-[#aee1f9] to-[#e0f4fc]"; // Default (Clear)
     if (displayedWeather === 'Clouds') {
         bgGradient = "from-[#6b7a8d] via-[#8fa0b0] to-[#b5c2ca]";
@@ -65,23 +68,27 @@ export default function OtenkiGurashiClient() {
         bgGradient = "from-[#030915] via-[#071428] to-[#0b1f36]";
     }
 
-    if (displayedSeason === 'spring' && (displayedWeather === 'Clear' || displayedWeather === 'Morning')) {
+    if (visualProfile.showSpring) {
         bgGradient = "from-[#fcedf3] via-[#fff5f9] to-[#fffdfd]";
     }
 
-    if (displayedSeason === 'spring' && displayedWeather === 'Clouds') {
+    if (visualProfile.showFlowerCloudy) {
         bgGradient = "from-[#c5d1d9] via-[#e6e9e7] to-[#f3e8ed]";
     }
 
-    if (displayedSeason === 'autumn' && (displayedWeather === 'Clear' || displayedWeather === 'Morning')) {
+    if (visualProfile.showAutumn) {
         bgGradient = "from-[#c7ded9] via-[#f1e6ce] to-[#e4b36f]";
     }
 
-    if (displayedSeason === 'summer' && displayedSeasonEvent === 'geshi' && (displayedWeather === 'Clear' || displayedWeather === 'Morning')) {
+    if (visualProfile.showGeshi) {
         bgGradient = "from-[#bddfeb] via-[#e0eef0] to-[#fff0cf]";
     }
 
-    if (displayedSeasonEvent === 'tsuyu') {
+    if (visualProfile.showFirstLight) {
+        bgGradient = FIRST_LIGHT_BACKGROUND_GRADIENT;
+    }
+
+    if (visualProfile.showTsuyu) {
         bgGradient = displayedWeather === 'Rain'
             ? TSUYU_RAIN_BACKGROUND_GRADIENT
             : displayedWeather === 'Clouds'
@@ -94,19 +101,26 @@ export default function OtenkiGurashiClient() {
     const springCardStyle = displayedSeason === 'spring' && (displayedWeather === 'Clear' || displayedWeather === 'Morning')
         ? 'border-white shadow-[0_20px_60px_-15px_rgba(152,173,194,0.3)]'
         : 'border-white shadow-[0_20px_60px_-15px_rgba(152,173,194,0.3)]';
-    const isSpringSun = displayedSeason === 'spring' && (displayedWeather === 'Clear' || displayedWeather === 'Morning');
-    const isFlowerCloudy = displayedSeason === 'spring' && displayedWeather === 'Clouds';
-    const isGeshiSun = displayedSeason === 'summer' && displayedSeasonEvent === 'geshi' && (displayedWeather === 'Clear' || displayedWeather === 'Morning');
-    const isTsuyu = displayedSeason === 'summer' && displayedSeasonEvent === 'tsuyu';
-    const isWinterSnowScene = displayedSeason === 'winter' && displayedWeather === 'Snow';
+    const isSpringSun = visualProfile.showSpring;
+    const isFlowerCloudy = visualProfile.showFlowerCloudy;
+    const isGeshiSun = visualProfile.showGeshi;
+    const isTsuyu = visualProfile.showTsuyu;
+    const isFirstLight = visualProfile.showFirstLight;
+    const isWinterSnowScene = visualProfile.showWinterSnow;
 
     return (
         <>
             <WeatherCursor weatherOverride={displayedWeather} seasonOverride={displayedSeason} />
-            <main className={`relative w-full min-h-[120dvh] ${displayedWeather !== 'Rain' && displayedWeather !== 'Snow' ? 'bg-gradient-to-b' : ''} ${bgGradient} ${displayedWeather === 'Thunder' || displayedWeather === 'Night' ? 'text-gray-200' : 'text-gray-700'} overflow-hidden font-sans pb-32 transition-colors duration-1000`} style={{
+            <main
+                data-world-weather={displayedWeather}
+                data-world-season={displayedSeason}
+                data-world-season-event={displayedSeasonEvent}
+                className={`relative w-full min-h-[120dvh] ${displayedWeather !== 'Rain' && displayedWeather !== 'Snow' ? 'bg-gradient-to-b' : ''} ${bgGradient} ${displayedWeather === 'Thunder' || displayedWeather === 'Night' ? 'text-gray-200' : 'text-gray-700'} overflow-hidden font-sans pb-32 transition-colors duration-1000`} style={{
                 cursor: isFinePointer ? 'none' : 'auto',
                 background: displayedSeason === 'autumn' && (displayedWeather === 'Clear' || displayedWeather === 'Morning')
                     ? AUTUMN_BACKGROUND_GRADIENT
+                    : isFirstLight
+                        ? FIRST_LIGHT_BACKGROUND_GRADIENT
                     : isTsuyu && (displayedWeather === 'Clear' || displayedWeather === 'Morning')
                         ? TSUYU_CLEAR_BACKGROUND_GRADIENT
                     : isTsuyu && displayedWeather === 'Clouds'
@@ -287,10 +301,14 @@ export default function OtenkiGurashiClient() {
                                         : 'radial-gradient(circle at 35% 35%, rgba(255,245,180,0.96) 0%, rgba(255,213,112,0.92) 38%, rgba(255,170,58,0.92) 100%)',
                                     boxShadow: isSpringSun
                                         ? '0 0 45px rgba(247,190,101,0.28), 0 0 110px rgba(236,163,80,0.12)'
+                                        : isFirstLight
+                                            ? '0 0 50px rgba(255,184,108,0.42), 0 0 118px rgba(219,123,91,0.16)'
                                         : isGeshiSun
                                             ? '0 0 28px rgba(150,211,240,0.22), 0 0 72px rgba(124,190,226,0.09)'
                                         : '0 0 45px rgba(255,205,110,0.55), 0 0 110px rgba(255,187,82,0.35)',
-                                    animation: isGeshiSun
+                                    animation: isFirstLight
+                                        ? 'first-light-sun-soft-pulse 5.4s ease-in-out infinite'
+                                    : isGeshiSun
                                         ? 'geshi-sun-soft-pulse 4.6s ease-in-out infinite'
                                         : 'sun-soft-pulse 4.6s ease-in-out infinite',
                                 }}
@@ -300,6 +318,8 @@ export default function OtenkiGurashiClient() {
                                 style={{
                                     background: isSpringSun
                                         ? 'radial-gradient(circle, rgba(255,224,157,0.20) 0%, rgba(245,183,97,0.06) 42%, rgba(245,183,97,0.0) 74%)'
+                                        : isFirstLight
+                                            ? 'radial-gradient(circle, rgba(255,207,145,0.28) 0%, rgba(234,151,113,0.09) 42%, rgba(234,151,113,0.0) 74%)'
                                         : isGeshiSun
                                             ? 'radial-gradient(circle, rgba(185,228,246,0.13) 0%, rgba(145,207,235,0.035) 42%, rgba(145,207,235,0.0) 74%)'
                                         : 'radial-gradient(circle, rgba(255,220,150,0.36) 0%, rgba(255,220,150,0.08) 42%, rgba(255,220,150,0.0) 74%)',
@@ -315,6 +335,10 @@ export default function OtenkiGurashiClient() {
                         @keyframes geshi-sun-soft-pulse {
                             0%, 100% { transform: scale(1); opacity: 0.84; }
                             50% { transform: scale(1.035); opacity: 0.9; }
+                        }
+                        @keyframes first-light-sun-soft-pulse {
+                            0%, 100% { transform: scale(1); opacity: 0.96; }
+                            50% { transform: scale(1.08); opacity: 1; }
                         }
                         @keyframes sun-aura-spin {
                             from { transform: rotate(0deg); }
@@ -388,8 +412,8 @@ export default function OtenkiGurashiClient() {
                         section={activeSection}
                         weather={displayedWeather}
                         showUmbrella={false}
-                        showSakura={isSpringSun || isFlowerCloudy}
-                        showMomiji={displayedSeason === 'autumn' && (displayedWeather === 'Clear' || displayedWeather === 'Morning')}
+                        showSakura={visualProfile.showSpring || visualProfile.showFlowerCloudy}
+                        showMomiji={visualProfile.showAutumn}
                         showHydrangea={isTsuyu}
                         showSnowflake={displayedWeather === 'Snow'}
                         showRainDrop={displayedWeather === 'Rain' && !isTsuyu}

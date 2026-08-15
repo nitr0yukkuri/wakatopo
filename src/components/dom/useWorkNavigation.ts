@@ -5,6 +5,8 @@ import { useCallback, useEffect, useRef } from 'react';
 import { buildWorldStateQuery } from '@/lib/worldState';
 import { type TransitionType } from '@/lib/soundProfile';
 import { useStore } from '@/store';
+import { useWorldState } from '@/components/WorldStateProvider';
+import type { WorldState } from '@/lib/worldStateTypes';
 
 type WorkId = '01' | '02' | '03' | '04' | '05';
 
@@ -25,6 +27,7 @@ export function useWorkNavigation(lang: 'ja' | 'en') {
     const router = useRouter();
     const setActiveWork = useStore((state) => state.setActiveWork);
     const setTransitionType = useStore((state) => state.setTransitionType);
+    const worldState = useWorldState();
     const timersRef = useRef<number[]>([]);
     const navigationVersionRef = useRef(0);
 
@@ -39,8 +42,7 @@ export function useWorkNavigation(lang: 'ja' | 'en') {
     const navigateToWork = useCallback((workId: string) => {
         if (!isWorkId(workId)) return false;
 
-        const currentState = useStore.getState();
-        const plan = getNavigationPlan(workId, lang, currentState);
+        const plan = getNavigationPlan(workId, lang, worldState);
         if (!plan) return false;
 
         clearTimers();
@@ -66,7 +68,7 @@ export function useWorkNavigation(lang: 'ja' | 'en') {
 
         timersRef.current.push(routeTimer);
         return true;
-    }, [clearTimers, lang, router, setActiveWork, setTransitionType]);
+    }, [clearTimers, lang, router, setActiveWork, setTransitionType, worldState]);
 
     return navigateToWork;
 }
@@ -78,7 +80,7 @@ function isWorkId(value: string): value is WorkId {
 function getNavigationPlan(
     workId: WorkId,
     lang: 'ja' | 'en',
-    state: ReturnType<typeof useStore.getState>,
+    state: WorldState,
 ): NavigationPlan | null {
     if (workId === '02') {
         const transition = state.weather === 'Rain'

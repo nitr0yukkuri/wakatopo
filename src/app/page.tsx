@@ -119,8 +119,11 @@ export default async function Home({
 
   const works = t.works.map((work) => ({ ...work }));
 
-  return (
+    return (
     <main
+      data-world-weather={initialWeather}
+      data-world-season={initialSeason}
+      data-world-season-event={initialSeasonEvent}
       className="relative w-full min-h-[100dvh] text-white font-sans bg-[#050505]"
       style={{ userSelect: 'none', WebkitUserSelect: 'none', WebkitTouchCallout: 'none' }}
     >

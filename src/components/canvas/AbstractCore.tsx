@@ -4,6 +4,7 @@ import { useRef } from 'react';
 import { useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 import { useStore } from '@/store';
+import { useWorldState } from '@/components/WorldStateProvider';
 import { useCoreInteraction } from './abstractCore/useCoreInteraction';
 import { useCoreParticles } from './abstractCore/useCoreParticles';
 import { useCoreAnimation } from './abstractCore/useCoreAnimation';
@@ -26,9 +27,11 @@ export default function AbstractCore({
     const wireframe2Ref = useRef<THREE.Mesh>(null);
 
     const isMobile = size.width < 768;
-    const { githubActivityLevel: storeActivityLevel, season, seasonEvent, weather: storeWeather } = useStore();
+    const storeActivityLevel = useStore((state) => state.githubActivityLevel);
+    const worldState = useWorldState();
     const githubActivityLevel = activityOverride ?? storeActivityLevel;
-    const weather = weatherOverride ?? storeWeather;
+    const weather = weatherOverride ?? worldState.weather;
+    const { season, seasonEvent } = worldState;
     const visual = getCoreVisualProfile(weather, season, seasonEvent);
     const initialColor = visual.baseColor;
     const initialInnerColor = visual.hoverColor;

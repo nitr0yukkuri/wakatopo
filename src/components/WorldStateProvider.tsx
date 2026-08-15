@@ -1,9 +1,9 @@
 'use client';
 
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useStore } from '@/store';
-import { parseWorldStateParams, resolveWorldState } from '@/lib/worldState';
+import { canonicalizeWorldStateQuery, parseWorldStateParams, resolveWorldState } from '@/lib/worldState';
 import type { WorldState } from '@/lib/worldStateTypes';
 import { resolveSeasonState } from '@/lib/seasonResolver';
 
@@ -12,6 +12,8 @@ const WorldStateContext = createContext<WorldState | null>(null);
 export default function WorldStateProvider({ children }: { children: ReactNode }) {
     const searchParams = useSearchParams();
     const searchParamsKey = searchParams.toString();
+    const pathname = usePathname();
+    const router = useRouter();
     const storeWeather = useStore((state) => state.weather);
     const storeSeason = useStore((state) => state.season);
     const storeSeasonEvent = useStore((state) => state.seasonEvent);
@@ -56,6 +58,20 @@ export default function WorldStateProvider({ children }: { children: ReactNode }
             setWorldState(nextWorldState);
         }
     }, [routeWorldState.season, routeWorldState.seasonEvent, routeWorldState.weather, setWorldState]);
+
+    useEffect(() => {
+        const currentParams = new URLSearchParams(searchParamsKey);
+        const hasRouteWorldState = ['weather', 'season', 'seasonEvent'].some((key) => currentParams.has(key));
+        if (!hasRouteWorldState) return;
+
+        const canonicalQuery = canonicalizeWorldStateQuery(
+            currentParams,
+            worldState,
+        ).toString();
+        if (canonicalQuery !== searchParamsKey) {
+            router.replace(`${pathname}?${canonicalQuery}`, { scroll: false });
+        }
+    }, [pathname, router, searchParamsKey, worldState]);
 
     return (
         <WorldStateContext.Provider value={worldState}>

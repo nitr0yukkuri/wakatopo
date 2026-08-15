@@ -1,7 +1,11 @@
 'use client'
 
 import { motion } from 'framer-motion';
-import { AUTUMN_BACKGROUND_GRADIENT, TSUYU_CLEAR_BACKGROUND_GRADIENT } from '@/lib/otenkigurashiSeasonal';
+import {
+    AUTUMN_BACKGROUND_GRADIENT,
+    FIRST_LIGHT_BACKGROUND_GRADIENT,
+    TSUYU_CLEAR_BACKGROUND_GRADIENT,
+} from '@/lib/otenkigurashiSeasonal';
 import { getWorldVisualProfile } from '@/lib/worldVisualProfile';
 import type { WorldState } from '@/lib/worldState';
 
@@ -13,13 +17,17 @@ export default function SunburstTransitionCanvas({ worldState }: { worldState: W
     const isAutumnSun = profile.showAutumn;
     const isGeshiSun = profile.showGeshi;
     const isTsuyuSun = profile.showTsuyu;
+    const isFirstLightSun = profile.showFirstLight;
     const isCoolSun = isGeshiSun || isTsuyuSun;
+    const transitionDuration = isFirstLightSun ? 1.2 : 0.9;
     const background = isSpringSun
         ? 'linear-gradient(180deg, #f6e8ee 0%, #fdf3f7 42%, #fffafc 74%, #ffffff 100%)'
         : isAutumnSun
             ? AUTUMN_BACKGROUND_GRADIENT
         : isTsuyuSun
             ? TSUYU_CLEAR_BACKGROUND_GRADIENT
+        : isFirstLightSun
+            ? FIRST_LIGHT_BACKGROUND_GRADIENT
         : isGeshiSun
             ? 'linear-gradient(180deg, #a9d6e8 0%, #cfe8ee 42%, #e8f0e8 74%, #f7edcf 100%)'
         : 'linear-gradient(180deg, #82cbf6 0%, #dff2ff 42%, #fff3d8 74%, #ffefcf 100%)';
@@ -33,7 +41,9 @@ export default function SunburstTransitionCanvas({ worldState }: { worldState: W
             <motion.div
                 className="absolute inset-0 pointer-events-none"
                 style={{
-                    background: isCoolSun
+                    background: isFirstLightSun
+                        ? 'radial-gradient(ellipse 100% 72% at 76% 18%, rgba(255,202,154,0.20) 0%, rgba(232,151,116,0.08) 44%, rgba(232,151,116,0) 78%)'
+                        : isCoolSun
                         ? isTsuyuSun
                             ? 'radial-gradient(ellipse 100% 72% at 76% 18%, rgba(191,222,239,0.16) 0%, rgba(164,195,220,0.06) 44%, rgba(164,195,220,0) 78%)'
                             : 'radial-gradient(ellipse 100% 72% at 76% 18%, rgba(190,229,246,0.14) 0%, rgba(164,215,237,0.06) 44%, rgba(164,215,237,0) 78%)'
@@ -41,7 +51,7 @@ export default function SunburstTransitionCanvas({ worldState }: { worldState: W
                 }}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: [0.08, 0.24, 0.18] }}
-                transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+                transition={{ duration: transitionDuration, ease: [0.22, 1, 0.36, 1] }}
             />
 
             {/* 遷移後の晴れ画面と同じ太陽 */}
@@ -50,6 +60,8 @@ export default function SunburstTransitionCanvas({ worldState }: { worldState: W
                 style={{
                     background: isSpringSun
                         ? 'radial-gradient(circle at 35% 35%, rgba(255,248,214,0.98) 0%, rgba(255,218,133,0.92) 38%, rgba(242,176,76,0.88) 100%)'
+                    : isFirstLightSun
+                        ? 'radial-gradient(circle at 35% 35%, rgba(255,248,211,0.97) 0%, rgba(255,220,133,0.92) 38%, rgba(246,181,70,0.86) 100%)'
                     : isCoolSun
                         ? 'radial-gradient(circle at 35% 35%, rgba(255,248,211,0.96) 0%, rgba(255,220,133,0.90) 38%, rgba(246,181,70,0.84) 100%)'
                         : 'radial-gradient(circle at 35% 35%, rgba(255,245,180,0.96) 0%, rgba(255,213,112,0.92) 38%, rgba(255,170,58,0.92) 100%)',

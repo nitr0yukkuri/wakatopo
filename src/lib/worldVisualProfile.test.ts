@@ -25,4 +25,20 @@ describe('getWorldVisualProfile', () => {
         expect(profile.showSpring).toBe(false);
         expect(profile.cloudsVariant).toBe('spring-clouds');
     });
+
+    it('selects first light only for the winter Morning snapshot', () => {
+        const morning = getWorldVisualProfile({ weather: 'Morning', season: 'winter', seasonEvent: 'first_light' });
+        const snow = getWorldVisualProfile({ weather: 'Snow', season: 'winter', seasonEvent: 'first_light' });
+
+        expect(morning.showFirstLight).toBe(true);
+        expect(morning.sunraysVariant).toBe('first-light');
+        expect(snow.showFirstLight).toBe(false);
+        expect(snow.sunraysVariant).toBe('default');
+    });
+
+    it('uses the seasonal clear profile for Morning across screens', () => {
+        expect(getWorldVisualProfile({ weather: 'Morning', season: 'spring', seasonEvent: 'none' }).showSpring).toBe(true);
+        expect(getWorldVisualProfile({ weather: 'Morning', season: 'summer', seasonEvent: 'none' }).showSummer).toBe(true);
+        expect(getWorldVisualProfile({ weather: 'Morning', season: 'autumn', seasonEvent: 'none' }).showAutumn).toBe(true);
+    });
 });
