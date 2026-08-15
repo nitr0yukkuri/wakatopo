@@ -6,6 +6,12 @@ export const AUTUMN_BACKGROUND_GRADIENT =
 export const WINTER_BACKGROUND_GRADIENT =
     'linear-gradient(180deg, #aebdcb 0%, #d8e4ec 48%, #ffffff 100%)';
 
+export const FIRST_LIGHT_BACKGROUND_GRADIENT =
+    'linear-gradient(180deg, #8f9eb8 0%, #d5a08d 42%, #f2c27b 72%, #fff0c9 100%)';
+
+export const FIRST_LIGHT_ATMOSPHERE_GRADIENT =
+    'radial-gradient(ellipse 82% 44% at 82% 8%, rgba(255,193,125,0.24), transparent 62%), linear-gradient(180deg, rgba(218,140,116,0.10), rgba(255,220,159,0.08) 62%, transparent)';
+
 export const SPRING_FLOWER_CLOUDY_BACKGROUND_GRADIENT =
     'linear-gradient(180deg, #c5d1d9 0%, #e6e9e7 52%, #f3e8ed 100%)';
 
@@ -42,6 +48,19 @@ export type FlowerCloudyPetalSpec = {
     drift: number;
     rotate: number;
 };
+
+export type SpringPetalSpec = FlowerCloudyPetalSpec;
+
+// Transition and final Sakura layers use one deterministic stream. This keeps
+// positions, drift, and fall speed continuous at the route boundary.
+export const SPRING_PETAL_SPECS: SpringPetalSpec[] = Array.from({ length: 24 }, (_, index) => ({
+    left: seasonalValue(index, 1) * 100,
+    delay: seasonalValue(index, 2) * 4,
+    duration: 12 + seasonalValue(index, 3) * 7,
+    size: 7 + seasonalValue(index, 4) * 8,
+    drift: -48 + seasonalValue(index, 5) * 96,
+    rotate: seasonalValue(index, 6) * 360,
+}));
 
 // The transition and final page share this exact dataset so flower-cloudy
 // petals keep their speed, position, and drift across the route boundary.
