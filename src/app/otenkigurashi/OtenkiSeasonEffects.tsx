@@ -5,15 +5,12 @@ import {
     AUTUMN_LEAF_SPECS,
     autumnLeafStyle,
     FLOWER_CLOUDY_PETAL_SPECS,
+    FIRST_LIGHT_ATMOSPHERE_GRADIENT,
+    SPRING_PETAL_SPECS,
     TSUYU_ATMOSPHERE_GRADIENT,
 } from '@/lib/otenkigurashiSeasonal';
 import { getWorldVisualProfile } from '@/lib/worldVisualProfile';
 import { useMemo } from 'react';
-
-const seasonalValue = (index: number, salt: number) => {
-    const value = Math.sin(index * 12.9898 + salt * 78.233) * 43758.5453123;
-    return value - Math.floor(value);
-};
 
 export default function OtenkiSeasonEffects({
     season,
@@ -26,6 +23,7 @@ export default function OtenkiSeasonEffects({
 }) {
     const {
         showTsuyu,
+        showFirstLight,
         showSpring,
         showFlowerCloudy,
         showGeshi,
@@ -34,20 +32,8 @@ export default function OtenkiSeasonEffects({
         showWinterSnow,
     } = getWorldVisualProfile({ weather, season, seasonEvent });
     const showWinter = showWinterSnow;
-    const springPetals = useMemo(
-        () => Array.from({ length: 24 }, (_, index) => ({
-            left: seasonalValue(index, 1) * 100,
-            // Keep a few petals on screen soon after the page opens while
-            // preserving enough spread for a gentle, continuous fall.
-            delay: seasonalValue(index, 2) * 4,
-            duration: 12 + seasonalValue(index, 3) * 7,
-            size: 7 + seasonalValue(index, 4) * 8,
-            drift: -48 + seasonalValue(index, 5) * 96,
-            rotate: seasonalValue(index, 6) * 360,
-        })),
-        []
-    );
-    if (!showTsuyu && !showSpring && !showFlowerCloudy && !showSummer && !showGeshi && !showAutumn && !showWinter) return null;
+    const springPetals = useMemo(() => SPRING_PETAL_SPECS, []);
+    if (!showTsuyu && !showFirstLight && !showSpring && !showFlowerCloudy && !showSummer && !showGeshi && !showAutumn && !showWinter) return null;
 
     return (
         <div className="fixed inset-0 pointer-events-none z-10 overflow-hidden" aria-hidden="true">
@@ -61,6 +47,8 @@ export default function OtenkiSeasonEffects({
             {showSpring && <div className="absolute inset-0 otenki-season-spring" />}
 
             {showFlowerCloudy && <div className="absolute inset-0 otenki-season-flower-cloudy" />}
+
+            {showFirstLight && <div data-testid="first-light-atmosphere" className="absolute inset-0 otenki-season-first-light" />}
 
             {showSpring && springPetals.map((petal, index) => (
                 <span
@@ -173,6 +161,11 @@ export default function OtenkiSeasonEffects({
                     animation: otenki-flower-cloudy-haze 12s ease-in-out infinite alternate;
                 }
 
+                .otenki-season-first-light {
+                    background: ${FIRST_LIGHT_ATMOSPHERE_GRADIENT};
+                    animation: otenki-first-light-air 9s ease-in-out infinite alternate;
+                }
+
                 .otenki-season-summer {
                     background:
                         radial-gradient(ellipse at 84% 8%, rgba(255,220,108,0.62) 0%, rgba(255,192,69,0.24) 28%, transparent 54%),
@@ -252,6 +245,11 @@ export default function OtenkiSeasonEffects({
                 @keyframes otenki-flower-cloudy-haze {
                     from { transform: translate3d(-0.6%, 0, 0) scale(1.02); opacity: 0.66; }
                     to { transform: translate3d(0.6%, 0.5%, 0) scale(1.04); opacity: 0.86; }
+                }
+
+                @keyframes otenki-first-light-air {
+                    from { transform: translate3d(-0.4%, 0, 0) scale(1.02); opacity: 0.56; }
+                    to { transform: translate3d(0.4%, 0.4%, 0) scale(1.04); opacity: 0.78; }
                 }
 
                 @keyframes otenki-sakura-fall {

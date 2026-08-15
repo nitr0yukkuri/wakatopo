@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react';
 import type { SeasonType, WeatherType } from '@/store';
 import { useWorldState } from '@/components/WorldStateProvider';
+import { getWorldVisualProfile } from '@/lib/worldVisualProfile';
 
 export default function WeatherCursor({ weatherOverride, seasonOverride }: { weatherOverride?: WeatherType; seasonOverride?: SeasonType } = {}) {
     const worldState = useWorldState();
@@ -10,8 +11,10 @@ export default function WeatherCursor({ weatherOverride, seasonOverride }: { wea
     const season = seasonOverride ?? worldState.season;
     const weatherRef = useRef(weather);
     const seasonRef = useRef(season);
+    const seasonEventRef = useRef(worldState.seasonEvent);
     useEffect(() => { weatherRef.current = weather; }, [weather]);
     useEffect(() => { seasonRef.current = season; }, [season]);
+    useEffect(() => { seasonEventRef.current = worldState.seasonEvent; }, [worldState.seasonEvent]);
 
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const stateRef = useRef({
@@ -23,8 +26,6 @@ export default function WeatherCursor({ weatherOverride, seasonOverride }: { wea
         sunRot: 0,
         // Spring / Clear
         sakuraRot: 0,
-        // Autumn / Clear
-        momijiRot: 0,
         // Snow
         snowRot: 0,
         // Rain
@@ -195,64 +196,42 @@ export default function WeatherCursor({ weatherOverride, seasonOverride }: { wea
             ctx.restore();
         };
 
-        //  MOMIJI — maple leaf with a warm amber palette for the autumn cursor
-        const drawMomiji = (t: number, momijiRot: number) => {
-            const pulse = 1 + Math.sin(t * 2.1) * 0.04;
+        //  MOMIJI — same fixed hair ornament shape as TenchanCompanion
+        const drawMomiji = () => {
             ctx.save();
-            ctx.rotate(momijiRot);
-            ctx.scale(pulse, pulse);
-            ctx.shadowBlur = 7;
-            ctx.shadowColor = 'rgba(188,112,45,0.28)';
+            ctx.rotate(12 * Math.PI / 180);
+            ctx.scale(0.78, 0.78);
 
             ctx.beginPath();
-            ctx.moveTo(0, -14);
-            ctx.quadraticCurveTo(1.4, -10.5, 2.8, -7.4);
-            ctx.quadraticCurveTo(5.8, -9.3, 8.5, -10.4);
-            ctx.quadraticCurveTo(7.6, -6.9, 6.4, -4.1);
-            ctx.quadraticCurveTo(10.5, -3.1, 13.8, -1.4);
-            ctx.quadraticCurveTo(10.1, 0.2, 6.8, 1.2);
-            ctx.quadraticCurveTo(8, 5.4, 8.8, 8.3);
-            ctx.quadraticCurveTo(4.2, 6.7, 1.8, 4.7);
-            ctx.quadraticCurveTo(1, 9, 1.2, 12.8);
-            ctx.quadraticCurveTo(0.3, 13.8, 0, 14.5);
-            ctx.quadraticCurveTo(-0.3, 13.8, -1.2, 12.8);
-            ctx.quadraticCurveTo(-1, 9, -1.8, 4.7);
-            ctx.quadraticCurveTo(-4.2, 6.7, -8.8, 8.3);
-            ctx.quadraticCurveTo(-8, 5.4, -6.8, 1.2);
-            ctx.quadraticCurveTo(-10.1, 0.2, -13.8, -1.4);
-            ctx.quadraticCurveTo(-10.5, -3.1, -6.4, -4.1);
-            ctx.quadraticCurveTo(-7.6, -6.9, -8.5, -10.4);
-            ctx.quadraticCurveTo(-5.8, -9.3, -2.8, -7.4);
-            ctx.quadraticCurveTo(-1.4, -10.5, 0, -14);
+            ctx.moveTo(0, 14);
+            ctx.bezierCurveTo(-1, 10, -1, 6, -1, 3);
+            ctx.bezierCurveTo(-5, 6, -10, 8, -14, 7);
+            ctx.bezierCurveTo(-12, 4, -9, 1, -6, -1);
+            ctx.bezierCurveTo(-10, -1, -13, -3, -14, -5);
+            ctx.bezierCurveTo(-11, -7, -7, -8, -4, -7);
+            ctx.bezierCurveTo(-4, -11, -2, -14, 0, -16);
+            ctx.bezierCurveTo(2, -14, 4, -11, 4, -7);
+            ctx.bezierCurveTo(7, -8, 11, -7, 14, -5);
+            ctx.bezierCurveTo(13, -3, 10, -1, 6, -1);
+            ctx.bezierCurveTo(9, 1, 12, 4, 14, 7);
+            ctx.bezierCurveTo(10, 8, 5, 6, 1, 3);
+            ctx.bezierCurveTo(1, 6, 1, 10, 0, 14);
             ctx.closePath();
-            const leaf = ctx.createLinearGradient(-8, -12, 8, 12);
-            leaf.addColorStop(0, '#ffd76f');
-            leaf.addColorStop(0.55, '#efa94d');
-            leaf.addColorStop(1, '#d8783e');
-            ctx.fillStyle = leaf;
+            ctx.fillStyle = '#e6a14d';
             ctx.fill();
-            ctx.strokeStyle = 'rgba(173,91,39,0.68)';
-            ctx.lineWidth = 0.9;
+            ctx.strokeStyle = '#b86f32';
+            ctx.lineWidth = 1.2;
+            ctx.lineJoin = 'round';
             ctx.stroke();
 
-            ctx.shadowBlur = 0;
-            ctx.strokeStyle = 'rgba(255,224,137,0.76)';
-            ctx.lineWidth = 0.9;
+            ctx.strokeStyle = '#f7d27d';
+            ctx.lineWidth = 1.2;
             ctx.lineCap = 'round';
             ctx.beginPath();
-            ctx.moveTo(0, 11); ctx.lineTo(0, -7);
-            ctx.moveTo(0, 0); ctx.lineTo(-6, -4.5);
-            ctx.moveTo(0, 0); ctx.lineTo(6, -4.5);
+            ctx.moveTo(0, 11); ctx.lineTo(0, -9);
+            ctx.moveTo(0, 1); ctx.lineTo(-6, -2);
+            ctx.moveTo(0, 1); ctx.lineTo(6, -2);
             ctx.stroke();
-
-            const drift = Math.sin(t * 1.7) * 1.6;
-            ctx.fillStyle = 'rgba(233,153,69,0.78)';
-            ctx.beginPath();
-            ctx.moveTo(-17 + drift, -8); ctx.lineTo(-14 + drift, -12); ctx.lineTo(-11 + drift, -8); ctx.lineTo(-14 + drift, -4); ctx.closePath();
-            ctx.fill();
-            ctx.beginPath();
-            ctx.moveTo(15 - drift, 8); ctx.lineTo(18 - drift, 4); ctx.lineTo(21 - drift, 8); ctx.lineTo(18 - drift, 12); ctx.closePath();
-            ctx.fill();
             ctx.restore();
         };
 
@@ -555,9 +534,13 @@ export default function WeatherCursor({ weatherOverride, seasonOverride }: { wea
             const speed = Math.hypot(s.vx, s.vy);
 
             // ── per-weather state update ────────────────────────────────────
-            const isClearOrMorning = w === 'Clear' || w === 'Morning';
-            const isSpringClear = seasonRef.current === 'spring' && isClearOrMorning;
-            const isAutumnClear = seasonRef.current === 'autumn' && isClearOrMorning;
+            const visualProfile = getWorldVisualProfile({
+                weather: w,
+                season: seasonRef.current,
+                seasonEvent: seasonEventRef.current,
+            });
+            const isSpringClear = visualProfile.showSpring;
+            const isAutumnClear = visualProfile.showAutumn;
             if (w === 'Clouds') {
                 s.bobPhase += 0.038 * dt;
                 const tSqX = 1 + Math.min(speed * 0.013, 0.22);
@@ -568,7 +551,6 @@ export default function WeatherCursor({ weatherOverride, seasonOverride }: { wea
             } else if (w === 'Clear' || w === 'Morning') {
                 s.sunRot += 0.018 * dt;
                 if (isSpringClear) s.sakuraRot += 0.012 * dt;
-                if (isAutumnClear) s.momijiRot += 0.009 * dt;
             } else if (w === 'Snow') {
                 s.snowRot += 0.012 * dt;
             } else if (w === 'Rain') {
@@ -622,7 +604,7 @@ export default function WeatherCursor({ weatherOverride, seasonOverride }: { wea
                 if (isSpringClear) {
                     drawSakura(t, s.sakuraRot);
                 } else if (isAutumnClear) {
-                    drawMomiji(t, s.momijiRot);
+                    drawMomiji();
                 } else {
                     drawSun(t, s.sunRot);
                 }
