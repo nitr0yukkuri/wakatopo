@@ -39,6 +39,22 @@ describe('world state store', () => {
         expect(useStore.getState().seasonEvent).toBe('none');
     });
 
+    it('clears an incompatible seasonal event when only weather changes', () => {
+        useStore.getState().setWorldState({
+            weather: 'Rain',
+            season: 'summer',
+            seasonEvent: 'tsuyu',
+        });
+
+        useStore.getState().setWeather('Snow');
+
+        expect(useStore.getState()).toMatchObject({
+            weather: 'Snow',
+            season: 'summer',
+            seasonEvent: 'none',
+        });
+    });
+
     it('keeps an explicit season clear separate from automatic resolution', () => {
         useStore.getState().setWorldState({ season: 'none', seasonEvent: 'none' });
 

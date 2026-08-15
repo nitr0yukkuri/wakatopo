@@ -31,6 +31,9 @@ function resolveSeason(month: number): SeasonType {
 }
 
 function resolveSeasonEvent(month: number, day: number): SeasonEventType {
+    // 元日は初日の出の演出を選ぶ。weather=Morning のときだけ表示側で有効化する。
+    if (month === 1 && day === 1) return 'first_light';
+
     // 夏至は梅雨の雰囲気より優先して、専用の演出を選ぶ。
     if (month === 6 && day === 21) return 'geshi';
 

@@ -63,10 +63,16 @@ export const useStore = create<AppState>((set) => ({
         seasonResolution: next.season === undefined ? current.seasonResolution : 'manual',
         seasonEventResolution: next.seasonEvent === undefined ? current.seasonEventResolution : 'manual',
     })),
-    initializeWorldState: (next) => set((current) => normalizeWorldState({
-        weather: next.weather ?? current.weather,
-        season: next.season ?? current.season,
-        seasonEvent: next.seasonEvent ?? current.seasonEvent,
+    initializeWorldState: (next) => set((current) => ({
+        ...normalizeWorldState({
+            weather: next.weather ?? current.weather,
+            season: next.season ?? current.season,
+            seasonEvent: next.seasonEvent ?? current.seasonEvent,
+        }),
+        // Server initialization is a fresh snapshot, not a manual override.
+        // Route parameters can opt fields back into manual mode afterwards.
+        seasonResolution: 'auto',
+        seasonEventResolution: 'auto',
     })),
     setActivity: (level) => set({ githubActivityLevel: level }),
     setActiveWork: (id) => set({ activeWorkId: id }),

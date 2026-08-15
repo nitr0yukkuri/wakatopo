@@ -12,10 +12,37 @@ export const DEFAULT_WORLD_STATE: WorldState = {
     seasonEvent: 'none',
 };
 
-export function normalizeSeasonEvent(season: SeasonType, seasonEvent: SeasonEventType): SeasonEventType {
-    if (seasonEvent === 'tsuyu' && season !== 'summer') return 'none';
-    if (seasonEvent === 'first_light' && season !== 'winter') return 'none';
-    return seasonEvent;
+type SeasonEventRule = {
+    season: SeasonType;
+    weather: readonly WeatherType[];
+};
+
+export const SEASON_EVENT_RULES: Record<Exclude<SeasonEventType, 'none'>, SeasonEventRule> = {
+    geshi: { season: 'summer', weather: ['Clear', 'Morning'] },
+    tsuyu: { season: 'summer', weather: ['Clear', 'Morning', 'Clouds', 'Rain'] },
+    first_light: { season: 'winter', weather: ['Morning'] },
+};
+
+export function isSeasonEventAllowed(
+    season: SeasonType | undefined,
+    seasonEvent: SeasonEventType,
+    weather?: WeatherType,
+): boolean {
+    if (seasonEvent === 'none') return true;
+
+    const rule = SEASON_EVENT_RULES[seasonEvent];
+    if (!rule) return false;
+    if (season !== undefined && season !== rule.season) return false;
+    if (weather !== undefined && !rule.weather.includes(weather)) return false;
+    return true;
+}
+
+export function normalizeSeasonEvent(
+    season: SeasonType | undefined,
+    seasonEvent: SeasonEventType,
+    weather?: WeatherType,
+): SeasonEventType {
+    return isSeasonEventAllowed(season, seasonEvent, weather) ? seasonEvent : 'none';
 }
 
 /**
@@ -24,13 +51,10 @@ export function normalizeSeasonEvent(season: SeasonType, seasonEvent: SeasonEven
  * and page components from disagreeing about the active seasonal event.
  */
 export function normalizeWorldState(state: WorldState): WorldState {
-    const normalizedSeasonEvent = normalizeSeasonEvent(state.season, state.seasonEvent);
+    const normalizedSeasonEvent = normalizeSeasonEvent(state.season, state.seasonEvent, state.weather);
     return {
         ...state,
-        seasonEvent: normalizedSeasonEvent === 'first_light'
-            && (state.season !== 'winter' || state.weather !== 'Morning')
-            ? 'none'
-            : normalizedSeasonEvent,
+        seasonEvent: normalizedSeasonEvent,
     };
 }
 
@@ -44,15 +68,22 @@ export function resolveWorldState(partial: Partial<WorldState>, fallback: WorldS
 
 export function canonicalizeWorldStateQuery(source: URLSearchParams, state: WorldState) {
     const params = new URLSearchParams(source.toString());
-    if (params.has('weather')) params.set('weather', state.weather);
-    if (params.has('season')) params.set('season', state.season);
-    if (params.has('seasonEvent')) params.set('seasonEvent', state.seasonEvent);
+    const resolvedState = normalizeWorldState(state);
+    // A route that opts into world state must carry one complete snapshot.
+    // Keeping partial query strings allows omitted seasonal fields to leak
+    // back in from the Zustand store on the next navigation.
+    params.set('weather', resolvedState.weather);
+    params.set('season', resolvedState.season);
+    params.set('seasonEvent', resolvedState.seasonEvent);
     return params;
 }
 
 type SearchValue = string | string[] | undefined | null;
 type SearchRecord = Record<string, SearchValue>;
-type SearchParamsLike = { get: (name: string) => string | null };
+type SearchParamsLike = {
+    get: (name: string) => string | null;
+    has?: (name: string) => boolean;
+};
 
 const firstValue = (value: SearchValue) => Array.isArray(value) ? value[0] : value ?? null;
 
@@ -64,12 +95,16 @@ export function parseWorldStateRecord(source: SearchRecord): Partial<WorldState>
     const parsedSeasonEvent = seasonEvent && VALID_SEASON_EVENTS.includes(seasonEvent as SeasonEventType)
         ? seasonEvent as SeasonEventType
         : null;
-    const normalizedSeasonEvent = parsedSeason && parsedSeasonEvent
-        ? normalizeSeasonEvent(parsedSeason, parsedSeasonEvent)
-        : parsedSeasonEvent;
+    const parsedWeather = weather && VALID_WEATHERS.includes(weather as WeatherType)
+        ? weather as WeatherType
+        : null;
+    const hasSeasonEvent = seasonEvent !== undefined && seasonEvent !== null;
+    const normalizedSeasonEvent = hasSeasonEvent
+        ? normalizeSeasonEvent(parsedSeason ?? undefined, parsedSeasonEvent ?? 'none', parsedWeather ?? undefined)
+        : null;
 
     return {
-        ...(weather && VALID_WEATHERS.includes(weather as WeatherType) ? { weather: weather as WeatherType } : {}),
+        ...(parsedWeather ? { weather: parsedWeather } : {}),
         ...(parsedSeason ? { season: parsedSeason } : {}),
         ...(normalizedSeasonEvent ? { seasonEvent: normalizedSeasonEvent } : {}),
     };
@@ -79,15 +114,18 @@ export function parseWorldStateParams(source: SearchParamsLike): Partial<WorldSt
     return parseWorldStateRecord({
         weather: source.get('weather'),
         season: source.get('season'),
-        seasonEvent: source.get('seasonEvent'),
+        // Preserve an explicitly supplied invalid event as `none` instead of
+        // allowing a stale event from the Zustand fallback to leak into the URL state.
+        seasonEvent: source.has?.('seasonEvent') ? source.get('seasonEvent') : undefined,
     });
 }
 
 export function buildWorldStateQuery(state: WorldState, lang?: string) {
+    const resolvedState = normalizeWorldState(state);
     const params = new URLSearchParams();
     if (lang) params.set('lang', lang);
-    params.set('weather', state.weather);
-    params.set('season', state.season);
-    params.set('seasonEvent', state.seasonEvent);
+    params.set('weather', resolvedState.weather);
+    params.set('season', resolvedState.season);
+    params.set('seasonEvent', resolvedState.seasonEvent);
     return params.toString();
 }
