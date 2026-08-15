@@ -4,8 +4,11 @@ const route = (weather: string, season = 'none', seasonEvent = 'none') =>
     `/otenkigurashi?lang=ja&weather=${weather}&season=${season}&seasonEvent=${seasonEvent}`;
 
 const revealTenchan = async (page: Page) => {
+    // domcontentloaded can precede hydration on this intentionally heavy page.
+    // Give the controller time to install its first-interaction listener.
+    await page.waitForTimeout(500);
     await page.mouse.click(100, 100);
-    await expect(page.locator('[data-testid="tenchan-companion"]')).toHaveCount(1, { timeout: 5000 });
+    await expect(page.locator('[data-testid="tenchan-companion"]')).toHaveCount(1, { timeout: 10000 });
 };
 
 test.describe('Otenkigurashi weather presentation', () => {
@@ -45,6 +48,26 @@ test.describe('Otenkigurashi weather presentation', () => {
         for (const weather of ['Clear', 'Clouds', 'Rain']) {
             await page.goto(route(weather, 'summer', 'tsuyu'), { waitUntil: 'domcontentloaded' });
             await expect(page.locator('[data-testid="tsuyu-atmosphere"]')).toHaveCount(1);
+        }
+    });
+
+    test('keeps first light and illegal events resolved in the route snapshot', async ({ page }) => {
+        await page.goto(route('Morning', 'winter', 'first_light'), { waitUntil: 'domcontentloaded' });
+        await expect(page.locator('main[data-world-weather="Morning"][data-world-season="winter"][data-world-season-event="first_light"]')).toHaveCount(1);
+        await expect(page.locator('[data-testid="first-light-atmosphere"]')).toHaveCount(1);
+
+        await page.goto(route('Snow', 'summer', 'tsuyu'), { waitUntil: 'domcontentloaded' });
+        await expect(page.locator('main[data-world-weather="Snow"][data-world-season="summer"][data-world-season-event="none"]')).toHaveCount(1);
+        await expect(page.locator('[data-testid="tsuyu-atmosphere"]')).toHaveCount(0);
+    });
+});
+
+test.describe('resolved world state across screens', () => {
+    test('keeps Morning first light consistent on home, card, and Denshouo', async ({ page }) => {
+        const query = 'lang=ja&weather=Morning&season=winter&seasonEvent=first_light';
+        for (const path of [`/?${query}`, `/card?${query}`, `/denshouo?${query}`]) {
+            await page.goto(path, { waitUntil: 'domcontentloaded' });
+            await expect(page.locator('main[data-world-weather="Morning"][data-world-season="winter"][data-world-season-event="first_light"]')).toHaveCount(1);
         }
     });
 });
