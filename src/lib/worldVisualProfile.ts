@@ -5,6 +5,7 @@ export type WorldVisualProfile = WorldState & {
     isGeshiEvent: boolean;
     showTsuyu: boolean;
     showFirstLight: boolean;
+    showBirthday: boolean;
     showSpring: boolean;
     showFlowerCloudy: boolean;
     showGeshi: boolean;
@@ -30,6 +31,7 @@ export function getWorldVisualProfile(
     const isGeshiEvent = season === 'summer' && seasonEvent === 'geshi';
     const showTsuyu = isSeasonEventAllowed(season, seasonEvent, weather) && seasonEvent === 'tsuyu';
     const showFirstLight = isSeasonEventAllowed(season, seasonEvent, weather) && seasonEvent === 'first_light';
+    const showBirthday = isSeasonEventAllowed(season, seasonEvent, weather) && seasonEvent === 'birthday';
     const showSpring = season === 'spring' && isClear && !showTsuyu;
     const showFlowerCloudy = season === 'spring' && weather === 'Clouds' && !showTsuyu;
     const showGeshi = isSeasonEventAllowed(season, seasonEvent, weather) && isGeshiEvent && isClear;
@@ -38,7 +40,7 @@ export function getWorldVisualProfile(
     const showWinterSnow = season === 'winter' && weather === 'Snow' && !showTsuyu;
     const includeGeshiSun = options.includeGeshiSun !== false;
 
-    const sunraysVariant = showFirstLight
+    const sunraysVariant = showFirstLight || showBirthday
         ? 'first-light'
         : !includeGeshiSun
         ? season === 'summer' && isClear
@@ -66,6 +68,7 @@ export function getWorldVisualProfile(
         isGeshiEvent,
         showTsuyu,
         showFirstLight,
+        showBirthday,
         showSpring,
         showFlowerCloudy,
         showGeshi,

@@ -16,6 +16,7 @@ type CharacterFaceProps = {
     showRainDrop?: boolean;
     showLightning?: boolean;
     showNightStar?: boolean;
+    showBirthday?: boolean;
 };
 
 export function CharacterFace({
@@ -30,6 +31,7 @@ export function CharacterFace({
     showRainDrop = false,
     showLightning = false,
     showNightStar = false,
+    showBirthday = false,
 }: CharacterFaceProps) {
 
     const getMouthPath = () => {
@@ -200,6 +202,16 @@ export function CharacterFace({
                     </g>
                 )}
 
+                {showBirthday && (
+                    <g transform="translate(87 16) rotate(8)" aria-hidden="true" data-birthday-accessory="birthday">
+                        <path d="M-13 -5 Q0 -9 13 -5 L11 7 Q0 11 -11 7 Z" fill="#fff4fb" stroke="#b9799a" strokeWidth="1.2" />
+                        <path d="M-13 -5 Q-9 1 -5 -5 Q0 1 5 -5 Q9 1 13 -5" fill="none" stroke="#f3a9ca" strokeWidth="2" strokeLinecap="round" />
+                        <ellipse cx="0" cy="8" rx="15" ry="3" fill="#9edfee" stroke="#5c9caf" strokeWidth="1.2" />
+                        <path d="M-8 -7 L-8 -14 M0 -8 L0 -16 M8 -7 L8 -14" fill="none" stroke="#8bd7e9" strokeWidth="1.5" strokeLinecap="round" />
+                        <path d="M-8 -14 C-10 -17 -6 -18 -8 -20 M0 -16 C-2 -19 2 -20 0 -23 M8 -14 C6 -17 10 -18 8 -20" fill="none" stroke="#ffe79a" strokeWidth="1.5" strokeLinecap="round" />
+                    </g>
+                )}
+
                 {/* ほっぺ */}
                 <circle cx="20" cy="70" r="12" fill={cheekColor} />
                 <circle cx="100" cy="70" r="12" fill={cheekColor} />
@@ -271,11 +283,12 @@ type TenchanCompanionProps = {
     showRainDrop?: boolean;
     showLightning?: boolean;
     showNightStar?: boolean;
+    showBirthdayCake?: boolean;
     overrideDialog?: { text: string; mood: "happy" | "neutral" | "sad" | "scared" | "sleepy" | "looking" | "surprised" | "talking" } | null;
     onClick?: () => void;
 };
 
-export default function TenchanCompanion({ section, lang = 'ja', weather, showUmbrella = true, showSakura = false, showMomiji = false, showHydrangea = false, showSnowflake = false, showRainDrop = false, showLightning = false, showNightStar = false, overrideDialog, onClick }: TenchanCompanionProps) {
+export default function TenchanCompanion({ section, lang = 'ja', weather, showUmbrella = true, showSakura = false, showMomiji = false, showHydrangea = false, showSnowflake = false, showRainDrop = false, showLightning = false, showNightStar = false, showBirthdayCake = false, overrideDialog, onClick }: TenchanCompanionProps) {
     // セクションに応じたデフォルトメッセージと表情を設定
     const getDialogue = () => {
         const byLang = {
@@ -368,6 +381,7 @@ export default function TenchanCompanion({ section, lang = 'ja', weather, showUm
                     showRainDrop={showRainDrop}
                     showLightning={showLightning}
                     showNightStar={showNightStar}
+                    showBirthday={showBirthdayCake}
                 />
             </motion.div>
         </div>

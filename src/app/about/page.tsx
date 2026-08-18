@@ -37,7 +37,24 @@ const copyByLang = {
         sectionAvailability: '稼働可能時期',
         availabilityText:
             'インターン・業務委託ともに相談可。短期PoC/プロトタイプ案件は優先して調整可能。',
-        sectionStrengths: '得意領域',
+        sectionStrengths: 'カンファレンス',
+        activities: [
+            '2025',
+            'フロントエンドカンファレンス 2025 参加',
+            '2026',
+            '技育祭2026【春】東京 参加（3/21–22）',
+            '技育祭2026 名古屋 参加（4/26）',
+            'TSKaigi 2026 参加（5/22–23）',
+            '技育祭2026 福岡 参加（6/20）',
+            '技育祭2026 関西 アンバサダー（7/11）',
+            'STORES Tech Conf 2026 参加予定（8/31）',
+            'DroidKaigi 2026 参加予定（9/1–3）',
+            'iOSDC Japan 2026 参加予定（9/11–13）',
+            '技育祭2026【秋】東京 参加予定（10/10–11）',
+            'フロントエンドカンファレンス関西2026 参加予定（10/12）',
+            'Vue Fes Japan 2026 参加予定（10/24）',
+            'Kotlin Fest 2026 参加予定（11/14）',
+        ],
     },
     en: {
         returnToOrbit: 'Return to Portfolio',
@@ -68,7 +85,24 @@ const copyByLang = {
         sectionAvailability: 'AVAILABILITY',
         availabilityText:
             'Open to both internships and contract work. Short-term PoC and prototype projects can be prioritized.',
-        sectionStrengths: 'CORE STRENGTHS',
+        sectionStrengths: 'CONFERENCES',
+        activities: [
+            '2025',
+            'Frontend Conference 2025 - Participant',
+            '2026',
+            'Geek Festival 2026 [Spring] Tokyo - Participant (Mar 21–22)',
+            'Geek Festival 2026 Nagoya - Participant (Apr 26)',
+            'TSKaigi 2026 - Participant (May 22–23)',
+            'Geek Festival 2026 Fukuoka - Participant (Jun 20)',
+            'Geek Festival 2026 Kansai - Ambassador (Jul 11)',
+            'STORES Tech Conf 2026 - Planned (Aug 31)',
+            'DroidKaigi 2026 - Planned (Sep 1–3)',
+            'iOSDC Japan 2026 - Planned (Sep 11–13)',
+            'Geek Festival 2026 [Autumn] Tokyo - Planned (Oct 10–11)',
+            'Frontend Conference Kansai 2026 - Planned (Oct 12)',
+            'Vue Fes Japan 2026 - Planned (Oct 24)',
+            'Kotlin Fest 2026 - Planned (Nov 14)',
+        ],
     },
 } as const;
 
@@ -125,10 +159,17 @@ export default async function AboutPage({
                     </div>
 
                     <div className="mt-6 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 items-start gap-3 text-sm font-mono">
-                        <article className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                            <h2 className="text-cyan-300 text-xs tracking-widest mb-3">{t.sectionCareer}</h2>
-                            <p className="text-gray-300 leading-relaxed">{t.careerText}</p>
-                        </article>
+                        <div className="flex flex-col gap-3">
+                            <article className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                                <h2 className="text-cyan-300 text-xs tracking-widest mb-3">{t.sectionCareer}</h2>
+                                <p className="text-gray-300 leading-relaxed">{t.careerText}</p>
+                            </article>
+
+                            <article className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                                <h2 className="text-cyan-300 text-xs tracking-widest mb-3">{t.sectionAvailability}</h2>
+                                <p className="text-gray-300 leading-relaxed">{t.availabilityText}</p>
+                            </article>
+                        </div>
 
 
 
@@ -141,26 +182,22 @@ export default async function AboutPage({
                             </ul>
                         </article>
 
-                        <article className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                            <h2 className="text-cyan-300 text-xs tracking-widest mb-3">{t.sectionDev}</h2>
-                            <p className="text-gray-300 leading-relaxed">{t.devText}</p>
-                        </article>
+                        <div className="flex flex-col gap-3">
+                            <article className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                                <h2 className="text-cyan-300 text-xs tracking-widest mb-3">{t.sectionDev}</h2>
+                                <p className="text-gray-300 leading-relaxed">{t.devText}</p>
+                            </article>
 
-                        <article className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                            <h2 className="text-cyan-300 text-xs tracking-widest mb-3">{t.sectionAvailability}</h2>
-                            <p className="text-gray-300 leading-relaxed">{t.availabilityText}</p>
-                        </article>
+                            <article className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                                <h2 className="text-cyan-300 text-xs tracking-widest mb-3">{t.sectionStrengths}</h2>
+                                <ul className="text-gray-300 space-y-2 leading-relaxed text-xs">
+                                    {t.activities.map((item) => (
+                                        <li key={item} className={item === '2026' ? 'pt-1 text-cyan-200' : undefined}>{item}</li>
+                                    ))}
+                                </ul>
+                            </article>
+                        </div>
 
-                        <article className="rounded-2xl border border-white/10 bg-white/5 p-4 md:col-span-2 xl:col-span-2">
-                            <h2 className="text-cyan-300 text-xs tracking-widest mb-3">{t.sectionStrengths}</h2>
-                            <div className="flex flex-wrap gap-2 text-[11px]">
-                                <span className="rounded-full border border-cyan-400/30 bg-cyan-400/10 px-3 py-1 text-cyan-200">Next.js / React</span>
-                                <span className="rounded-full border border-cyan-400/30 bg-cyan-400/10 px-3 py-1 text-cyan-200">TypeScript</span>
-                                <span className="rounded-full border border-cyan-400/30 bg-cyan-400/10 px-3 py-1 text-cyan-200">Three.js / R3F</span>
-                                <span className="rounded-full border border-cyan-400/30 bg-cyan-400/10 px-3 py-1 text-cyan-200">Web Audio API</span>
-                                <span className="rounded-full border border-cyan-400/30 bg-cyan-400/10 px-3 py-1 text-cyan-200">Interactive UI Motion</span>
-                            </div>
-                        </article>
                     </div>
 
                     <div className="mt-6 flex flex-wrap gap-3">

@@ -660,7 +660,7 @@ export default function SoundDirector() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeWorkId, githubActivityLevel, isCardPage, pathname, weather]);
 
-  if (isCardPage || pathname === "/otenkigurashi") return null;
+  if (isCardPage || pathname === "/otenkigurashi" || pathname === "/ogp") return null;
 
   const soundButtonPositionClass =
     pathname === "/"

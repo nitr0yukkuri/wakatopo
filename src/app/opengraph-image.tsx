@@ -19,8 +19,8 @@ export default function Image() {
                 }}
             >
                 <img
-                    src="https://wakato.tech/wakato_gemini_logo.png"
-                    alt="WAKATO Portfolio"
+                    src="https://wakato.tech/opengraph-image.gif"
+                    alt="WAKATO | Living Planet Portfolio"
                     width={1200}
                     height={630}
                     style={{ objectFit: "cover" }}
