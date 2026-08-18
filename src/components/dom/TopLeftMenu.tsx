@@ -130,7 +130,7 @@ export default function TopLeftMenu() {
         appendHistory({ tone: 'info', text: `$ ${command}` });
 
         if (command.toLowerCase() === 'help') {
-            appendHistory({ tone: 'info', text: 'Available: sudo make rain|snow|clouds|clear|thunder|night|spring|summer|autumn|winter|sakura|hanagumori|geshi|tsuyu|hatsuhinode|momiji|tsukimi|yukigeshiki|season-clear, help, exit' });
+            appendHistory({ tone: 'info', text: 'Available: sudo make rain|snow|clouds|clear|thunder|night|spring|summer|autumn|winter|sakura|hanagumori|geshi|tsuyu|hatsuhinode|momiji|tsukimi|yukigeshiki|birthday|season-clear, help, exit' });
             return;
         }
 
@@ -143,6 +143,13 @@ export default function TopLeftMenu() {
         const sudoMatch = command.match(/^sudo\s+make\s+([a-z-]+)$/i);
         if (sudoMatch) {
             const token = sudoMatch[1].toLowerCase();
+            if (token === 'birthday') {
+                applyWorldState({ weather: 'Morning', season: 'none', seasonEvent: 'birthday' });
+                window.dispatchEvent(new CustomEvent('living-planet:birthday'));
+                appendHistory({ tone: 'ok', text: '[ok] birthday sequence started' });
+                return;
+            }
+
             const presetMap: Record<string, { season: SeasonType; weather: WeatherType; seasonEvent?: SeasonEventType }> = {
                 sakura: { season: 'spring', weather: 'Clear' },
                 hanagumori: { season: 'spring', weather: 'Clouds' },
