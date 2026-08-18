@@ -24,6 +24,7 @@ export default function OtenkiSeasonEffects({
     const {
         showTsuyu,
         showFirstLight,
+        showBirthday,
         showSpring,
         showFlowerCloudy,
         showGeshi,
@@ -33,7 +34,7 @@ export default function OtenkiSeasonEffects({
     } = getWorldVisualProfile({ weather, season, seasonEvent });
     const showWinter = showWinterSnow;
     const springPetals = useMemo(() => SPRING_PETAL_SPECS, []);
-    if (!showTsuyu && !showFirstLight && !showSpring && !showFlowerCloudy && !showSummer && !showGeshi && !showAutumn && !showWinter) return null;
+    if (!showTsuyu && !showFirstLight && !showBirthday && !showSpring && !showFlowerCloudy && !showSummer && !showGeshi && !showAutumn && !showWinter) return null;
 
     return (
         <div className="fixed inset-0 pointer-events-none z-10 overflow-hidden" aria-hidden="true">
@@ -48,7 +49,9 @@ export default function OtenkiSeasonEffects({
 
             {showFlowerCloudy && <div className="absolute inset-0 otenki-season-flower-cloudy" />}
 
-            {showFirstLight && <div data-testid="first-light-atmosphere" className="absolute inset-0 otenki-season-first-light" />}
+            {(showFirstLight || showBirthday) && (
+                <div data-testid={showBirthday ? 'birthday-atmosphere' : 'first-light-atmosphere'} className="absolute inset-0 otenki-season-first-light" />
+            )}
 
             {showSpring && springPetals.map((petal, index) => (
                 <span

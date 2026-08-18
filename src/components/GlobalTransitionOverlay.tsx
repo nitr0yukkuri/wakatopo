@@ -36,6 +36,7 @@ export function SeasonalTransitionAtmosphere({ season, seasonEvent, weather }: {
         isClear,
         isGeshiEvent,
         showFirstLight,
+        showBirthday,
         showSpring,
         showFlowerCloudy,
         showAutumn,
@@ -43,7 +44,7 @@ export function SeasonalTransitionAtmosphere({ season, seasonEvent, weather }: {
         showTsuyu,
     } = getWorldVisualProfile({ weather, season, seasonEvent });
     const springPetals = useMemo(() => SPRING_PETAL_SPECS, []);
-    if (season === 'none') return null;
+    if (season === 'none' && !showBirthday) return null;
 
     const isGeshi = isGeshiEvent;
 
@@ -62,7 +63,7 @@ export function SeasonalTransitionAtmosphere({ season, seasonEvent, weather }: {
         autumn: showAutumn ? AUTUMN_BACKGROUND_GRADIENT : 'transparent',
         winter: showWinterSnow
             ? 'linear-gradient(110deg, rgba(193,228,249,0.28), transparent 34%, transparent 68%, rgba(175,215,242,0.24)), radial-gradient(ellipse at 50% 100%, rgba(255,255,255,0.34), transparent 65%)'
-            : showFirstLight
+            : showFirstLight || showBirthday
                 ? FIRST_LIGHT_BACKGROUND_GRADIENT
             : 'transparent',
     };
@@ -74,7 +75,7 @@ export function SeasonalTransitionAtmosphere({ season, seasonEvent, weather }: {
             style={{
                 background: showTsuyu
                     ? TSUYU_ATMOSPHERE_GRADIENT
-                    : showFirstLight
+                    : showFirstLight || showBirthday
                         ? FIRST_LIGHT_ATMOSPHERE_GRADIENT
                         : backgroundBySeason[season],
                 mixBlendMode: 'normal',
@@ -84,7 +85,7 @@ export function SeasonalTransitionAtmosphere({ season, seasonEvent, weather }: {
             animate={{
                 opacity: showTsuyu
                     ? [0.12, 0.24, 0.16]
-                    : showFirstLight
+                    : showFirstLight || showBirthday
                         ? [0.16, 0.30, 0.22]
                     : showAutumn
                     ? [0.34, 0.58, 0.44]

@@ -4,7 +4,7 @@ export type { SeasonEventType, SeasonType, WeatherType, WorldState } from './wor
 
 export const VALID_WEATHERS: WeatherType[] = ['Clear', 'Rain', 'Clouds', 'Snow', 'Night', 'Morning', 'Thunder'];
 export const VALID_SEASONS: SeasonType[] = ['none', 'spring', 'summer', 'autumn', 'winter'];
-export const VALID_SEASON_EVENTS: SeasonEventType[] = ['none', 'geshi', 'tsuyu', 'first_light'];
+export const VALID_SEASON_EVENTS: SeasonEventType[] = ['none', 'geshi', 'tsuyu', 'first_light', 'birthday'];
 
 export const DEFAULT_WORLD_STATE: WorldState = {
     weather: 'Clear',
@@ -21,6 +21,7 @@ export const SEASON_EVENT_RULES: Record<Exclude<SeasonEventType, 'none'>, Season
     geshi: { season: 'summer', weather: ['Clear', 'Morning'] },
     tsuyu: { season: 'summer', weather: ['Clear', 'Morning', 'Clouds', 'Rain'] },
     first_light: { season: 'winter', weather: ['Morning'] },
+    birthday: { season: 'none', weather: ['Morning'] },
 };
 
 export function isSeasonEventAllowed(
