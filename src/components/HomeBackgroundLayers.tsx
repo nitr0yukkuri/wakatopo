@@ -1,6 +1,7 @@
 'use client';
 
 import dynamic from 'next/dynamic';
+import BirthdayHomeOverlay from '@/components/dom/BirthdayHomeOverlay';
 
 const SceneClient = dynamic(() => import('@/components/canvas/SceneClient'), {
     ssr: false,
@@ -17,6 +18,7 @@ export default function HomeBackgroundLayers() {
                 <SceneClient />
             </div>
             <WeatherEffectsOverlay snowMobileScale={0.42} />
+            <BirthdayHomeOverlay />
         </>
     );
 }
