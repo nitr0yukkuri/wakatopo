@@ -84,7 +84,7 @@ export default function OtenkiGurashiClient() {
         bgGradient = "from-[#bddfeb] via-[#e0eef0] to-[#fff0cf]";
     }
 
-    if (visualProfile.showFirstLight) {
+    if (visualProfile.showFirstLight || visualProfile.showBirthday) {
         bgGradient = FIRST_LIGHT_BACKGROUND_GRADIENT;
     }
 
@@ -106,6 +106,7 @@ export default function OtenkiGurashiClient() {
     const isGeshiSun = visualProfile.showGeshi;
     const isTsuyu = visualProfile.showTsuyu;
     const isFirstLight = visualProfile.showFirstLight;
+    const isBirthday = visualProfile.showBirthday;
     const isWinterSnowScene = visualProfile.showWinterSnow;
 
     return (
@@ -119,7 +120,7 @@ export default function OtenkiGurashiClient() {
                 cursor: isFinePointer ? 'none' : 'auto',
                 background: displayedSeason === 'autumn' && (displayedWeather === 'Clear' || displayedWeather === 'Morning')
                     ? AUTUMN_BACKGROUND_GRADIENT
-                    : isFirstLight
+                    : isFirstLight || isBirthday
                         ? FIRST_LIGHT_BACKGROUND_GRADIENT
                     : isTsuyu && (displayedWeather === 'Clear' || displayedWeather === 'Morning')
                         ? TSUYU_CLEAR_BACKGROUND_GRADIENT
@@ -419,6 +420,7 @@ export default function OtenkiGurashiClient() {
                         showRainDrop={displayedWeather === 'Rain' && !isTsuyu}
                         showLightning={displayedWeather === 'Thunder'}
                         showNightStar={displayedWeather === 'Night'}
+                        showBirthdayCake={isBirthday}
                         overrideDialog={overrideDialog}
                         onClick={handleTenchanClick}
                     />
