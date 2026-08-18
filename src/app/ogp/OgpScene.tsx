@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import ClientInitializer from '@/components/ClientInitializer';
-import { SeasonalTransitionAtmosphere } from '@/components/GlobalTransitionOverlay';
+import SeasonalAtmosphereOverlay from '@/components/dom/SeasonalAtmosphereOverlay';
 import WeatherEffectsOverlay from '@/components/dom/WeatherEffectsOverlay';
 import CardScene from '@/app/card/CardScene';
 import { useStore } from '@/store';
@@ -71,10 +71,11 @@ export default function OgpScene() {
                 <WeatherEffectsOverlay weatherOverride={stage.weather} includeRain />
             </div>
 
-            <SeasonalTransitionAtmosphere
+            <SeasonalAtmosphereOverlay
                 season={stage.season}
                 seasonEvent={stage.seasonEvent}
                 weather={stage.weather}
+                transitionDuration={0.8}
             />
 
             <div className="pointer-events-none absolute inset-0 z-[10001] bg-[radial-gradient(circle_at_50%_45%,transparent_0%,transparent_44%,rgba(0,0,0,0.3)_78%,rgba(0,0,0,0.62)_100%)]" />
