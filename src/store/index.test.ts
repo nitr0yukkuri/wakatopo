@@ -26,6 +26,23 @@ describe('world state store', () => {
         });
     });
 
+    it('keeps birthday independent from summer seasonal events', () => {
+        useStore.getState().setWorldState({
+            weather: 'Morning',
+            season: 'none',
+            seasonEvent: 'birthday',
+        });
+
+        expect(useStore.getState()).toMatchObject({
+            weather: 'Morning',
+            season: 'none',
+            seasonEvent: 'birthday',
+        });
+
+        useStore.getState().setWorldState({ season: 'summer', seasonEvent: 'geshi' });
+        expect(useStore.getState().seasonEvent).toBe('geshi');
+    });
+
     it('keeps first light only for a winter morning', () => {
         useStore.getState().setWorldState({
             weather: 'Morning',
