@@ -31,7 +31,7 @@ const WaveTransitionCanvas = dynamic(() => import('@/components/canvas/WaveTrans
 const MoonriseTransitionCanvas = dynamic(() => import('@/components/canvas/MoonriseTransitionCanvas'), { ssr: false });
 const CaptchaLockTransitionCanvas = dynamic(() => import('@/components/canvas/CaptchaLockTransitionCanvas'), { ssr: false });
 
-function SeasonalTransitionAtmosphere({ season, seasonEvent, weather }: { season: SeasonType; seasonEvent: SeasonEventType; weather: WeatherType }) {
+export function SeasonalTransitionAtmosphere({ season, seasonEvent, weather }: { season: SeasonType; seasonEvent: SeasonEventType; weather: WeatherType }) {
     const {
         isClear,
         isGeshiEvent,
