@@ -48,7 +48,7 @@ export default async function CardPage({
             <div className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-linear-to-r from-transparent via-blue-300/40 to-transparent" />
 
             <div className="absolute inset-0 z-0">
-                <CardScene weather={visualWeather} activityLevel={data.activityLevel} />
+                <CardScene weather={visualWeather} activityLevel={data.activityLevel} showBackgroundStars={false} />
             </div>
 
             <div className="pointer-events-none absolute inset-0 z-10">
