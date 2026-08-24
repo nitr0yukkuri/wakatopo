@@ -23,9 +23,11 @@ function CardCameraRig() {
 export default function CardScene({
     weather,
     activityLevel,
+    showBackgroundStars = true,
 }: {
     weather: WeatherType;
     activityLevel: number;
+    showBackgroundStars?: boolean;
 }) {
     return (
         <Canvas
@@ -47,7 +49,7 @@ export default function CardScene({
 
                 <Weather weatherOverride={weather} />
 
-                <Stars radius={100} depth={50} count={640} factor={1.5} saturation={0} fade speed={0.35} />
+                <Stars radius={100} depth={50} count={showBackgroundStars ? 640 : 0} factor={1.5} saturation={0} fade speed={0.35} />
 
                 <EffectComposer multisampling={8}>
                     <Bloom
