@@ -28,11 +28,11 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "https://wakato.tech/opengraph-image.gif",
+        url: "https://wakato.tech/opengraph-image.png",
         width: 1200,
         height: 630,
         alt: "WAKATO Portfolio",
-        type: "image/gif",
+        type: "image/png",
       },
     ],
   },
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
     title: "WAKATO | Living Planet Portfolio",
     description: "GitHubの活動とリアルタイム天気が連動する、インタラクティブな3Dポートフォリオ。",
     creator: "@nitr0yukkuri",
-    images: ["https://wakato.tech/opengraph-image.gif"],
+    images: ["https://wakato.tech/opengraph-image.png"],
   },
   icons: {
     icon: "/faviconwakato.png",
