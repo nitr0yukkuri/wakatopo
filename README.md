@@ -66,7 +66,7 @@
 | `momiji` | 秋 + 晴れ | 紅葉と秋の地面 |
 | `tsukimi` | 秋 + 夜 | 月見の夜の光 |
 | `yukigeshiki` | 冬 + 雪 | 雪景色と雪の大気 |
-これらは単発の表示フラグではなく、URL・Zustandストア・季節ビジュアルプロファイルで同じ状態を参照します。ホーム左上のCLIから、たとえば `sudo make tsuyu` や `sudo make birthday` を実行して体験できます。
+これらは単発の表示フラグではなく、URL・Zustandストア・季節ビジュアルプロファイルで同じ状態を参照します。梅雨や初日の出は日付に応じて自動的に選ばれますが、夏至の専用カラーはホーム左上のCLIから `sudo make geshi` を実行したときだけ有効になります。
 
 ### 作品間の状態共有
 
@@ -222,7 +222,7 @@ Denshouo
 
 - React Three Fiber / WebGLで構成したインタラクティブな3Dワールド
 - 天候・季節・季節イベントを正規化する共有WorldState
-- 梅雨、夏至、初日の出、誕生日などの日付・状態連動イベント
+- 梅雨や初日の出などの日付連動イベント、CLIで呼び出せる夏至・誕生日プリセット
 - GitHub Planet、Otenkigurashi、ColdKeep、reCAPTCHA Game、Denshouoをつなぐ作品別遷移
 - Tone.jsによる状態連動のサウンドディレクション
 - DenshouoのWebGL検出とCSS fallback
