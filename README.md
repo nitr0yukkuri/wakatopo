@@ -312,7 +312,7 @@ DiscordやXなどのSNS用OGPは、過去にも使っていたWAKATOロゴを `s
 
 ### README Preview GIF
 
-README上部のプレビューは `/card` を `1200x600` で録画したライブ天候GIFです。生成物は `preview-assets` ブランチへ分離して保存し、READMEから `raw.githubusercontent.com` 経由で参照しています。
+README上部のプレビューは `/card` を `800x400` で録画したライブ天候GIFです。生成物は `preview-assets` ブランチへ分離して保存し、READMEから `raw.githubusercontent.com` 経由で参照しています。
 
 ```text
 main
