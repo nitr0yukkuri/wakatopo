@@ -34,6 +34,7 @@ export default function DenshouoClient() {
         size: number;
         isHover: boolean;
         isRain: boolean;
+        opacity: number;
         duration: number;
     };
     type RainDrop = {
@@ -79,6 +80,7 @@ export default function DenshouoClient() {
                     size: isHover ? 96 + Math.random() * 28 : 120 + Math.random() * 40,
                     isHover,
                     isRain: false,
+                    opacity: isHover ? 0.32 : 0.5,
                     duration: isHover ? 0.85 : 1.1,
                 },
             ]);
@@ -230,6 +232,7 @@ export default function DenshouoClient() {
                                     size: 72 + Math.random() * 56,
                                     isHover: false,
                                     isRain: true,
+                                    opacity: 0.18 + Math.random() * 0.15,
                                     duration: 1.0 + Math.random() * 0.7,
                                 },
                             ]);
@@ -255,7 +258,7 @@ export default function DenshouoClient() {
                                 ? '0 0 0 1px rgba(167, 243, 208, 0.14), 0 0 22px rgba(45, 212, 191, 0.12)'
                                 : '0 0 0 1px rgba(167, 243, 208, 0.18), 0 0 34px rgba(45, 212, 191, 0.18)',
                         }}
-                        initial={{ scale: ripple.isRain ? 0.1 : ripple.isHover ? 0.18 : 0.15, opacity: ripple.isRain ? 0.22 : ripple.isHover ? 0.32 : 0.5 }}
+                        initial={{ scale: ripple.isRain ? 0.1 : ripple.isHover ? 0.18 : 0.15, opacity: ripple.opacity }}
                         animate={{ scale: ripple.isRain ? 1.55 : ripple.isHover ? 1.45 : 1.9, opacity: 0 }}
                         transition={{ duration: ripple.duration, ease: 'easeOut' }}
                         onAnimationComplete={() => {
