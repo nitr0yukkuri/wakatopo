@@ -31,8 +31,8 @@ async function getEnvironment(searchParams: SearchParams) {
     const timeBand: WritingTimeBand = timeOverride ?? getWritingTimeBand(new Date());
     const weather: WritingWeather = weatherOverride ?? await getWritingWeather();
     return {
-        timeBand,
-        weather,
+        initialTimeBand: timeBand,
+        initialWeather: weather,
         lockTimeBand: Boolean(timeOverride),
         lockWeather: Boolean(weatherOverride),
     };

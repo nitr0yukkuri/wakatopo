@@ -39,7 +39,7 @@ const THEMES: Record<WritingTimeBand, WritingTheme> = {
     },
     morning: {
         background: '#162235',
-        surface: 'rgba(30,  fifty,  seventy, 0.72)'.replace('fifty', '50').replace('seventy', '70'),
+        surface: 'rgba(30, 50, 70, 0.72)',
         text: '#f8fbff',
         secondary: '#c7d6e9',
         border: 'rgba(186, 230, 253, 0.26)',
