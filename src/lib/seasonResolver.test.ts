@@ -19,8 +19,8 @@ describe('resolveSeasonState', () => {
         expect(resolveSeasonState(japanDate('2026-12-01'))).toEqual({ season: 'winter', seasonEvent: 'none' });
     });
 
-    it('gives geshi precedence over the tsuyu atmosphere on the solstice', () => {
-        expect(resolveSeasonState(japanDate('2026-06-21'))).toEqual({ season: 'summer', seasonEvent: 'geshi' });
+    it('does not auto-select geshi on the solstice', () => {
+        expect(resolveSeasonState(japanDate('2026-06-21'))).toEqual({ season: 'summer', seasonEvent: 'tsuyu' });
     });
 
     it('keeps tsuyu inside its intended date range', () => {
