@@ -27,11 +27,31 @@ export default function DenshouoClient() {
     const { lang, worldState, setActiveWork } = useDenshouoWorldState();
     const { weather: displayedWeather, season: displayedSeason, seasonEvent: displayedSeasonEvent } = worldState;
 
-    const [ripples, setRipples] = useState<Array<{ id: number; x: number; y: number; size: number; isHover: boolean; isRain: boolean }>>([]);
-    const [rainDemoDrop, setRainDemoDrop] = useState(false);
+    type Ripple = {
+        id: number;
+        x: number;
+        y: number;
+        size: number;
+        isHover: boolean;
+        isRain: boolean;
+        duration: number;
+    };
+    type RainDrop = {
+        x: number;
+        startY: number;
+        impactY: number;
+        length: number;
+        rotation: number;
+        duration: number;
+    };
+
+    const [ripples, setRipples] = useState<Ripple[]>([]);
+    const [rainDemoDrop, setRainDemoDrop] = useState<RainDrop | null>(null);
     const rippleIdRef = useRef(0);
     const lastHoverRippleAtRef = useRef(0);
-    const rainDemoTriggeredRef = useRef(false);
+    const rainActiveRef = useRef(false);
+    const rainTimerRef = useRef<number | null>(null);
+    const scheduleRainDropRef = useRef<(() => void) | null>(null);
     const reducedMotion = useReducedMotion();
     // isFinePointer — hide native cursor only on mouse devices
     const [isFinePointer, setIsFinePointer] = useState(false);
@@ -59,6 +79,7 @@ export default function DenshouoClient() {
                     size: isHover ? 96 + Math.random() * 28 : 120 + Math.random() * 40,
                     isHover,
                     isRain: false,
+                    duration: isHover ? 0.85 : 1.1,
                 },
             ]);
         };
@@ -74,20 +95,53 @@ export default function DenshouoClient() {
     }, []);
 
     useEffect(() => {
-        if (displayedWeather !== 'Rain') {
-            rainDemoTriggeredRef.current = false;
-            setRainDemoDrop(false);
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        rainActiveRef.current = displayedWeather === 'Rain' && !prefersReducedMotion && reducedMotion !== true;
+
+        if (rainTimerRef.current !== null) {
+            window.clearTimeout(rainTimerRef.current);
+            rainTimerRef.current = null;
+        }
+        setRainDemoDrop(null);
+        if (!rainActiveRef.current) {
+            setRipples((current) => current.filter((ripple) => !ripple.isRain));
+            scheduleRainDropRef.current = null;
             return;
         }
-        if (rainDemoTriggeredRef.current || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-        rainDemoTriggeredRef.current = true;
-        const timer = window.setTimeout(() => setRainDemoDrop(true), 700);
-        return () => {
-            window.clearTimeout(timer);
-            setRainDemoDrop(false);
+        const scheduleRainDrop = () => {
+            if (!rainActiveRef.current) return;
+            rainTimerRef.current = window.setTimeout(() => {
+                rainTimerRef.current = null;
+                if (!rainActiveRef.current) return;
+
+                const startY = 5 + Math.random() * 11;
+                const impactY = 28 + Math.random() * 48;
+                setRainDemoDrop({
+                    x: 16 + Math.random() * 68,
+                    startY,
+                    impactY,
+                    length: 10 + Math.random() * 10,
+                    rotation: -8 + Math.random() * 16,
+                    duration: 0.45 + Math.random() * 0.35,
+                });
+            }, 650 + Math.random() * 2200);
         };
-    }, [displayedWeather]);
+
+        scheduleRainDropRef.current = scheduleRainDrop;
+        scheduleRainDrop();
+
+        return () => {
+            rainActiveRef.current = false;
+            scheduleRainDropRef.current = null;
+            if (rainTimerRef.current !== null) {
+                window.clearTimeout(rainTimerRef.current);
+                rainTimerRef.current = null;
+            }
+            setRainDemoDrop(null);
+            setRipples((current) => current.filter((ripple) => !ripple.isRain));
+        };
+    }, [displayedWeather, reducedMotion]);
 
 
 
@@ -145,26 +199,41 @@ export default function DenshouoClient() {
                 {rainDemoDrop && reducedMotion !== true && (
                     <motion.span
                         data-testid="rain-demo-drop"
-                        className="absolute left-[52%] top-[10%] h-4 w-0.5 rounded-full bg-sky-100/80"
-                        initial={{ y: '-10vh', opacity: 0 }}
-                        animate={{ y: '24vh', opacity: [0, 0.9, 0.95] }}
-                        transition={{ duration: 0.7, ease: 'easeIn' }}
-                        style={{ filter: 'drop-shadow(0 0 6px rgba(125, 211, 252, 0.65))' }}
+                        className="absolute rounded-full bg-sky-100/80"
+                        initial={{ y: '-10vh', rotate: rainDemoDrop.rotation, opacity: 0 }}
+                        animate={{
+                            y: `${Math.max(8, rainDemoDrop.impactY - rainDemoDrop.startY)}vh`,
+                            rotate: rainDemoDrop.rotation,
+                            opacity: [0, 0.9, 0.95],
+                        }}
+                        transition={{ duration: rainDemoDrop.duration, ease: 'easeIn' }}
+                        style={{
+                            left: `${rainDemoDrop.x}%`,
+                            top: `${rainDemoDrop.startY}%`,
+                            height: rainDemoDrop.length,
+                            width: 2,
+                            filter: 'drop-shadow(0 0 6px rgba(125, 211, 252, 0.65))',
+                        }}
                         onAnimationComplete={() => {
-                            setRainDemoDrop(false);
+                            if (!rainActiveRef.current) return;
+                            const x = rainDemoDrop.x;
+                            const y = rainDemoDrop.impactY;
+                            setRainDemoDrop(null);
                             const id = rippleIdRef.current;
                             rippleIdRef.current += 1;
                             setRipples((current) => [
                                 ...current,
                                 {
                                     id,
-                                    x: 52,
-                                    y: 34,
-                                    size: 96,
+                                    x,
+                                    y,
+                                    size: 72 + Math.random() * 56,
                                     isHover: false,
                                     isRain: true,
+                                    duration: 1.0 + Math.random() * 0.7,
                                 },
                             ]);
+                            scheduleRainDropRef.current?.();
                         }}
                     />
                 )}
@@ -188,7 +257,7 @@ export default function DenshouoClient() {
                         }}
                         initial={{ scale: ripple.isRain ? 0.1 : ripple.isHover ? 0.18 : 0.15, opacity: ripple.isRain ? 0.22 : ripple.isHover ? 0.32 : 0.5 }}
                         animate={{ scale: ripple.isRain ? 1.55 : ripple.isHover ? 1.45 : 1.9, opacity: 0 }}
-                        transition={{ duration: ripple.isRain ? 1.35 : ripple.isHover ? 0.85 : 1.1, ease: 'easeOut' }}
+                        transition={{ duration: ripple.duration, ease: 'easeOut' }}
                         onAnimationComplete={() => {
                             setRipples((current) => current.filter((item) => item.id !== ripple.id));
                         }}
