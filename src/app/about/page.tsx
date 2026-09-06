@@ -132,6 +132,10 @@ export default async function AboutPage({
                 </Link>
             </nav>
 
+            <p className="writing-about-link">
+                <a href="/writing">Notes — 記事サイト</a>
+            </p>
+
             <section className="relative z-10 container mx-auto px-6 md:px-12 pb-10 md:pb-14 max-w-6xl">
                 <div className="rounded-3xl border border-cyan-500/20 bg-black/35 backdrop-blur-md p-6 md:p-8">
                     <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">

@@ -86,6 +86,19 @@ Home
 
 ---
 
+## Notes / Writing
+
+記事サイトはPortfolioとは別の責務を持つ、静かに文章を読むためのページとして /writing に分離しています。
+
+- 記事は content/writing の Markdown / MDX ファイルで管理
+- title、date、description、tags、draft のfrontmatterに対応
+- 公開記事は日付順・年別で一覧化
+- 記事詳細は固有のtitle、description、canonical、OG metadataを生成
+- /writing/feed.xml と /writing/sitemap.xml を提供
+- draft: true の記事は本番の一覧、RSS、sitemapから除外
+- 時間帯と大阪の天気をCSSテーマへ反映し、取得失敗時はunavailableへfallback
+- 公開URLは https://wakato.tech/writing。将来サブドメインへ移す場合は NEXT_PUBLIC_WRITING_SITE_URL で切り替え可能
+
 ## Frontend Architecture
 
 このプロジェクトは、画面をただ描画する構成ではなく、**状態を変えると世界が反応する** 形で設計しています。
