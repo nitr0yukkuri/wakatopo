@@ -3,7 +3,7 @@ title: Living Planetを「状態」として設計する
 date: 2026-08-24
 description: 天候・季節・作品遷移をひとつのWorldStateとして扱うまでの設計メモ。
 tags: ["design", "nextjs", "world-state"]
-draft: false
+draft: true
 ---
 
 # Living Planetを「状態」として設計する

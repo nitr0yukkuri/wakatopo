@@ -4,11 +4,9 @@ on:
   push:
     branches:
       - main
-      - codex/writing-site
     paths:
       - 'content/writing/**'
       - 'src/app/writing/**'
-      - 'src/app/api/writing/**'
       - 'src/lib/writing/**'
       - 'src/app/about/page.tsx'
       - 'src/app/globals.css'
@@ -19,7 +17,6 @@ on:
     paths:
       - 'content/writing/**'
       - 'src/app/writing/**'
-      - 'src/app/api/writing/**'
       - 'src/lib/writing/**'
       - 'src/app/about/page.tsx'
       - 'src/app/globals.css'

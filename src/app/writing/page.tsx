@@ -3,38 +3,22 @@ import Link from 'next/link';
 import WritingNav, { WritingFooter } from './WritingNav';
 import WritingShell from './WritingShell';
 import { getPublicArticles, type WritingArticle } from '@/lib/writing/content';
-import {
-    getWritingTimeBand,
-    parseWritingTimeBand,
-    parseWritingWeather,
-    type WritingTimeBand,
-    type WritingWeather,
-} from '@/lib/writing/theme';
-import { getWritingWeather } from '@/lib/writing/weather';
 import { WRITING_OG_IMAGE, WRITING_SITE_URL } from '@/lib/writing/site';
 
 export const revalidate = 300;
 
 export const metadata: Metadata = {
     title: 'Notes | WAKATO',
-    description: 'WAKATOが考えたこと、作ったもの、観察したことを静かに読む場所。',
+    description: 'WAKATOが考えたこと、作ったもの、観察したことを読む場所。',
     alternates: { canonical: WRITING_SITE_URL },
     openGraph: {
         title: 'Notes | WAKATO',
-        description: 'WAKATOの記録を静かに読む場所。',
+        description: 'WAKATOの記録を読む場所。',
         url: WRITING_SITE_URL,
         type: 'website',
         images: [{ url: WRITING_OG_IMAGE, width: 1200, height: 630, alt: 'WAKATO' }],
     },
 };
-
-type SearchParams = {
-    writingTime?: string | string[];
-    writingWeather?: string | string[];
-};
-
-const firstValue = (value: string | string[] | undefined) =>
-    Array.isArray(value) ? value[0] : value;
 
 function groupByYear(articles: WritingArticle[]) {
     const groups = new Map<string, WritingArticle[]>();
@@ -47,39 +31,16 @@ function groupByYear(articles: WritingArticle[]) {
     return [...groups.entries()].sort((a, b) => b[0].localeCompare(a[0]));
 }
 
-async function getEnvironment(searchParams: SearchParams) {
-    const timeOverride = parseWritingTimeBand(firstValue(searchParams.writingTime));
-    const weatherOverride = parseWritingWeather(firstValue(searchParams.writingWeather));
-    const timeBand: WritingTimeBand = timeOverride ?? getWritingTimeBand(new Date());
-    const weather: WritingWeather = weatherOverride ?? await getWritingWeather();
-    return {
-        initialTimeBand: timeBand,
-        initialWeather: weather,
-        lockTimeBand: Boolean(timeOverride),
-        lockWeather: Boolean(weatherOverride),
-    };
-}
-
-export default async function WritingIndexPage({
-    searchParams,
-}: {
-    searchParams?: SearchParams | Promise<SearchParams>;
-}) {
-    const resolvedSearchParams = (await searchParams) ?? {};
-    const environment = await getEnvironment(resolvedSearchParams);
+export default function WritingIndexPage() {
     const articles = getPublicArticles();
     const yearGroups = groupByYear(articles);
 
     return (
-        <WritingShell {...environment}>
+        <WritingShell>
             <WritingNav />
             <header className="writing-header writing-container">
-                <p className="writing-eyebrow">A QUIET PLACE FOR NOTES</p>
                 <h1 className="writing-title">Notes</h1>
-                <p className="writing-lead">
-                    検索で流れてしまう前に、考えたことを文章として置いておく。
-                    作品の裏側や、実装中に見つけた小さな発見を記録しています。
-                </p>
+                <p className="writing-lead">作ったものと、考えたこと。</p>
             </header>
 
             <main className="writing-container writing-archive" data-writing-page="archive">

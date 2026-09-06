@@ -278,52 +278,73 @@ body:has(.card-capture-page) .landscape-lock-overlay {
 }
 
 
-/* Writing / Notes: a quiet, readable one-column article space. */
+/* Writing / Notes: a small archive with a soft, blurred atmosphere. */
 .writing-site {
   --writing-space-1: 0.5rem;
   --writing-space-2: 1rem;
   --writing-space-3: 1.5rem;
   --writing-space-4: 2.5rem;
-  --writing-space-5: 4.5rem;
+  --writing-space-5: 4rem;
+  --writing-bg: #0b1722;
+  --writing-surface: rgba(14, 31, 46, 0.78);
+  --writing-text: #edf7ff;
+  --writing-secondary: #a8bfd2;
+  --writing-border: rgba(170, 215, 237, 0.2);
+  --writing-accent: #8fd8ff;
+  position: relative;
+  z-index: 0;
   min-height: 100dvh;
   overflow-x: clip;
   isolation: isolate;
-  position: relative;
   color: var(--writing-text);
-  background: var(--writing-bg);
+  background:
+    radial-gradient(ellipse at 50% -16%, rgba(117, 190, 224, 0.15), transparent 56%),
+    linear-gradient(180deg, #0b1722 0%, #102131 52%, #09131e 100%);
   font-family: var(--font-japanese);
-  transition: color 1200ms ease, background-color 1200ms ease;
 }
 
 .writing-site::before,
-.writing-site::after {
+.writing-site::after,
+.writing-atmosphere {
   content: "";
   position: fixed;
   inset: 0;
   pointer-events: none;
-  z-index: -1;
 }
 
 .writing-site::before {
+  z-index: 0;
   background:
-    radial-gradient(ellipse at 50% 0%, var(--writing-weather-wash), transparent 58%),
-    linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.24));
-  transition: background 1200ms ease;
+    radial-gradient(ellipse at 18% 8%, rgba(190, 226, 239, 0.11), transparent 34%),
+    radial-gradient(ellipse at 84% 24%, rgba(117, 174, 204, 0.09), transparent 31%);
+  filter: blur(20px);
+  transform: scale(1.04);
 }
 
 .writing-site::after {
-  background-image:
-    radial-gradient(rgba(255, 255, 255, 0.055) 0.6px, transparent 0.8px),
-    radial-gradient(rgba(0, 0, 0, 0.08) 0.6px, transparent 0.8px);
-  background-position: 0 0, 7px 11px;
-  background-size: 13px 13px, 17px 17px;
-  mix-blend-mode: soft-light;
-  opacity: 0.18;
+  z-index: 0;
+  background:
+    linear-gradient(180deg, transparent 54%, rgba(0, 5, 10, 0.34)),
+    radial-gradient(ellipse at center, transparent 42%, rgba(1, 6, 12, 0.3) 100%);
+}
+
+.writing-atmosphere {
+  z-index: 0;
+  inset: -8%;
+  opacity: 0.5;
+  background:
+    radial-gradient(ellipse at 20% 22%, rgba(143, 216, 255, 0.14) 0 8%, transparent 36%),
+    radial-gradient(ellipse at 78% 36%, rgba(122, 181, 214, 0.11) 0 10%, transparent 40%),
+    radial-gradient(ellipse at 40% 88%, rgba(94, 157, 191, 0.1) 0 9%, transparent 38%);
+  filter: blur(46px);
+  transform: scale(1.08);
+  animation: writing-atmosphere-drift 20s ease-in-out infinite alternate;
 }
 
 .writing-site-inner {
-  min-height: 100dvh;
   position: relative;
+  z-index: 1;
+  min-height: 100dvh;
   padding: 0 1.25rem 4rem;
 }
 
@@ -385,25 +406,12 @@ body:has(.card-capture-page) .landscape-lock-overlay {
   border-bottom-color: var(--writing-accent);
 }
 
-.writing-environment {
-  width: min(100%, 46rem);
-  margin: 2.25rem auto 0;
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.55rem;
-  color: var(--writing-secondary);
-  font-family: var(--font-geist-mono);
-  font-size: 0.65rem;
-  letter-spacing: 0.12em;
-  opacity: 0.78;
-}
-
 .writing-header {
-  padding: 7rem 0 6rem;
+  padding: 5rem 0 3.5rem;
 }
 
 .writing-eyebrow {
-  margin: 0 0 1rem;
+  margin: 0 0 0.8rem;
   color: var(--writing-accent);
   font-family: var(--font-geist-mono);
   font-size: 0.68rem;
@@ -423,28 +431,26 @@ body:has(.card-capture-page) .landscape-lock-overlay {
 }
 
 .writing-title {
-  font-size: clamp(3.5rem, 12vw, 7.4rem);
+  font-size: clamp(3.25rem, 10vw, 5.75rem);
 }
 
 .writing-lead {
-  max-width: 38rem;
-  margin: 2rem 0 0;
+  margin: 1.2rem 0 0;
   color: var(--writing-secondary);
-  font-size: clamp(1rem, 2.4vw, 1.22rem);
-  line-height: 1.9;
-  text-wrap: pretty;
+  font-size: 1rem;
+  line-height: 1.8;
 }
 
 .writing-archive {
-  padding-bottom: 4rem;
+  padding-bottom: 3rem;
 }
 
 .writing-year + .writing-year {
-  margin-top: 4.5rem;
+  margin-top: 3.5rem;
 }
 
 .writing-year-title {
-  margin: 0 0 1rem;
+  margin: 0 0 0.9rem;
   color: var(--writing-accent);
   font-family: var(--font-geist-mono);
   font-size: 0.74rem;
@@ -465,54 +471,88 @@ body:has(.card-capture-page) .landscape-lock-overlay {
 
 .writing-article-link {
   display: grid;
-  gap: 0.65rem;
-  padding: 1.35rem 0;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.4rem 1.2rem;
+  padding: 1.1rem 0;
 }
 
-.writing-article-link:hover .writing-article-title,
-.writing-article-link:focus-visible .writing-article-title {
-  color: var(--writing-accent);
+.writing-article-link:hover,
+.writing-article-link:focus-visible {
+  color: var(--writing-text);
+}
+
+.writing-article-link:focus-visible,
+.writing-back-link:focus-visible,
+.writing-nav-link:focus-visible,
+.writing-brand:focus-visible,
+.writing-footer-link:focus-visible {
+  outline: 2px solid var(--writing-accent);
+  outline-offset: 0.25rem;
 }
 
 .writing-article-title {
-  color: var(--writing-text);
-  font-size: 1.12rem;
-  line-height: 1.55;
-  transition: color 180ms ease;
+  min-width: 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+  line-height: 1.5;
 }
 
 .writing-article-meta {
   display: flex;
-  flex-wrap: wrap;
+  align-items: center;
   gap: 0.7rem;
   color: var(--writing-secondary);
   font-family: var(--font-geist-mono);
-  font-size: 0.66rem;
-  letter-spacing: 0.08em;
-  opacity: 0.86;
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
 }
 
 .writing-article-description {
+  grid-column: 1 / -1;
   color: var(--writing-secondary);
-  font-size: 0.9rem;
-  line-height: 1.75;
+  font-size: 0.86rem;
+  line-height: 1.7;
 }
 
 .writing-empty {
   color: var(--writing-secondary);
 }
 
+.writing-footer {
+  position: relative;
+  z-index: 1;
+  width: min(100% - 2.5rem, 46rem);
+  margin: 0 auto;
+  padding: 2rem 0 1rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  color: var(--writing-secondary);
+  font-family: var(--font-geist-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.05em;
+}
+
+.writing-footer p {
+  margin: 0;
+}
+
+.writing-footer-link {
+  white-space: nowrap;
+}
+
 .writing-article-page {
-  padding: 5rem 0 7rem;
+  padding-top: 4rem;
 }
 
 .writing-back-link {
   display: inline-block;
-  margin-bottom: 4rem;
+  margin-bottom: 3rem;
   color: var(--writing-secondary);
   font-family: var(--font-geist-mono);
   font-size: 0.72rem;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
 }
 
 .writing-article-header {
@@ -521,12 +561,14 @@ body:has(.card-capture-page) .landscape-lock-overlay {
 }
 
 .writing-article-heading {
-  font-size: clamp(2.2rem, 7vw, 4.8rem);
+  max-width: 42rem;
+  font-size: clamp(2.4rem, 7vw, 4.8rem);
 }
 
-.writing-article-header .writing-article-description {
+.writing-article-description {
   max-width: 38rem;
-  margin: 1.6rem 0 0;
+  margin: 1.5rem 0 0;
+  color: var(--writing-secondary);
   font-size: 1rem;
   line-height: 1.85;
 }
@@ -534,48 +576,51 @@ body:has(.card-capture-page) .landscape-lock-overlay {
 .writing-article-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.55rem;
-  margin-top: 1.6rem;
+  gap: 0.5rem 0.8rem;
+  margin-top: 1.25rem;
   color: var(--writing-accent);
   font-family: var(--font-geist-mono);
-  font-size: 0.66rem;
-  letter-spacing: 0.08em;
+  font-size: 0.7rem;
 }
 
 .writing-prose {
-  padding-top: 3.5rem;
-  color: var(--writing-text);
-  font-size: 1.04rem;
+  padding: 3.5rem 0 4rem;
+  color: #dceaf4;
+  font-size: 1rem;
   line-height: 2;
-  overflow-wrap: anywhere;
 }
 
-.writing-prose h1,
+.writing-prose > :first-child {
+  margin-top: 0;
+}
+
 .writing-prose h2,
 .writing-prose h3,
 .writing-prose h4 {
-  margin: 3.3rem 0 1rem;
+  margin: 2.8rem 0 1rem;
   color: var(--writing-text);
-  font-weight: 500;
-  line-height: 1.4;
-  scroll-margin-top: 2rem;
+  line-height: 1.45;
 }
 
-.writing-prose h1 { font-size: 1.8rem; }
-.writing-prose h2 { font-size: 1.45rem; }
-.writing-prose h3 { font-size: 1.2rem; }
+.writing-prose h2 {
+  font-size: 1.55rem;
+}
+
+.writing-prose h3 {
+  font-size: 1.25rem;
+}
 
 .writing-prose p,
 .writing-prose ul,
 .writing-prose ol,
 .writing-prose blockquote,
 .writing-prose pre {
-  margin: 1.3rem 0;
+  margin: 1.2rem 0;
 }
 
 .writing-prose ul,
 .writing-prose ol {
-  padding-left: 1.35rem;
+  padding-left: 1.4rem;
 }
 
 .writing-prose li + li {
@@ -585,142 +630,35 @@ body:has(.card-capture-page) .landscape-lock-overlay {
 .writing-prose a {
   color: var(--writing-accent);
   text-decoration: underline;
-  text-decoration-color: color-mix(in srgb, var(--writing-accent) 52%, transparent);
   text-underline-offset: 0.2em;
 }
 
-.writing-prose a:hover,
-.writing-prose a:focus-visible {
-  text-decoration-color: var(--writing-accent);
-}
-
-.writing-prose strong {
-  font-weight: 700;
-}
-
-.writing-prose em {
-  font-style: italic;
-}
-
-.writing-prose code {
-  padding: 0.12em 0.35em;
-  border: 1px solid var(--writing-border);
-  border-radius: 0.25rem;
-  background: rgba(0, 0, 0, 0.2);
-  color: var(--writing-accent);
-  font-family: var(--font-geist-mono);
-  font-size: 0.86em;
-}
-
-.writing-prose pre {
-  max-width: 100%;
-  overflow-x: auto;
-  padding: 1rem 1.1rem;
-  border: 1px solid var(--writing-border);
-  border-radius: 0.5rem;
-  background: rgba(0, 0, 0, 0.34);
-  color: var(--writing-text);
-  font-family: var(--font-geist-mono);
-  font-size: 0.82rem;
-  line-height: 1.7;
-  -webkit-overflow-scrolling: touch;
-}
-
-.writing-prose pre code {
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: inherit;
-  white-space: pre;
-}
-
 .writing-prose blockquote {
-  margin-inline: 0;
-  padding: 0.35rem 0 0.35rem 1.1rem;
+  padding: 0.2rem 0 0.2rem 1rem;
   border-left: 2px solid var(--writing-accent);
   color: var(--writing-secondary);
 }
 
-.writing-prose img {
-  display: block;
-  width: auto;
-  max-width: 100%;
-  height: auto;
-  margin: 2rem auto;
-  border: 1px solid var(--writing-border);
-  border-radius: 0.4rem;
-}
-
-.writing-footer {
-  width: min(100%, 46rem);
-  margin-inline: auto;
-  padding: 2rem 0 1rem;
-  border-top: 1px solid var(--writing-border);
-  color: var(--writing-secondary);
-  font-size: 0.82rem;
-  line-height: 1.7;
-}
-
-.writing-footer p {
-  margin: 0 0 0.75rem;
-}
-
-.writing-footer-link {
-  color: var(--writing-accent);
+.writing-prose code {
+  padding: 0.12rem 0.3rem;
+  border-radius: 0.25rem;
+  background: rgba(145, 196, 224, 0.12);
+  color: #e9f8ff;
   font-family: var(--font-geist-mono);
-  font-size: 0.68rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  font-size: 0.88em;
 }
 
-.writing-site a:focus-visible {
-  outline: 2px solid var(--writing-accent);
-  outline-offset: 4px;
-  border-radius: 2px;
+.writing-prose pre {
+  overflow-x: auto;
+  padding: 1rem;
+  border: 1px solid var(--writing-border);
+  border-radius: 0.5rem;
+  background: rgba(4, 14, 23, 0.7);
 }
 
-@media (max-width: 640px) {
-  .writing-site-inner {
-    padding-inline: 1rem;
-  }
-
-  .writing-header {
-    padding: 5.5rem 0 4.5rem;
-  }
-
-  .writing-environment {
-    margin-top: 1.7rem;
-    font-size: 0.58rem;
-  }
-
-  .writing-article-page {
-    padding-top: 4rem;
-  }
-
-  .writing-back-link {
-    margin-bottom: 3rem;
-  }
-
-  .writing-prose {
-    font-size: 1rem;
-  }
-
-  .writing-prose pre {
-    margin-inline: -0.15rem;
-    border-radius: 0.35rem;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .writing-site,
-  .writing-site::before,
-  .writing-site a,
-  .writing-site * {
-    scroll-behavior: auto;
-    transition-duration: 0.01ms !important;
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-  }
+.writing-prose pre code {
+  padding: 0;
+  background: transparent;
 }
 
 .writing-about-link {
@@ -746,4 +684,69 @@ body:has(.card-capture-page) .landscape-lock-overlay {
 .writing-about-link a:focus-visible {
   color: #ffffff;
   border-color: #ffffff;
+}
+
+@keyframes writing-atmosphere-drift {
+  from {
+    transform: scale(1.08) translate3d(-1%, -1%, 0);
+  }
+  to {
+    transform: scale(1.12) translate3d(1%, 1%, 0);
+  }
+}
+
+@media (max-width: 640px) {
+  .writing-site-inner {
+    padding-inline: 1rem;
+  }
+
+  .writing-nav {
+    padding-top: 1.2rem;
+  }
+
+  .writing-header {
+    padding: 4rem 0 2.75rem;
+  }
+
+  .writing-title {
+    font-size: clamp(3rem, 18vw, 4.6rem);
+  }
+
+  .writing-article-link {
+    grid-template-columns: 1fr;
+    gap: 0.45rem;
+  }
+
+  .writing-article-meta {
+    white-space: normal;
+    flex-wrap: wrap;
+  }
+
+  .writing-article-description {
+    grid-column: auto;
+  }
+
+  .writing-footer {
+    width: 100%;
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+
+  .writing-article-page {
+    padding-top: 3rem;
+  }
+
+  .writing-prose {
+    font-size: 0.98rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .writing-atmosphere {
+    animation: none;
+  }
+
+  .writing-site a {
+    transition-duration: 0.01ms !important;
+  }
 }
