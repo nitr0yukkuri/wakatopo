@@ -1,0 +1,40 @@
+name: writing-check
+
+on:
+  push:
+    branches:
+      - main
+      - codex/writing-site
+    paths:
+      - 'content/writing/**'
+      - 'src/app/writing/**'
+      - 'src/app/api/writing/**'
+      - 'src/lib/writing/**'
+      - 'src/app/about/page.tsx'
+      - 'src/app/globals.css'
+      - 'e2e/writing-site.spec.ts'
+      - 'package.json'
+      - 'package-lock.json'
+  pull_request:
+    paths:
+      - 'content/writing/**'
+      - 'src/app/writing/**'
+      - 'src/app/api/writing/**'
+      - 'src/lib/writing/**'
+      - 'src/app/about/page.tsx'
+      - 'src/app/globals.css'
+      - 'e2e/writing-site.spec.ts'
+      - 'package.json'
+      - 'package-lock.json'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
