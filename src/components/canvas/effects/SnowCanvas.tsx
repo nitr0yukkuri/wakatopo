@@ -126,7 +126,14 @@ export default function SnowCanvas({
                 if (f.x < -6) f.x = w + 6;
 
                 const rOffset = Math.ceil(f.r);
-                ctx.drawImage(flakeCanvases[i], f.x - rOffset, f.y - rOffset);
+                const drawSize = rOffset * 2;
+                ctx.drawImage(
+                    flakeCanvases[i],
+                    f.x - rOffset,
+                    f.y - rOffset,
+                    drawSize,
+                    drawSize,
+                );
             }
 
             if (isWinterSnow) {
