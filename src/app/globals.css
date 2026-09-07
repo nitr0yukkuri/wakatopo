@@ -305,7 +305,8 @@ body:has(.card-capture-page) .landscape-lock-overlay {
 
 .writing-site::before,
 .writing-site::after,
-.writing-atmosphere {
+.writing-atmosphere,
+.writing-rain {
   content: "";
   position: fixed;
   inset: 0;
@@ -331,14 +332,25 @@ body:has(.card-capture-page) .landscape-lock-overlay {
 .writing-atmosphere {
   z-index: 0;
   inset: -8%;
-  opacity: 0.5;
+  opacity: 0.42;
   background:
     radial-gradient(ellipse at 20% 22%, rgba(143, 216, 255, 0.14) 0 8%, transparent 36%),
     radial-gradient(ellipse at 78% 36%, rgba(122, 181, 214, 0.11) 0 10%, transparent 40%),
     radial-gradient(ellipse at 40% 88%, rgba(94, 157, 191, 0.1) 0 9%, transparent 38%);
   filter: blur(46px);
   transform: scale(1.08);
-  animation: writing-atmosphere-drift 20s ease-in-out infinite alternate;
+  animation: writing-atmosphere-drift 24s ease-in-out infinite alternate;
+}
+
+.writing-rain {
+  z-index: 0;
+  opacity: 0.06;
+  background-image:
+    repeating-linear-gradient(108deg, transparent 0 22px, rgba(196, 231, 245, 0.34) 23px, transparent 24px 68px),
+    repeating-linear-gradient(108deg, transparent 0 63px, rgba(125, 211, 252, 0.24) 64px, transparent 65px 112px);
+  background-position: 0 0, 18px -28px;
+  background-size: 96px 96px, 160px 160px;
+  animation: writing-rain-fall 16s linear infinite;
 }
 
 .writing-site-inner {
@@ -695,9 +707,26 @@ body:has(.card-capture-page) .landscape-lock-overlay {
   }
 }
 
+@keyframes writing-rain-fall {
+  from {
+    background-position: 0 0, 18px -28px;
+  }
+  to {
+    background-position: -12px 96px, 42px 96px;
+  }
+}
+
 @media (max-width: 640px) {
   .writing-site-inner {
     padding-inline: 1rem;
+  }
+
+  .writing-atmosphere {
+    opacity: 0.36;
+  }
+
+  .writing-rain {
+    opacity: 0.045;
   }
 
   .writing-nav {
@@ -742,7 +771,8 @@ body:has(.card-capture-page) .landscape-lock-overlay {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .writing-atmosphere {
+  .writing-atmosphere,
+  .writing-rain {
     animation: none;
   }
 

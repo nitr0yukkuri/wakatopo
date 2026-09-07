@@ -6,6 +6,7 @@ test.describe('Writing / Notes', () => {
         await expect(page.locator('[data-writing-page="archive"]')).toHaveCount(1);
         await expect(page.locator('.writing-site')).toHaveCount(1);
         await expect(page.locator('.writing-atmosphere')).toHaveCount(1);
+        await expect(page.locator('.writing-rain')).toHaveCount(1);
         await expect(page.locator('.writing-year')).toHaveCount(0);
         await expect(page.locator('.writing-article-link')).toHaveCount(0);
         await expect(page.locator('.writing-empty')).toContainText('まだ公開された記録はありません');
