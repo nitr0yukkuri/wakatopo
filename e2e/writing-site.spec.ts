@@ -16,9 +16,10 @@ test.describe('Writing / Notes', () => {
         await expect(page.locator('a[href="/otenkigurashi"]')).toHaveCount(0);
     });
 
-    test('does not expose a draft article route', async ({ page }) => {
-        const response = await page.goto('/writing/2026-living-planet', { waitUntil: 'domcontentloaded' });
-        expect(response?.status()).toBe(404);
+    test('does not expose draft article content', async ({ page }) => {
+        await page.goto('/writing/2026-living-planet', { waitUntil: 'domcontentloaded' });
+        await expect(page.locator('[data-writing-page="article"]')).toHaveCount(0);
+        await expect(page.locator('body')).not.toContainText('Living Planetを「状態」として設計する');
     });
 
     test('does not overflow an iPhone-sized viewport', async ({ page }) => {
