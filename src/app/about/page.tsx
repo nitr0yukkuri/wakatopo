@@ -30,6 +30,7 @@ const copyByLang = {
             '機械学習基盤体験型2daysサイバーエージェントインターンシップ 参加',
             'CSS Winner SOTD WAKATO | Living Planet Portfolio',
             '技育博 Vol.1 展示　recaptchagame',
+            'Demo Stage 最優秀賞',
         ],
         sectionDev: '開発体制',
         devText:
@@ -78,6 +79,7 @@ const copyByLang = {
             'CyberAgent 2-day Hands-on ML Platform Internship - Participant',
             'CSS Winner SOTD WAKATO | Living Planet Portfolio',
             'Geek Expo Vol.1 Exhibition - recaptchagame',
+            'Demo Stage Grand Prize',
         ],
         sectionDev: 'DEVELOPMENT STYLE',
         devText:
