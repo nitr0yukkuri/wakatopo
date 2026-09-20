@@ -84,7 +84,7 @@ export default function RootLayout({
                 url: "https://wakato.tech",
                 image: "https://wakato.tech/faviconwakato.png",
                 description: "プロダクト価値から逆算して必要な領域を横断するSWEを目指しています",
-                jobTitle: "Interactive Web Developer / Creative Coder",
+                jobTitle: "Software Engineer / Creative Developer",
                 sameAs: ["https://github.com/nitr0yukkuri", "https://twitter.com/nitr0yukkuri"],
               },
             }),
