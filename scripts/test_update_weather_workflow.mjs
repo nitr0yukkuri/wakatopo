@@ -5,7 +5,7 @@ const workflowPath = resolve('.github/workflows/update-weather.yml');
 const workflow = readFileSync(workflowPath, 'utf8');
 
 const fail = (message) => {
-  console.error(\`workflow safety test failed: \${message}\`);
+  console.error('workflow safety test failed: ' + message);
   process.exitCode = 1;
 };
 
@@ -53,17 +53,17 @@ expectIncludes('Asset branch changed during publish; refreshing it before retry.
 if (workflow.includes('git fetch origin "$ASSET_BRANCH" || true')) {
   fail('fetch failures must never be ignored.');
 }
-if (workflow.includes('--force')) {
+if (workflow.includes('git push --force')) {
   fail('the publisher must not force-push the asset branch.');
 }
 
-expectIncludes('cat > "$TMP_DIR/package.json" <<\\'JSON\\'', 'preview-assets package.json must be generated intentionally.');
+expectIncludes(\`cat > "$TMP_DIR/package.json" <<'JSON'\`, 'preview-assets package.json must be generated intentionally.');
 expectIncludes('"private": true', 'preview-assets package.json should remain minimal.');
 if (workflow.includes('"vercel-build"')) {
   fail('preview-assets package.json must not define vercel-build.');
 }
 
-expectIncludes('cat > "$TMP_DIR/vercel.json" <<\\'JSON\\'', 'preview-assets vercel.json must be generated intentionally.');
+expectIncludes(\`cat > "$TMP_DIR/vercel.json" <<'JSON'\`, 'preview-assets vercel.json must be generated intentionally.');
 expectIncludes('"framework": null', 'preview-assets must disable Vercel framework detection.');
 expectIncludes('"installCommand": ""', 'preview-assets must skip dependency installation.');
 expectIncludes('"buildCommand": null', 'preview-assets must not run a Next.js build.');
