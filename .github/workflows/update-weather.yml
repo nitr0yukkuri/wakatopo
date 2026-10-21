@@ -7,16 +7,46 @@ on:
   schedule:
     - cron: '0 */3 * * *'
   workflow_dispatch:
+  pull_request:
+    paths:
+      - .github/workflows/update-weather.yml
+      - scripts/test_update_weather_workflow.mjs
+      - scripts/test_weather_asset_publisher.mjs
+      - scripts/publish_weather_assets.sh
+      - package.json
+      - package-lock.json
 
-concurrency:
-  group: update-live-weather-gif
-  cancel-in-progress: true
+permissions:
+  contents: read
 
 jobs:
-  update-gif:
+  verify-workflow:
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.23.4'
+
+      - name: Check weather workflow safety
+        run: npm run test:workflow
+
+  update-gif:
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
     permissions:
       contents: write
+    concurrency:
+      group: update-live-weather-gif
+      cancel-in-progress: false
 
     steps:
       - name: Checkout repository
@@ -25,7 +55,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22.23.4'
 
       - name: Install dependencies
         run: npm ci
@@ -50,58 +80,9 @@ jobs:
           ffmpeg -y -i "$WEBM_FILE" -ss 15 -t 5 -vf "setpts=1.25*PTS,fps=16,scale=800:-1:flags=lanczos,split[s0][s1];[s0]palettegen=max_colors=256:stats_mode=diff[p];[s1][p]paletteuse=dither=sierra2_4a:diff_mode=rectangle" -loop 0 preview.gif
           rm -rf videos/
 
-      - name: Commit GIF to assets branch
+      - name: Publish GIF to asset branch
+        shell: bash
+        run: bash scripts/publish_weather_assets.sh preview.gif
+      - name: Summary
         run: |
-          git config --global user.name 'github-actions[bot]'
-          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-          ASSET_BRANCH="preview-assets"
-          TMP_DIR="$(mktemp -d)"
-          cp preview.gif "$TMP_DIR/preview.gif"
-          rm -f preview.gif
-
-          git fetch origin "$ASSET_BRANCH" || true
-          if git show-ref --verify --quiet "refs/remotes/origin/$ASSET_BRANCH"; then
-            git switch --force-create "$ASSET_BRANCH" "origin/$ASSET_BRANCH"
-          else
-            git switch --orphan "$ASSET_BRANCH"
-          fi
-
-          git rm -rf . || true
-          cp "$TMP_DIR/preview.gif" preview.gif
-          cat > index.html <<'HTML'
-          <!doctype html>
-          <html lang="en">
-            <head>
-              <meta charset="utf-8">
-              <meta name="viewport" content="width=device-width, initial-scale=1">
-              <title>Wakato Preview Assets</title>
-            </head>
-            <body>
-              <img src="./preview.gif" alt="Live Weather Preview">
-            </body>
-          </html>
-          HTML
-          cat > package.json <<'JSON'
-          {
-            "private": true
-          }
-          JSON
-          cat > vercel.json <<'JSON'
-          {
-            "$schema": "https://openapi.vercel.sh/vercel.json",
-            "framework": null,
-            "installCommand": "",
-            "buildCommand": null,
-            "outputDirectory": "."
-          }
-          JSON
-          git add preview.gif
-          git add index.html
-          git add package.json
-          git add vercel.json
-          if git diff --cached --quiet; then
-            echo "preview.gif is unchanged."
-            exit 0
-          fi
-          git commit -m "chore: update live weather gif [skip ci]"
-          git push origin "$ASSET_BRANCH"
+          echo "Live weather GIF published to preview-assets."
