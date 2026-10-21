@@ -50,14 +50,14 @@ try {
   run('git', ['-C', publisherRepo, 'remote', 'add', 'origin', remotePath], tempRoot);
   run('git', ['-C', publisherRepo, 'push', '-u', 'origin', 'main'], tempRoot);
 
-  writeFileSync(join(publisherRepo, 'preview.gif'), 'gif-fixture-v1\n');
+  writeFileSync(join(publisherRepo, 'preview.gif'), 'gif-fixture-v1');
   const firstOutput = runPublisher(publisherRepo);
   assert.match(firstOutput, /does not exist yet; creating it\./);
   assert.deepEqual(remoteFiles(remotePath), ['index.html', 'package.json', 'preview.gif', 'vercel.json']);
-  assert.equal(remoteFile(remotePath, 'preview.gif'), 'gif-fixture-v1\n');
+  assert.equal(remoteFile(remotePath, 'preview.gif'), 'gif-fixture-v1');
   const initialAssetSha = run('git', ['--git-dir', remotePath, 'rev-parse', 'refs/heads/preview-assets'], repoRoot);
 
-  writeFileSync(join(publisherRepo, 'preview.gif'), 'gif-fixture-v1\n');
+  writeFileSync(join(publisherRepo, 'preview.gif'), 'gif-fixture-v1');
   const unchangedOutput = runPublisher(publisherRepo);
   assert.match(unchangedOutput, /Published assets are unchanged\./);
   assert.equal(run('git', ['--git-dir', remotePath, 'rev-parse', 'refs/heads/preview-assets'], repoRoot), initialAssetSha);
@@ -91,7 +91,7 @@ process.exit(result.status ?? 1);
 `);
   chmodSync(gitShim, 0o755);
 
-  writeFileSync(join(publisherRepo, 'preview.gif'), 'gif-fixture-v2\n');
+  writeFileSync(join(publisherRepo, 'preview.gif'), 'gif-fixture-v2');
   const raceEnv = {
     ...process.env,
     PATH: shimDirectory + delimiter + process.env.PATH,
@@ -102,7 +102,7 @@ process.exit(result.status ?? 1);
   const retryOutput = runPublisher(publisherRepo, raceEnv);
   assert.ok(existsSync(raceMarker), 'the test must inject a concurrent push before the publisher push.');
   assert.match(retryOutput, /Asset branch changed during publish; refreshing it before retry\./);
-  assert.equal(remoteFile(remotePath, 'preview.gif'), 'gif-fixture-v2\n');
+  assert.equal(remoteFile(remotePath, 'preview.gif'), 'gif-fixture-v2');
   assert.deepEqual(remoteFiles(remotePath), ['index.html', 'package.json', 'preview.gif', 'vercel.json']);
   console.log('weather asset publisher integration checks passed (new branch, no-op, push conflict retry).');
 } finally {
