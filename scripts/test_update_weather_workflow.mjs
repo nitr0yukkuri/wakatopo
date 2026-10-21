@@ -57,13 +57,13 @@ if (workflow.includes('git push --force')) {
   fail('the publisher must not force-push the asset branch.');
 }
 
-expectIncludes(\`cat > "$TMP_DIR/package.json" <<'JSON'\`, 'preview-assets package.json must be generated intentionally.');
+expectIncludes("cat > \\\"$TMP_DIR/package.json\\\" <<'JSON'", 'preview-assets package.json must be generated intentionally.');
 expectIncludes('"private": true', 'preview-assets package.json should remain minimal.');
 if (workflow.includes('"vercel-build"')) {
   fail('preview-assets package.json must not define vercel-build.');
 }
 
-expectIncludes(\`cat > "$TMP_DIR/vercel.json" <<'JSON'\`, 'preview-assets vercel.json must be generated intentionally.');
+expectIncludes("cat > \\\"$TMP_DIR/vercel.json\\\" <<'JSON'", 'preview-assets vercel.json must be generated intentionally.');
 expectIncludes('"framework": null', 'preview-assets must disable Vercel framework detection.');
 expectIncludes('"installCommand": ""', 'preview-assets must skip dependency installation.');
 expectIncludes('"buildCommand": null', 'preview-assets must not run a Next.js build.');
