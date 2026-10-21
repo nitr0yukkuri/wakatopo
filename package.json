@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "test:i18n": "node scripts/test_i18n_copy.mjs",
-    "test:workflow": "node scripts/test_update_weather_workflow.mjs",
+    "test:workflow": "node scripts/test_update_weather_workflow.mjs && node scripts/test_weather_asset_publisher.mjs",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "gltf:draco": "gltf-pipeline -i public/models/planet.glb -o public/models/planet.draco.glb -d",
