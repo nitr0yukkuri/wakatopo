@@ -1,5 +1,7 @@
 # WAKATO | Living Planet
 
+[日本語](README.md) | [English](README.en.md)
+
 <div align="center">
   <a href="https://wakato.tech">
     <img src="https://raw.githubusercontent.com/nitr0yukkuri/wakatopo/preview-assets/preview.gif" alt="WAKATO | Living Planet preview" width="800" />
