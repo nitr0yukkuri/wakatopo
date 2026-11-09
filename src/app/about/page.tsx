@@ -117,7 +117,7 @@ const copyByLang = {
 export default async function AboutPage({
     searchParams,
 }: {
-    searchParams?: SearchParams | Promise<SearchParams>;
+    searchParams?: Promise<SearchParams>;
 }) {
     const resolvedSearchParams = (await searchParams) ?? {};
     const langParam = Array.isArray(resolvedSearchParams.lang)

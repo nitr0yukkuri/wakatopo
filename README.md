@@ -239,6 +239,7 @@ Denshouo
 | Area | Tech |
 | --- | --- |
 | Framework | Next.js 16 |
+| Cloudflare adapter | OpenNext for Cloudflare |
 | Language | TypeScript |
 | 3D | Three.js, React Three Fiber |
 | Shader / Graphics | WebGL, GLSL |
@@ -247,7 +248,16 @@ Denshouo
 | State | Zustand |
 | Audio | Tone.js |
 | Test / Automation | Playwright, GitHub Actions |
-| Deploy | Vercel |
+| Deploy | Cloudflare Workers |
+
+### Cloudflare Workers
+
+- Run `npm run dev` for the usual Next.js development server.
+- Run `npm run preview` to build and preview the app in the local Workers runtime.
+- Run `npm run cf-typegen` to generate Cloudflare binding types.
+- Run `npm run deploy` after configuring Wrangler authentication to deploy the Worker.
+
+Next.js image optimization uses the Cloudflare Images binding and may incur usage charges.
 
 ---
 
