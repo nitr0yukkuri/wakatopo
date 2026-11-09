@@ -257,7 +257,7 @@ Denshouo
 - Run `npm run cf-typegen` to generate Cloudflare binding types.
 - Run `npm run deploy` after configuring Wrangler authentication to deploy the Worker.
 
-Next.js image optimization uses the Cloudflare Images binding and may incur usage charges.
+Next.js images are served without on-the-fly optimization to avoid Cloudflare Images transformation charges. The Wrangler configuration uses no paid Cloudflare Images binding; Workers Free account limits still apply.
 
 ---
 
