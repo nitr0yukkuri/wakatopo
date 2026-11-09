@@ -97,7 +97,7 @@ export const revalidate = 1800;
 export default async function Home({
   searchParams,
 }: {
-  searchParams?: SearchParams | Promise<SearchParams>;
+  searchParams?: Promise<SearchParams>;
 }) {
   const data = await fetchPlanetData();
   const resolvedSearchParams = (await searchParams) ?? {};

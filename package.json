@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint",
     "test:i18n": "node scripts/test_i18n_copy.mjs",
@@ -12,20 +12,25 @@
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "gltf:draco": "gltf-pipeline -i public/models/planet.glb -o public/models/planet.draco.glb -d",
-    "gltf:optimize": "gltf-transform optimize public/models/planet.glb public/models/planet.opt.glb --compress draco --texture-compress webp --prune --simplify"
+    "gltf:optimize": "gltf-transform optimize public/models/planet.glb public/models/planet.opt.glb --compress draco --texture-compress webp --prune --simplify",
+    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
+    "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
+    "upload": "opennextjs-cloudflare build && opennextjs-cloudflare upload",
+    "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts"
   },
   "dependencies": {
     "@next/third-parties": "^16.2.2",
+    "@opennextjs/cloudflare": "^1.20.16",
     "@react-three/drei": "^10.7.7",
-    "@react-three/fiber": "^9.5.0",
+    "@react-three/fiber": "^9.8.2",
     "@react-three/postprocessing": "^3.0.4",
     "@types/three": "^0.182.0",
     "animejs": "^3.2.2",
     "clsx": "^2.1.1",
     "framer-motion": "^12.35.0",
-    "next": "16.1.6",
-    "react": "19.2.3",
-    "react-dom": "19.2.3",
+    "next": "16.4.5",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
     "tailwind-merge": "^3.4.1",
     "textalive-app-api": "^0.4.0",
     "three": "^0.182.0",
@@ -44,12 +49,30 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "draco3dgltf": "^1.5.7",
+    "esbuild": "0.28.2",
     "eslint": "^9",
-    "eslint-config-next": "16.1.6",
+    "eslint-config-next": "16.4.5",
     "gltf-pipeline": "^4.3.0",
     "jsdom": "^29.0.0",
     "tailwindcss": "^4",
     "typescript": "^5",
-    "vitest": "^4.1.0"
+    "vitest": "^4.1.0",
+    "wrangler": "4.158.0"
+  },
+  "type": "module",
+  "overrides": {
+    "eslint-plugin-react-hooks": "7.0.1",
+    "@opennextjs/cloudflare": {
+      "glob": "14.0.2"
+    },
+    "@opennextjs/aws": {
+      "@node-minify/core": {
+        "glob": "14.0.2"
+      }
+    }
+  },
+  "allowScripts": {
+    "esbuild@0.28.2": true,
+    "workerd@1.20261104.1": true
   }
 }

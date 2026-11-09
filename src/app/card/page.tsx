@@ -16,7 +16,7 @@ type SearchParams = {
 export default async function CardPage({
     searchParams,
 }: {
-    searchParams?: SearchParams | Promise<SearchParams>;
+    searchParams?: Promise<SearchParams>;
 }) {
     const data = await fetchPlanetData();
     const routeState = parseWorldStateRecord((await searchParams) ?? {});

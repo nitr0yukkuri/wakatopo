@@ -36,7 +36,9 @@ export async function fetchPlanetData() {
                 { next: { revalidate: 1800 } }
             );
             if (!res.ok) throw new Error(`open-meteo ${res.status}`);
-            const data = await res.json();
+            const data = (await res.json()) as {
+                current: { weather_code: number };
+            };
             const code: number = data.current.weather_code;
             const base = mapWeatherCode(code);
             // 5〜9時は晴れでも Morning に
