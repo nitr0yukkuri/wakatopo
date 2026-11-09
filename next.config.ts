@@ -12,7 +12,7 @@ const nextConfig: NextConfig = {
     root: projectRoot,
   },
   images: {
-    formats: ["image/avif", "image/webp"],
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: "https",
