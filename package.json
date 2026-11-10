@@ -65,10 +65,8 @@
     "@opennextjs/cloudflare": {
       "glob": "14.0.2"
     },
-    "@opennextjs/aws": {
-      "@node-minify/core": {
-        "glob": "14.0.2"
-      }
+    "@node-minify/core": {
+      "glob": "14.0.2"
     }
   },
   "allowScripts": {
