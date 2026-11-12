@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState, Suspense } from 'react';
-import { Canvas } from '@react-three/fiber';
+import Canvas from '@/components/canvas/SafeCanvas';
 import { OrbitControls, Stars } from '@react-three/drei';
 import Planet from './Planet';
 import Meteors from './Meteors';

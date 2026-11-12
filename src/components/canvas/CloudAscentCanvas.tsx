@@ -1,7 +1,8 @@
 'use client'
 
 import { useRef, useMemo } from 'react';
-import { Canvas, useFrame, useThree } from '@react-three/fiber';
+import { useFrame, useThree } from '@react-three/fiber';
+import Canvas from '@/components/canvas/SafeCanvas';
 import * as THREE from 'three';
 import { cloudVertexShader, cloudFragmentShader } from '@/shaders/cloud';
 import { sunVertexShader, sunFragmentShader } from '@/shaders/sun';
