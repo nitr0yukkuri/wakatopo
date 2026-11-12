@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { headers } from "next/headers";
 import { Suspense } from "react";
 import "./globals.css";
 import LocaleSync from "@/components/LocaleSync";
@@ -17,84 +18,25 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL("https://wakato.tech"),
   title: "WAKATO | Living Planet Portfolio",
-  description: "GitHubの活動とリアルタイム天気が連動する、インタラクティブな3Dポートフォリオ。プロダクト価値から逆算して必要な領域を横断するSWEを目指しています。",
-  keywords: ["ポートフォリオ", "3D", "インタラクション", "SWE", "GitHub", "Three.js", "React"],
-  openGraph: {
-    title: "WAKATO | Living Planet Portfolio",
-    description: "GitHubの活動とリアルタイム天気が連動する、インタラクティブな3Dポートフォリオ。",
-    url: "https://wakato.tech",
-    siteName: "WAKATO",
-    locale: "ja_JP",
-    type: "website",
-    images: [
-      {
-        url: "https://wakato.tech/opengraph-image.png",
-        width: 1200,
-        height: 630,
-        alt: "WAKATO Portfolio",
-        type: "image/png",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "WAKATO | Living Planet Portfolio",
-    description: "GitHubの活動とリアルタイム天気が連動する、インタラクティブな3Dポートフォリオ。",
-    creator: "@nitr0yukkuri",
-    images: ["https://wakato.tech/opengraph-image.png"],
-  },
-  icons: {
-    icon: "/faviconwakato.png",
-    apple: "/faviconwakato.png",
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      "max-video-preview": -1,
-      "max-image-preview": "large",
-      "max-snippet": -1,
-    },
-  },
+  description: "WAKATO（わかと）の没入型3Dポートフォリオ。",
+  icons: { icon: "/icon.png", apple: "/apple-icon.png" },
+  verification: { google: process.env.GOOGLE_SITE_VERIFICATION },
+  robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 } },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const lang = (await headers()).get("x-wakato-lang") === "en" ? "en" : "ja";
   return (
-    <html lang="ja" suppressHydrationWarning>
-      <head>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "ProfilePage",
-              name: "WAKATO",
-              url: "https://wakato.tech",
-              description: "GitHubの活動とリアルタイム天気が連動する、インタラクティブな3Dポートフォリオ。プロダクト価値から逆算して必要な領域を横断するSWEを目指しています。",
-              image: "https://wakato.tech/faviconwakato.png",
-              mainEntity: {
-                "@type": "Person",
-                name: "WAKATO (nitr0yukkuri)",
-                url: "https://wakato.tech",
-                image: "https://wakato.tech/faviconwakato.png",
-                description: "プロダクト価値から逆算して必要な領域を横断するSWEを目指しています",
-                jobTitle: "Software Engineer / Creative Developer",
-                sameAs: ["https://github.com/nitr0yukkuri", "https://twitter.com/nitr0yukkuri"],
-              },
-            }),
-          }}
-        />
-      </head>
+    <html lang={lang} data-lang={lang} suppressHydrationWarning>
       <body
         className="antialiased"
         suppressHydrationWarning
       >
+        <noscript><style>{'[data-readable-without-js] { opacity: 1 !important; transform: none !important; }'}</style></noscript>
         {isGaEnabled && <DelayedAnalytics measurementId={GA_MEASUREMENT_ID} />}
         <Suspense fallback={null}>
           <LocaleSync />

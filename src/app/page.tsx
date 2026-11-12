@@ -1,3 +1,5 @@
+import SeoJsonLd from '@/components/SeoJsonLd';
+import { getPageMetadata, type SeoPageProps } from '@/lib/seo';
 import { fetchPlanetData } from '@/lib/actions';
 import { Suspense } from 'react';
 import ClientInitializer from '@/components/ClientInitializer';
@@ -32,7 +34,7 @@ const copyByLang = {
     conceptLeadBefore: '静的な「情報の羅列」から、息づく',
     conceptLeadHighlight: '「体験」',
     conceptLeadAfter: 'へ。',
-    conceptDesc: '大阪の気象データとリアルタイムに同期し、画面の中に息づく空を描き出す。スキルや作品といった静的な情報を、3D表現とモーションによって直感的な「体験」へと昇華させる。',
+    conceptDesc: 'WAKATO（わかと）の個人ポートフォリオ。Next.js、Three.js、React Three Fiber、WebGL・GLSLで、大阪の天候、季節、時間帯が息づく世界を制作。作品ごとのモーションや音を通して、開発したプロダクトを体験として伝えます。',
     worksLabel: '02 / SELECTED WORKS',
     canDoLabel: '03 / WHAT I CAN DO',
     askLabel: 'WHAT YOU CAN ASK',
@@ -50,7 +52,7 @@ const copyByLang = {
     works: [
       { id: '01', title: 'GitHub Planet', cat: 'THREE.JS / VISUALIZATION', desc: 'GitHubのコミット数を惑星として可視化する3Dビジュアライザー。' },
       { id: '02', title: 'おてんきぐらし', cat: 'NEXT.JS / PWA', desc: '今いる場所の天気が、アプリの世界に自動で反映される生活シミュレーション。雨は雨粒、雷はフラッシュ、雪は降雪モーションとして表現される。' },
-      { id: '03', title: 'ColdKeep', cat: 'AI / IOT', desc: 'スマホのマイクで水筒の音を解析し、氷の有無・残量・温度を推定するAIアシスタント。' },
+      { id: '03', title: 'ColdKeep', cat: 'AI / IOT', desc: '水筒を振る音で残量の3段階推定を目指す、実験的なAIプロトタイプ。' },
       { id: '04', title: 'reCAPTCHA Game', cat: 'REACT / GO / WEBSOCKET', desc: '60秒以内に何回「人間」を証明できる？対戦型認証ゲーム。' },
       { id: '05', title: 'でんしょうお', cat: 'REACT / SUPABASE', desc: '小さな幸せを魚に乗せて流す、癒しと分かち合いのSNS。' },
     ],
@@ -67,7 +69,7 @@ const copyByLang = {
     conceptLeadBefore: 'From a static list of information to a ',
     conceptLeadHighlight: 'breathing planet',
     conceptLeadAfter: '.',
-    conceptDesc: 'GitHub activity shapes terrain, and real-world weather changes the atmosphere. A living experiment that transforms my engineering record into organic digital art.',
+    conceptDesc: 'WAKATO is a software engineer and creative developer in Osaka. Built with Next.js, Three.js, React Three Fiber and GLSL, this interactive portfolio brings weather, seasons and time into a living WebGL world. Explore projects through motion, sound and distinct transitions.',
     worksLabel: '02 / SELECTED WORKS',
     canDoLabel: '03 / WHAT I CAN DO',
     askLabel: 'WHAT YOU CAN ASK',
@@ -85,12 +87,16 @@ const copyByLang = {
     works: [
       { id: '01', title: 'GitHub Planet', cat: 'THREE.JS / VISUALIZATION', desc: 'A 3D visualizer where GitHub commit count becomes planetary terrain in real time. Each line of code uplifts the landscape.' },
       { id: '02', title: 'Otenkigurashi', cat: 'NEXT.JS / PWA', desc: 'A lifestyle simulation where local weather is reflected directly into the app world: rain droplets, thunder flashes, and snow motions.' },
-      { id: '03', title: 'ColdKeep', cat: 'AI / IOT', desc: 'An AI assistant that analyzes bottle sounds from a smartphone mic to estimate ice presence, remaining amount, and temperature.' },
+      { id: '03', title: 'ColdKeep', cat: 'AI / IOT', desc: 'An experimental AI prototype exploring three-level bottle fill estimation from smartphone recordings of shaking sounds.' },
       { id: '04', title: 'reCAPTCHA Game', cat: 'REACT / GO / WEBSOCKET', desc: 'How many times can you prove you are human in 60 seconds? A competitive authentication game.' },
       { id: '05', title: 'Denshouo', cat: 'REACT / SUPABASE', desc: 'A gentle SNS where small happiness is sent away on fish, made for healing and sharing.' },
     ],
   },
 } as const;
+
+export async function generateMetadata({ searchParams }: SeoPageProps) {
+  return getPageMetadata('home', searchParams);
+}
 
 export const revalidate = 1800;
 
@@ -121,12 +127,14 @@ export default async function Home({
 
     return (
     <main
+      lang={lang}
       data-world-weather={initialWeather}
       data-world-season={initialSeason}
       data-world-season-event={initialSeasonEvent}
       className="relative w-full min-h-[100dvh] text-white font-sans bg-[#050505]"
       style={{ userSelect: 'none', WebkitUserSelect: 'none', WebkitTouchCallout: 'none' }}
     >
+      <SeoJsonLd page="home" lang={lang} />
       <ClientInitializer
         initialWeather={initialWeather as WeatherType}
         initialSeason={initialSeason as SeasonType}
@@ -146,9 +154,9 @@ export default async function Home({
         {/* Top Right */}
         <div className="absolute top-6 right-4 sm:right-6 md:right-8 text-right flex flex-col gap-1 pointer-events-auto w-fit" style={{ touchAction: 'pan-y' }}>
           <div className="flex items-center justify-end gap-1.5 text-[10px] font-mono tracking-widest text-gray-400">
-            <Link href="/?lang=ja" className={lang === 'ja' ? 'text-cyan-300' : 'hover:text-gray-200 transition-colors'}>JP</Link>
+            <Link href="/" hrefLang="ja" lang="ja" className={lang === 'ja' ? 'text-cyan-300' : 'hover:text-gray-200 transition-colors'}>JP</Link>
             <span className="text-gray-700">/</span>
-            <Link href="/?lang=en" className={lang === 'en' ? 'text-cyan-300' : 'hover:text-gray-200 transition-colors'}>ENG</Link>
+            <Link href="/?lang=en" hrefLang="en" lang="en" className={lang === 'en' ? 'text-cyan-300' : 'hover:text-gray-200 transition-colors'}>ENG</Link>
           </div>
         </div>
 
@@ -186,9 +194,9 @@ export default async function Home({
         {/* HERO */}
         <section className="h-[100dvh] min-h-[100dvh] flex items-center justify-center pointer-events-auto md:pointer-events-none">
           <div className="text-center space-y-4 md:space-y-6">
-            <h2 className="text-6xl md:text-9xl font-bold tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white to-transparent opacity-80">
-              LIVING<br />PLANET
-            </h2>
+            <h1 className="text-6xl md:text-9xl font-bold tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white to-transparent opacity-80">
+              <span className="sr-only">WAKATO — </span>LIVING<br />PLANET
+            </h1>
             <p className="text-sm md:text-base text-gray-400 font-mono">
               {t.heroTagline}
             </p>
@@ -197,7 +205,7 @@ export default async function Home({
 
         {/* PHILOSOPHY */}
         <section className="py-32 px-6 md:px-20 max-w-4xl mx-auto pointer-events-auto">
-          <span className="text-cyan-500 text-xs font-mono mb-8 block">{t.conceptLabel}</span>
+          <h2 className="text-cyan-500 text-xs font-mono mb-8 block">{t.conceptLabel}</h2>
           <p className="max-w-3xl text-2xl md:text-4xl font-light leading-[1.35] text-gray-200 text-balance">
             {t.conceptLeadBefore}<span className="text-white font-normal border-b border-cyan-500/50">{t.conceptLeadHighlight}</span>{t.conceptLeadAfter}
           </p>
@@ -209,7 +217,7 @@ export default async function Home({
         {/* WORKS */}
         <section className="pt-32 pb-48 md:pb-32 bg-black/40 backdrop-blur-sm pointer-events-auto border-y border-white/5 relative z-40">
           <div className="container mx-auto px-6 md:px-20">
-            <span className="text-cyan-500 text-xs font-mono mb-12 block">{t.worksLabel}</span>
+            <h2 className="text-cyan-500 text-xs font-mono mb-12 block">{t.worksLabel}</h2>
 
             <Suspense fallback={null}>
               <WorksList works={works} />
@@ -220,7 +228,7 @@ export default async function Home({
         {/* SKILLS & CAN DO */}
         <section className="py-24 px-6 md:px-20 pointer-events-auto">
           <div className="max-w-5xl mx-auto">
-            <span className="text-cyan-500 text-xs font-mono mb-12 block">{t.canDoLabel}</span>
+            <h2 className="text-cyan-500 text-xs font-mono mb-12 block">{t.canDoLabel}</h2>
 
             <div className="relative grid md:grid-cols-2 gap-8 md:gap-12">
               <div className="hidden md:block pointer-events-none absolute left-1/2 top-1 -translate-x-1/2 h-[92%] w-px bg-gradient-to-b from-transparent via-cyan-500/25 to-transparent" />

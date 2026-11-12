@@ -540,6 +540,9 @@ export default function SoundDirector() {
     const ok = await ensureAudioGraph();
     if (!ok) return;
 
+    hasUnlockedAudioRef.current = true;
+    setHasUnlockedAudio(true);
+
     if (nextMuted) {
       stopBgm();
       return;
@@ -572,7 +575,9 @@ export default function SoundDirector() {
     setIsMuted(isMutedRef.current);
 
     const unlockAudio = async (event?: Event) => {
-      if (hasUnlockedAudioRef.current) return;
+      // Muted interactions should not build convolution/noise buffers on the UI thread.
+      // The explicit sound control still initializes audio in its user gesture.
+      if (hasUnlockedAudioRef.current || isMutedRef.current) return;
       const target = event?.target as HTMLElement | null;
       if (target?.closest("[data-sound-toggle]")) return;
 
@@ -637,7 +642,7 @@ export default function SoundDirector() {
 
     if (hasExclusiveBgm(resolvedWorkId)) return;
 
-    if (transitionType === "none" || transitionType === previous) {
+    if (transitionType === "none" || transitionType === previous || isMutedRef.current) {
       return;
     }
 

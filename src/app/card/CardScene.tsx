@@ -1,6 +1,7 @@
 'use client';
 
-import { Canvas, useFrame } from '@react-three/fiber';
+import { useFrame } from '@react-three/fiber';
+import Canvas from '@/components/canvas/SafeCanvas';
 import { Stars } from '@react-three/drei';
 import { EffectComposer, Bloom } from '@react-three/postprocessing';
 import { Suspense } from 'react';

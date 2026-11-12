@@ -1,0 +1,32 @@
+{
+  "verifiedAt": "2026-11-12T00:06:30.5395413+09:00",
+  "target": "Local Next.js production build (port 3019), not deployed",
+  "playwright": {
+    "startTime": "2026-11-11T15:04:11.695Z",
+    "duration": 91263.70800000001,
+    "expected": 49,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "typecheck": "passed",
+  "eslint": {
+    "errors": 0,
+    "existingWarnings": 9
+  },
+  "productionBuild": "Next.js 16.4.5 webpack: passed in tmp/seo-after",
+  "sourceCopy": "all src files match production build copy",
+  "cloudflareWorkerPreview": "unverified",
+  "fieldCoreWebVitals": "unverified",
+  "dependencyChanges": false,
+  "finalSeoRecheck": {
+    "startTime": "2026-11-12T00:38:10.86Z",
+    "duration": 18615.905,
+    "expected": 20,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "i18n": "passed: 8 bilingual copy pairs; achievement title romanized in English",
+  "finalBuild": "passed after the English achievement title correction; SEO recheck target port 3020"
+}

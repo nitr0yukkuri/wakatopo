@@ -1,7 +1,8 @@
 'use client';
 
 import { motion, useReducedMotion } from 'framer-motion';
-import { Canvas, useFrame } from '@react-three/fiber';
+import { useFrame } from '@react-three/fiber';
+import Canvas from '@/components/canvas/SafeCanvas';
 import { Component, useEffect, useMemo, useRef, useState, type ErrorInfo, type ReactNode } from 'react';
 import * as THREE from 'three';
 import type { WeatherType } from '@/store';

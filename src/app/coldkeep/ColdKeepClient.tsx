@@ -4,7 +4,8 @@ import { useRef, useMemo, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useStore } from '@/store';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { Canvas, useFrame } from '@react-three/fiber';
+import { useFrame } from '@react-three/fiber';
+import Canvas from '@/components/canvas/SafeCanvas';
 import * as THREE from 'three';
 import Image from 'next/image';
 
@@ -405,27 +406,27 @@ export default function ColdKeepClient() {
     const copy = {
         ja: {
             returnToOrbit: 'Return to Lab',
-            overview: 'スマートフォンのマイクを入力センサーとして活用し、ステンレスボトルの内部状態（氷の有無・残量・温度）を非破壊で推定する',
+            overview: '水筒を振る音から残量の3段階推定を目指す、実験的AIプロトタイプ。スマートフォンのマイクを使う',
             overviewTail: 'アーキテクチャ。',
-            blackbox: 'ステンレス水筒の中身は見えない。「飲んだら熱すぎた」「いつの間にかぬるい」という体験の損失が発生している。',
-            hardware: '既存のIoT水筒は専用デバイスが必須。充電の手間、高コスト、そして電子廃棄物（E-Waste）の問題が避けられない。',
-            active1: 'ユーザーがボトルを振った際、あるいは注水時の「衝突音・流体音」をスマートフォンのマイクで集音。',
-            active2: 'PCM生波形をFFTでスペクトログラム化し、TensorFlow Liteによる軽量モデルで端末内推論（氷量・水量）を実行します。',
-            active3: 'C++ JSIレイヤーで直接処理することで、超低遅延を実現。',
-            passive1: '一度内部状態を特定した後は、ニュートンの冷却法則に基づく物理モデルをバックグラウンドで実行。',
-            passive2: '外気温と時刻データから熱移動を計算し、水筒内部の温度変化を高精度にシミュレーションし続けます。',
+            blackbox: 'ステンレス水筒の中身は見えない。開けずに残量を把握するために、音を入力センサーとして使う方法を研究しています。',
+            hardware: '水筒に専用センサーを追加せず、スマートフォンで録音・特徴量抽出・推論を完結させることを目指しています。',
+            active1: '水筒を振る音を、AndroidのKotlin製AudioRecordモジュールでPCM WAVとして録音します。',
+            active2: 'TypeScriptでWAVを検証し、FFTとlog-mel特徴量、線形softmaxモデルで空・半分・満杯のクラスを扱います。',
+            active3: 'RustとKotlinの任意ブリッジを利用できない場合は、TypeScript経路へフォールバックします。',
+            passive1: '通常版ではモデルが未学習、または信頼度が0.65未満の場合に「未判定」を表示し、結果を強制しません。',
+            passive2: '現在の提出版は水温・保冷時間・正確な氷個数を推定しません。モデルの準備状況と既知の制約を画面に示します。',
         },
         en: {
             returnToOrbit: 'Return to Lab',
-            overview: 'A non-destructive',
-            overviewTail: 'architecture that uses a smartphone microphone as an input sensor to estimate internal bottle conditions (ice presence, remaining amount, and temperature).',
-            blackbox: 'You cannot see inside a stainless bottle. This causes experience loss, such as finding it too hot to drink or unexpectedly lukewarm.',
-            hardware: 'Existing IoT bottles require dedicated hardware. Charging friction, higher cost, and electronic waste (E-Waste) are hard to avoid.',
-            active1: 'When users shake the bottle or pour liquid, collision and fluid sounds are captured by the smartphone microphone.',
-            active2: 'Raw PCM waveforms are converted into spectrograms with FFT, then a lightweight TensorFlow Lite model performs on-device inference for ice and liquid levels.',
-            active3: 'Direct C++ JSI processing enables ultra-low latency.',
-            passive1: 'After estimating the internal state once, a physical model based on Newton\'s law of cooling runs in the background.',
-            passive2: 'Using ambient temperature and time data, it continuously simulates internal temperature changes with high accuracy.',
+            overview: 'An experimental',
+            overviewTail: 'prototype exploring three-level bottle fill estimation from shaking sounds recorded with a smartphone microphone.',
+            blackbox: 'The inside of a stainless bottle is hidden. ColdKeep explores whether shaking sounds can help estimate how much liquid remains without opening it.',
+            hardware: 'The project aims to record audio, extract features and run inference on a smartphone without adding a dedicated sensor to the bottle.',
+            active1: 'A custom Kotlin AudioRecord module captures bottle-shaking sounds as PCM WAV on Android.',
+            active2: 'TypeScript validates the WAV and uses FFT, log-mel features and a linear softmax model to handle empty, half-full and full classes.',
+            active3: 'An optional Rust and Kotlin bridge falls back to the TypeScript path when unavailable.',
+            passive1: 'The standard build shows an undetermined result when the model is untrained or confidence is below 0.65.',
+            passive2: 'The current submission does not estimate water temperature, cooling duration or exact ice count. Model status and known limitations are shown in the interface.',
         },
     } as const;
     const t = copy[lang];
@@ -439,7 +440,8 @@ export default function ColdKeepClient() {
     };
 
     return (
-        <main className="relative w-full min-h-dvh bg-[#01060c] text-white overflow-x-hidden font-sans selection:bg-cyan-200 selection:text-[#020b16]">
+        <main lang={lang} className="relative w-full min-h-dvh bg-[#01060c] text-white overflow-x-hidden font-sans selection:bg-cyan-200 selection:text-[#020b16]">
+            <h1 className="sr-only">ColdKeep</h1>
             
             <IceCursor />
 
@@ -474,7 +476,7 @@ export default function ColdKeepClient() {
             <div className="relative z-10 container mx-auto px-6 md:px-12 pt-40 pb-32 max-w-4xl">
                 {/* Hero */}
                 <motion.div className="mb-32 md:mb-48 text-center" style={{ y: yTransform, opacity: opacityTransform }}>
-                    <motion.div className="relative isolate mx-auto max-w-3xl pt-8 pb-12" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1 }}>
+                    <motion.div data-readable-without-js className="relative isolate mx-auto max-w-3xl pt-8 pb-12" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1 }}>
                         <div
                             className="absolute inset-x-4 -top-10 bottom-0 -z-10 rounded-[45%] opacity-80"
                             style={{
@@ -496,10 +498,10 @@ export default function ColdKeepClient() {
                             STATUS: R&amp;D PHASE
                         </span>
                         <Image
-                            src="/coldkeep-logo.png"
+                            src="/coldkeep-logo.webp"
                             alt="コールドキープ COLDKEEP"
-                            width={640}
-                            height={220}
+                            width={1024}
+                            height={559}
                             sizes="(max-width: 768px) 80vw, 448px"
                             priority
                             className="w-full max-w-xs md:max-w-md mx-auto mb-6 drop-shadow-[0_0_40px_rgba(100,200,255,0.5)]"
@@ -509,8 +511,8 @@ export default function ColdKeepClient() {
                             AI Water Bottle Assistant
                         </p>
                         <div className="mt-8 flex flex-wrap items-center justify-center gap-3 font-mono text-[9px] tracking-[0.24em] text-cyan-100/55">
-                            <span className="border border-cyan-100/15 bg-cyan-100/[0.03] px-3 py-1">THERMAL HOLD</span>
-                            <span className="border border-cyan-100/15 bg-cyan-100/[0.03] px-3 py-1">ICE PRESENCE</span>
+                            <span className="border border-cyan-100/15 bg-cyan-100/[0.03] px-3 py-1">FILL LEVEL</span>
+                            <span className="border border-cyan-100/15 bg-cyan-100/[0.03] px-3 py-1">ON-DEVICE AUDIO</span>
                         </div>
                     </motion.div>
                 </motion.div>
@@ -518,7 +520,7 @@ export default function ColdKeepClient() {
                 {/* Content */}
                 <div className="space-y-32">
                     {/* Overview */}
-                    <motion.section
+                    <motion.section data-readable-without-js
                         className="backdrop-blur-xl bg-white/5 border border-white/10 p-8 md:p-12 rounded-[2rem] shadow-2xl"
                         initial={{ opacity: 0, y: 40 }}
                         whileInView={{ opacity: 1, y: 0 }}
@@ -534,7 +536,7 @@ export default function ColdKeepClient() {
                     </motion.section>
 
                     {/* Problem */}
-                    <motion.section
+                    <motion.section data-readable-without-js
                         className="backdrop-blur-xl bg-white/5 border border-white/10 p-8 md:p-12 rounded-[2rem] shadow-2xl"
                         initial={{ opacity: 0, y: 40 }}
                         whileInView={{ opacity: 1, y: 0 }}
@@ -561,7 +563,7 @@ export default function ColdKeepClient() {
                     </motion.section>
 
                     {/* Technical Approach */}
-                    <motion.section
+                    <motion.section data-readable-without-js
                         className="backdrop-blur-xl bg-white/5 border border-white/10 p-8 md:p-12 rounded-[2rem] shadow-2xl"
                         initial={{ opacity: 0, y: 40 }}
                         whileInView={{ opacity: 1, y: 0 }}
@@ -584,23 +586,19 @@ export default function ColdKeepClient() {
                             </div>
 
                             <div>
-                                <h3 className="text-3xl font-bold text-white mb-2">Passive Simulation</h3>
-                                <p className="text-[#38bdf8] font-mono text-sm mb-6 bg-[#0369a1]/20 inline-block px-3 py-1 rounded-full">Newton&apos;s Law of Cooling</p>
+                                <h3 className="text-3xl font-bold text-white mb-2">Model Readiness</h3>
+                                <p className="text-[#38bdf8] font-mono text-sm mb-6 bg-[#0369a1]/20 inline-block px-3 py-1 rounded-full">Confidence / Untrained State</p>
                                 <p className="text-[#e0f2fe] leading-relaxed mb-8 opacity-90">
                                     {t.passive1}
                                     {t.passive2}
                                 </p>
                                 <div className="bg-[#020b16]/80 glass border border-[#38bdf8]/30 p-6 rounded-lg font-mono text-xs md:text-sm text-[#bae6fd] overflow-x-auto shadow-inner">
                                     <code>
-                                        {`// Newton's Law of Cooling Simulation Step
-const dT = -k * (T_liquid - T_ambient) * delta_t;
-T_liquid += dT;
-
-if (ice_mass > 0) {
-    // Phase change enthalpy
-    const energy_transfer = h_f * ice_melt_rate * delta_t;
-    T_liquid = 0.0;
-}`}
+                                        {`// Model-readiness guard
+if (!model.trained || confidence < 0.65) {
+    return 'undetermined';
+}
+return fillLevel; // empty / half-full / full`}
                                     </code>
                                 </div>
                             </div>

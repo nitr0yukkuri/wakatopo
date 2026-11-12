@@ -134,6 +134,7 @@ export default function OtenkiGurashiClient() {
                         ? WINTER_BACKGROUND_GRADIENT
                     : undefined,
             }}>
+            <h1 className="sr-only">{lang === 'en' ? 'Otenkigurashi' : 'おてんきぐらし'}</h1>
                 <OtenkiSeasonEffects season={displayedSeason} seasonEvent={displayedSeasonEvent} weather={displayedWeather} />
 
                 <nav className="fixed top-0 left-0 w-full z-50 p-6 md:p-10">
@@ -178,10 +179,10 @@ export default function OtenkiGurashiClient() {
                     {/* Pop Title Logo */}
                     <div id="hero" ref={heroRef} className="mb-8 md:mb-10 text-center scroll-mt-24 w-full flex justify-center">
                         <Image
-                            src="/otenkigurashi-logo.png"
+                            src="/otenkigurashi-logo.webp"
                             alt={t.logoAlt}
-                            width={640}
-                            height={220}
+                            width={1024}
+                            height={565}
                             sizes="(max-width: 768px) 80vw, 448px"
                             priority
                             className="w-full max-w-xs md:max-w-md drop-shadow-md"

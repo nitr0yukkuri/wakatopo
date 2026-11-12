@@ -1,7 +1,8 @@
 'use client'
 
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
+import { useFrame } from '@react-three/fiber';
+import Canvas from '@/components/canvas/SafeCanvas';
 import * as THREE from 'three';
 import { AnimatePresence, motion } from 'framer-motion';
 import { freezeFragmentShader, freezeVertexShader } from '@/shaders/freeze';

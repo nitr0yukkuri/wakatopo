@@ -1,7 +1,8 @@
 'use client'
 
 import { useRef, useMemo } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
+import { useFrame } from '@react-three/fiber';
+import Canvas from '@/components/canvas/SafeCanvas';
 import * as THREE from 'three';
 import { waveVertexShader, waveFragmentShader } from '@/shaders/wave';
 

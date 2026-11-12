@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import ClientInitializer from '@/components/ClientInitializer';
 import { fetchPlanetData } from '@/lib/actions';
 import type { SeasonEventType, SeasonType, WeatherType } from '@/store';
@@ -6,6 +7,7 @@ import CardScene from './CardScene';
 import WeatherEffectsOverlay from '@/components/dom/WeatherEffectsOverlay';
 
 export const dynamic = 'force-dynamic';
+export const metadata: Metadata = { title: 'WAKATO | Live Preview Capture', robots: { index: false, follow: false, googleBot: { index: false, follow: false } } };
 
 type SearchParams = {
     weather?: string | string[];

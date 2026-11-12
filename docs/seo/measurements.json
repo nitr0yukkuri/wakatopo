@@ -1,0 +1,534 @@
+{
+  "method": "Local production builds, same dependencies, Windows installed Chrome, fresh browser contexts, cache disabled, service workers blocked, Clear/autumn/none, DOMContentLoaded + 12s, screenshots before the explicitly selected portfolio-menu click; desktop 1365x900/1x CPU; mobile 390x844/4x CPU/1.6Mbps download/750kbps upload/150ms latency. Tests and builds did not run concurrently with accepted performance measurements.",
+  "limitation": "Lab samples, not CrUX/GSC field Core Web Vitals. Menu latency is one Event Timing interaction, not field INP. Single project observations cannot establish a statistically reliable improvement. Network/CPU emulation cannot reproduce all real mobile GPU/thermal conditions.",
+  "before": {
+    "measuredAt": "2026-11-11T14:43:47.251Z",
+    "browserVersion": "157.0.8103.50",
+    "summary": {
+      "desktop-unthrottled": {
+        "samples": 3,
+        "lcpMs": {
+          "median": 536,
+          "range": [
+            204,
+            944
+          ]
+        },
+        "cls": {
+          "median": 0.0014930347396464616,
+          "range": [
+            0.00014986101606980726,
+            0.0014930347396464616
+          ]
+        },
+        "menuEventLatencyMs": {
+          "median": 672,
+          "range": [
+            624,
+            696
+          ]
+        }
+      },
+      "mobile-4x-1.6Mbps-150ms": {
+        "samples": 3,
+        "lcpMs": {
+          "median": 2788,
+          "range": [
+            2756,
+            3784
+          ]
+        },
+        "cls": {
+          "median": 0.0035407111835800333,
+          "range": [
+            0.002545708766649446,
+            0.0035407111835800333
+          ]
+        },
+        "menuEventLatencyMs": {
+          "median": 784,
+          "range": [
+            736,
+            800
+          ]
+        }
+      }
+    }
+  },
+  "after": {
+    "measuredAt": "2026-11-11T14:46:20.286Z",
+    "browserVersion": "157.0.8103.50",
+    "summary": {
+      "desktop-unthrottled": {
+        "samples": 3,
+        "lcpMs": {
+          "median": 508,
+          "range": [
+            504,
+            744
+          ]
+        },
+        "cls": {
+          "median": 0.00014986101606980726,
+          "range": [
+            0.00014986101606980726,
+            0.0014930347396464616
+          ]
+        },
+        "menuEventLatencyMs": {
+          "median": 80,
+          "range": [
+            80,
+            88
+          ]
+        }
+      },
+      "mobile-4x-1.6Mbps-150ms": {
+        "samples": 3,
+        "lcpMs": {
+          "median": 3312,
+          "range": [
+            2716,
+            3640
+          ]
+        },
+        "cls": {
+          "median": 0.002545708766649446,
+          "range": [
+            0.002545708766649446,
+            0.0035407111835800333
+          ]
+        },
+        "menuEventLatencyMs": {
+          "median": 104,
+          "range": [
+            64,
+            128
+          ]
+        }
+      }
+    }
+  },
+  "projectSamples": [
+    {
+      "phase": "before",
+      "path": "/github-planet",
+      "profile": "desktop-unthrottled",
+      "samples": 1,
+      "lcpMs": 328,
+      "cls": 0,
+      "canvasCount": 0
+    },
+    {
+      "phase": "before",
+      "path": "/github-planet",
+      "profile": "mobile-4x-1.6Mbps-150ms",
+      "samples": 1,
+      "lcpMs": 3352,
+      "cls": 0,
+      "canvasCount": 0
+    },
+    {
+      "phase": "before",
+      "path": "/coldkeep",
+      "profile": "mobile-4x-1.6Mbps-150ms",
+      "samples": 1,
+      "lcpMs": 9088,
+      "cls": 0,
+      "canvasCount": 1
+    },
+    {
+      "phase": "before",
+      "path": "/about",
+      "profile": "mobile-4x-1.6Mbps-150ms",
+      "samples": 1,
+      "lcpMs": 2596,
+      "cls": 0,
+      "canvasCount": 0
+    },
+    {
+      "phase": "after",
+      "path": "/github-planet",
+      "profile": "desktop-unthrottled",
+      "samples": 1,
+      "lcpMs": 360,
+      "cls": 0,
+      "canvasCount": 0
+    },
+    {
+      "phase": "after",
+      "path": "/github-planet",
+      "profile": "mobile-4x-1.6Mbps-150ms",
+      "samples": 1,
+      "lcpMs": 4328,
+      "cls": 0,
+      "canvasCount": 0
+    },
+    {
+      "phase": "after",
+      "path": "/coldkeep",
+      "profile": "mobile-4x-1.6Mbps-150ms",
+      "samples": 1,
+      "lcpMs": 7008,
+      "cls": 0,
+      "canvasCount": 1
+    },
+    {
+      "phase": "after",
+      "path": "/about",
+      "profile": "mobile-4x-1.6Mbps-150ms",
+      "samples": 1,
+      "lcpMs": 2672,
+      "cls": 0,
+      "canvasCount": 0
+    }
+  ],
+  "samples": {
+    "before": [
+      {
+        "path": "/",
+        "profile": "desktop-unthrottled",
+        "lcp": {
+          "ms": 944,
+          "element": "P",
+          "text": "Code breathes with the atmosphere.",
+          "url": ""
+        },
+        "cls": 0.0014930347396464616,
+        "menuEventLatencyMs": 696,
+        "ttfbMs": 17.30000000447035,
+        "observedResourceTransferBytes": 1787860,
+        "canvasCount": 2,
+        "errors": []
+      },
+      {
+        "path": "/",
+        "profile": "desktop-unthrottled",
+        "lcp": {
+          "ms": 204,
+          "element": "P",
+          "text": "Code breathes with the atmosphere.",
+          "url": ""
+        },
+        "cls": 0.0014930347396464616,
+        "menuEventLatencyMs": 624,
+        "ttfbMs": 10.799999997019768,
+        "observedResourceTransferBytes": 1787864,
+        "canvasCount": 2,
+        "errors": []
+      },
+      {
+        "path": "/",
+        "profile": "desktop-unthrottled",
+        "lcp": {
+          "ms": 536,
+          "element": "P",
+          "text": "Code breathes with the atmosphere.",
+          "url": ""
+        },
+        "cls": 0.00014986101606980726,
+        "menuEventLatencyMs": 672,
+        "ttfbMs": 15.399999998509884,
+        "observedResourceTransferBytes": 1787862,
+        "canvasCount": 2,
+        "errors": []
+      },
+      {
+        "path": "/github-planet",
+        "profile": "desktop-unthrottled",
+        "lcp": {
+          "ms": 328,
+          "element": "IMG",
+          "text": "",
+          "url": "http://127.0.0.1:3013/github-planet-logo.webp"
+        },
+        "cls": 0,
+        "menuEventLatencyMs": null,
+        "ttfbMs": 6.4000000059604645,
+        "observedResourceTransferBytes": 1493316,
+        "canvasCount": 0,
+        "errors": []
+      },
+      {
+        "path": "/",
+        "profile": "mobile-4x-1.6Mbps-150ms",
+        "lcp": {
+          "ms": 3784,
+          "element": "P",
+          "text": "Code breathes with the atmosphere.",
+          "url": ""
+        },
+        "cls": 0.002545708766649446,
+        "menuEventLatencyMs": 800,
+        "ttfbMs": 150.10000000149012,
+        "observedResourceTransferBytes": 1787859,
+        "canvasCount": 2,
+        "errors": []
+      },
+      {
+        "path": "/",
+        "profile": "mobile-4x-1.6Mbps-150ms",
+        "lcp": {
+          "ms": 2788,
+          "element": "P",
+          "text": "Code breathes with the atmosphere.",
+          "url": ""
+        },
+        "cls": 0.0035407111835800333,
+        "menuEventLatencyMs": 784,
+        "ttfbMs": 150.09999999403954,
+        "observedResourceTransferBytes": 1787859,
+        "canvasCount": 2,
+        "errors": []
+      },
+      {
+        "path": "/",
+        "profile": "mobile-4x-1.6Mbps-150ms",
+        "lcp": {
+          "ms": 2756,
+          "element": "P",
+          "text": "Code breathes with the atmosphere.",
+          "url": ""
+        },
+        "cls": 0.0035407111835800333,
+        "menuEventLatencyMs": 736,
+        "ttfbMs": 150.19999999552965,
+        "observedResourceTransferBytes": 1787858,
+        "canvasCount": 2,
+        "errors": []
+      },
+      {
+        "path": "/github-planet",
+        "profile": "mobile-4x-1.6Mbps-150ms",
+        "lcp": {
+          "ms": 3352,
+          "element": "IMG",
+          "text": "",
+          "url": "http://127.0.0.1:3013/github-planet-logo.webp"
+        },
+        "cls": 0,
+        "menuEventLatencyMs": null,
+        "ttfbMs": 150.39999999850988,
+        "observedResourceTransferBytes": 1493316,
+        "canvasCount": 0,
+        "errors": []
+      },
+      {
+        "path": "/coldkeep",
+        "profile": "mobile-4x-1.6Mbps-150ms",
+        "lcp": {
+          "ms": 9088,
+          "element": "IMG",
+          "text": "",
+          "url": "http://127.0.0.1:3013/coldkeep-logo.png"
+        },
+        "cls": 0,
+        "menuEventLatencyMs": null,
+        "ttfbMs": 150.20000000298023,
+        "observedResourceTransferBytes": 2472257,
+        "canvasCount": 1,
+        "errors": []
+      },
+      {
+        "path": "/about",
+        "profile": "mobile-4x-1.6Mbps-150ms",
+        "lcp": {
+          "ms": 2596,
+          "element": "P",
+          "text": "ECCコンピュータ専門学校在学（29卒）。3D・WebGLによる体験設計を軸に、Node.js/ExpressやGoによるAPI・リアルタイム通信、PostgreSQLによるデータ永続化、Docker",
+          "url": ""
+        },
+        "cls": 0,
+        "menuEventLatencyMs": null,
+        "ttfbMs": 150.10000000149012,
+        "observedResourceTransferBytes": 1926469,
+        "canvasCount": 0,
+        "errors": []
+      }
+    ],
+    "after": [
+      {
+        "path": "/",
+        "profile": "desktop-unthrottled",
+        "lcp": {
+          "ms": 744,
+          "element": "P",
+          "text": "Code breathes with the atmosphere.",
+          "url": ""
+        },
+        "cls": 0.0014930347396464616,
+        "menuEventLatencyMs": 80,
+        "ttfbMs": 259,
+        "observedResourceTransferBytes": 1026876,
+        "canvasCount": 2,
+        "errors": []
+      },
+      {
+        "path": "/",
+        "profile": "desktop-unthrottled",
+        "lcp": {
+          "ms": 508,
+          "element": "P",
+          "text": "Code breathes with the atmosphere.",
+          "url": ""
+        },
+        "cls": 0.00014986101606980726,
+        "menuEventLatencyMs": 80,
+        "ttfbMs": 26,
+        "observedResourceTransferBytes": 1026879,
+        "canvasCount": 2,
+        "errors": []
+      },
+      {
+        "path": "/",
+        "profile": "desktop-unthrottled",
+        "lcp": {
+          "ms": 504,
+          "element": "P",
+          "text": "Code breathes with the atmosphere.",
+          "url": ""
+        },
+        "cls": 0.00014986101606980726,
+        "menuEventLatencyMs": 88,
+        "ttfbMs": 16.200000002980232,
+        "observedResourceTransferBytes": 1026878,
+        "canvasCount": 2,
+        "errors": []
+      },
+      {
+        "path": "/github-planet",
+        "profile": "desktop-unthrottled",
+        "lcp": {
+          "ms": 360,
+          "element": "IMG",
+          "text": "",
+          "url": "http://127.0.0.1:3018/github-planet-logo.webp"
+        },
+        "cls": 0,
+        "menuEventLatencyMs": null,
+        "ttfbMs": 32,
+        "observedResourceTransferBytes": 711841,
+        "canvasCount": 0,
+        "errors": []
+      },
+      {
+        "path": "/",
+        "profile": "mobile-4x-1.6Mbps-150ms",
+        "lcp": {
+          "ms": 3640,
+          "element": "P",
+          "text": "Code breathes with the atmosphere.",
+          "url": ""
+        },
+        "cls": 0.002545708766649446,
+        "menuEventLatencyMs": 128,
+        "ttfbMs": 150.20000000298023,
+        "observedResourceTransferBytes": 1026878,
+        "canvasCount": 2,
+        "errors": []
+      },
+      {
+        "path": "/",
+        "profile": "mobile-4x-1.6Mbps-150ms",
+        "lcp": {
+          "ms": 3312,
+          "element": "P",
+          "text": "Code breathes with the atmosphere.",
+          "url": ""
+        },
+        "cls": 0.002545708766649446,
+        "menuEventLatencyMs": 64,
+        "ttfbMs": 150.29999999701977,
+        "observedResourceTransferBytes": 1026880,
+        "canvasCount": 2,
+        "errors": []
+      },
+      {
+        "path": "/",
+        "profile": "mobile-4x-1.6Mbps-150ms",
+        "lcp": {
+          "ms": 2716,
+          "element": "P",
+          "text": "Code breathes with the atmosphere.",
+          "url": ""
+        },
+        "cls": 0.0035407111835800333,
+        "menuEventLatencyMs": 104,
+        "ttfbMs": 150.09999999403954,
+        "observedResourceTransferBytes": 1026879,
+        "canvasCount": 2,
+        "errors": []
+      },
+      {
+        "path": "/github-planet",
+        "profile": "mobile-4x-1.6Mbps-150ms",
+        "lcp": {
+          "ms": 4328,
+          "element": "IMG",
+          "text": "",
+          "url": "http://127.0.0.1:3018/github-planet-logo.webp"
+        },
+        "cls": 0,
+        "menuEventLatencyMs": null,
+        "ttfbMs": 150.20000000298023,
+        "observedResourceTransferBytes": 711841,
+        "canvasCount": 0,
+        "errors": []
+      },
+      {
+        "path": "/coldkeep",
+        "profile": "mobile-4x-1.6Mbps-150ms",
+        "lcp": {
+          "ms": 7008,
+          "element": "IMG",
+          "text": "",
+          "url": "http://127.0.0.1:3018/coldkeep-logo.webp"
+        },
+        "cls": 0,
+        "menuEventLatencyMs": null,
+        "ttfbMs": 150.09999999403954,
+        "observedResourceTransferBytes": 1290637,
+        "canvasCount": 1,
+        "errors": []
+      },
+      {
+        "path": "/about",
+        "profile": "mobile-4x-1.6Mbps-150ms",
+        "lcp": {
+          "ms": 2672,
+          "element": "P",
+          "text": "ECCコンピュータ専門学校在学（29卒）。3D・WebGLによる体験設計を軸に、Node.js/ExpressやGoによるAPI・リアルタイム通信、PostgreSQLによるデータ永続化、Docker",
+          "url": ""
+        },
+        "cls": 0,
+        "menuEventLatencyMs": null,
+        "ttfbMs": 150.19999999552965,
+        "observedResourceTransferBytes": 397507,
+        "canvasCount": 0,
+        "errors": []
+      }
+    ]
+  },
+  "assets": [
+    {
+      "name": "coldkeep-logo",
+      "originalBytes": 762979,
+      "webpBytes": 432450
+    },
+    {
+      "name": "denshouo-logo",
+      "originalBytes": 1123293,
+      "webpBytes": 379638
+    },
+    {
+      "name": "otenkigurashi-logo",
+      "originalBytes": 460818,
+      "webpBytes": 131896
+    },
+    {
+      "name": "recatcha-logo",
+      "originalBytes": 321083,
+      "webpBytes": 179700
+    }
+  ]
+}

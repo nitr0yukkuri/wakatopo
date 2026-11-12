@@ -83,8 +83,23 @@ test.describe('Denshouo weather presentation', () => {
 
     test('shows the rain drop-to-ripple demo only for Rain', async ({ page }) => {
         await page.goto('/denshouo?lang=ja&weather=Rain&season=summer&seasonEvent=none', { waitUntil: 'domcontentloaded' });
-        await expect(page.locator('[data-testid="rain-demo-drop"]')).toHaveCount(1, { timeout: 8000 });
-        await expect(page.locator('[data-testid="rain-ripple"]')).toHaveCount(1, { timeout: 8000 });
+        // Each drop is short-lived and randomly timed; record actual DOM appearances
+        // instead of letting assertion polling repeatedly miss the animation.
+        await page.evaluate(() => {
+            const state = window as Window & { rainDemoSeen?: { drop: boolean; ripple: boolean } };
+            state.rainDemoSeen = { drop: false, ripple: false };
+            const observe = () => {
+                state.rainDemoSeen!.drop ||= !!document.querySelector('[data-testid="rain-demo-drop"]');
+                state.rainDemoSeen!.ripple ||= !!document.querySelector('[data-testid="rain-ripple"]');
+                if (state.rainDemoSeen!.drop && state.rainDemoSeen!.ripple) observer.disconnect();
+            };
+            const observer = new MutationObserver(observe);
+            observer.observe(document.body, { childList: true, subtree: true });
+            observe();
+        });
+        await expect.poll(() => page.evaluate(() =>
+            (window as Window & { rainDemoSeen?: { drop: boolean; ripple: boolean } }).rainDemoSeen
+        ), { timeout: 10000 }).toEqual({ drop: true, ripple: true });
 
         await page.goto('/denshouo?lang=ja&weather=Clear&season=summer&seasonEvent=none', { waitUntil: 'domcontentloaded' });
         await page.waitForTimeout(4500);

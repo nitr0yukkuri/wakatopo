@@ -195,6 +195,7 @@ export default function DenshouoClient() {
             className="relative min-h-dvh bg-[radial-gradient(circle_at_top_left,rgba(56,189,248,0.10),transparent_28%),radial-gradient(circle_at_bottom,rgba(20,184,166,0.12),transparent_35%),#041116] text-white overflow-x-hidden"
             style={{ cursor: isFinePointer ? 'none' : 'auto' }}
         >
+            <h1 className="sr-only">{lang === 'en' ? 'Denshouo' : 'でんしょうお'}</h1>
             <OceanBackdrop weather={displayedWeather} />
 
             <div className="pointer-events-none fixed inset-0 z-4 overflow-hidden" aria-hidden="true">
@@ -310,10 +311,10 @@ export default function DenshouoClient() {
                         REACT / SUPABASE
                     </span>
                     <Image
-                        src="/denshouo-logo.png"
+                        src="/denshouo-logo.webp"
                         alt="でんしょうお ロゴ"
-                        width={640}
-                        height={220}
+                        width={1280}
+                        height={720}
                         sizes="(max-width: 768px) 80vw, 448px"
                         priority
                         className="w-full max-w-xs md:max-w-md mx-auto"

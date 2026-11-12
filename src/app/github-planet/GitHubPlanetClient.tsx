@@ -65,7 +65,8 @@ export default function GitHubPlanetClient() {
     };
 
     return (
-        <main className="relative w-full min-h-[120dvh] bg-[#020202] text-white overflow-x-hidden">
+        <main lang={lang} className="relative w-full min-h-[120dvh] bg-[#020202] text-white overflow-x-hidden">
+            <h1 className="sr-only">GitHub Planet</h1>
             {/* Custom Mouse Cursor */}
             <CrosshairCursor />
 
@@ -107,7 +108,7 @@ export default function GitHubPlanetClient() {
                             <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/0 via-cyan-500/20 to-purple-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000 blur-xl"></div>
                             <div className="relative z-10 w-full aspect-[2/1] rounded-2xl border border-white/10 shadow-2xl overflow-hidden hover:border-cyan-500/50 transition-colors duration-500 bg-[#060b16]">
                                 <iframe
-                                    src="https://githubplanet-git-543426763451.asia-northeast2.run.app/card.html?username=nitr0yukkuri&fix=true"
+                                    src="https://githubplanet.dev/card.html?username=nitr0yukkuri&fix=true"
                                     title="GitHub Planet Card - nitr0yukkuri"
                                     loading="lazy"
                                     className="w-full h-full"
@@ -183,7 +184,7 @@ export default function GitHubPlanetClient() {
                         </a>
 
                         <a
-                            href="https://githubplanet-git-543426763451.asia-northeast2.run.app/"
+                            href="https://githubplanet.dev/"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="bg-white/5 border border-white/20 text-gray-200 px-8 py-4 rounded-full font-mono text-sm hover:bg-white/10 hover:text-white transition-all duration-300 flex items-center gap-3"
