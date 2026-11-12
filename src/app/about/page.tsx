@@ -80,7 +80,7 @@ const copyByLang = {
             '2026',
             'Geek Expo Vol.6 Corporate Award (WingArc 1st) - GitHub Planet',
             'GeekCamp Vol.19 Grand Prize - reCAPTCHA Game',
-            'GeekCamp 2026 Hackathon Vol.6 Supporters Award - 俺を捌け！',
+            'GeekCamp 2026 Hackathon Vol.6 Supporters Award - Ore wo Sabake!',
             'CyberAgent 2-day Hands-on ML Platform Internship - Participant',
             'CSS Winner SOTD WAKATO | Living Planet Portfolio',
             'CSS Winner Star GitHub Planet',
