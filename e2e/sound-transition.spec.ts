@@ -123,13 +123,12 @@ test.beforeEach(async ({ page }) => {
     });
 });
 
-const unlockAudioByKeyboard = async (page: Page) => {
-    await page.keyboard.press('A');
-    await page.waitForTimeout(120);
-};
-
-const applyWeather = async (page: Page, weather: WeatherType) => {
-    await page.getByRole('button', { name: weather.toUpperCase() }).click();
+const enableAudio = async (page: Page) => {
+    // Sound is opt-in by default; a generic key must not override a muted preference.
+    await expect(page.getByRole('button', { name: /^(Start sound|Enable sound|Disable sound)$/ })).toBeVisible();
+    const control = page.getByRole('button', { name: /^(Start sound|Enable sound)$/ });
+    if (await control.count()) await control.click();
+    await expect(page.getByRole('button', { name: 'Disable sound' })).toBeVisible();
 };
 
 const clickWork = async (page: Page, workTitle: string) => {
@@ -156,7 +155,7 @@ const expectAudioIncreaseAfterAction = async (
 
 test('初回遷移で効果音の発火を検知できる (warp)', async ({ page }) => {
     await page.goto('/');
-    await unlockAudioByKeyboard(page);
+    await enableAudio(page);
 
     await expectAudioIncreaseAfterAction(
         page,
@@ -165,35 +164,31 @@ test('初回遷移で効果音の発火を検知できる (warp)', async ({ page
     );
 });
 
-test('天候依存遷移で効果音の発火を検知できる (rain, snow, flash, heavy-cloud, sunburst, moonrise)', async ({ page }) => {
-    await page.goto('/');
-    await unlockAudioByKeyboard(page);
-
-    const scenarios: Array<{ weather: WeatherType; label: string }> = [
+const weatherScenarios: Array<{ weather: WeatherType; label: string }> = [
         { weather: 'Rain', label: 'rain' },
         { weather: 'Snow', label: 'snow' },
         { weather: 'Thunder', label: 'flash' },
         { weather: 'Clouds', label: 'heavy-cloud' },
         { weather: 'Morning', label: 'sunburst' },
         { weather: 'Night', label: 'moonrise' },
-    ];
-
-    for (const s of scenarios) {
-        await page.goto('/');
-        await unlockAudioByKeyboard(page);
-        await applyWeather(page, s.weather);
+];
+for (const s of weatherScenarios) {
+    test(`天候依存遷移で効果音の発火を検知できる (${s.label})`, async ({ page }) => {
+        // Morning is a supported URL state, not a debug-selector button.
+        await page.goto(`/?lang=ja&weather=${s.weather}&season=autumn&seasonEvent=none`);
+        await enableAudio(page);
 
         await expectAudioIncreaseAfterAction(
             page,
             () => clickWork(page, 'おてんきぐらし'),
             `otenkigurashi transition(${s.label})`,
         );
-    }
-});
+    });
+}
 
 test('freeze と wave 遷移で効果音の発火を検知できる', async ({ page }) => {
     await page.goto('/');
-    await unlockAudioByKeyboard(page);
+    await enableAudio(page);
 
     await expectAudioIncreaseAfterAction(
         page,
@@ -202,7 +197,7 @@ test('freeze と wave 遷移で効果音の発火を検知できる', async ({ p
     );
 
     await page.goto('/');
-    await unlockAudioByKeyboard(page);
+    await enableAudio(page);
 
     await expectAudioIncreaseAfterAction(
         page,
@@ -213,6 +208,7 @@ test('freeze と wave 遷移で効果音の発火を検知できる', async ({ p
 
 test('mute 時は遷移を起こしても新規の効果音トリガーが増えない', async ({ page }) => {
     await page.goto('/');
+    await enableAudio(page);
 
     // 先にミュートに切り替え
     await page.getByRole('button', { name: 'Disable sound' }).click();
@@ -229,9 +225,22 @@ test('mute 時は遷移を起こしても新規の効果音トリガーが増え
     expect(after.noiseStarts - before.noiseStarts).toBe(0);
 });
 
+test('ミュート中の通常操作では音響初期化を遅延できる', async ({ page }) => {
+    await page.goto('/');
+    await expect(page.getByRole('button', { name: 'Start sound' })).toBeVisible();
+    const before = await readCounter(page);
+    await page.getByRole('button', { name: 'WAKATO // PORTFOLIO' }).click();
+    await page.waitForTimeout(150);
+    const muted = await readCounter(page);
+    expect(muted.audioContexts).toBe(before.audioContexts);
+    expect(muted.oscillatorStarts).toBe(before.oscillatorStarts);
+    await enableAudio(page);
+    await expect.poll(async () => (await readCounter(page)).audioContexts).toBeGreaterThan(before.audioContexts);
+});
+
 test('音割れ対策: 過大ゲイン要求がなく、出力コンプレッサーが使われる', async ({ page }) => {
     await page.goto('/');
-    await unlockAudioByKeyboard(page);
+    await enableAudio(page);
 
     await expectAudioIncreaseAfterAction(
         page,
@@ -251,22 +260,22 @@ test('音割れ対策: 過大ゲイン要求がなく、出力コンプレッサ
     expect(after.maxGainRequested).toBeLessThanOrEqual(1);
 });
 
-test('denshouo 常駐BGM: 連続ノイズが起動し、多重ループしない', async ({ page }) => {
+test('denshouo 常駐BGM: ピアノ音源が起動し、多重ループしない', async ({ page }) => {
     await page.goto('/denshouo?lang=ja');
     const beforeUnlock = await readCounter(page);
-    await unlockAudioByKeyboard(page);
+    await enableAudio(page);
 
     await expect
         .poll(async () => {
             const after = await readCounter(page);
-            return after.noiseStarts - beforeUnlock.noiseStarts;
-        }, { message: 'denshouo の 3レイヤー連続ノイズが起動すること' })
-        .toBeGreaterThanOrEqual(3);
+            return after.oscillatorStarts - beforeUnlock.oscillatorStarts;
+        }, { message: '現在のdenshouo BGMのピアノ音源が起動すること' })
+        .toBeGreaterThanOrEqual(12);
 
     const started = await readCounter(page);
     await page.waitForTimeout(2600);
     const stable = await readCounter(page);
-    expect(stable.noiseStarts - started.noiseStarts).toBe(0);
+    expect(stable.oscillatorStarts - started.oscillatorStarts).toBe(0);
 
     await page.keyboard.press('m');
     await page.waitForTimeout(180);
@@ -275,10 +284,15 @@ test('denshouo 常駐BGM: 連続ノイズが起動し、多重ループしない
     await expect
         .poll(async () => {
             const resumed = await readCounter(page);
-            return resumed.noiseStarts - stable.noiseStarts;
-        }, { message: '再開時もノイズループは1セット(3 start)のみ増えること' })
-        .toBeGreaterThanOrEqual(3);
+            return resumed.oscillatorStarts - stable.oscillatorStarts;
+        }, { message: '再開時にピアノのフレーズが再開すること' })
+        .toBeGreaterThanOrEqual(36);
 
     const resumed = await readCounter(page);
-    expect(resumed.noiseStarts - stable.noiseStarts).toBeLessThanOrEqual(3);
+    // Nine notes with four oscillators, plus UI confirmation tones. A duplicated
+    // phrase would schedule at least another 36 oscillators immediately.
+    expect(resumed.oscillatorStarts - stable.oscillatorStarts).toBeLessThan(72);
+    await page.waitForTimeout(2600);
+    const afterResume = await readCounter(page);
+    expect(afterResume.oscillatorStarts - resumed.oscillatorStarts).toBe(0);
 });
