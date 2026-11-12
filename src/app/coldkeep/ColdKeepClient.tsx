@@ -440,7 +440,8 @@ export default function ColdKeepClient() {
     };
 
     return (
-        <main className="relative w-full min-h-dvh bg-[#01060c] text-white overflow-x-hidden font-sans selection:bg-cyan-200 selection:text-[#020b16]">
+        <main lang={lang} className="relative w-full min-h-dvh bg-[#01060c] text-white overflow-x-hidden font-sans selection:bg-cyan-200 selection:text-[#020b16]">
+            <h1 className="sr-only">ColdKeep</h1>
             
             <IceCursor />
 
@@ -475,7 +476,7 @@ export default function ColdKeepClient() {
             <div className="relative z-10 container mx-auto px-6 md:px-12 pt-40 pb-32 max-w-4xl">
                 {/* Hero */}
                 <motion.div className="mb-32 md:mb-48 text-center" style={{ y: yTransform, opacity: opacityTransform }}>
-                    <motion.div className="relative isolate mx-auto max-w-3xl pt-8 pb-12" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1 }}>
+                    <motion.div data-readable-without-js className="relative isolate mx-auto max-w-3xl pt-8 pb-12" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1 }}>
                         <div
                             className="absolute inset-x-4 -top-10 bottom-0 -z-10 rounded-[45%] opacity-80"
                             style={{
@@ -519,7 +520,7 @@ export default function ColdKeepClient() {
                 {/* Content */}
                 <div className="space-y-32">
                     {/* Overview */}
-                    <motion.section
+                    <motion.section data-readable-without-js
                         className="backdrop-blur-xl bg-white/5 border border-white/10 p-8 md:p-12 rounded-[2rem] shadow-2xl"
                         initial={{ opacity: 0, y: 40 }}
                         whileInView={{ opacity: 1, y: 0 }}
@@ -535,7 +536,7 @@ export default function ColdKeepClient() {
                     </motion.section>
 
                     {/* Problem */}
-                    <motion.section
+                    <motion.section data-readable-without-js
                         className="backdrop-blur-xl bg-white/5 border border-white/10 p-8 md:p-12 rounded-[2rem] shadow-2xl"
                         initial={{ opacity: 0, y: 40 }}
                         whileInView={{ opacity: 1, y: 0 }}
@@ -562,7 +563,7 @@ export default function ColdKeepClient() {
                     </motion.section>
 
                     {/* Technical Approach */}
-                    <motion.section
+                    <motion.section data-readable-without-js
                         className="backdrop-blur-xl bg-white/5 border border-white/10 p-8 md:p-12 rounded-[2rem] shadow-2xl"
                         initial={{ opacity: 0, y: 40 }}
                         whileInView={{ opacity: 1, y: 0 }}

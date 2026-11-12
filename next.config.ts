@@ -7,6 +7,8 @@ const projectRoot = dirname(fileURLToPath(import.meta.url));
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   compress: true,
+  // Metadata is local and inexpensive; include it in the initial head for every crawler.
+  htmlLimitedBots: /.*/,
   productionBrowserSourceMaps: false,
   turbopack: {
     root: projectRoot,

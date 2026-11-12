@@ -1,3 +1,6 @@
+import SeoJsonLd from '@/components/SeoJsonLd';
+import ProjectLinks from '@/components/ProjectLinks';
+import { getPageMetadata, localizedPath, type SeoPageProps } from '@/lib/seo';
 import Link from 'next/link';
 import Image from 'next/image';
 import GeoLocationBadge from '@/components/dom/GeoLocationBadge';
@@ -116,6 +119,10 @@ const copyByLang = {
     },
 } as const;
 
+export async function generateMetadata({ searchParams }: SeoPageProps) {
+    return getPageMetadata('about', searchParams);
+}
+
 export default async function AboutPage({
     searchParams,
 }: {
@@ -129,14 +136,15 @@ export default async function AboutPage({
     const t = copyByLang[lang];
 
     return (
-        <main className="relative min-h-dvh bg-[#050505] text-white overflow-hidden font-sans selection:bg-cyan-500 selection:text-black">
+        <main lang={lang} className="relative min-h-dvh bg-[#050505] text-white overflow-hidden font-sans selection:bg-cyan-500 selection:text-black">
             <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-cyan-900/20 blur-[120px] pointer-events-none" />
             <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-blue-900/20 blur-[120px] pointer-events-none" />
 
             <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_60%_at_50%_50%,#000_10%,transparent_100%)] opacity-20" />
 
+            <SeoJsonLd page="about" lang={lang} />
             <nav className="relative z-50 p-6 md:p-12">
-                <Link href={`/?lang=${lang}`} className="inline-flex items-center gap-3 text-sm font-mono tracking-widest text-cyan-500 hover:text-white transition-colors group">
+                <Link href={localizedPath('/', lang)} className="inline-flex items-center gap-3 text-sm font-mono tracking-widest text-cyan-500 hover:text-white transition-colors group">
                     <span className="w-6 h-[1px] bg-cyan-500 group-hover:bg-white transition-colors" />
                     {t.returnToOrbit}
                 </Link>
@@ -244,6 +252,7 @@ export default async function AboutPage({
                     </div>
                 </div>
             </section>
+            <ProjectLinks page="about" lang={lang} />
         </main>
     );
 }

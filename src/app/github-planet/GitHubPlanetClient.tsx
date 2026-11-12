@@ -65,7 +65,8 @@ export default function GitHubPlanetClient() {
     };
 
     return (
-        <main className="relative w-full min-h-[120dvh] bg-[#020202] text-white overflow-x-hidden">
+        <main lang={lang} className="relative w-full min-h-[120dvh] bg-[#020202] text-white overflow-x-hidden">
+            <h1 className="sr-only">GitHub Planet</h1>
             {/* Custom Mouse Cursor */}
             <CrosshairCursor />
 

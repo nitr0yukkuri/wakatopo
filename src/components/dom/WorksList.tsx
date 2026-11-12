@@ -1,5 +1,7 @@
 'use client'
 
+import Link from 'next/link';
+import { localizedPath } from '@/lib/seo';
 import { useSearchParams } from 'next/navigation';
 import { useWorkNavigation } from './useWorkNavigation';
 
@@ -15,17 +17,20 @@ export default function WorksList({ works }: { works: Work[] }) {
     const lang = searchParams.get('lang') === 'en' ? 'en' : 'ja';
     const navigateToWork = useWorkNavigation(lang);
 
-    const handleWorkClick = (id: string) => {
-        navigateToWork(id);
-    };
+    const workPaths: Record<string, string> = { '01': '/github-planet', '02': '/otenkigurashi', '03': '/coldkeep', '04': '/recaptcha-game', '05': '/denshouo' };
 
     return (
         <>
             <div className="flex flex-col">
                 {works.map((work) => (
-                    <div
+                    <Link
                         key={work.id}
-                        onClick={() => handleWorkClick(work.id)}
+                        href={localizedPath(workPaths[work.id], lang)}
+                        prefetch={false}
+                        onClick={(event) => {
+                            if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+                            if (navigateToWork(work.id)) event.preventDefault();
+                        }}
                         className="group relative border-t border-white/10 py-7 sm:py-8 md:py-10 grid grid-cols-[2.5rem_minmax(0,1fr)] sm:grid-cols-[3.25rem_minmax(0,1fr)] lg:grid-cols-[4rem_minmax(0,1fr)_minmax(19rem,22rem)] gap-y-2 sm:gap-y-3 gap-x-3 sm:gap-x-4 lg:gap-x-8 transition-colors hover:bg-white/5 cursor-pointer"
                     >
                         <span className="font-mono text-[10px] sm:text-xs text-gray-600 group-hover:text-cyan-400 transition-colors lg:pt-3">
@@ -44,7 +49,7 @@ export default function WorksList({ works }: { works: Work[] }) {
                                 {work.desc}
                             </div>
                         </div>
-                    </div>
+                    </Link>
                 ))}
                 <div className="border-t border-white/10" />
             </div>

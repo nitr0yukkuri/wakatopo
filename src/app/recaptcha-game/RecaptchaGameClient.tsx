@@ -51,7 +51,8 @@ export default function RecaptchaGameClient() {
     };
 
     return (
-        <main className="relative min-h-[100dvh] overflow-x-hidden bg-[#02050c] text-white">
+        <main lang={lang} className="relative min-h-[100dvh] overflow-x-hidden bg-[#02050c] text-white">
+            <h1 className="sr-only">reCAPTCHA Game</h1>
             <CrosshairCursor />
             <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_50%_18%,rgba(34,211,238,0.16),transparent_34%),radial-gradient(ellipse_at_18%_54%,rgba(14,165,233,0.24),transparent_36%),radial-gradient(ellipse_at_82%_54%,rgba(244,63,94,0.18),transparent_34%),linear-gradient(180deg,#02050c_0%,#040918_44%,#02040a_100%)]" />
             <div className="pointer-events-none absolute left-1/2 top-[17%] h-44 w-[min(72vw,620px)] -translate-x-1/2 rounded-[1.5rem] border border-cyan-100/15 bg-[#020916]/55 shadow-[0_0_70px_rgba(34,211,238,0.14)]" />

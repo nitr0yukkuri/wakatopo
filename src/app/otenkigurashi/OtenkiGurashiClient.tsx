@@ -134,6 +134,7 @@ export default function OtenkiGurashiClient() {
                         ? WINTER_BACKGROUND_GRADIENT
                     : undefined,
             }}>
+            <h1 className="sr-only">{lang === 'en' ? 'Otenkigurashi' : 'おてんきぐらし'}</h1>
                 <OtenkiSeasonEffects season={displayedSeason} seasonEvent={displayedSeasonEvent} weather={displayedWeather} />
 
                 <nav className="fixed top-0 left-0 w-full z-50 p-6 md:p-10">

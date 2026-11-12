@@ -1,3 +1,5 @@
+import SeoJsonLd from '@/components/SeoJsonLd';
+import { getPageMetadata, type SeoPageProps } from '@/lib/seo';
 import { fetchPlanetData } from '@/lib/actions';
 import { Suspense } from 'react';
 import ClientInitializer from '@/components/ClientInitializer';
@@ -92,6 +94,10 @@ const copyByLang = {
   },
 } as const;
 
+export async function generateMetadata({ searchParams }: SeoPageProps) {
+  return getPageMetadata('home', searchParams);
+}
+
 export const revalidate = 1800;
 
 export default async function Home({
@@ -121,12 +127,14 @@ export default async function Home({
 
     return (
     <main
+      lang={lang}
       data-world-weather={initialWeather}
       data-world-season={initialSeason}
       data-world-season-event={initialSeasonEvent}
       className="relative w-full min-h-[100dvh] text-white font-sans bg-[#050505]"
       style={{ userSelect: 'none', WebkitUserSelect: 'none', WebkitTouchCallout: 'none' }}
     >
+      <SeoJsonLd page="home" lang={lang} />
       <ClientInitializer
         initialWeather={initialWeather as WeatherType}
         initialSeason={initialSeason as SeasonType}
@@ -146,9 +154,9 @@ export default async function Home({
         {/* Top Right */}
         <div className="absolute top-6 right-4 sm:right-6 md:right-8 text-right flex flex-col gap-1 pointer-events-auto w-fit" style={{ touchAction: 'pan-y' }}>
           <div className="flex items-center justify-end gap-1.5 text-[10px] font-mono tracking-widest text-gray-400">
-            <Link href="/?lang=ja" className={lang === 'ja' ? 'text-cyan-300' : 'hover:text-gray-200 transition-colors'}>JP</Link>
+            <Link href="/" hrefLang="ja" lang="ja" className={lang === 'ja' ? 'text-cyan-300' : 'hover:text-gray-200 transition-colors'}>JP</Link>
             <span className="text-gray-700">/</span>
-            <Link href="/?lang=en" className={lang === 'en' ? 'text-cyan-300' : 'hover:text-gray-200 transition-colors'}>ENG</Link>
+            <Link href="/?lang=en" hrefLang="en" lang="en" className={lang === 'en' ? 'text-cyan-300' : 'hover:text-gray-200 transition-colors'}>ENG</Link>
           </div>
         </div>
 
@@ -186,9 +194,9 @@ export default async function Home({
         {/* HERO */}
         <section className="h-[100dvh] min-h-[100dvh] flex items-center justify-center pointer-events-auto md:pointer-events-none">
           <div className="text-center space-y-4 md:space-y-6">
-            <h2 className="text-6xl md:text-9xl font-bold tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white to-transparent opacity-80">
-              LIVING<br />PLANET
-            </h2>
+            <h1 className="text-6xl md:text-9xl font-bold tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white to-transparent opacity-80">
+              <span className="sr-only">WAKATO — </span>LIVING<br />PLANET
+            </h1>
             <p className="text-sm md:text-base text-gray-400 font-mono">
               {t.heroTagline}
             </p>
@@ -197,7 +205,7 @@ export default async function Home({
 
         {/* PHILOSOPHY */}
         <section className="py-32 px-6 md:px-20 max-w-4xl mx-auto pointer-events-auto">
-          <span className="text-cyan-500 text-xs font-mono mb-8 block">{t.conceptLabel}</span>
+          <h2 className="text-cyan-500 text-xs font-mono mb-8 block">{t.conceptLabel}</h2>
           <p className="max-w-3xl text-2xl md:text-4xl font-light leading-[1.35] text-gray-200 text-balance">
             {t.conceptLeadBefore}<span className="text-white font-normal border-b border-cyan-500/50">{t.conceptLeadHighlight}</span>{t.conceptLeadAfter}
           </p>
@@ -209,7 +217,7 @@ export default async function Home({
         {/* WORKS */}
         <section className="pt-32 pb-48 md:pb-32 bg-black/40 backdrop-blur-sm pointer-events-auto border-y border-white/5 relative z-40">
           <div className="container mx-auto px-6 md:px-20">
-            <span className="text-cyan-500 text-xs font-mono mb-12 block">{t.worksLabel}</span>
+            <h2 className="text-cyan-500 text-xs font-mono mb-12 block">{t.worksLabel}</h2>
 
             <Suspense fallback={null}>
               <WorksList works={works} />
@@ -220,7 +228,7 @@ export default async function Home({
         {/* SKILLS & CAN DO */}
         <section className="py-24 px-6 md:px-20 pointer-events-auto">
           <div className="max-w-5xl mx-auto">
-            <span className="text-cyan-500 text-xs font-mono mb-12 block">{t.canDoLabel}</span>
+            <h2 className="text-cyan-500 text-xs font-mono mb-12 block">{t.canDoLabel}</h2>
 
             <div className="relative grid md:grid-cols-2 gap-8 md:gap-12">
               <div className="hidden md:block pointer-events-none absolute left-1/2 top-1 -translate-x-1/2 h-[92%] w-px bg-gradient-to-b from-transparent via-cyan-500/25 to-transparent" />

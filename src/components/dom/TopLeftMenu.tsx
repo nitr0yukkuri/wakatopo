@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { localizedPath } from '@/lib/seo';
 import { useEffect, useRef, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useStore, type SeasonEventType, type SeasonType, type WeatherType } from '@/store';
@@ -44,7 +45,7 @@ export default function TopLeftMenu() {
     const setWorldState = useStore((state) => state.setWorldState);
     const navigateToWork = useWorkNavigation(lang);
     const commands = MENU_COMMANDS[lang];
-    const withLang = (href: string) => `${href}?lang=${lang}`;
+    const withLang = (href: string) => localizedPath(href, lang);
 
     const navigateWithTransition = (href: string) => {
         setOpen(false);
@@ -334,16 +335,21 @@ export default function TopLeftMenu() {
                                 <span className="text-[9px] sm:text-[10px] tracking-[0.14em] sm:tracking-[0.16em] text-cyan-200/60">{command.hint}</span>
                             </Link>
                         ) : (
-                            <button
+                            <Link
                                 key={command.href}
-                                type="button"
-                                onClick={() => navigateWithTransition(command.href)}
+                                href={withLang(command.href)}
+                                prefetch={false}
+                                onClick={(event) => {
+                                    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+                                    event.preventDefault();
+                                    navigateWithTransition(command.href);
+                                }}
                                 className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 rounded-lg px-2 py-2 text-gray-200 hover:bg-cyan-400/15 hover:text-cyan-200 text-left"
                             >
                                 <span className="text-cyan-400/70">{String(index + 1).padStart(2, '0')}</span>
                                 <span className="truncate pr-2">{command.label}</span>
                                 <span className="text-[9px] sm:text-[10px] tracking-[0.14em] sm:tracking-[0.16em] text-cyan-200/60">{command.hint}</span>
-                            </button>
+                            </Link>
                         )
                     ))}
                 </nav>
