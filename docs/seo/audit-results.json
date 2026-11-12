@@ -1,0 +1,2428 @@
+{
+  "beforePublic": {
+    "base": "https://wakato.tech",
+    "measuredAt": "2026-11-11T13:56:05.827Z",
+    "results": [
+      {
+        "path": "/",
+        "status": 200,
+        "finalUrl": "https://wakato.tech/",
+        "title": "WAKATO | Living Planet Portfolio",
+        "description": "GitHubの活動とリアルタイム天気が連動する、インタラクティブな3Dポートフォリオ。プロダクト価値から逆算して必要な領域を横断するSWEを目指しています。",
+        "canonical": null,
+        "lang": "ja",
+        "alternates": [],
+        "ogTitle": "WAKATO | Living Planet Portfolio",
+        "ogUrl": "https://wakato.tech",
+        "twitterCard": "summary_large_image",
+        "robots": "index, follow",
+        "h1Count": 0,
+        "textLength": 1654,
+        "schemas": [
+          {
+            "@context": "https://schema.org",
+            "@type": "ProfilePage",
+            "name": "WAKATO",
+            "url": "https://wakato.tech",
+            "description": "GitHubの活動とリアルタイム天気が連動する、インタラクティブな3Dポートフォリオ。プロダクト価値から逆算して必要な領域を横断するSWEを目指しています。",
+            "image": "https://wakato.tech/faviconwakato.png",
+            "mainEntity": {
+              "@type": "Person",
+              "name": "WAKATO (nitr0yukkuri)",
+              "url": "https://wakato.tech",
+              "image": "https://wakato.tech/faviconwakato.png",
+              "description": "プロダクト価値から逆算して必要な領域を横断するSWEを目指しています",
+              "jobTitle": "Software Engineer / Creative Developer",
+              "sameAs": [
+                "https://github.com/nitr0yukkuri",
+                "https://twitter.com/nitr0yukkuri"
+              ]
+            }
+          }
+        ],
+        "internalLinks": [
+          "/?lang=ja",
+          "/?lang=en",
+          "/about?lang=ja"
+        ]
+      },
+      {
+        "path": "/?lang=en",
+        "status": 200,
+        "finalUrl": "https://wakato.tech/?lang=en",
+        "title": "WAKATO | Living Planet Portfolio",
+        "description": "GitHubの活動とリアルタイム天気が連動する、インタラクティブな3Dポートフォリオ。プロダクト価値から逆算して必要な領域を横断するSWEを目指しています。",
+        "canonical": null,
+        "lang": "ja",
+        "alternates": [],
+        "ogTitle": "WAKATO | Living Planet Portfolio",
+        "ogUrl": "https://wakato.tech",
+        "twitterCard": "summary_large_image",
+        "robots": "index, follow",
+        "h1Count": 0,
+        "textLength": 2521,
+        "schemas": [
+          {
+            "@context": "https://schema.org",
+            "@type": "ProfilePage",
+            "name": "WAKATO",
+            "url": "https://wakato.tech",
+            "description": "GitHubの活動とリアルタイム天気が連動する、インタラクティブな3Dポートフォリオ。プロダクト価値から逆算して必要な領域を横断するSWEを目指しています。",
+            "image": "https://wakato.tech/faviconwakato.png",
+            "mainEntity": {
+              "@type": "Person",
+              "name": "WAKATO (nitr0yukkuri)",
+              "url": "https://wakato.tech",
+              "image": "https://wakato.tech/faviconwakato.png",
+              "description": "プロダクト価値から逆算して必要な領域を横断するSWEを目指しています",
+              "jobTitle": "Software Engineer / Creative Developer",
+              "sameAs": [
+                "https://github.com/nitr0yukkuri",
+                "https://twitter.com/nitr0yukkuri"
+              ]
+            }
+          }
+        ],
+        "internalLinks": [
+          "/?lang=ja",
+          "/?lang=en",
+          "/about?lang=en"
+        ]
+      },
+      {
+        "path": "/about",
+        "status": 200,
+        "finalUrl": "https://wakato.tech/about",
+        "title": "WAKATO | Living Planet Portfolio",
+        "description": "GitHubの活動とリアルタイム天気が連動する、インタラクティブな3Dポートフォリオ。プロダクト価値から逆算して必要な領域を横断するSWEを目指しています。",
+        "canonical": null,
+        "lang": "ja",
+        "alternates": [],
+        "ogTitle": "WAKATO | Living Planet Portfolio",
+        "ogUrl": "https://wakato.tech",
+        "twitterCard": "summary_large_image",
+        "robots": "index, follow",
+        "h1Count": 1,
+        "textLength": 1244,
+        "schemas": [
+          {
+            "@context": "https://schema.org",
+            "@type": "ProfilePage",
+            "name": "WAKATO",
+            "url": "https://wakato.tech",
+            "description": "GitHubの活動とリアルタイム天気が連動する、インタラクティブな3Dポートフォリオ。プロダクト価値から逆算して必要な領域を横断するSWEを目指しています。",
+            "image": "https://wakato.tech/faviconwakato.png",
+            "mainEntity": {
+              "@type": "Person",
+              "name": "WAKATO (nitr0yukkuri)",
+              "url": "https://wakato.tech",
+              "image": "https://wakato.tech/faviconwakato.png",
+              "description": "プロダクト価値から逆算して必要な領域を横断するSWEを目指しています",
+              "jobTitle": "Software Engineer / Creative Developer",
+              "sameAs": [
+                "https://github.com/nitr0yukkuri",
+                "https://twitter.com/nitr0yukkuri"
+              ]
+            }
+          }
+        ],
+        "internalLinks": [
+          "/?lang=ja"
+        ]
+      },
+      {
+        "path": "/about?lang=en",
+        "status": 200,
+        "finalUrl": "https://wakato.tech/about?lang=en",
+        "title": "WAKATO | Living Planet Portfolio",
+        "description": "GitHubの活動とリアルタイム天気が連動する、インタラクティブな3Dポートフォリオ。プロダクト価値から逆算して必要な領域を横断するSWEを目指しています。",
+        "canonical": null,
+        "lang": "ja",
+        "alternates": [],
+        "ogTitle": "WAKATO | Living Planet Portfolio",
+        "ogUrl": "https://wakato.tech",
+        "twitterCard": "summary_large_image",
+        "robots": "index, follow",
+        "h1Count": 1,
+        "textLength": 2049,
+        "schemas": [
+          {
+            "@context": "https://schema.org",
+            "@type": "ProfilePage",
+            "name": "WAKATO",
+            "url": "https://wakato.tech",
+            "description": "GitHubの活動とリアルタイム天気が連動する、インタラクティブな3Dポートフォリオ。プロダクト価値から逆算して必要な領域を横断するSWEを目指しています。",
+            "image": "https://wakato.tech/faviconwakato.png",
+            "mainEntity": {
+              "@type": "Person",
+              "name": "WAKATO (nitr0yukkuri)",
+              "url": "https://wakato.tech",
+              "image": "https://wakato.tech/faviconwakato.png",
+              "description": "プロダクト価値から逆算して必要な領域を横断するSWEを目指しています",
+              "jobTitle": "Software Engineer / Creative Developer",
+              "sameAs": [
+                "https://github.com/nitr0yukkuri",
+                "https://twitter.com/nitr0yukkuri"
+              ]
+            }
+          }
+        ],
+        "internalLinks": [
+          "/?lang=en"
+        ]
+      },
+      {
+        "path": "/github-planet",
+        "status": 200,
+        "finalUrl": "https://wakato.tech/github-planet",
+        "title": "WAKATO | Living Planet Portfolio",
+        "description": "GitHubの活動とリアルタイム天気が連動する、インタラクティブな3Dポートフォリオ。プロダクト価値から逆算して必要な領域を横断するSWEを目指しています。",
+        "canonical": null,
+        "lang": "ja",
+        "alternates": [],
+        "ogTitle": "WAKATO | Living Planet Portfolio",
+        "ogUrl": "https://wakato.tech",
+        "twitterCard": "summary_large_image",
+        "robots": "index, follow",
+        "h1Count": 0,
+        "textLength": 979,
+        "schemas": [
+          {
+            "@context": "https://schema.org",
+            "@type": "ProfilePage",
+            "name": "WAKATO",
+            "url": "https://wakato.tech",
+            "description": "GitHubの活動とリアルタイム天気が連動する、インタラクティブな3Dポートフォリオ。プロダクト価値から逆算して必要な領域を横断するSWEを目指しています。",
+            "image": "https://wakato.tech/faviconwakato.png",
+            "mainEntity": {
+              "@type": "Person",
+              "name": "WAKATO (nitr0yukkuri)",
+              "url": "https://wakato.tech",
+              "image": "https://wakato.tech/faviconwakato.png",
+              "description": "プロダクト価値から逆算して必要な領域を横断するSWEを目指しています",
+              "jobTitle": "Software Engineer / Creative Developer",
+              "sameAs": [
+                "https://github.com/nitr0yukkuri",
+                "https://twitter.com/nitr0yukkuri"
+              ]
+            }
+          }
+        ],
+        "internalLinks": []
+      },
+      {
+        "path": "/github-planet?lang=en",
+        "status": 200,
+        "finalUrl": "https://wakato.tech/github-planet?lang=en",
+        "title": "WAKATO | Living Planet Portfolio",
+        "description": "GitHubの活動とリアルタイム天気が連動する、インタラクティブな3Dポートフォリオ。プロダクト価値から逆算して必要な領域を横断するSWEを目指しています。",
+        "canonical": null,
+        "lang": "ja",
+        "alternates": [],
+        "ogTitle": "WAKATO | Living Planet Portfolio",
+        "ogUrl": "https://wakato.tech",
+        "twitterCard": "summary_large_image",
+        "robots": "index, follow",
+        "h1Count": 0,
+        "textLength": 1556,
+        "schemas": [
+          {
+            "@context": "https://schema.org",
+            "@type": "ProfilePage",
+            "name": "WAKATO",
+            "url": "https://wakato.tech",
+            "description": "GitHubの活動とリアルタイム天気が連動する、インタラクティブな3Dポートフォリオ。プロダクト価値から逆算して必要な領域を横断するSWEを目指しています。",
+            "image": "https://wakato.tech/faviconwakato.png",
+            "mainEntity": {
+              "@type": "Person",
+              "name": "WAKATO (nitr0yukkuri)",
+              "url": "https://wakato.tech",
+              "image": "https://wakato.tech/faviconwakato.png",
+              "description": "プロダクト価値から逆算して必要な領域を横断するSWEを目指しています",
+              "jobTitle": "Software Engineer / Creative Developer",
+              "sameAs": [
+                "https://github.com/nitr0yukkuri",
+                "https://twitter.com/nitr0yukkuri"
+              ]
+            }
+          }
+        ],
+        "internalLinks": []
+      },
+      {
+        "path": "/otenkigurashi",
+        "status": 200,
+        "finalUrl": "https://wakato.tech/otenkigurashi",
+        "title": "WAKATO | Living Planet Portfolio",
+        "description": "GitHubの活動とリアルタイム天気が連動する、インタラクティブな3Dポートフォリオ。プロダクト価値から逆算して必要な領域を横断するSWEを目指しています。",
+        "canonical": null,
+        "lang": "ja",
+        "alternates": [],
+        "ogTitle": "WAKATO | Living Planet Portfolio",
+        "ogUrl": "https://wakato.tech",
+        "twitterCard": "summary_large_image",
+        "robots": "index, follow",
+        "h1Count": 0,
+        "textLength": 644,
+        "schemas": [
+          {
+            "@context": "https://schema.org",
+            "@type": "ProfilePage",
+            "name": "WAKATO",
+            "url": "https://wakato.tech",
+            "description": "GitHubの活動とリアルタイム天気が連動する、インタラクティブな3Dポートフォリオ。プロダクト価値から逆算して必要な領域を横断するSWEを目指しています。",
+            "image": "https://wakato.tech/faviconwakato.png",
+            "mainEntity": {
+              "@type": "Person",
+              "name": "WAKATO (nitr0yukkuri)",
+              "url": "https://wakato.tech",
+              "image": "https://wakato.tech/faviconwakato.png",
+              "description": "プロダクト価値から逆算して必要な領域を横断するSWEを目指しています",
+              "jobTitle": "Software Engineer / Creative Developer",
+              "sameAs": [
+                "https://github.com/nitr0yukkuri",
+                "https://twitter.com/nitr0yukkuri"
+              ]
+            }
+          }
+        ],
+        "internalLinks": []
+      },
+      {
+        "path": "/otenkigurashi?lang=en",
+        "status": 200,
+        "finalUrl": "https://wakato.tech/otenkigurashi?lang=en",
+        "title": "WAKATO | Living Planet Portfolio",
+        "description": "GitHubの活動とリアルタイム天気が連動する、インタラクティブな3Dポートフォリオ。プロダクト価値から逆算して必要な領域を横断するSWEを目指しています。",
+        "canonical": null,
+        "lang": "ja",
+        "alternates": [],
+        "ogTitle": "WAKATO | Living Planet Portfolio",
+        "ogUrl": "https://wakato.tech",
+        "twitterCard": "summary_large_image",
+        "robots": "index, follow",
+        "h1Count": 0,
+        "textLength": 1125,
+        "schemas": [
+          {
+            "@context": "https://schema.org",
+            "@type": "ProfilePage",
+            "name": "WAKATO",
+            "url": "https://wakato.tech",
+            "description": "GitHubの活動とリアルタイム天気が連動する、インタラクティブな3Dポートフォリオ。プロダクト価値から逆算して必要な領域を横断するSWEを目指しています。",
+            "image": "https://wakato.tech/faviconwakato.png",
+            "mainEntity": {
+              "@type": "Person",
+              "name": "WAKATO (nitr0yukkuri)",
+              "url": "https://wakato.tech",
+              "image": "https://wakato.tech/faviconwakato.png",
+              "description": "プロダクト価値から逆算して必要な領域を横断するSWEを目指しています",
+              "jobTitle": "Software Engineer / Creative Developer",
+              "sameAs": [
+                "https://github.com/nitr0yukkuri",
+                "https://twitter.com/nitr0yukkuri"
+              ]
+            }
+          }
+        ],
+        "internalLinks": []
+      },
+      {
+        "path": "/coldkeep",
+        "status": 200,
+        "finalUrl": "https://wakato.tech/coldkeep",
+        "title": "WAKATO | Living Planet Portfolio",
+        "description": "GitHubの活動とリアルタイム天気が連動する、インタラクティブな3Dポートフォリオ。プロダクト価値から逆算して必要な領域を横断するSWEを目指しています。",
+        "canonical": null,
+        "lang": "ja",
+        "alternates": [],
+        "ogTitle": "WAKATO | Living Planet Portfolio",
+        "ogUrl": "https://wakato.tech",
+        "twitterCard": "summary_large_image",
+        "robots": "index, follow",
+        "h1Count": 0,
+        "textLength": 1006,
+        "schemas": [
+          {
+            "@context": "https://schema.org",
+            "@type": "ProfilePage",
+            "name": "WAKATO",
+            "url": "https://wakato.tech",
+            "description": "GitHubの活動とリアルタイム天気が連動する、インタラクティブな3Dポートフォリオ。プロダクト価値から逆算して必要な領域を横断するSWEを目指しています。",
+            "image": "https://wakato.tech/faviconwakato.png",
+            "mainEntity": {
+              "@type": "Person",
+              "name": "WAKATO (nitr0yukkuri)",
+              "url": "https://wakato.tech",
+              "image": "https://wakato.tech/faviconwakato.png",
+              "description": "プロダクト価値から逆算して必要な領域を横断するSWEを目指しています",
+              "jobTitle": "Software Engineer / Creative Developer",
+              "sameAs": [
+                "https://github.com/nitr0yukkuri",
+                "https://twitter.com/nitr0yukkuri"
+              ]
+            }
+          }
+        ],
+        "internalLinks": []
+      },
+      {
+        "path": "/coldkeep?lang=en",
+        "status": 200,
+        "finalUrl": "https://wakato.tech/coldkeep?lang=en",
+        "title": "WAKATO | Living Planet Portfolio",
+        "description": "GitHubの活動とリアルタイム天気が連動する、インタラクティブな3Dポートフォリオ。プロダクト価値から逆算して必要な領域を横断するSWEを目指しています。",
+        "canonical": null,
+        "lang": "ja",
+        "alternates": [],
+        "ogTitle": "WAKATO | Living Planet Portfolio",
+        "ogUrl": "https://wakato.tech",
+        "twitterCard": "summary_large_image",
+        "robots": "index, follow",
+        "h1Count": 0,
+        "textLength": 1578,
+        "schemas": [
+          {
+            "@context": "https://schema.org",
+            "@type": "ProfilePage",
+            "name": "WAKATO",
+            "url": "https://wakato.tech",
+            "description": "GitHubの活動とリアルタイム天気が連動する、インタラクティブな3Dポートフォリオ。プロダクト価値から逆算して必要な領域を横断するSWEを目指しています。",
+            "image": "https://wakato.tech/faviconwakato.png",
+            "mainEntity": {
+              "@type": "Person",
+              "name": "WAKATO (nitr0yukkuri)",
+              "url": "https://wakato.tech",
+              "image": "https://wakato.tech/faviconwakato.png",
+              "description": "プロダクト価値から逆算して必要な領域を横断するSWEを目指しています",
+              "jobTitle": "Software Engineer / Creative Developer",
+              "sameAs": [
+                "https://github.com/nitr0yukkuri",
+                "https://twitter.com/nitr0yukkuri"
+              ]
+            }
+          }
+        ],
+        "internalLinks": []
+      },
+      {
+        "path": "/recaptcha-game",
+        "status": 200,
+        "finalUrl": "https://wakato.tech/recaptcha-game",
+        "title": "WAKATO | Living Planet Portfolio",
+        "description": "GitHubの活動とリアルタイム天気が連動する、インタラクティブな3Dポートフォリオ。プロダクト価値から逆算して必要な領域を横断するSWEを目指しています。",
+        "canonical": null,
+        "lang": "ja",
+        "alternates": [],
+        "ogTitle": "WAKATO | Living Planet Portfolio",
+        "ogUrl": "https://wakato.tech",
+        "twitterCard": "summary_large_image",
+        "robots": "index, follow",
+        "h1Count": 0,
+        "textLength": 847,
+        "schemas": [
+          {
+            "@context": "https://schema.org",
+            "@type": "ProfilePage",
+            "name": "WAKATO",
+            "url": "https://wakato.tech",
+            "description": "GitHubの活動とリアルタイム天気が連動する、インタラクティブな3Dポートフォリオ。プロダクト価値から逆算して必要な領域を横断するSWEを目指しています。",
+            "image": "https://wakato.tech/faviconwakato.png",
+            "mainEntity": {
+              "@type": "Person",
+              "name": "WAKATO (nitr0yukkuri)",
+              "url": "https://wakato.tech",
+              "image": "https://wakato.tech/faviconwakato.png",
+              "description": "プロダクト価値から逆算して必要な領域を横断するSWEを目指しています",
+              "jobTitle": "Software Engineer / Creative Developer",
+              "sameAs": [
+                "https://github.com/nitr0yukkuri",
+                "https://twitter.com/nitr0yukkuri"
+              ]
+            }
+          }
+        ],
+        "internalLinks": []
+      },
+      {
+        "path": "/recaptcha-game?lang=en",
+        "status": 200,
+        "finalUrl": "https://wakato.tech/recaptcha-game?lang=en",
+        "title": "WAKATO | Living Planet Portfolio",
+        "description": "GitHubの活動とリアルタイム天気が連動する、インタラクティブな3Dポートフォリオ。プロダクト価値から逆算して必要な領域を横断するSWEを目指しています。",
+        "canonical": null,
+        "lang": "ja",
+        "alternates": [],
+        "ogTitle": "WAKATO | Living Planet Portfolio",
+        "ogUrl": "https://wakato.tech",
+        "twitterCard": "summary_large_image",
+        "robots": "index, follow",
+        "h1Count": 0,
+        "textLength": 1240,
+        "schemas": [
+          {
+            "@context": "https://schema.org",
+            "@type": "ProfilePage",
+            "name": "WAKATO",
+            "url": "https://wakato.tech",
+            "description": "GitHubの活動とリアルタイム天気が連動する、インタラクティブな3Dポートフォリオ。プロダクト価値から逆算して必要な領域を横断するSWEを目指しています。",
+            "image": "https://wakato.tech/faviconwakato.png",
+            "mainEntity": {
+              "@type": "Person",
+              "name": "WAKATO (nitr0yukkuri)",
+              "url": "https://wakato.tech",
+              "image": "https://wakato.tech/faviconwakato.png",
+              "description": "プロダクト価値から逆算して必要な領域を横断するSWEを目指しています",
+              "jobTitle": "Software Engineer / Creative Developer",
+              "sameAs": [
+                "https://github.com/nitr0yukkuri",
+                "https://twitter.com/nitr0yukkuri"
+              ]
+            }
+          }
+        ],
+        "internalLinks": []
+      },
+      {
+        "path": "/denshouo",
+        "status": 200,
+        "finalUrl": "https://wakato.tech/denshouo",
+        "title": "WAKATO | Living Planet Portfolio",
+        "description": "GitHubの活動とリアルタイム天気が連動する、インタラクティブな3Dポートフォリオ。プロダクト価値から逆算して必要な領域を横断するSWEを目指しています。",
+        "canonical": null,
+        "lang": "ja",
+        "alternates": [],
+        "ogTitle": "WAKATO | Living Planet Portfolio",
+        "ogUrl": "https://wakato.tech",
+        "twitterCard": "summary_large_image",
+        "robots": "index, follow",
+        "h1Count": 0,
+        "textLength": 837,
+        "schemas": [
+          {
+            "@context": "https://schema.org",
+            "@type": "ProfilePage",
+            "name": "WAKATO",
+            "url": "https://wakato.tech",
+            "description": "GitHubの活動とリアルタイム天気が連動する、インタラクティブな3Dポートフォリオ。プロダクト価値から逆算して必要な領域を横断するSWEを目指しています。",
+            "image": "https://wakato.tech/faviconwakato.png",
+            "mainEntity": {
+              "@type": "Person",
+              "name": "WAKATO (nitr0yukkuri)",
+              "url": "https://wakato.tech",
+              "image": "https://wakato.tech/faviconwakato.png",
+              "description": "プロダクト価値から逆算して必要な領域を横断するSWEを目指しています",
+              "jobTitle": "Software Engineer / Creative Developer",
+              "sameAs": [
+                "https://github.com/nitr0yukkuri",
+                "https://twitter.com/nitr0yukkuri"
+              ]
+            }
+          }
+        ],
+        "internalLinks": []
+      },
+      {
+        "path": "/denshouo?lang=en",
+        "status": 200,
+        "finalUrl": "https://wakato.tech/denshouo?lang=en",
+        "title": "WAKATO | Living Planet Portfolio",
+        "description": "GitHubの活動とリアルタイム天気が連動する、インタラクティブな3Dポートフォリオ。プロダクト価値から逆算して必要な領域を横断するSWEを目指しています。",
+        "canonical": null,
+        "lang": "ja",
+        "alternates": [],
+        "ogTitle": "WAKATO | Living Planet Portfolio",
+        "ogUrl": "https://wakato.tech",
+        "twitterCard": "summary_large_image",
+        "robots": "index, follow",
+        "h1Count": 0,
+        "textLength": 1508,
+        "schemas": [
+          {
+            "@context": "https://schema.org",
+            "@type": "ProfilePage",
+            "name": "WAKATO",
+            "url": "https://wakato.tech",
+            "description": "GitHubの活動とリアルタイム天気が連動する、インタラクティブな3Dポートフォリオ。プロダクト価値から逆算して必要な領域を横断するSWEを目指しています。",
+            "image": "https://wakato.tech/faviconwakato.png",
+            "mainEntity": {
+              "@type": "Person",
+              "name": "WAKATO (nitr0yukkuri)",
+              "url": "https://wakato.tech",
+              "image": "https://wakato.tech/faviconwakato.png",
+              "description": "プロダクト価値から逆算して必要な領域を横断するSWEを目指しています",
+              "jobTitle": "Software Engineer / Creative Developer",
+              "sameAs": [
+                "https://github.com/nitr0yukkuri",
+                "https://twitter.com/nitr0yukkuri"
+              ]
+            }
+          }
+        ],
+        "internalLinks": []
+      },
+      {
+        "path": "/?lang=ja&weather=Rain&season=autumn",
+        "status": 200,
+        "finalUrl": "https://wakato.tech/?lang=ja&weather=Rain&season=autumn",
+        "title": "WAKATO | Living Planet Portfolio",
+        "description": "GitHubの活動とリアルタイム天気が連動する、インタラクティブな3Dポートフォリオ。プロダクト価値から逆算して必要な領域を横断するSWEを目指しています。",
+        "canonical": null,
+        "lang": "ja",
+        "alternates": [],
+        "ogTitle": "WAKATO | Living Planet Portfolio",
+        "ogUrl": "https://wakato.tech",
+        "twitterCard": "summary_large_image",
+        "robots": "index, follow",
+        "h1Count": 0,
+        "textLength": 1653,
+        "schemas": [
+          {
+            "@context": "https://schema.org",
+            "@type": "ProfilePage",
+            "name": "WAKATO",
+            "url": "https://wakato.tech",
+            "description": "GitHubの活動とリアルタイム天気が連動する、インタラクティブな3Dポートフォリオ。プロダクト価値から逆算して必要な領域を横断するSWEを目指しています。",
+            "image": "https://wakato.tech/faviconwakato.png",
+            "mainEntity": {
+              "@type": "Person",
+              "name": "WAKATO (nitr0yukkuri)",
+              "url": "https://wakato.tech",
+              "image": "https://wakato.tech/faviconwakato.png",
+              "description": "プロダクト価値から逆算して必要な領域を横断するSWEを目指しています",
+              "jobTitle": "Software Engineer / Creative Developer",
+              "sameAs": [
+                "https://github.com/nitr0yukkuri",
+                "https://twitter.com/nitr0yukkuri"
+              ]
+            }
+          }
+        ],
+        "internalLinks": [
+          "/?lang=ja",
+          "/?lang=en",
+          "/about?lang=ja"
+        ]
+      },
+      {
+        "path": "/card",
+        "status": 200,
+        "finalUrl": "https://wakato.tech/card",
+        "title": "WAKATO | Living Planet Portfolio",
+        "description": "GitHubの活動とリアルタイム天気が連動する、インタラクティブな3Dポートフォリオ。プロダクト価値から逆算して必要な領域を横断するSWEを目指しています。",
+        "canonical": null,
+        "lang": "ja",
+        "alternates": [],
+        "ogTitle": "WAKATO | Living Planet Portfolio",
+        "ogUrl": "https://wakato.tech",
+        "twitterCard": "summary_large_image",
+        "robots": "index, follow",
+        "h1Count": 0,
+        "textLength": 139,
+        "schemas": [
+          {
+            "@context": "https://schema.org",
+            "@type": "ProfilePage",
+            "name": "WAKATO",
+            "url": "https://wakato.tech",
+            "description": "GitHubの活動とリアルタイム天気が連動する、インタラクティブな3Dポートフォリオ。プロダクト価値から逆算して必要な領域を横断するSWEを目指しています。",
+            "image": "https://wakato.tech/faviconwakato.png",
+            "mainEntity": {
+              "@type": "Person",
+              "name": "WAKATO (nitr0yukkuri)",
+              "url": "https://wakato.tech",
+              "image": "https://wakato.tech/faviconwakato.png",
+              "description": "プロダクト価値から逆算して必要な領域を横断するSWEを目指しています",
+              "jobTitle": "Software Engineer / Creative Developer",
+              "sameAs": [
+                "https://github.com/nitr0yukkuri",
+                "https://twitter.com/nitr0yukkuri"
+              ]
+            }
+          }
+        ],
+        "internalLinks": []
+      },
+      {
+        "path": "/ogp",
+        "status": 200,
+        "finalUrl": "https://wakato.tech/ogp",
+        "title": "WAKATO | Living Planet OGP Capture",
+        "description": "GitHubの活動とリアルタイム天気が連動する、インタラクティブな3Dポートフォリオ。プロダクト価値から逆算して必要な領域を横断するSWEを目指しています。",
+        "canonical": null,
+        "lang": "ja",
+        "alternates": [],
+        "ogTitle": "WAKATO | Living Planet Portfolio",
+        "ogUrl": "https://wakato.tech",
+        "twitterCard": "summary_large_image",
+        "robots": "noindex, nofollow",
+        "h1Count": 0,
+        "textLength": 171,
+        "schemas": [
+          {
+            "@context": "https://schema.org",
+            "@type": "ProfilePage",
+            "name": "WAKATO",
+            "url": "https://wakato.tech",
+            "description": "GitHubの活動とリアルタイム天気が連動する、インタラクティブな3Dポートフォリオ。プロダクト価値から逆算して必要な領域を横断するSWEを目指しています。",
+            "image": "https://wakato.tech/faviconwakato.png",
+            "mainEntity": {
+              "@type": "Person",
+              "name": "WAKATO (nitr0yukkuri)",
+              "url": "https://wakato.tech",
+              "image": "https://wakato.tech/faviconwakato.png",
+              "description": "プロダクト価値から逆算して必要な領域を横断するSWEを目指しています",
+              "jobTitle": "Software Engineer / Creative Developer",
+              "sameAs": [
+                "https://github.com/nitr0yukkuri",
+                "https://twitter.com/nitr0yukkuri"
+              ]
+            }
+          }
+        ],
+        "internalLinks": []
+      },
+      {
+        "path": "/seo-missing-page",
+        "status": 404,
+        "finalUrl": "https://wakato.tech/seo-missing-page",
+        "title": "WAKATO | Living Planet Portfolio",
+        "description": "GitHubの活動とリアルタイム天気が連動する、インタラクティブな3Dポートフォリオ。プロダクト価値から逆算して必要な領域を横断するSWEを目指しています。",
+        "canonical": null,
+        "lang": "ja",
+        "alternates": [],
+        "ogTitle": "WAKATO | Living Planet Portfolio",
+        "ogUrl": "https://wakato.tech",
+        "twitterCard": "summary_large_image",
+        "robots": "noindex",
+        "h1Count": 1,
+        "textLength": 119,
+        "schemas": [
+          {
+            "@context": "https://schema.org",
+            "@type": "ProfilePage",
+            "name": "WAKATO",
+            "url": "https://wakato.tech",
+            "description": "GitHubの活動とリアルタイム天気が連動する、インタラクティブな3Dポートフォリオ。プロダクト価値から逆算して必要な領域を横断するSWEを目指しています。",
+            "image": "https://wakato.tech/faviconwakato.png",
+            "mainEntity": {
+              "@type": "Person",
+              "name": "WAKATO (nitr0yukkuri)",
+              "url": "https://wakato.tech",
+              "image": "https://wakato.tech/faviconwakato.png",
+              "description": "プロダクト価値から逆算して必要な領域を横断するSWEを目指しています",
+              "jobTitle": "Software Engineer / Creative Developer",
+              "sameAs": [
+                "https://github.com/nitr0yukkuri",
+                "https://twitter.com/nitr0yukkuri"
+              ]
+            }
+          }
+        ],
+        "internalLinks": [
+          "/"
+        ]
+      },
+      {
+        "path": "/robots.txt",
+        "status": 200,
+        "finalUrl": "https://wakato.tech/robots.txt",
+        "title": "",
+        "description": null,
+        "canonical": null,
+        "lang": "",
+        "alternates": [],
+        "ogTitle": null,
+        "ogUrl": null,
+        "twitterCard": null,
+        "robots": null,
+        "h1Count": 0,
+        "textLength": 1247,
+        "schemas": [],
+        "internalLinks": []
+      },
+      {
+        "path": "/sitemap.xml",
+        "status": 404,
+        "finalUrl": "https://wakato.tech/sitemap.xml",
+        "title": "WAKATO | Living Planet Portfolio",
+        "description": "GitHubの活動とリアルタイム天気が連動する、インタラクティブな3Dポートフォリオ。プロダクト価値から逆算して必要な領域を横断するSWEを目指しています。",
+        "canonical": null,
+        "lang": "ja",
+        "alternates": [],
+        "ogTitle": "WAKATO | Living Planet Portfolio",
+        "ogUrl": "https://wakato.tech",
+        "twitterCard": "summary_large_image",
+        "robots": "noindex",
+        "h1Count": 1,
+        "textLength": 119,
+        "schemas": [
+          {
+            "@context": "https://schema.org",
+            "@type": "ProfilePage",
+            "name": "WAKATO",
+            "url": "https://wakato.tech",
+            "description": "GitHubの活動とリアルタイム天気が連動する、インタラクティブな3Dポートフォリオ。プロダクト価値から逆算して必要な領域を横断するSWEを目指しています。",
+            "image": "https://wakato.tech/faviconwakato.png",
+            "mainEntity": {
+              "@type": "Person",
+              "name": "WAKATO (nitr0yukkuri)",
+              "url": "https://wakato.tech",
+              "image": "https://wakato.tech/faviconwakato.png",
+              "description": "プロダクト価値から逆算して必要な領域を横断するSWEを目指しています",
+              "jobTitle": "Software Engineer / Creative Developer",
+              "sameAs": [
+                "https://github.com/nitr0yukkuri",
+                "https://twitter.com/nitr0yukkuri"
+              ]
+            }
+          }
+        ],
+        "internalLinks": [
+          "/"
+        ]
+      },
+      {
+        "path": "/manifest.webmanifest",
+        "status": 200,
+        "finalUrl": "https://wakato.tech/manifest.webmanifest",
+        "title": "",
+        "description": null,
+        "canonical": null,
+        "lang": "",
+        "alternates": [],
+        "ogTitle": null,
+        "ogUrl": null,
+        "twitterCard": null,
+        "robots": null,
+        "h1Count": 0,
+        "textLength": 318,
+        "schemas": [],
+        "internalLinks": []
+      }
+    ]
+  },
+  "afterLocal": {
+    "base": "http://127.0.0.1:3018",
+    "measuredAt": "2026-11-11T14:47:33.289Z",
+    "results": [
+      {
+        "path": "/",
+        "status": 200,
+        "finalUrl": "http://127.0.0.1:3018/",
+        "title": "WAKATO（わかと）| Living Planet — 3Dポートフォリオ",
+        "description": "WAKATO（わかと）の個人ポートフォリオ。Three.js・React Three Fiber・WebGL・GLSLで、天候・季節・時間帯が息づく3D体験と作品を紹介。CSS Winner Site of the Day受賞。",
+        "canonical": "https://wakato.tech",
+        "lang": "ja",
+        "alternates": [
+          [
+            "ja",
+            "https://wakato.tech/"
+          ],
+          [
+            "en",
+            "https://wakato.tech/?lang=en"
+          ],
+          [
+            "x-default",
+            "https://wakato.tech/"
+          ]
+        ],
+        "ogTitle": "WAKATO（わかと）| Living Planet — 3Dポートフォリオ",
+        "ogUrl": "https://wakato.tech",
+        "twitterCard": "summary_large_image",
+        "robots": "index, follow",
+        "h1Count": 1,
+        "textLength": 1701,
+        "schemas": [
+          {
+            "@context": "https://schema.org",
+            "@graph": [
+              {
+                "@type": "Person",
+                "@id": "https://wakato.tech/#person",
+                "name": "WAKATO",
+                "alternateName": [
+                  "わかと",
+                  "nitr0yukkuri"
+                ],
+                "url": "https://wakato.tech/about",
+                "sameAs": [
+                  "https://github.com/nitr0yukkuri",
+                  "https://x.com/0ts_st",
+                  "https://www.instagram.com/0ts_st/"
+                ],
+                "jobTitle": "Software Engineer / Creative Developer"
+              },
+              {
+                "@type": "WebSite",
+                "@id": "https://wakato.tech/#website",
+                "name": "WAKATO | Living Planet",
+                "url": "https://wakato.tech/",
+                "inLanguage": [
+                  "ja",
+                  "en"
+                ],
+                "description": "WAKATO（わかと）の個人ポートフォリオ。Three.js・React Three Fiber・WebGL・GLSLで、天候・季節・時間帯が息づく3D体験と作品を紹介。CSS Winner Site of the Day受賞。",
+                "creator": {
+                  "@id": "https://wakato.tech/#person"
+                },
+                "award": "CSS Winner Site of the Day — 6 April 2026"
+              },
+              {
+                "@type": "WebPage",
+                "@id": "https://wakato.tech/#webpage",
+                "url": "https://wakato.tech/",
+                "name": "WAKATO（わかと）| Living Planet — 3Dポートフォリオ",
+                "description": "WAKATO（わかと）の個人ポートフォリオ。Three.js・React Three Fiber・WebGL・GLSLで、天候・季節・時間帯が息づく3D体験と作品を紹介。CSS Winner Site of the Day受賞。",
+                "inLanguage": "ja",
+                "isPartOf": {
+                  "@id": "https://wakato.tech/#website"
+                }
+              }
+            ]
+          }
+        ],
+        "internalLinks": [
+          "/",
+          "/?lang=en",
+          "/about",
+          "/github-planet",
+          "/otenkigurashi",
+          "/coldkeep",
+          "/recaptcha-game",
+          "/denshouo",
+          "/github-planet",
+          "/otenkigurashi",
+          "/coldkeep",
+          "/recaptcha-game",
+          "/denshouo"
+        ]
+      },
+      {
+        "path": "/?lang=en",
+        "status": 200,
+        "finalUrl": "http://127.0.0.1:3018/?lang=en",
+        "title": "WAKATO | Living Planet — Creative Developer & 3D Portfolio",
+        "description": "WAKATO’s immersive portfolio, built with Three.js, React Three Fiber, WebGL and GLSL. Explore projects in a world shaped by weather, seasons and time. CSS Winner Site of the Day.",
+        "canonical": "https://wakato.tech/?lang=en",
+        "lang": "en",
+        "alternates": [
+          [
+            "ja",
+            "https://wakato.tech/"
+          ],
+          [
+            "en",
+            "https://wakato.tech/?lang=en"
+          ],
+          [
+            "x-default",
+            "https://wakato.tech/"
+          ]
+        ],
+        "ogTitle": "WAKATO | Living Planet — Creative Developer & 3D Portfolio",
+        "ogUrl": "https://wakato.tech/?lang=en",
+        "twitterCard": "summary_large_image",
+        "robots": "index, follow",
+        "h1Count": 1,
+        "textLength": 2633,
+        "schemas": [
+          {
+            "@context": "https://schema.org",
+            "@graph": [
+              {
+                "@type": "Person",
+                "@id": "https://wakato.tech/#person",
+                "name": "WAKATO",
+                "alternateName": [
+                  "わかと",
+                  "nitr0yukkuri"
+                ],
+                "url": "https://wakato.tech/about",
+                "sameAs": [
+                  "https://github.com/nitr0yukkuri",
+                  "https://x.com/0ts_st",
+                  "https://www.instagram.com/0ts_st/"
+                ],
+                "jobTitle": "Software Engineer / Creative Developer"
+              },
+              {
+                "@type": "WebSite",
+                "@id": "https://wakato.tech/#website",
+                "name": "WAKATO | Living Planet",
+                "url": "https://wakato.tech/",
+                "inLanguage": [
+                  "ja",
+                  "en"
+                ],
+                "description": "WAKATO’s immersive portfolio, built with Three.js, React Three Fiber, WebGL and GLSL. Explore projects in a world shaped by weather, seasons and time. CSS Winner Site of the Day.",
+                "creator": {
+                  "@id": "https://wakato.tech/#person"
+                },
+                "award": "CSS Winner Site of the Day — 6 April 2026"
+              },
+              {
+                "@type": "WebPage",
+                "@id": "https://wakato.tech/?lang=en#webpage",
+                "url": "https://wakato.tech/?lang=en",
+                "name": "WAKATO | Living Planet — Creative Developer & 3D Portfolio",
+                "description": "WAKATO’s immersive portfolio, built with Three.js, React Three Fiber, WebGL and GLSL. Explore projects in a world shaped by weather, seasons and time. CSS Winner Site of the Day.",
+                "inLanguage": "en",
+                "isPartOf": {
+                  "@id": "https://wakato.tech/#website"
+                }
+              }
+            ]
+          }
+        ],
+        "internalLinks": [
+          "/",
+          "/?lang=en",
+          "/about?lang=en",
+          "/github-planet?lang=en",
+          "/otenkigurashi?lang=en",
+          "/coldkeep?lang=en",
+          "/recaptcha-game?lang=en",
+          "/denshouo?lang=en",
+          "/github-planet?lang=en",
+          "/otenkigurashi?lang=en",
+          "/coldkeep?lang=en",
+          "/recaptcha-game?lang=en",
+          "/denshouo?lang=en"
+        ]
+      },
+      {
+        "path": "/about",
+        "status": 200,
+        "finalUrl": "http://127.0.0.1:3018/about",
+        "title": "WAKATO（わかと）について | 経歴・技術・実績",
+        "description": "WAKATO（わかと）のプロフィール。ECCコンピュータ専門学校在学。3D・WebGLによる体験設計から、Node.js・GoのAPI、PostgreSQL、デプロイまで。経歴・技術スタック・受賞実績を紹介します。",
+        "canonical": "https://wakato.tech/about",
+        "lang": "ja",
+        "alternates": [
+          [
+            "ja",
+            "https://wakato.tech/about"
+          ],
+          [
+            "en",
+            "https://wakato.tech/about?lang=en"
+          ],
+          [
+            "x-default",
+            "https://wakato.tech/about"
+          ]
+        ],
+        "ogTitle": "WAKATO（わかと）について | 経歴・技術・実績",
+        "ogUrl": "https://wakato.tech/about",
+        "twitterCard": "summary_large_image",
+        "robots": "index, follow",
+        "h1Count": 1,
+        "textLength": 1373,
+        "schemas": [
+          {
+            "@context": "https://schema.org",
+            "@graph": [
+              {
+                "@type": "Person",
+                "@id": "https://wakato.tech/#person",
+                "name": "WAKATO",
+                "alternateName": [
+                  "わかと",
+                  "nitr0yukkuri"
+                ],
+                "url": "https://wakato.tech/about",
+                "sameAs": [
+                  "https://github.com/nitr0yukkuri",
+                  "https://x.com/0ts_st",
+                  "https://www.instagram.com/0ts_st/"
+                ],
+                "jobTitle": "Software Engineer / Creative Developer"
+              },
+              {
+                "@type": "ProfilePage",
+                "@id": "https://wakato.tech/about#webpage",
+                "url": "https://wakato.tech/about",
+                "name": "WAKATO（わかと）について | 経歴・技術・実績",
+                "description": "WAKATO（わかと）のプロフィール。ECCコンピュータ専門学校在学。3D・WebGLによる体験設計から、Node.js・GoのAPI、PostgreSQL、デプロイまで。経歴・技術スタック・受賞実績を紹介します。",
+                "inLanguage": "ja",
+                "isPartOf": {
+                  "@id": "https://wakato.tech/#website"
+                },
+                "mainEntity": {
+                  "@id": "https://wakato.tech/#person"
+                }
+              },
+              {
+                "@type": "BreadcrumbList",
+                "itemListElement": [
+                  {
+                    "@type": "ListItem",
+                    "position": 1,
+                    "name": "WAKATO | Living Planet",
+                    "item": "https://wakato.tech/"
+                  },
+                  {
+                    "@type": "ListItem",
+                    "position": 2,
+                    "name": "WAKATOについて",
+                    "item": "https://wakato.tech/about"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "internalLinks": [
+          "/",
+          "/",
+          "/github-planet",
+          "/otenkigurashi",
+          "/coldkeep",
+          "/recaptcha-game",
+          "/denshouo",
+          "/about",
+          "/about?lang=en"
+        ]
+      },
+      {
+        "path": "/about?lang=en",
+        "status": 200,
+        "finalUrl": "http://127.0.0.1:3018/about?lang=en",
+        "title": "About WAKATO | Software Engineer & Creative Developer",
+        "description": "Meet WAKATO, a software engineer and creative developer studying at ECC Computer College. Explore experience, awards and work across 3D WebGL interfaces, Node.js, Go, PostgreSQL and deployment.",
+        "canonical": "https://wakato.tech/about?lang=en",
+        "lang": "en",
+        "alternates": [
+          [
+            "ja",
+            "https://wakato.tech/about"
+          ],
+          [
+            "en",
+            "https://wakato.tech/about?lang=en"
+          ],
+          [
+            "x-default",
+            "https://wakato.tech/about"
+          ]
+        ],
+        "ogTitle": "About WAKATO | Software Engineer & Creative Developer",
+        "ogUrl": "https://wakato.tech/about?lang=en",
+        "twitterCard": "summary_large_image",
+        "robots": "index, follow",
+        "h1Count": 1,
+        "textLength": 2204,
+        "schemas": [
+          {
+            "@context": "https://schema.org",
+            "@graph": [
+              {
+                "@type": "Person",
+                "@id": "https://wakato.tech/#person",
+                "name": "WAKATO",
+                "alternateName": [
+                  "わかと",
+                  "nitr0yukkuri"
+                ],
+                "url": "https://wakato.tech/about",
+                "sameAs": [
+                  "https://github.com/nitr0yukkuri",
+                  "https://x.com/0ts_st",
+                  "https://www.instagram.com/0ts_st/"
+                ],
+                "jobTitle": "Software Engineer / Creative Developer"
+              },
+              {
+                "@type": "ProfilePage",
+                "@id": "https://wakato.tech/about?lang=en#webpage",
+                "url": "https://wakato.tech/about?lang=en",
+                "name": "About WAKATO | Software Engineer & Creative Developer",
+                "description": "Meet WAKATO, a software engineer and creative developer studying at ECC Computer College. Explore experience, awards and work across 3D WebGL interfaces, Node.js, Go, PostgreSQL and deployment.",
+                "inLanguage": "en",
+                "isPartOf": {
+                  "@id": "https://wakato.tech/#website"
+                },
+                "mainEntity": {
+                  "@id": "https://wakato.tech/#person"
+                }
+              },
+              {
+                "@type": "BreadcrumbList",
+                "itemListElement": [
+                  {
+                    "@type": "ListItem",
+                    "position": 1,
+                    "name": "WAKATO | Living Planet",
+                    "item": "https://wakato.tech/?lang=en"
+                  },
+                  {
+                    "@type": "ListItem",
+                    "position": 2,
+                    "name": "About WAKATO",
+                    "item": "https://wakato.tech/about?lang=en"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "internalLinks": [
+          "/?lang=en",
+          "/?lang=en",
+          "/github-planet?lang=en",
+          "/otenkigurashi?lang=en",
+          "/coldkeep?lang=en",
+          "/recaptcha-game?lang=en",
+          "/denshouo?lang=en",
+          "/about",
+          "/about?lang=en"
+        ]
+      },
+      {
+        "path": "/github-planet",
+        "status": 200,
+        "finalUrl": "http://127.0.0.1:3018/github-planet",
+        "title": "GitHub Planet | GitHubの活動を惑星にする3D作品 — WAKATO",
+        "description": "GitHubの活動を宇宙に浮かぶ惑星として可視化するGitHub Planet。言語ごとの地表、シェーダー、リアルタイムの流星など、Three.jsによる作品のコンセプトと技術を紹介します。",
+        "canonical": "https://wakato.tech/github-planet",
+        "lang": "ja",
+        "alternates": [
+          [
+            "ja",
+            "https://wakato.tech/github-planet"
+          ],
+          [
+            "en",
+            "https://wakato.tech/github-planet?lang=en"
+          ],
+          [
+            "x-default",
+            "https://wakato.tech/github-planet"
+          ]
+        ],
+        "ogTitle": "GitHub Planet | GitHubの活動を惑星にする3D作品 — WAKATO",
+        "ogUrl": "https://wakato.tech/github-planet",
+        "twitterCard": "summary_large_image",
+        "robots": "index, follow",
+        "h1Count": 1,
+        "textLength": 1083,
+        "schemas": [
+          {
+            "@context": "https://schema.org",
+            "@graph": [
+              {
+                "@type": "Person",
+                "@id": "https://wakato.tech/#person",
+                "name": "WAKATO",
+                "alternateName": [
+                  "わかと",
+                  "nitr0yukkuri"
+                ],
+                "url": "https://wakato.tech/about",
+                "sameAs": [
+                  "https://github.com/nitr0yukkuri",
+                  "https://x.com/0ts_st",
+                  "https://www.instagram.com/0ts_st/"
+                ],
+                "jobTitle": "Software Engineer / Creative Developer"
+              },
+              {
+                "@type": "WebPage",
+                "@id": "https://wakato.tech/github-planet#webpage",
+                "url": "https://wakato.tech/github-planet",
+                "name": "GitHub Planet | GitHubの活動を惑星にする3D作品 — WAKATO",
+                "description": "GitHubの活動を宇宙に浮かぶ惑星として可視化するGitHub Planet。言語ごとの地表、シェーダー、リアルタイムの流星など、Three.jsによる作品のコンセプトと技術を紹介します。",
+                "inLanguage": "ja",
+                "isPartOf": {
+                  "@id": "https://wakato.tech/#website"
+                }
+              },
+              {
+                "@type": "CreativeWork",
+                "@id": "https://wakato.tech/github-planet#work",
+                "name": "GitHub Planet",
+                "url": "https://wakato.tech/github-planet",
+                "description": "GitHubの活動を宇宙に浮かぶ惑星として可視化するGitHub Planet。言語ごとの地表、シェーダー、リアルタイムの流星など、Three.jsによる作品のコンセプトと技術を紹介します。",
+                "inLanguage": "ja",
+                "creator": {
+                  "@id": "https://wakato.tech/#person"
+                },
+                "mainEntityOfPage": {
+                  "@id": "https://wakato.tech/github-planet#webpage"
+                }
+              },
+              {
+                "@type": "BreadcrumbList",
+                "itemListElement": [
+                  {
+                    "@type": "ListItem",
+                    "position": 1,
+                    "name": "WAKATO | Living Planet",
+                    "item": "https://wakato.tech/"
+                  },
+                  {
+                    "@type": "ListItem",
+                    "position": 2,
+                    "name": "GitHub Planet",
+                    "item": "https://wakato.tech/github-planet"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "internalLinks": [
+          "/",
+          "/about",
+          "/otenkigurashi",
+          "/coldkeep",
+          "/recaptcha-game",
+          "/denshouo",
+          "/github-planet",
+          "/github-planet?lang=en"
+        ]
+      },
+      {
+        "path": "/github-planet?lang=en",
+        "status": 200,
+        "finalUrl": "http://127.0.0.1:3018/github-planet?lang=en",
+        "title": "GitHub Planet | A 3D Visualization of GitHub Activity — WAKATO",
+        "description": "Explore GitHub Planet, a Three.js project that turns GitHub activity into planets. Discover language-specific surfaces, shaders and real-time meteors, with the concept and technical details.",
+        "canonical": "https://wakato.tech/github-planet?lang=en",
+        "lang": "en",
+        "alternates": [
+          [
+            "ja",
+            "https://wakato.tech/github-planet"
+          ],
+          [
+            "en",
+            "https://wakato.tech/github-planet?lang=en"
+          ],
+          [
+            "x-default",
+            "https://wakato.tech/github-planet"
+          ]
+        ],
+        "ogTitle": "GitHub Planet | A 3D Visualization of GitHub Activity — WAKATO",
+        "ogUrl": "https://wakato.tech/github-planet?lang=en",
+        "twitterCard": "summary_large_image",
+        "robots": "index, follow",
+        "h1Count": 1,
+        "textLength": 1670,
+        "schemas": [
+          {
+            "@context": "https://schema.org",
+            "@graph": [
+              {
+                "@type": "Person",
+                "@id": "https://wakato.tech/#person",
+                "name": "WAKATO",
+                "alternateName": [
+                  "わかと",
+                  "nitr0yukkuri"
+                ],
+                "url": "https://wakato.tech/about",
+                "sameAs": [
+                  "https://github.com/nitr0yukkuri",
+                  "https://x.com/0ts_st",
+                  "https://www.instagram.com/0ts_st/"
+                ],
+                "jobTitle": "Software Engineer / Creative Developer"
+              },
+              {
+                "@type": "WebPage",
+                "@id": "https://wakato.tech/github-planet?lang=en#webpage",
+                "url": "https://wakato.tech/github-planet?lang=en",
+                "name": "GitHub Planet | A 3D Visualization of GitHub Activity — WAKATO",
+                "description": "Explore GitHub Planet, a Three.js project that turns GitHub activity into planets. Discover language-specific surfaces, shaders and real-time meteors, with the concept and technical details.",
+                "inLanguage": "en",
+                "isPartOf": {
+                  "@id": "https://wakato.tech/#website"
+                }
+              },
+              {
+                "@type": "CreativeWork",
+                "@id": "https://wakato.tech/github-planet?lang=en#work",
+                "name": "GitHub Planet",
+                "url": "https://wakato.tech/github-planet?lang=en",
+                "description": "Explore GitHub Planet, a Three.js project that turns GitHub activity into planets. Discover language-specific surfaces, shaders and real-time meteors, with the concept and technical details.",
+                "inLanguage": "en",
+                "creator": {
+                  "@id": "https://wakato.tech/#person"
+                },
+                "mainEntityOfPage": {
+                  "@id": "https://wakato.tech/github-planet?lang=en#webpage"
+                }
+              },
+              {
+                "@type": "BreadcrumbList",
+                "itemListElement": [
+                  {
+                    "@type": "ListItem",
+                    "position": 1,
+                    "name": "WAKATO | Living Planet",
+                    "item": "https://wakato.tech/?lang=en"
+                  },
+                  {
+                    "@type": "ListItem",
+                    "position": 2,
+                    "name": "GitHub Planet",
+                    "item": "https://wakato.tech/github-planet?lang=en"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "internalLinks": [
+          "/?lang=en",
+          "/about?lang=en",
+          "/otenkigurashi?lang=en",
+          "/coldkeep?lang=en",
+          "/recaptcha-game?lang=en",
+          "/denshouo?lang=en",
+          "/github-planet",
+          "/github-planet?lang=en"
+        ]
+      },
+      {
+        "path": "/otenkigurashi",
+        "status": 200,
+        "finalUrl": "http://127.0.0.1:3018/otenkigurashi",
+        "title": "おてんきぐらし | 天気と暮らす生活シミュレーション — WAKATO",
+        "description": "今いる場所の天気がアプリの世界に反映される「おてんきぐらし」。雨・雪・雷や季節の演出、キャラクターとの暮らしを紹介する、Next.js・PWA作品の詳細ページです。",
+        "canonical": "https://wakato.tech/otenkigurashi",
+        "lang": "ja",
+        "alternates": [
+          [
+            "ja",
+            "https://wakato.tech/otenkigurashi"
+          ],
+          [
+            "en",
+            "https://wakato.tech/otenkigurashi?lang=en"
+          ],
+          [
+            "x-default",
+            "https://wakato.tech/otenkigurashi"
+          ]
+        ],
+        "ogTitle": "おてんきぐらし | 天気と暮らす生活シミュレーション — WAKATO",
+        "ogUrl": "https://wakato.tech/otenkigurashi",
+        "twitterCard": "summary_large_image",
+        "robots": "index, follow",
+        "h1Count": 1,
+        "textLength": 742,
+        "schemas": [
+          {
+            "@context": "https://schema.org",
+            "@graph": [
+              {
+                "@type": "Person",
+                "@id": "https://wakato.tech/#person",
+                "name": "WAKATO",
+                "alternateName": [
+                  "わかと",
+                  "nitr0yukkuri"
+                ],
+                "url": "https://wakato.tech/about",
+                "sameAs": [
+                  "https://github.com/nitr0yukkuri",
+                  "https://x.com/0ts_st",
+                  "https://www.instagram.com/0ts_st/"
+                ],
+                "jobTitle": "Software Engineer / Creative Developer"
+              },
+              {
+                "@type": "WebPage",
+                "@id": "https://wakato.tech/otenkigurashi#webpage",
+                "url": "https://wakato.tech/otenkigurashi",
+                "name": "おてんきぐらし | 天気と暮らす生活シミュレーション — WAKATO",
+                "description": "今いる場所の天気がアプリの世界に反映される「おてんきぐらし」。雨・雪・雷や季節の演出、キャラクターとの暮らしを紹介する、Next.js・PWA作品の詳細ページです。",
+                "inLanguage": "ja",
+                "isPartOf": {
+                  "@id": "https://wakato.tech/#website"
+                }
+              },
+              {
+                "@type": "CreativeWork",
+                "@id": "https://wakato.tech/otenkigurashi#work",
+                "name": "おてんきぐらし",
+                "url": "https://wakato.tech/otenkigurashi",
+                "description": "今いる場所の天気がアプリの世界に反映される「おてんきぐらし」。雨・雪・雷や季節の演出、キャラクターとの暮らしを紹介する、Next.js・PWA作品の詳細ページです。",
+                "inLanguage": "ja",
+                "creator": {
+                  "@id": "https://wakato.tech/#person"
+                },
+                "mainEntityOfPage": {
+                  "@id": "https://wakato.tech/otenkigurashi#webpage"
+                }
+              },
+              {
+                "@type": "BreadcrumbList",
+                "itemListElement": [
+                  {
+                    "@type": "ListItem",
+                    "position": 1,
+                    "name": "WAKATO | Living Planet",
+                    "item": "https://wakato.tech/"
+                  },
+                  {
+                    "@type": "ListItem",
+                    "position": 2,
+                    "name": "おてんきぐらし",
+                    "item": "https://wakato.tech/otenkigurashi"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "internalLinks": [
+          "/",
+          "/about",
+          "/github-planet",
+          "/coldkeep",
+          "/recaptcha-game",
+          "/denshouo",
+          "/otenkigurashi",
+          "/otenkigurashi?lang=en"
+        ]
+      },
+      {
+        "path": "/otenkigurashi?lang=en",
+        "status": 200,
+        "finalUrl": "http://127.0.0.1:3018/otenkigurashi?lang=en",
+        "title": "Otenkigurashi | A Weather-Connected Life Simulation — WAKATO",
+        "description": "Otenkigurashi is a Next.js and PWA life simulation connected to local weather. Explore its character, rain, snow, thunder and seasonal interactions, along with the project’s features and technology.",
+        "canonical": "https://wakato.tech/otenkigurashi?lang=en",
+        "lang": "en",
+        "alternates": [
+          [
+            "ja",
+            "https://wakato.tech/otenkigurashi"
+          ],
+          [
+            "en",
+            "https://wakato.tech/otenkigurashi?lang=en"
+          ],
+          [
+            "x-default",
+            "https://wakato.tech/otenkigurashi"
+          ]
+        ],
+        "ogTitle": "Otenkigurashi | A Weather-Connected Life Simulation — WAKATO",
+        "ogUrl": "https://wakato.tech/otenkigurashi?lang=en",
+        "twitterCard": "summary_large_image",
+        "robots": "index, follow",
+        "h1Count": 1,
+        "textLength": 1239,
+        "schemas": [
+          {
+            "@context": "https://schema.org",
+            "@graph": [
+              {
+                "@type": "Person",
+                "@id": "https://wakato.tech/#person",
+                "name": "WAKATO",
+                "alternateName": [
+                  "わかと",
+                  "nitr0yukkuri"
+                ],
+                "url": "https://wakato.tech/about",
+                "sameAs": [
+                  "https://github.com/nitr0yukkuri",
+                  "https://x.com/0ts_st",
+                  "https://www.instagram.com/0ts_st/"
+                ],
+                "jobTitle": "Software Engineer / Creative Developer"
+              },
+              {
+                "@type": "WebPage",
+                "@id": "https://wakato.tech/otenkigurashi?lang=en#webpage",
+                "url": "https://wakato.tech/otenkigurashi?lang=en",
+                "name": "Otenkigurashi | A Weather-Connected Life Simulation — WAKATO",
+                "description": "Otenkigurashi is a Next.js and PWA life simulation connected to local weather. Explore its character, rain, snow, thunder and seasonal interactions, along with the project’s features and technology.",
+                "inLanguage": "en",
+                "isPartOf": {
+                  "@id": "https://wakato.tech/#website"
+                }
+              },
+              {
+                "@type": "CreativeWork",
+                "@id": "https://wakato.tech/otenkigurashi?lang=en#work",
+                "name": "Otenkigurashi",
+                "url": "https://wakato.tech/otenkigurashi?lang=en",
+                "description": "Otenkigurashi is a Next.js and PWA life simulation connected to local weather. Explore its character, rain, snow, thunder and seasonal interactions, along with the project’s features and technology.",
+                "inLanguage": "en",
+                "creator": {
+                  "@id": "https://wakato.tech/#person"
+                },
+                "mainEntityOfPage": {
+                  "@id": "https://wakato.tech/otenkigurashi?lang=en#webpage"
+                }
+              },
+              {
+                "@type": "BreadcrumbList",
+                "itemListElement": [
+                  {
+                    "@type": "ListItem",
+                    "position": 1,
+                    "name": "WAKATO | Living Planet",
+                    "item": "https://wakato.tech/?lang=en"
+                  },
+                  {
+                    "@type": "ListItem",
+                    "position": 2,
+                    "name": "Otenkigurashi",
+                    "item": "https://wakato.tech/otenkigurashi?lang=en"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "internalLinks": [
+          "/?lang=en",
+          "/about?lang=en",
+          "/github-planet?lang=en",
+          "/coldkeep?lang=en",
+          "/recaptcha-game?lang=en",
+          "/denshouo?lang=en",
+          "/otenkigurashi",
+          "/otenkigurashi?lang=en"
+        ]
+      },
+      {
+        "path": "/coldkeep",
+        "status": 200,
+        "finalUrl": "http://127.0.0.1:3018/coldkeep",
+        "title": "ColdKeep | 水筒の振り音で残量推定を目指すAIプロトタイプ — WAKATO",
+        "description": "水筒を振る音で残量の3段階推定を目指す実験的AIプロトタイプ、ColdKeep。React Native・TypeScript、Android録音、音響特徴量とモデルの設計、未学習・低信頼度時の扱いを紹介します。",
+        "canonical": "https://wakato.tech/coldkeep",
+        "lang": "ja",
+        "alternates": [
+          [
+            "ja",
+            "https://wakato.tech/coldkeep"
+          ],
+          [
+            "en",
+            "https://wakato.tech/coldkeep?lang=en"
+          ],
+          [
+            "x-default",
+            "https://wakato.tech/coldkeep"
+          ]
+        ],
+        "ogTitle": "ColdKeep | 水筒の振り音で残量推定を目指すAIプロトタイプ — WAKATO",
+        "ogUrl": "https://wakato.tech/coldkeep",
+        "twitterCard": "summary_large_image",
+        "robots": "index, follow",
+        "h1Count": 1,
+        "textLength": 1034,
+        "schemas": [
+          {
+            "@context": "https://schema.org",
+            "@graph": [
+              {
+                "@type": "Person",
+                "@id": "https://wakato.tech/#person",
+                "name": "WAKATO",
+                "alternateName": [
+                  "わかと",
+                  "nitr0yukkuri"
+                ],
+                "url": "https://wakato.tech/about",
+                "sameAs": [
+                  "https://github.com/nitr0yukkuri",
+                  "https://x.com/0ts_st",
+                  "https://www.instagram.com/0ts_st/"
+                ],
+                "jobTitle": "Software Engineer / Creative Developer"
+              },
+              {
+                "@type": "WebPage",
+                "@id": "https://wakato.tech/coldkeep#webpage",
+                "url": "https://wakato.tech/coldkeep",
+                "name": "ColdKeep | 水筒の振り音で残量推定を目指すAIプロトタイプ — WAKATO",
+                "description": "水筒を振る音で残量の3段階推定を目指す実験的AIプロトタイプ、ColdKeep。React Native・TypeScript、Android録音、音響特徴量とモデルの設計、未学習・低信頼度時の扱いを紹介します。",
+                "inLanguage": "ja",
+                "isPartOf": {
+                  "@id": "https://wakato.tech/#website"
+                }
+              },
+              {
+                "@type": "CreativeWork",
+                "@id": "https://wakato.tech/coldkeep#work",
+                "name": "ColdKeep",
+                "url": "https://wakato.tech/coldkeep",
+                "description": "水筒を振る音で残量の3段階推定を目指す実験的AIプロトタイプ、ColdKeep。React Native・TypeScript、Android録音、音響特徴量とモデルの設計、未学習・低信頼度時の扱いを紹介します。",
+                "inLanguage": "ja",
+                "creator": {
+                  "@id": "https://wakato.tech/#person"
+                },
+                "mainEntityOfPage": {
+                  "@id": "https://wakato.tech/coldkeep#webpage"
+                }
+              },
+              {
+                "@type": "BreadcrumbList",
+                "itemListElement": [
+                  {
+                    "@type": "ListItem",
+                    "position": 1,
+                    "name": "WAKATO | Living Planet",
+                    "item": "https://wakato.tech/"
+                  },
+                  {
+                    "@type": "ListItem",
+                    "position": 2,
+                    "name": "ColdKeep",
+                    "item": "https://wakato.tech/coldkeep"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "internalLinks": [
+          "/",
+          "/about",
+          "/github-planet",
+          "/otenkigurashi",
+          "/recaptcha-game",
+          "/denshouo",
+          "/coldkeep",
+          "/coldkeep?lang=en"
+        ]
+      },
+      {
+        "path": "/coldkeep?lang=en",
+        "status": 200,
+        "finalUrl": "http://127.0.0.1:3018/coldkeep?lang=en",
+        "title": "ColdKeep | An Experimental Audio-Based Bottle Assistant — WAKATO",
+        "description": "ColdKeep is an experimental AI prototype exploring three-level bottle fill estimation from shaking sounds. Discover its React Native interface, Android recording, audio features and model-readiness safeguards.",
+        "canonical": "https://wakato.tech/coldkeep?lang=en",
+        "lang": "en",
+        "alternates": [
+          [
+            "ja",
+            "https://wakato.tech/coldkeep"
+          ],
+          [
+            "en",
+            "https://wakato.tech/coldkeep?lang=en"
+          ],
+          [
+            "x-default",
+            "https://wakato.tech/coldkeep"
+          ]
+        ],
+        "ogTitle": "ColdKeep | An Experimental Audio-Based Bottle Assistant — WAKATO",
+        "ogUrl": "https://wakato.tech/coldkeep?lang=en",
+        "twitterCard": "summary_large_image",
+        "robots": "index, follow",
+        "h1Count": 1,
+        "textLength": 1583,
+        "schemas": [
+          {
+            "@context": "https://schema.org",
+            "@graph": [
+              {
+                "@type": "Person",
+                "@id": "https://wakato.tech/#person",
+                "name": "WAKATO",
+                "alternateName": [
+                  "わかと",
+                  "nitr0yukkuri"
+                ],
+                "url": "https://wakato.tech/about",
+                "sameAs": [
+                  "https://github.com/nitr0yukkuri",
+                  "https://x.com/0ts_st",
+                  "https://www.instagram.com/0ts_st/"
+                ],
+                "jobTitle": "Software Engineer / Creative Developer"
+              },
+              {
+                "@type": "WebPage",
+                "@id": "https://wakato.tech/coldkeep?lang=en#webpage",
+                "url": "https://wakato.tech/coldkeep?lang=en",
+                "name": "ColdKeep | An Experimental Audio-Based Bottle Assistant — WAKATO",
+                "description": "ColdKeep is an experimental AI prototype exploring three-level bottle fill estimation from shaking sounds. Discover its React Native interface, Android recording, audio features and model-readiness safeguards.",
+                "inLanguage": "en",
+                "isPartOf": {
+                  "@id": "https://wakato.tech/#website"
+                }
+              },
+              {
+                "@type": "CreativeWork",
+                "@id": "https://wakato.tech/coldkeep?lang=en#work",
+                "name": "ColdKeep",
+                "url": "https://wakato.tech/coldkeep?lang=en",
+                "description": "ColdKeep is an experimental AI prototype exploring three-level bottle fill estimation from shaking sounds. Discover its React Native interface, Android recording, audio features and model-readiness safeguards.",
+                "inLanguage": "en",
+                "creator": {
+                  "@id": "https://wakato.tech/#person"
+                },
+                "mainEntityOfPage": {
+                  "@id": "https://wakato.tech/coldkeep?lang=en#webpage"
+                }
+              },
+              {
+                "@type": "BreadcrumbList",
+                "itemListElement": [
+                  {
+                    "@type": "ListItem",
+                    "position": 1,
+                    "name": "WAKATO | Living Planet",
+                    "item": "https://wakato.tech/?lang=en"
+                  },
+                  {
+                    "@type": "ListItem",
+                    "position": 2,
+                    "name": "ColdKeep",
+                    "item": "https://wakato.tech/coldkeep?lang=en"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "internalLinks": [
+          "/?lang=en",
+          "/about?lang=en",
+          "/github-planet?lang=en",
+          "/otenkigurashi?lang=en",
+          "/recaptcha-game?lang=en",
+          "/denshouo?lang=en",
+          "/coldkeep",
+          "/coldkeep?lang=en"
+        ]
+      },
+      {
+        "path": "/recaptcha-game",
+        "status": 200,
+        "finalUrl": "http://127.0.0.1:3018/recaptcha-game",
+        "title": "reCAPTCHA Game | 画像認証モチーフのリアルタイム対戦ゲーム — WAKATO",
+        "description": "画像認証をモチーフにしたreCAPTCHA Game。9枚のパネルを選ぶCPU戦・オンライン対戦、コンボと妨害演出を、React・Go・WebSocketで構成した作品を紹介します。",
+        "canonical": "https://wakato.tech/recaptcha-game",
+        "lang": "ja",
+        "alternates": [
+          [
+            "ja",
+            "https://wakato.tech/recaptcha-game"
+          ],
+          [
+            "en",
+            "https://wakato.tech/recaptcha-game?lang=en"
+          ],
+          [
+            "x-default",
+            "https://wakato.tech/recaptcha-game"
+          ]
+        ],
+        "ogTitle": "reCAPTCHA Game | 画像認証モチーフのリアルタイム対戦ゲーム — WAKATO",
+        "ogUrl": "https://wakato.tech/recaptcha-game",
+        "twitterCard": "summary_large_image",
+        "robots": "index, follow",
+        "h1Count": 1,
+        "textLength": 952,
+        "schemas": [
+          {
+            "@context": "https://schema.org",
+            "@graph": [
+              {
+                "@type": "Person",
+                "@id": "https://wakato.tech/#person",
+                "name": "WAKATO",
+                "alternateName": [
+                  "わかと",
+                  "nitr0yukkuri"
+                ],
+                "url": "https://wakato.tech/about",
+                "sameAs": [
+                  "https://github.com/nitr0yukkuri",
+                  "https://x.com/0ts_st",
+                  "https://www.instagram.com/0ts_st/"
+                ],
+                "jobTitle": "Software Engineer / Creative Developer"
+              },
+              {
+                "@type": "WebPage",
+                "@id": "https://wakato.tech/recaptcha-game#webpage",
+                "url": "https://wakato.tech/recaptcha-game",
+                "name": "reCAPTCHA Game | 画像認証モチーフのリアルタイム対戦ゲーム — WAKATO",
+                "description": "画像認証をモチーフにしたreCAPTCHA Game。9枚のパネルを選ぶCPU戦・オンライン対戦、コンボと妨害演出を、React・Go・WebSocketで構成した作品を紹介します。",
+                "inLanguage": "ja",
+                "isPartOf": {
+                  "@id": "https://wakato.tech/#website"
+                }
+              },
+              {
+                "@type": "CreativeWork",
+                "@id": "https://wakato.tech/recaptcha-game#work",
+                "name": "reCAPTCHA Game",
+                "url": "https://wakato.tech/recaptcha-game",
+                "description": "画像認証をモチーフにしたreCAPTCHA Game。9枚のパネルを選ぶCPU戦・オンライン対戦、コンボと妨害演出を、React・Go・WebSocketで構成した作品を紹介します。",
+                "inLanguage": "ja",
+                "creator": {
+                  "@id": "https://wakato.tech/#person"
+                },
+                "mainEntityOfPage": {
+                  "@id": "https://wakato.tech/recaptcha-game#webpage"
+                }
+              },
+              {
+                "@type": "BreadcrumbList",
+                "itemListElement": [
+                  {
+                    "@type": "ListItem",
+                    "position": 1,
+                    "name": "WAKATO | Living Planet",
+                    "item": "https://wakato.tech/"
+                  },
+                  {
+                    "@type": "ListItem",
+                    "position": 2,
+                    "name": "reCAPTCHA Game",
+                    "item": "https://wakato.tech/recaptcha-game"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "internalLinks": [
+          "/",
+          "/about",
+          "/github-planet",
+          "/otenkigurashi",
+          "/coldkeep",
+          "/denshouo",
+          "/recaptcha-game",
+          "/recaptcha-game?lang=en"
+        ]
+      },
+      {
+        "path": "/recaptcha-game?lang=en",
+        "status": 200,
+        "finalUrl": "http://127.0.0.1:3018/recaptcha-game?lang=en",
+        "title": "reCAPTCHA Game | Real-Time Image Verification Battles — WAKATO",
+        "description": "A competitive game inspired by image verification. Explore CPU and online battles across nine panels, combos and interference effects, built with React, Go and WebSocket.",
+        "canonical": "https://wakato.tech/recaptcha-game?lang=en",
+        "lang": "en",
+        "alternates": [
+          [
+            "ja",
+            "https://wakato.tech/recaptcha-game"
+          ],
+          [
+            "en",
+            "https://wakato.tech/recaptcha-game?lang=en"
+          ],
+          [
+            "x-default",
+            "https://wakato.tech/recaptcha-game"
+          ]
+        ],
+        "ogTitle": "reCAPTCHA Game | Real-Time Image Verification Battles — WAKATO",
+        "ogUrl": "https://wakato.tech/recaptcha-game?lang=en",
+        "twitterCard": "summary_large_image",
+        "robots": "index, follow",
+        "h1Count": 1,
+        "textLength": 1355,
+        "schemas": [
+          {
+            "@context": "https://schema.org",
+            "@graph": [
+              {
+                "@type": "Person",
+                "@id": "https://wakato.tech/#person",
+                "name": "WAKATO",
+                "alternateName": [
+                  "わかと",
+                  "nitr0yukkuri"
+                ],
+                "url": "https://wakato.tech/about",
+                "sameAs": [
+                  "https://github.com/nitr0yukkuri",
+                  "https://x.com/0ts_st",
+                  "https://www.instagram.com/0ts_st/"
+                ],
+                "jobTitle": "Software Engineer / Creative Developer"
+              },
+              {
+                "@type": "WebPage",
+                "@id": "https://wakato.tech/recaptcha-game?lang=en#webpage",
+                "url": "https://wakato.tech/recaptcha-game?lang=en",
+                "name": "reCAPTCHA Game | Real-Time Image Verification Battles — WAKATO",
+                "description": "A competitive game inspired by image verification. Explore CPU and online battles across nine panels, combos and interference effects, built with React, Go and WebSocket.",
+                "inLanguage": "en",
+                "isPartOf": {
+                  "@id": "https://wakato.tech/#website"
+                }
+              },
+              {
+                "@type": "CreativeWork",
+                "@id": "https://wakato.tech/recaptcha-game?lang=en#work",
+                "name": "reCAPTCHA Game",
+                "url": "https://wakato.tech/recaptcha-game?lang=en",
+                "description": "A competitive game inspired by image verification. Explore CPU and online battles across nine panels, combos and interference effects, built with React, Go and WebSocket.",
+                "inLanguage": "en",
+                "creator": {
+                  "@id": "https://wakato.tech/#person"
+                },
+                "mainEntityOfPage": {
+                  "@id": "https://wakato.tech/recaptcha-game?lang=en#webpage"
+                }
+              },
+              {
+                "@type": "BreadcrumbList",
+                "itemListElement": [
+                  {
+                    "@type": "ListItem",
+                    "position": 1,
+                    "name": "WAKATO | Living Planet",
+                    "item": "https://wakato.tech/?lang=en"
+                  },
+                  {
+                    "@type": "ListItem",
+                    "position": 2,
+                    "name": "reCAPTCHA Game",
+                    "item": "https://wakato.tech/recaptcha-game?lang=en"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "internalLinks": [
+          "/?lang=en",
+          "/about?lang=en",
+          "/github-planet?lang=en",
+          "/otenkigurashi?lang=en",
+          "/coldkeep?lang=en",
+          "/denshouo?lang=en",
+          "/recaptcha-game",
+          "/recaptcha-game?lang=en"
+        ]
+      },
+      {
+        "path": "/denshouo",
+        "status": 200,
+        "finalUrl": "http://127.0.0.1:3018/denshouo",
+        "title": "でんしょうお | 小さな幸せを魚に乗せるSNS — WAKATO",
+        "description": "小さな幸せを魚に乗せて流すSNS「でんしょうお」。React・Supabaseによる作品のコンセプト、光と影を使った水中表現、コミュニケーションの設計を紹介します。",
+        "canonical": "https://wakato.tech/denshouo",
+        "lang": "ja",
+        "alternates": [
+          [
+            "ja",
+            "https://wakato.tech/denshouo"
+          ],
+          [
+            "en",
+            "https://wakato.tech/denshouo?lang=en"
+          ],
+          [
+            "x-default",
+            "https://wakato.tech/denshouo"
+          ]
+        ],
+        "ogTitle": "でんしょうお | 小さな幸せを魚に乗せるSNS — WAKATO",
+        "ogUrl": "https://wakato.tech/denshouo",
+        "twitterCard": "summary_large_image",
+        "robots": "index, follow",
+        "h1Count": 1,
+        "textLength": 934,
+        "schemas": [
+          {
+            "@context": "https://schema.org",
+            "@graph": [
+              {
+                "@type": "Person",
+                "@id": "https://wakato.tech/#person",
+                "name": "WAKATO",
+                "alternateName": [
+                  "わかと",
+                  "nitr0yukkuri"
+                ],
+                "url": "https://wakato.tech/about",
+                "sameAs": [
+                  "https://github.com/nitr0yukkuri",
+                  "https://x.com/0ts_st",
+                  "https://www.instagram.com/0ts_st/"
+                ],
+                "jobTitle": "Software Engineer / Creative Developer"
+              },
+              {
+                "@type": "WebPage",
+                "@id": "https://wakato.tech/denshouo#webpage",
+                "url": "https://wakato.tech/denshouo",
+                "name": "でんしょうお | 小さな幸せを魚に乗せるSNS — WAKATO",
+                "description": "小さな幸せを魚に乗せて流すSNS「でんしょうお」。React・Supabaseによる作品のコンセプト、光と影を使った水中表現、コミュニケーションの設計を紹介します。",
+                "inLanguage": "ja",
+                "isPartOf": {
+                  "@id": "https://wakato.tech/#website"
+                }
+              },
+              {
+                "@type": "CreativeWork",
+                "@id": "https://wakato.tech/denshouo#work",
+                "name": "でんしょうお",
+                "url": "https://wakato.tech/denshouo",
+                "description": "小さな幸せを魚に乗せて流すSNS「でんしょうお」。React・Supabaseによる作品のコンセプト、光と影を使った水中表現、コミュニケーションの設計を紹介します。",
+                "inLanguage": "ja",
+                "creator": {
+                  "@id": "https://wakato.tech/#person"
+                },
+                "mainEntityOfPage": {
+                  "@id": "https://wakato.tech/denshouo#webpage"
+                }
+              },
+              {
+                "@type": "BreadcrumbList",
+                "itemListElement": [
+                  {
+                    "@type": "ListItem",
+                    "position": 1,
+                    "name": "WAKATO | Living Planet",
+                    "item": "https://wakato.tech/"
+                  },
+                  {
+                    "@type": "ListItem",
+                    "position": 2,
+                    "name": "でんしょうお",
+                    "item": "https://wakato.tech/denshouo"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "internalLinks": [
+          "/",
+          "/about",
+          "/github-planet",
+          "/otenkigurashi",
+          "/coldkeep",
+          "/recaptcha-game",
+          "/denshouo",
+          "/denshouo?lang=en"
+        ]
+      },
+      {
+        "path": "/denshouo?lang=en",
+        "status": 200,
+        "finalUrl": "http://127.0.0.1:3018/denshouo?lang=en",
+        "title": "Denshouo | Sharing Small Moments of Happiness — WAKATO",
+        "description": "Denshouo is a gentle social app where fish carry small moments of happiness. Explore the React and Supabase project, its underwater atmosphere and approach to communication.",
+        "canonical": "https://wakato.tech/denshouo?lang=en",
+        "lang": "en",
+        "alternates": [
+          [
+            "ja",
+            "https://wakato.tech/denshouo"
+          ],
+          [
+            "en",
+            "https://wakato.tech/denshouo?lang=en"
+          ],
+          [
+            "x-default",
+            "https://wakato.tech/denshouo"
+          ]
+        ],
+        "ogTitle": "Denshouo | Sharing Small Moments of Happiness — WAKATO",
+        "ogUrl": "https://wakato.tech/denshouo?lang=en",
+        "twitterCard": "summary_large_image",
+        "robots": "index, follow",
+        "h1Count": 1,
+        "textLength": 1617,
+        "schemas": [
+          {
+            "@context": "https://schema.org",
+            "@graph": [
+              {
+                "@type": "Person",
+                "@id": "https://wakato.tech/#person",
+                "name": "WAKATO",
+                "alternateName": [
+                  "わかと",
+                  "nitr0yukkuri"
+                ],
+                "url": "https://wakato.tech/about",
+                "sameAs": [
+                  "https://github.com/nitr0yukkuri",
+                  "https://x.com/0ts_st",
+                  "https://www.instagram.com/0ts_st/"
+                ],
+                "jobTitle": "Software Engineer / Creative Developer"
+              },
+              {
+                "@type": "WebPage",
+                "@id": "https://wakato.tech/denshouo?lang=en#webpage",
+                "url": "https://wakato.tech/denshouo?lang=en",
+                "name": "Denshouo | Sharing Small Moments of Happiness — WAKATO",
+                "description": "Denshouo is a gentle social app where fish carry small moments of happiness. Explore the React and Supabase project, its underwater atmosphere and approach to communication.",
+                "inLanguage": "en",
+                "isPartOf": {
+                  "@id": "https://wakato.tech/#website"
+                }
+              },
+              {
+                "@type": "CreativeWork",
+                "@id": "https://wakato.tech/denshouo?lang=en#work",
+                "name": "Denshouo",
+                "url": "https://wakato.tech/denshouo?lang=en",
+                "description": "Denshouo is a gentle social app where fish carry small moments of happiness. Explore the React and Supabase project, its underwater atmosphere and approach to communication.",
+                "inLanguage": "en",
+                "creator": {
+                  "@id": "https://wakato.tech/#person"
+                },
+                "mainEntityOfPage": {
+                  "@id": "https://wakato.tech/denshouo?lang=en#webpage"
+                }
+              },
+              {
+                "@type": "BreadcrumbList",
+                "itemListElement": [
+                  {
+                    "@type": "ListItem",
+                    "position": 1,
+                    "name": "WAKATO | Living Planet",
+                    "item": "https://wakato.tech/?lang=en"
+                  },
+                  {
+                    "@type": "ListItem",
+                    "position": 2,
+                    "name": "Denshouo",
+                    "item": "https://wakato.tech/denshouo?lang=en"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "internalLinks": [
+          "/?lang=en",
+          "/about?lang=en",
+          "/github-planet?lang=en",
+          "/otenkigurashi?lang=en",
+          "/coldkeep?lang=en",
+          "/recaptcha-game?lang=en",
+          "/denshouo",
+          "/denshouo?lang=en"
+        ]
+      },
+      {
+        "path": "/?lang=ja&weather=Rain&season=autumn",
+        "status": 200,
+        "finalUrl": "http://127.0.0.1:3018/?lang=ja&weather=Rain&season=autumn",
+        "title": "WAKATO（わかと）| Living Planet — 3Dポートフォリオ",
+        "description": "WAKATO（わかと）の個人ポートフォリオ。Three.js・React Three Fiber・WebGL・GLSLで、天候・季節・時間帯が息づく3D体験と作品を紹介。CSS Winner Site of the Day受賞。",
+        "canonical": "https://wakato.tech",
+        "lang": "ja",
+        "alternates": [
+          [
+            "ja",
+            "https://wakato.tech/"
+          ],
+          [
+            "en",
+            "https://wakato.tech/?lang=en"
+          ],
+          [
+            "x-default",
+            "https://wakato.tech/"
+          ]
+        ],
+        "ogTitle": "WAKATO（わかと）| Living Planet — 3Dポートフォリオ",
+        "ogUrl": "https://wakato.tech",
+        "twitterCard": "summary_large_image",
+        "robots": "index, follow",
+        "h1Count": 1,
+        "textLength": 1700,
+        "schemas": [
+          {
+            "@context": "https://schema.org",
+            "@graph": [
+              {
+                "@type": "Person",
+                "@id": "https://wakato.tech/#person",
+                "name": "WAKATO",
+                "alternateName": [
+                  "わかと",
+                  "nitr0yukkuri"
+                ],
+                "url": "https://wakato.tech/about",
+                "sameAs": [
+                  "https://github.com/nitr0yukkuri",
+                  "https://x.com/0ts_st",
+                  "https://www.instagram.com/0ts_st/"
+                ],
+                "jobTitle": "Software Engineer / Creative Developer"
+              },
+              {
+                "@type": "WebSite",
+                "@id": "https://wakato.tech/#website",
+                "name": "WAKATO | Living Planet",
+                "url": "https://wakato.tech/",
+                "inLanguage": [
+                  "ja",
+                  "en"
+                ],
+                "description": "WAKATO（わかと）の個人ポートフォリオ。Three.js・React Three Fiber・WebGL・GLSLで、天候・季節・時間帯が息づく3D体験と作品を紹介。CSS Winner Site of the Day受賞。",
+                "creator": {
+                  "@id": "https://wakato.tech/#person"
+                },
+                "award": "CSS Winner Site of the Day — 6 April 2026"
+              },
+              {
+                "@type": "WebPage",
+                "@id": "https://wakato.tech/#webpage",
+                "url": "https://wakato.tech/",
+                "name": "WAKATO（わかと）| Living Planet — 3Dポートフォリオ",
+                "description": "WAKATO（わかと）の個人ポートフォリオ。Three.js・React Three Fiber・WebGL・GLSLで、天候・季節・時間帯が息づく3D体験と作品を紹介。CSS Winner Site of the Day受賞。",
+                "inLanguage": "ja",
+                "isPartOf": {
+                  "@id": "https://wakato.tech/#website"
+                }
+              }
+            ]
+          }
+        ],
+        "internalLinks": [
+          "/",
+          "/?lang=en",
+          "/about",
+          "/github-planet",
+          "/otenkigurashi",
+          "/coldkeep",
+          "/recaptcha-game",
+          "/denshouo",
+          "/github-planet",
+          "/otenkigurashi",
+          "/coldkeep",
+          "/recaptcha-game",
+          "/denshouo"
+        ]
+      },
+      {
+        "path": "/card",
+        "status": 200,
+        "finalUrl": "http://127.0.0.1:3018/card",
+        "title": "WAKATO | Live Preview Capture",
+        "description": "WAKATO（わかと）の没入型3Dポートフォリオ。",
+        "canonical": null,
+        "lang": "ja",
+        "alternates": [],
+        "ogTitle": "WAKATO | Live Preview Capture",
+        "ogUrl": null,
+        "twitterCard": "summary_large_image",
+        "robots": "noindex, nofollow",
+        "h1Count": 0,
+        "textLength": 139,
+        "schemas": [],
+        "internalLinks": []
+      },
+      {
+        "path": "/ogp",
+        "status": 200,
+        "finalUrl": "http://127.0.0.1:3018/ogp",
+        "title": "WAKATO | Living Planet OGP Capture",
+        "description": "WAKATO（わかと）の没入型3Dポートフォリオ。",
+        "canonical": null,
+        "lang": "ja",
+        "alternates": [],
+        "ogTitle": "WAKATO | Living Planet OGP Capture",
+        "ogUrl": null,
+        "twitterCard": "summary_large_image",
+        "robots": "noindex, nofollow",
+        "h1Count": 0,
+        "textLength": 171,
+        "schemas": [],
+        "internalLinks": []
+      },
+      {
+        "path": "/seo-missing-page",
+        "status": 404,
+        "finalUrl": "http://127.0.0.1:3018/seo-missing-page",
+        "title": "Page not found | WAKATO",
+        "description": "WAKATO（わかと）の没入型3Dポートフォリオ。",
+        "canonical": null,
+        "lang": "ja",
+        "alternates": [],
+        "ogTitle": "Page not found | WAKATO",
+        "ogUrl": null,
+        "twitterCard": "summary_large_image",
+        "robots": "noindex",
+        "h1Count": 1,
+        "textLength": 119,
+        "schemas": [],
+        "internalLinks": [
+          "/"
+        ]
+      },
+      {
+        "path": "/robots.txt",
+        "status": 200,
+        "finalUrl": "http://127.0.0.1:3018/robots.txt",
+        "title": "",
+        "description": null,
+        "canonical": null,
+        "lang": "",
+        "alternates": [],
+        "ogTitle": null,
+        "ogUrl": null,
+        "twitterCard": null,
+        "robots": null,
+        "h1Count": 0,
+        "textLength": 64,
+        "schemas": [],
+        "internalLinks": []
+      },
+      {
+        "path": "/sitemap.xml",
+        "status": 200,
+        "finalUrl": "http://127.0.0.1:3018/sitemap.xml",
+        "title": "",
+        "description": null,
+        "canonical": null,
+        "lang": "",
+        "alternates": [],
+        "ogTitle": null,
+        "ogUrl": null,
+        "twitterCard": null,
+        "robots": null,
+        "h1Count": 0,
+        "textLength": 536,
+        "schemas": [],
+        "internalLinks": []
+      },
+      {
+        "path": "/manifest.webmanifest",
+        "status": 200,
+        "finalUrl": "http://127.0.0.1:3018/manifest.webmanifest",
+        "title": "",
+        "description": null,
+        "canonical": null,
+        "lang": "",
+        "alternates": [],
+        "ogTitle": null,
+        "ogUrl": null,
+        "twitterCard": null,
+        "robots": null,
+        "h1Count": 0,
+        "textLength": 325,
+        "schemas": [],
+        "internalLinks": []
+      }
+    ]
+  }
+}
