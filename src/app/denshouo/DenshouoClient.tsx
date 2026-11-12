@@ -310,10 +310,10 @@ export default function DenshouoClient() {
                         REACT / SUPABASE
                     </span>
                     <Image
-                        src="/denshouo-logo.png"
+                        src="/denshouo-logo.webp"
                         alt="でんしょうお ロゴ"
-                        width={640}
-                        height={220}
+                        width={1280}
+                        height={720}
                         sizes="(max-width: 768px) 80vw, 448px"
                         priority
                         className="w-full max-w-xs md:max-w-md mx-auto"

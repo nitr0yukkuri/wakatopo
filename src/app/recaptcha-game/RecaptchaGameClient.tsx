@@ -98,10 +98,10 @@ export default function RecaptchaGameClient() {
 
             <div className="relative z-10 mx-auto max-w-6xl px-5 pt-28 pb-20 md:px-10 md:pt-36 md:pb-24">
                 <Image
-                    src="/recatcha-logo.png"
+                    src="/recatcha-logo.webp"
                     alt="reCAPTCHA Game"
-                    width={640}
-                    height={220}
+                    width={673}
+                    height={371}
                     sizes="(max-width: 768px) 80vw, 448px"
                     priority
                     className="block w-full max-w-xs mx-auto mb-6 md:max-w-md"

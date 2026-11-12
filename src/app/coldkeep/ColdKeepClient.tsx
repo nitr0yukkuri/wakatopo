@@ -497,10 +497,10 @@ export default function ColdKeepClient() {
                             STATUS: R&amp;D PHASE
                         </span>
                         <Image
-                            src="/coldkeep-logo.png"
+                            src="/coldkeep-logo.webp"
                             alt="コールドキープ COLDKEEP"
-                            width={640}
-                            height={220}
+                            width={1024}
+                            height={559}
                             sizes="(max-width: 768px) 80vw, 448px"
                             priority
                             className="w-full max-w-xs md:max-w-md mx-auto mb-6 drop-shadow-[0_0_40px_rgba(100,200,255,0.5)]"

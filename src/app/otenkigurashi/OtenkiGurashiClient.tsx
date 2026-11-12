@@ -178,10 +178,10 @@ export default function OtenkiGurashiClient() {
                     {/* Pop Title Logo */}
                     <div id="hero" ref={heroRef} className="mb-8 md:mb-10 text-center scroll-mt-24 w-full flex justify-center">
                         <Image
-                            src="/otenkigurashi-logo.png"
+                            src="/otenkigurashi-logo.webp"
                             alt={t.logoAlt}
-                            width={640}
-                            height={220}
+                            width={1024}
+                            height={565}
                             sizes="(max-width: 768px) 80vw, 448px"
                             priority
                             className="w-full max-w-xs md:max-w-md drop-shadow-md"

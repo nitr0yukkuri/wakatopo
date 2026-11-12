@@ -147,7 +147,7 @@ export default async function AboutPage({
                     <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
                         <div className="flex items-center gap-4">
                             <Image
-                                src="/faviconwakato.png"
+                                src="/avatar.webp"
                                 alt="WAKATO icon"
                                 width={64}
                                 height={64}
