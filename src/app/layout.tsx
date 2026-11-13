@@ -41,14 +41,14 @@ export default async function RootLayout({
         <Suspense fallback={null}>
           <LocaleSync />
         </Suspense>
-        <Suspense fallback={null}>
-          <WorldStateProvider>
+        <WorldStateProvider>
+          <Suspense fallback={null}>
             <ClientRuntime />
-            <div className="overflow-x-clip">
-              {children}
-            </div>
-          </WorldStateProvider>
-        </Suspense>
+          </Suspense>
+          <div className="overflow-x-clip">
+            {children}
+          </div>
+        </WorldStateProvider>
         <div
           className="landscape-lock-overlay"
           role="alert"

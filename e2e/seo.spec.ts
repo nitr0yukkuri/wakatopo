@@ -1,4 +1,20 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Locator } from '@playwright/test';
+
+async function expectRendered(element: Locator) {
+    await expect(element).toBeVisible();
+    const hiddenAncestor = await element.evaluate(node => {
+        for (let current: Element | null = node; current; current = current.parentElement) {
+            const style = getComputedStyle(current);
+            if (current.hasAttribute('hidden') || style.display === 'none'
+                || ['hidden', 'collapse'].includes(style.visibility)
+                || Number(style.opacity) === 0 || style.contentVisibility === 'hidden') {
+                return current.tagName;
+            }
+        }
+        return null;
+    });
+    expect(hiddenAncestor, 'content must be painted, including all of its ancestors').toBeNull();
+}
 
 const routes = ['/', '/about', '/github-planet', '/otenkigurashi', '/coldkeep', '/recaptcha-game', '/denshouo'];
 const origin = 'https://wakato.tech';
@@ -30,8 +46,12 @@ test.describe('server-rendered SEO without JavaScript', () => {
             expect(graph.some((node: Record<string, unknown>) => node['@type'] === 'Person')).toBe(true);
             if (path !== '/') expect(graph.some((node: Record<string, unknown>) => node['@type'] === 'BreadcrumbList')).toBe(true);
             if (path !== '/' && path !== '/about') expect(graph.some((node: Record<string, unknown>) => node['@type'] === 'CreativeWork')).toBe(true);
-            expect((await page.locator('main').innerText()).length).toBeGreaterThan(250);
-            if (path === '/coldkeep') await expect(page.locator('[data-readable-without-js]').first()).toHaveCSS('opacity', '1');
+            await expectRendered(page.locator('main'));
+            // innerText on an unrendered element can still return textContent.
+            // The rendered body and ancestor checks must both pass.
+            expect((await page.locator('body').innerText()).length).toBeGreaterThan(250);
+            for (const content of await page.locator('[data-readable-without-js]').all()) await expectRendered(content);
+            if (path === '/coldkeep') await expectRendered(page.getByRole('link', { name: 'VIEW SOURCE ON GITHUB ↗', exact: true }));
             for (const image of await page.locator('img').all()) expect(await image.getAttribute('alt')).not.toBeNull();
             if (path === '/') for (const work of routes.slice(2)) await expect(page.locator(`a[href="${work}${lang === 'en' ? '?lang=en' : ''}"]`).first()).toHaveAttribute('href');
             if (path !== '/') {
@@ -39,6 +59,14 @@ test.describe('server-rendered SEO without JavaScript', () => {
             }
         });
     }
+    test('work links really navigate without JavaScript', async ({ page }) => {
+        await page.goto('/?lang=en');
+        const link = page.locator('a').filter({ has: page.locator('h3', { hasText: 'GitHub Planet' }) });
+        await expectRendered(link);
+        await link.click();
+        await expect(page).toHaveURL(/\/github-planet\?lang=en/);
+        await expectRendered(page.locator('main'));
+    });
     test('presentation parameters collapse to the same canonical', async ({ page }) => {
         await page.goto('/?lang=ja&weather=Rain&season=winter&seasonEvent=none');
         expect(new URL((await page.locator('link[rel="canonical"]').getAttribute('href'))!).href).toBe(`${origin}/`);
