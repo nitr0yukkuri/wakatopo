@@ -22,7 +22,7 @@ Weather, time, seasons, sound, and transitions between works interact. Visitors 
 
 [https://wakato.tech](https://wakato.tech)
 
-> Last updated: 2026-08-24
+> Last updated: 2026-11-14
 
 ---
 
@@ -240,6 +240,7 @@ Denshouo
 | Area | Technology |
 | --- | --- |
 | Framework | Next.js 16 |
+| Cloudflare adapter | OpenNext for Cloudflare |
 | Language | TypeScript |
 | 3D | Three.js, React Three Fiber |
 | Shader / Graphics | WebGL, GLSL |
@@ -248,7 +249,18 @@ Denshouo
 | State | Zustand |
 | Audio | Tone.js |
 | Test / Automation | Playwright, GitHub Actions |
-| Deployment | Vercel |
+| Deployment | Cloudflare Workers |
+
+### Cloudflare Workers
+
+- Run `npm run dev` for the usual Next.js development server.
+- Run `npm run preview` to build and preview the app in the local Workers runtime.
+- Run `npm run cf-typegen` to generate Cloudflare binding types.
+- Run `npm run deploy` after configuring Wrangler authentication to deploy the Worker.
+
+OpenNext uses the `NEXT_INC_CACHE_KV` binding for the Cloudflare fetch-data cache. Weather data is cached for 30 minutes, and requests to the upstream weather API have a 2-second timeout.
+
+Next.js images are served without on-the-fly optimization to avoid Cloudflare Images transformation charges. The Wrangler configuration uses no paid Cloudflare Images binding; Workers Free account limits still apply.
 
 ---
 
@@ -301,9 +313,15 @@ NEXT_PUBLIC_GA_MEASUREMENT_ID=G-XXXXXXXXXX
 ```bash
 npm run dev
 npm run build
+npm run build:cloudflare
 npm run lint
+npm run test:i18n
+npm run test:weather
 npm run test:e2e
+npm run test:cloudflare
 ```
+
+Run `npm run build:cloudflare` before `npm run test:cloudflare`; the latter starts the built Worker in the local runtime and runs the browser checks.
 
 ---
 

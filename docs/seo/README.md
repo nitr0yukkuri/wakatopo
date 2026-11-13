@@ -157,6 +157,8 @@ npm run test:e2e
 
 ## 公式資料
 
+再レビューで判明したCloudflareビルド・JS無効時の表示・Data Cacheの問題と、その検証手順は[Cloudflare再レビュー対応](./cloudflare-verification.md)を参照。上記の従来測定結果はNode版の測定であり、Cloudflare本番の性能や公開可否を保証するものではない。
+
 - [Google: クロール可能なリンク](https://developers.google.com/search/docs/crawling-indexing/links-crawlable)
 - [Google: 多言語版とhreflang](https://developers.google.com/search/docs/specialty/international/localized-versions)
 - [Google: JavaScript SEO](https://developers.google.com/search/docs/crawling-indexing/javascript/javascript-seo-basics)
