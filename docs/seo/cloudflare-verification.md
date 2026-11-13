@@ -4,7 +4,7 @@ PR #89のNode/Vercel検証だけではCloudflareでの公開可否を判断で�
 
 ## 本文とJavaScript
 
-RootLayoutはリクエストヘッダーから言語を決める動的ルートである。本文全体をSuspenseで囲まず、音・遷移などのクライアント実行部分に境界を限定する。JS無効時も本文を初期HTML内に表示し、ColdKeepのGitHubリンクにも既存のnoscript表示補正を適用する。
+RootLayoutはリクエストヘッダーから言語を決める動的ルートである。本文全体・作品一覧・各作品の本文をSuspenseで囲まず、音・遷移などのクライアント実行部分に境界を限定する。JS無効時も本文を初期HTML内に表示し、ColdKeepのGitHubリンクにも既存のnoscript表示補正を適用する。
 
 Playwrightでは14ページ（日英）について、本文を囲む要素の表示・親要素のhidden/display/visibility/opacity/content-visibility・描画されたbodyの文字数を確認する。ColdKeepのアニメーション対象とGitHubリンク、JSなしの作品リンク遷移も検証する。文字数だけの旧判定は使用しない。
 

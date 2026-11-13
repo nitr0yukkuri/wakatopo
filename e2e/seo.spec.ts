@@ -22,7 +22,7 @@ const origin = 'https://wakato.tech';
 test.describe('server-rendered SEO without JavaScript', () => {
     test.use({ javaScriptEnabled: false });
     for (const path of routes) for (const lang of ['ja', 'en']) {
-        test(`${path} ${lang} has localized metadata and readable content`, async ({ page }) => {
+        test(`${path} ${lang} has localized metadata and readable content`, async ({ page }, testInfo) => {
             const response = await page.goto(`${path}?lang=${lang}`);
             expect(response?.status()).toBe(200);
             await expect(page.locator('html')).toHaveAttribute('lang', lang);
@@ -53,9 +53,13 @@ test.describe('server-rendered SEO without JavaScript', () => {
             for (const content of await page.locator('[data-readable-without-js]').all()) await expectRendered(content);
             if (path === '/coldkeep') await expectRendered(page.getByRole('link', { name: 'VIEW SOURCE ON GITHUB ↗', exact: true }));
             for (const image of await page.locator('img').all()) expect(await image.getAttribute('alt')).not.toBeNull();
-            if (path === '/') for (const work of routes.slice(2)) await expect(page.locator(`a[href="${work}${lang === 'en' ? '?lang=en' : ''}"]`).first()).toHaveAttribute('href');
+            if (path === '/') for (const work of routes.slice(2)) await expectRendered(page.locator(`a[href="${work}${lang === 'en' ? '?lang=en' : ''}"]`).first());
             if (path !== '/') {
                 await expect(page.getByRole('navigation', { name: 'Language', exact: true }).getByRole('link', { name: 'English' })).toHaveAttribute('href', `${path}?lang=en`);
+            }
+            if (lang === 'ja' && (path === '/' || path === '/coldkeep')) {
+                if (path === '/coldkeep') await page.getByRole('link', { name: 'VIEW SOURCE ON GITHUB ↗', exact: true }).scrollIntoViewIfNeeded();
+                await page.screenshot({ path: testInfo.outputPath('without-javascript.png'), fullPage: path === '/' });
             }
         });
     }
