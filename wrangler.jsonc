@@ -5,6 +5,9 @@
   "upload_source_maps": true,
   "compatibility_date": "2026-11-09",
   "compatibility_flags": ["nodejs_compat"],
+  "kv_namespaces": [
+    { "binding": "NEXT_INC_CACHE_KV" }
+  ],
   "assets": {
     "directory": ".open-next/assets",
     "binding": "ASSETS"
