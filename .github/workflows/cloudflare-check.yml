@@ -1,0 +1,47 @@
+name: Cloudflare validation
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cloudflare-check-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  cloudflare:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    env:
+      NEXT_TELEMETRY_DISABLED: '1'
+      WRANGLER_SEND_METRICS: 'false'
+      CI: 'true'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run test:i18n
+      - run: npm run test:weather
+      - run: npx playwright install chromium --with-deps
+      - name: Build the actual Cloudflare Worker
+        run: npm run build:cloudflare
+      - run: npx tsc --noEmit
+      - name: Verify workerd, weather KV and browser behavior
+        run: npm run test:cloudflare
+      - name: Upload verification results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cloudflare-validation
+          path: |
+            test-results/
+            tmp/cloudflare-runtime-results.json
+          retention-days: 7
