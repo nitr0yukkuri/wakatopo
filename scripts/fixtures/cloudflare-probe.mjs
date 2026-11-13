@@ -2,9 +2,13 @@
 // Wrangler entrypoint never imports this file or exposes these control routes.
 export function createProbe(worker) {
     const NativeDate = Date;
-    globalThis.Date = class extends NativeDate {
-        constructor(...args) { super(...(args.length ? args : ['2026-11-13T04:00:00Z'])); }
-    };
+    function FixedDate(...args) {
+        if (!new.target) return new NativeDate('2026-11-13T04:00:00Z').toString();
+        return Reflect.construct(NativeDate, args.length ? args : ['2026-11-13T04:00:00Z'], new.target);
+    }
+    // Keep own now/parse/UTC descriptors so Next can install its normal Date
+    // tracking extension. Date.now stays real for cache expiration checks.
+    globalThis.Date = Object.defineProperties(FixedDate, Object.getOwnPropertyDescriptors(NativeDate));
     const originalFetch = globalThis.fetch;
     let mode = 'Rain';
     let upstreamCalls = 0;

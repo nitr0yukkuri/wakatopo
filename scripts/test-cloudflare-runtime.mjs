@@ -69,6 +69,7 @@ try {
     assert.match(await home(), /data-world-weather="Clear"/);
     results.timeoutFallbackMs = Math.round(performance.now() - started);
     assert.ok(results.timeoutFallbackMs < 4000, 'unresponsive weather service must not hang HTML rendering');
+    console.log('workerd weather checks:', JSON.stringify(results));
 
     await control({ mode: 'Rain', clear: true });
     const browser = spawn(process.execPath, ['node_modules/@playwright/test/cli.js', 'test', '--reporter=line,json'], {
