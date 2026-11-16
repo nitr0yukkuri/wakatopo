@@ -4,6 +4,7 @@ import { resolve } from 'node:path';
 import { isSameWeatherPreviewState, parseWeatherPreviewState, serializeWeatherPreviewState } from './weather_preview_state.mjs';
 
 const updateWorkflow = readFileSync(resolve('.github/workflows/update-weather.yml'), 'utf8');
+const recoveryWorkflow = readFileSync(resolve('.github/workflows/recover-weather-gif.yml'), 'utf8');
 const captureScript = readFileSync(resolve('scripts/update_weather_gif.mjs'), 'utf8');
 
 const current = parseWeatherPreviewState(
@@ -59,6 +60,18 @@ expectIncludes(updateWorkflow, '"installCommand": ""', 'preview-assets must skip
 expectIncludes(updateWorkflow, '"buildCommand": null', 'preview-assets must not run a Next.js build.');
 expectIncludes(updateWorkflow, '"outputDirectory": "."', 'preview-assets must serve static files from the branch root.');
 expectBefore(updateWorkflow, 'Record and validate weather GIF', 'Commit GIF to assets branch', 'asset branch must only be changed after recording and validation.');
+
+expectIncludes(recoveryWorkflow, 'workflow_run:', 'recovery must watch the update workflow completion event.');
+expectIncludes(recoveryWorkflow, 'workflows:\n      - Update Live Weather GIF', 'recovery must watch only the weather GIF workflow.');
+expectIncludes(recoveryWorkflow, "conclusion == 'failure'", 'recovery should respond to failed runs.');
+expectIncludes(recoveryWorkflow, "conclusion == 'timed_out'", 'recovery should respond to timed-out runs.');
+expectIncludes(recoveryWorkflow, "head_branch == 'main'", 'recovery must ignore non-main runs.');
+expectIncludes(recoveryWorkflow, 'run_attempt == 1', 'automatic retry must run only for the first attempt.');
+expectIncludes(recoveryWorkflow, 'reRunWorkflowFailedJobs', 'automatic recovery must rerun failed jobs.');
+expectIncludes(recoveryWorkflow, 'run_attempt >= 2', 'persistent failure must be detected after the retry.');
+expectIncludes(recoveryWorkflow, 'issues.create', 'persistent failure must create a GitHub issue.');
+expectIncludes(recoveryWorkflow, 'weather-gif-failure:${run.id}', 'failure issue must deduplicate by workflow run.');
+if (recoveryWorkflow.includes('actions/checkout')) fail('privileged recovery workflow must not check out or execute repository code.');
 
 if (process.exitCode) process.exit(process.exitCode);
 console.log('weather preview state and workflow safety checks passed.');
