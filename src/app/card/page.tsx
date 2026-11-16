@@ -33,6 +33,7 @@ export default async function CardPage({
     return (
         <main
             data-world-weather={visualWeather}
+            data-preview-weather={weather}
             data-world-season={resolvedState.season}
             data-world-season-event={resolvedState.seasonEvent}
             className="card-capture-page relative flex h-[400px] w-[800px] select-none items-center justify-center overflow-hidden rounded-xl border border-cyan-100/10 bg-[#050505] text-white shadow-2xl"
