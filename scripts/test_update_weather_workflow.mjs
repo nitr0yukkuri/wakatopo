@@ -52,6 +52,7 @@ expectIncludes(updateWorkflow, "github.ref == 'refs/heads/main'", 'only main may
 expectIncludes(updateWorkflow, 'force:', 'manual refresh override must remain available.');
 expectIncludes(updateWorkflow, "cancel-in-progress: true", 'newer captures must replace an outdated active capture.');
 expectIncludes(captureScript, "http://127.0.0.1:3000/card", 'automation must render the local app instead of relying on the public domain.');
+expectIncludes(captureScript, 'AbortSignal.timeout(60_000)', 'allow the local route to finish its server-rendered weather fetch before aborting.');
 expectIncludes(captureScript, 'isSameWeatherPreviewState(currentState, previousState)', 'unchanged preview state must skip recording.');
 expectIncludes(captureScript, "await rename(generatedGif, resolve(root, 'preview.gif'))", 'GIF must be published only after validation.');
 expectBefore(captureScript, 'await runCapture', "await rename(generatedGif, resolve(root, 'preview.gif'))", 'GIF validation must happen before replacing output assets.');
