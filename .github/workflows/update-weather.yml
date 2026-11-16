@@ -4,9 +4,29 @@ on:
   push:
     branches:
       - main
+    paths-ignore:
+      - '**/*.md'
+      - 'docs/**'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/update-weather.yml'
+      - '.github/workflows/recover-weather-gif.yml'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'scripts/**'
+      - 'src/**'
+      - 'public/**'
   schedule:
     - cron: '0 */3 * * *'
   workflow_dispatch:
+    inputs:
+      force:
+        description: 'Force a fresh recording even when the preview state is unchanged'
+        required: false
+        type: boolean
+        default: false
 
 concurrency:
   group: update-live-weather-gif
@@ -15,8 +35,11 @@ concurrency:
 jobs:
   update-gif:
     runs-on: ubuntu-24.04
+    timeout-minutes: 20
     permissions:
       contents: write
+    outputs:
+      skipped: ${{ steps.capture.outputs.skip }}
 
     steps:
       - name: Checkout repository
@@ -26,48 +49,54 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
+          cache: npm
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Install Playwright Browsers
-        run: npx playwright install chromium --with-deps
+      - name: Check workflow safety
+        run: npm run test:workflow
 
-      - name: Install FFmpeg
-        run: sudo apt-get update && sudo apt-get install -y ffmpeg
-
-      - name: Run recording script
-        run: npx --yes tsx scripts/record_weather.ts
-
-      - name: Convert WebM to GIF
+      - name: Read previous weather preview state
+        env:
+          STATE_FILE: ${{ runner.temp }}/weather-preview-state.json
         run: |
           set -euo pipefail
-          WEBM_FILE=$(find videos -type f -name '*.webm' | head -n 1)
-          if [ -z "$WEBM_FILE" ]; then
-            echo "No WebM file was recorded."
-            exit 1
+          if git fetch --depth=1 --no-tags origin refs/heads/preview-assets:refs/remotes/origin/preview-assets; then
+            if git cat-file -e origin/preview-assets:preview-state.json 2>/dev/null; then
+              git show origin/preview-assets:preview-state.json > "$STATE_FILE"
+            else
+              echo 'No previous weather preview state found; the first run will record the GIF.'
+            fi
+          else
+            echo 'Could not read the previous asset branch; treating this run as an initial capture.'
           fi
-          ffmpeg -y -i "$WEBM_FILE" -ss 15 -t 5 -vf "setpts=1.25*PTS,fps=16,scale=800:-1:flags=lanczos,split[s0][s1];[s0]palettegen=max_colors=256:stats_mode=diff[p];[s1][p]paletteuse=dither=sierra2_4a:diff_mode=rectangle" -loop 0 preview.gif
-          rm -rf videos/
+
+      - name: Record and validate weather GIF
+        id: capture
+        env:
+          WEATHER_GIF_FORCE: ${{ github.event.inputs.force || 'false' }}
+          WEATHER_PREVIOUS_STATE_FILE: ${{ runner.temp }}/weather-preview-state.json
+          WEATHER_SOURCE_REVISION: ${{ github.sha }}
+        run: node scripts/update_weather_gif.mjs
 
       - name: Commit GIF to assets branch
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && steps.capture.outputs.skip != 'true'
         run: |
+          set -euo pipefail
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-          ASSET_BRANCH="preview-assets"
+          ASSET_BRANCH='preview-assets'
           TMP_DIR="$(mktemp -d)"
           cp preview.gif "$TMP_DIR/preview.gif"
-          rm -f preview.gif
+          cp preview-state.json "$TMP_DIR/preview-state.json"
+          rm -f preview.gif preview-state.json
 
-          git fetch origin "$ASSET_BRANCH" || true
-          if git show-ref --verify --quiet "refs/remotes/origin/$ASSET_BRANCH"; then
-            git switch --force-create "$ASSET_BRANCH" "origin/$ASSET_BRANCH"
-          else
-            git switch --orphan "$ASSET_BRANCH"
-          fi
-
-          git rm -rf . || true
+          git fetch origin "$ASSET_BRANCH"
+          git switch --force-create "$ASSET_BRANCH" "origin/$ASSET_BRANCH"
+          git rm -rf .
           cp "$TMP_DIR/preview.gif" preview.gif
+          cp "$TMP_DIR/preview-state.json" preview-state.json
           cat > index.html <<'HTML'
           <!doctype html>
           <html lang="en">
@@ -95,13 +124,10 @@ jobs:
             "outputDirectory": "."
           }
           JSON
-          git add preview.gif
-          git add index.html
-          git add package.json
-          git add vercel.json
+          git add preview.gif preview-state.json index.html package.json vercel.json
           if git diff --cached --quiet; then
-            echo "preview.gif is unchanged."
+            echo 'Weather preview assets are byte-for-byte unchanged.'
             exit 0
           fi
-          git commit -m "chore: update live weather gif [skip ci]"
+          git commit -m 'chore: update live weather gif [skip ci]'
           git push origin "$ASSET_BRANCH"
