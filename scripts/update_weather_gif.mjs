@@ -63,7 +63,7 @@ async function stopServer() {
 }
 
 async function getPreviewHtml() {
-    const deadline = Date.now() + 120_000;
+    const deadline = Date.now() + 180_000;
     let lastError;
 
     while (Date.now() < deadline) {
@@ -73,7 +73,7 @@ async function getPreviewHtml() {
         }
 
         try {
-            const response = await fetch(previewUrl, { signal: AbortSignal.timeout(10_000) });
+            const response = await fetch(previewUrl, { signal: AbortSignal.timeout(60_000) });
             if (response.ok) return await response.text();
             lastError = new Error(`/card returned HTTP ${response.status}.`);
         } catch (error) {
