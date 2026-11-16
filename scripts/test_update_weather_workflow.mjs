@@ -50,7 +50,7 @@ expectIncludes(updateWorkflow, 'WEATHER_SOURCE_REVISION: ${{ github.sha }}', 'so
 expectIncludes(updateWorkflow, "if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && steps.capture.outputs.skip != 'true'", 'only changed main captures may publish assets.');
 expectIncludes(updateWorkflow, "github.ref == 'refs/heads/main'", 'only main may publish to the assets branch.');
 expectIncludes(updateWorkflow, 'force:', 'manual refresh override must remain available.');
-expectIncludes(updateWorkflow, "cancel-in-progress: false", 'new captures must not cancel active captures.');
+expectIncludes(updateWorkflow, "cancel-in-progress: true", 'newer captures must replace an outdated active capture.');
 expectIncludes(captureScript, "http://127.0.0.1:3000/card", 'automation must render the local app instead of relying on the public domain.');
 expectIncludes(captureScript, 'isSameWeatherPreviewState(currentState, previousState)', 'unchanged preview state must skip recording.');
 expectIncludes(captureScript, "await rename(generatedGif, resolve(root, 'preview.gif'))", 'GIF must be published only after validation.');
