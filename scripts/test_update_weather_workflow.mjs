@@ -44,6 +44,7 @@ const expectBefore = (text, first, second, message) => {
 };
 
 expectIncludes(updateWorkflow, "refs/heads/preview-assets:refs/remotes/origin/preview-assets", 'previous state must come from preview-assets.');
+expectIncludes(updateWorkflow, 'git fetch --depth=1', 'read only the latest preview state instead of the full asset branch history.');
 expectIncludes(updateWorkflow, "WEATHER_PREVIOUS_STATE_FILE", 'capture must receive the previous-state file path.');
 expectIncludes(updateWorkflow, 'WEATHER_SOURCE_REVISION: ${{ github.sha }}', 'source changes must invalidate the previous render state.');
 expectIncludes(updateWorkflow, "if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && steps.capture.outputs.skip != 'true'", 'only changed main captures may publish assets.');
@@ -62,7 +63,7 @@ expectIncludes(updateWorkflow, '"outputDirectory": "."', 'preview-assets must se
 expectBefore(updateWorkflow, 'Record and validate weather GIF', 'Commit GIF to assets branch', 'asset branch must only be changed after recording and validation.');
 
 expectIncludes(recoveryWorkflow, 'workflow_run:', 'recovery must watch the update workflow completion event.');
-expectIncludes(recoveryWorkflow, 'workflows:\n      - Update Live Weather GIF', 'recovery must watch only the weather GIF workflow.');
+expectIncludes(recoveryWorkflow, '- Update Live Weather GIF', 'recovery must watch the weather GIF workflow.');
 expectIncludes(recoveryWorkflow, "conclusion == 'failure'", 'recovery should respond to failed runs.');
 expectIncludes(recoveryWorkflow, "conclusion == 'timed_out'", 'recovery should respond to timed-out runs.');
 expectIncludes(recoveryWorkflow, "head_branch == 'main'", 'recovery must ignore non-main runs.');

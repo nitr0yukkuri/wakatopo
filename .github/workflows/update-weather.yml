@@ -62,7 +62,7 @@ jobs:
           STATE_FILE: ${{ runner.temp }}/weather-preview-state.json
         run: |
           set -euo pipefail
-          if git fetch --no-tags origin refs/heads/preview-assets:refs/remotes/origin/preview-assets; then
+          if git fetch --depth=1 --no-tags origin refs/heads/preview-assets:refs/remotes/origin/preview-assets; then
             if git cat-file -e origin/preview-assets:preview-state.json 2>/dev/null; then
               git show origin/preview-assets:preview-state.json > "$STATE_FILE"
             else
