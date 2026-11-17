@@ -1,4 +1,3 @@
-import { Suspense } from 'react';
 import RecaptchaGameClient from './RecaptchaGameClient';
 import SeoJsonLd from '@/components/SeoJsonLd';
 import ProjectLinks from '@/components/ProjectLinks';
@@ -14,7 +13,7 @@ export default async function Page({ searchParams }: SeoPageProps) {
     const lang = getLang(await searchParams);
     return <>
         <SeoJsonLd page="recaptcha-game" lang={lang} />
-        <Suspense fallback={null}><RecaptchaGameClient /></Suspense>
+        <RecaptchaGameClient />
         <ProjectLinks page="recaptcha-game" lang={lang} />
     </>;
 }

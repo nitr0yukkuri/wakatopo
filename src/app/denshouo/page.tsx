@@ -1,4 +1,3 @@
-import { Suspense } from 'react';
 import DenshouoClient from './DenshouoClient';
 import SeoJsonLd from '@/components/SeoJsonLd';
 import ProjectLinks from '@/components/ProjectLinks';
@@ -14,7 +13,7 @@ export default async function Page({ searchParams }: SeoPageProps) {
     const lang = getLang(await searchParams);
     return <>
         <SeoJsonLd page="denshouo" lang={lang} />
-        <Suspense fallback={null}><DenshouoClient /></Suspense>
+        <DenshouoClient />
         <ProjectLinks page="denshouo" lang={lang} />
     </>;
 }

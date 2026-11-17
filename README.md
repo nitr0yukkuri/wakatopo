@@ -22,7 +22,7 @@
 
 [https://wakato.tech](https://wakato.tech)
 
-> 最終更新: 2026-08-24
+> 最終更新: 2026-11-14
 
 ---
 
@@ -257,6 +257,8 @@ Denshouo
 - Run `npm run cf-typegen` to generate Cloudflare binding types.
 - Run `npm run deploy` after configuring Wrangler authentication to deploy the Worker.
 
+OpenNext uses the `NEXT_INC_CACHE_KV` binding for the Cloudflare fetch-data cache. Weather data is cached for 30 minutes, and requests to the upstream weather API have a 2-second timeout.
+
 Next.js images are served without on-the-fly optimization to avoid Cloudflare Images transformation charges. The Wrangler configuration uses no paid Cloudflare Images binding; Workers Free account limits still apply.
 
 ---
@@ -310,9 +312,15 @@ NEXT_PUBLIC_GA_MEASUREMENT_ID=G-XXXXXXXXXX
 ```bash
 npm run dev
 npm run build
+npm run build:cloudflare
 npm run lint
+npm run test:i18n
+npm run test:weather
 npm run test:e2e
+npm run test:cloudflare
 ```
+
+Run `npm run build:cloudflare` before `npm run test:cloudflare`; the latter starts the built Worker in the local runtime and runs the browser checks.
 
 ---
 
