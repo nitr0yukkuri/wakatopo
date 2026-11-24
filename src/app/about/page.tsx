@@ -37,6 +37,7 @@ const copyByLang = {
             '技育博 Vol.1 展示　recaptchagame',
             'Demo Stage 最優秀賞 GitHub Planet',
             'E展 企業賞 待つん屋',
+            'HACK STAGE｜GROST vol.1 優秀賞 ほしるべ',
         ],
         sectionDev: '開発体制',
         devText:
@@ -90,6 +91,7 @@ const copyByLang = {
             'Geek Expo Vol.1 Exhibition - recaptchagame',
             'Demo Stage Grand Prize - GitHub Planet',
             'E Exhibition Corporate Award - Matsunya',
+            'HACK STAGE | GROST vol.1 Excellence Award - Hoshirube',
         ],
         sectionDev: 'DEVELOPMENT STYLE',
         devText:
