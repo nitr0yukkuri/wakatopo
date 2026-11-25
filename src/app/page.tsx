@@ -219,9 +219,7 @@ export default async function Home({
           <div className="container mx-auto px-6 md:px-20">
             <h2 className="text-cyan-500 text-xs font-mono mb-12 block">{t.worksLabel}</h2>
 
-            <Suspense fallback={null}>
-              <WorksList works={works} />
-            </Suspense>
+            <WorksList works={works} />
           </div>
         </section>
 

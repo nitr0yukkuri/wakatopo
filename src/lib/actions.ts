@@ -1,6 +1,6 @@
 'use server'
 
-import { resolveSeasonState } from '@/lib/seasonResolver';
+import { resolveSeasonState } from './seasonResolver';
 
 type WeatherType = 'Clear' | 'Rain' | 'Clouds' | 'Snow' | 'Night' | 'Morning' | 'Thunder';
 
@@ -33,13 +33,16 @@ export async function fetchPlanetData() {
             // Open-Meteo: 大阪 (lat=34.6937, lon=135.5023) / APIキー不要 / 30分キャッシュ
             const res = await fetch(
                 'https://api.open-meteo.com/v1/forecast?latitude=34.6937&longitude=135.5023&current=weather_code',
-                { next: { revalidate: 1800 } }
+                { next: { revalidate: 1800 }, signal: AbortSignal.timeout(2000) }
             );
             if (!res.ok) throw new Error(`open-meteo ${res.status}`);
             const data = (await res.json()) as {
                 current: { weather_code: number };
             };
-            const code: number = data.current.weather_code;
+            const code = data.current?.weather_code;
+            if (typeof code !== 'number' || !Number.isFinite(code)) {
+                throw new Error('Invalid Open-Meteo weather code');
+            }
             const base = mapWeatherCode(code);
             // 5〜9時は晴れでも Morning に
             weather = base === 'Clear' && hours < 9 ? 'Morning' : base;
