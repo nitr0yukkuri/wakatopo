@@ -5,9 +5,9 @@ import Canvas from '@/components/canvas/SafeCanvas';
 import { Stars } from '@react-three/drei';
 import { EffectComposer, Bloom } from '@react-three/postprocessing';
 import { Suspense } from 'react';
-import AbstractCore from '@/components/canvas/AbstractCore';
-import Weather from '@/components/canvas/Weather';
-import type { WeatherType } from '@/store';
+import AbstractCoreVisual from '@/components/canvas/AbstractCoreVisual';
+import WeatherVisual from '@/components/canvas/WeatherVisual';
+import type { WorldState } from '@/lib/worldStateTypes';
 
 function CardCameraRig() {
     useFrame(({ camera, clock }) => {
@@ -22,11 +22,11 @@ function CardCameraRig() {
 }
 
 export default function CardScene({
-    weather,
+    world,
     activityLevel,
     showBackgroundStars = true,
 }: {
-    weather: WeatherType;
+    world: WorldState;
     activityLevel: number;
     showBackgroundStars?: boolean;
 }) {
@@ -45,10 +45,10 @@ export default function CardScene({
                 <pointLight position={[-10, -10, -10]} intensity={0.5} color="#00ffff" />
 
                 <group scale={1.08} position={[0, 0.02, 0]}>
-                    <AbstractCore weatherOverride={weather} activityOverride={activityLevel} />
+                    <AbstractCoreVisual world={world} activityLevel={activityLevel} interactive={false} />
                 </group>
 
-                <Weather weatherOverride={weather} />
+                <WeatherVisual weather={world.weather} />
 
                 <Stars radius={100} depth={50} count={showBackgroundStars ? 640 : 0} factor={1.5} saturation={0} fade speed={0.35} />
 

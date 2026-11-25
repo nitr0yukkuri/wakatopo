@@ -1,15 +1,7 @@
 'use client';
-import dynamic from 'next/dynamic';
-import type { WeatherType } from '@/store';
-import { getWorldVisualProfile } from '@/lib/worldVisualProfile';
+import type { WeatherType } from '@/lib/worldStateTypes';
 import { useWorldState } from '@/components/WorldStateProvider';
-
-const RainParticles = dynamic(() => import('@/components/canvas/RainTransitionCanvas').then((m) => m.RainParticles), { ssr: false });
-const SunraysCanvas = dynamic(() => import('@/components/canvas/effects/SunraysCanvas'), { ssr: false });
-const CloudsOverlayCanvas = dynamic(() => import('@/components/canvas/effects/CloudsOverlayCanvas'), { ssr: false });
-const ThunderCanvas = dynamic(() => import('@/components/canvas/effects/ThunderCanvas'), { ssr: false });
-const SnowCanvas = dynamic(() => import('@/components/canvas/effects/SnowCanvas'), { ssr: false });
-const NightGlowOverlay = dynamic(() => import('@/components/canvas/effects/NightGlowOverlay'), { ssr: false });
+import WeatherEffectsVisual from './WeatherEffectsVisual';
 
 type WindowWithDataLayer = Window & {
     dataLayer?: {
@@ -28,21 +20,14 @@ export default function WeatherEffectsOverlay({
 } = {}) {
     const worldState = useWorldState();
     const weather = weatherOverride ?? worldState.weather;
-    const visualProfile = getWorldVisualProfile(
-        { ...worldState, weather },
-        { includeGeshiSun: !weatherOverride },
-    );
-    const { sunraysVariant, cloudsVariant, nightVariant, snowVariant } = visualProfile;
-
     return (
         <>
-            {(weather === 'Clear' || weather === 'Morning') && <SunraysCanvas key={`sunrays-${sunraysVariant}`} variant={sunraysVariant} />}
-            {weather === 'Clouds' && <CloudsOverlayCanvas key={`clouds-${cloudsVariant}`} variant={cloudsVariant} />}
-            {includeRain && weather === 'Rain' && <RainParticles key="rain" />}
-            {weather === 'Thunder' && <RainParticles key="thunder-rain" />}
-            {weather === 'Thunder' && <ThunderCanvas key="thunder" />}
-            {weather === 'Snow' && <SnowCanvas key={`snow-${snowVariant}`} density={0.72} variant={snowVariant} mobileScale={snowMobileScale} />}
-            {weather === 'Night' && <NightGlowOverlay key={`night-${nightVariant}`} variant={nightVariant} />}
+            <WeatherEffectsVisual
+                world={{ ...worldState, weather }}
+                includeRain={includeRain}
+                snowMobileScale={snowMobileScale}
+                includeGeshiSun={!weatherOverride}
+            />
 
             {/* Sun / Moon overlay anchors: open X in a new tab. Position tuned to match canvases. */}
             {(weather === 'Clear' || weather === 'Morning') && (

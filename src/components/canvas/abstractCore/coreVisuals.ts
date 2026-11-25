@@ -1,4 +1,4 @@
-import type { SeasonEventType, SeasonType, WeatherType } from '@/store';
+import type { SeasonEventType, SeasonType, WeatherType } from '@/lib/worldStateTypes';
 
 export type CoreVisualProfile = {
     baseColor: string;
