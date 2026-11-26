@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import ClientInitializer from '@/components/ClientInitializer';
 import SeasonalAtmosphereOverlay from '@/components/dom/SeasonalAtmosphereOverlay';
 import WeatherEffectsOverlay from '@/components/dom/WeatherEffectsOverlay';
-import CardScene from '@/app/card/CardScene';
+import CardScene from '@/components/living-card/CardScene';
 import { useStore } from '@/store';
 import type { SeasonEventType, SeasonType, WeatherType } from '@/store';
 
@@ -64,7 +64,7 @@ export default function OgpScene() {
             <div className="pointer-events-none absolute inset-0 opacity-[0.08] [background:linear-gradient(rgba(125,211,252,0.45)_1px,transparent_1px),linear-gradient(90deg,rgba(125,211,252,0.25)_1px,transparent_1px)] [background-size:40px_40px]" />
 
             <div className="absolute inset-0 z-0">
-                <CardScene weather={stage.weather} activityLevel={OGP_ACTIVITY_LEVEL} />
+                <CardScene world={{ weather: stage.weather, season: stage.season, seasonEvent: stage.seasonEvent }} activityLevel={OGP_ACTIVITY_LEVEL} />
             </div>
 
             <div className="pointer-events-none absolute inset-0 z-10">
