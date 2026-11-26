@@ -11,7 +11,7 @@ const isDesktopLongPressMode = () => {
     return window.innerWidth >= 1024 && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 };
 
-export const useCoreInteraction = () => {
+export const useCoreInteraction = (enabled = true) => {
     const [hovered, setHovered] = useState(false);
     const [active, setActive] = useState(false);
 
@@ -22,6 +22,7 @@ export const useCoreInteraction = () => {
     const longPressTimerRef = useRef<number | null>(null);
 
     useEffect(() => {
+        if (!enabled) return;
         document.body.style.cursor = hovered ? (active ? 'crosshair' : 'pointer') : 'auto';
 
         const handlePointerUp = () => setActive(false);
@@ -40,7 +41,7 @@ export const useCoreInteraction = () => {
                 longPressTimerRef.current = null;
             }
         };
-    }, [hovered, active]);
+    }, [hovered, active, enabled]);
 
     const onPointerOver = (e: ThreeEvent<PointerEvent>) => {
         e.stopPropagation();
