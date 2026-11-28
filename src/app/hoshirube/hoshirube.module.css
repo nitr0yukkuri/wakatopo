@@ -1,0 +1,441 @@
+.page {
+  position: relative;
+  z-index: 10;
+  overflow: clip;
+  color: #eff7ff;
+  font-family: var(--font-base), system-ui, sans-serif;
+}
+
+.hero {
+  position: relative;
+  display: flex;
+  min-height: min(900px, 100svh);
+  align-items: center;
+  padding: 7rem clamp(1.25rem, 5vw, 5rem) 5rem;
+  overflow: hidden;
+}
+
+.earth {
+  position: absolute;
+  z-index: 0;
+  bottom: -58%;
+  left: -30%;
+  width: 160%;
+  height: 70%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 50% 0, #10224f, #050a1a 70%);
+  box-shadow: 0 -2px 6px #7db0ff, 0 -10px 50px rgb(70 130 255 / 55%);
+  pointer-events: none;
+}
+
+.heroInner {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  width: min(100%, 1280px);
+  min-width: 0;
+  grid-template-columns: minmax(0, .86fr) minmax(0, 1.14fr);
+  align-items: center;
+  gap: clamp(2.5rem, 6vw, 6rem);
+  margin: 0 auto;
+}
+
+.heroCopy {
+  position: relative;
+  z-index: 2;
+  min-width: 0;
+  width: 100%;
+  max-width: 560px;
+}
+
+.eyebrow,
+.heroIndex,
+.sectionLabel,
+.visualMeta,
+.visualFoot,
+.scrollHint,
+.awardYear {
+  font-family: var(--font-geist-mono), monospace;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+}
+
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: .7rem;
+  color: #91dfff;
+  font-size: .75rem;
+  font-weight: 600;
+}
+
+.eyebrowDot,
+.liveDot {
+  width: .45rem;
+  height: .45rem;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: #91dfff;
+  box-shadow: 0 0 1rem #5ecbff;
+}
+
+.heroIndex {
+  margin: 3.5rem 0 1rem;
+  color: #8595a8;
+  font-size: .8rem;
+}
+
+.heroIndex span,
+.sectionLabel span {
+  color: #62d5ff;
+}
+
+.title {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  font-size: clamp(3.6rem, 8vw, 7.8rem);
+  font-weight: 700;
+  letter-spacing: .035em;
+  line-height: .98;
+  text-shadow: 0 0 2rem rgb(88 184 255 / 16%);
+}
+
+.titleRoman {
+  margin-top: 1rem;
+  color: #9bdfff;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: clamp(.76rem, 1.3vw, 1rem);
+  font-weight: 500;
+  letter-spacing: .36em;
+}
+
+.tagline {
+  margin: 2.1rem 0 0;
+  font-size: clamp(1.5rem, 2.5vw, 2.25rem);
+  font-weight: 600;
+  line-height: 1.6;
+  letter-spacing: .01em;
+}
+
+.tagline span {
+  color: #92dfff;
+  text-shadow: 0 0 1.8rem rgb(105 207 255 / 40%);
+}
+
+.intro {
+  max-width: 31rem;
+  margin: 1.1rem 0 0;
+  color: #c1ccd8;
+  font-size: 1rem;
+  line-height: 1.9;
+  text-wrap: pretty;
+}
+
+.textLink,
+.secondaryLink {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: #c8eaff;
+  font-size: .95rem;
+  text-decoration: underline;
+  text-decoration-color: rgb(142 213 255 / 42%);
+  text-underline-offset: .35rem;
+  transition: color .2s ease, text-decoration-color .2s ease;
+}
+
+.textLink { margin-top: 1.5rem; }
+.textLink:hover,
+.secondaryLink:hover { color: #fff; text-decoration-color: #fff; }
+
+.heroVisual {
+  position: relative;
+  min-width: 0;
+  width: 100%;
+  padding: clamp(1rem, 2.5vw, 2rem);
+  border: 1px solid rgb(157 207 255 / 22%);
+  border-radius: 1.2rem;
+  background: linear-gradient(145deg, rgb(5 15 28 / 56%), rgb(5 8 16 / 28%));
+  box-shadow: 0 1.5rem 6rem rgb(0 0 0 / 24%), inset 0 1px rgb(255 255 255 / 4%);
+  backdrop-filter: blur(8px);
+}
+
+.visualMeta,
+.visualFoot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  color: #8eaac3;
+  font-size: .68rem;
+}
+
+.visualMeta { flex-wrap: wrap; }
+
+.visualFoot {
+  justify-content: flex-start;
+  gap: .65rem;
+  color: #bad4e8;
+}
+
+.liveDot { width: .36rem; height: .36rem; }
+
+.mapFigure { margin: 1.1rem 0 .5rem; }
+
+.mapCaption {
+  color: #8ea2b7;
+  font-size: .8rem;
+  line-height: 1.6;
+}
+
+.scrollHint {
+  position: absolute;
+  z-index: 1;
+  bottom: 1.75rem;
+  left: 50%;
+  color: #8091a4;
+  font-size: .68rem;
+  transform: translateX(-50%);
+}
+
+.conceptSection,
+.mapSection,
+.stepsSection,
+.projectSection {
+  width: min(100% - 2.5rem, 1120px);
+  margin: 0 auto;
+}
+
+.conceptSection {
+  display: grid;
+  grid-template-columns: 1fr .88fr;
+  gap: clamp(2rem, 8vw, 8rem);
+  align-items: end;
+  padding: clamp(5.5rem, 11vw, 10rem) 0;
+  border-top: 1px solid rgb(255 255 255 / 11%);
+}
+
+.sectionLabel {
+  margin: 0 0 1.4rem;
+  color: #7bd8ff;
+  font-size: .76rem;
+  font-weight: 600;
+}
+
+.sectionHead h2,
+.mapSectionHead h2,
+.projectSection h2 {
+  margin: 0;
+  font-size: clamp(2rem, 4.2vw, 4rem);
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: -.025em;
+  text-wrap: balance;
+}
+
+.conceptCopy p,
+.mapSectionHead > p,
+.projectBody {
+  margin: 0;
+  color: #c2ccd7;
+  font-size: 1.05rem;
+  line-height: 2;
+  text-wrap: pretty;
+}
+
+.mapSection {
+  padding: clamp(4rem, 8vw, 7rem) 0;
+  border-top: 1px solid rgb(255 255 255 / 11%);
+}
+
+.mapSectionHead {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 2.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.mapSectionHead > p { max-width: 27rem; }
+
+.mapCard {
+  padding: clamp(1rem, 3vw, 2rem);
+  border: 1px solid rgb(157 207 255 / 18%);
+  border-radius: 1rem;
+  background: linear-gradient(130deg, rgb(7 18 32 / 75%), rgb(5 9 18 / 52%));
+  box-shadow: inset 0 1px rgb(255 255 255 / 3%);
+  backdrop-filter: blur(8px);
+}
+
+.worldLegend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .6rem;
+  margin-top: 1.4rem;
+}
+
+.worldLegend span {
+  padding: .45rem .75rem;
+  border: 1px solid rgb(154 201 236 / 20%);
+  border-radius: 999px;
+  color: #d5e4ef;
+  font-size: .9rem;
+}
+
+.stepsSection {
+  padding: clamp(4.5rem, 9vw, 8rem) 0;
+  border-top: 1px solid rgb(255 255 255 / 11%);
+}
+
+.stepsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 3rem;
+}
+
+.step {
+  min-height: 15rem;
+  padding: 1.5rem;
+  border-top: 1px solid rgb(146 208 255 / 40%);
+  background: linear-gradient(180deg, rgb(15 29 45 / 50%), transparent 80%);
+}
+
+.stepTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #8babc2;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: .78rem;
+  letter-spacing: .1em;
+}
+
+.stepStar {
+  width: .6rem;
+  height: .6rem;
+  border-radius: 50%;
+  background: #c6efff;
+  box-shadow: 0 0 1rem .18rem rgb(116 204 255 / 72%);
+  animation: star-breathe 3.6s ease-in-out infinite;
+  animation-delay: var(--step-delay);
+}
+
+.step h3 { margin: 2.8rem 0 .8rem; font-size: 1.35rem; font-weight: 600; }
+.step p { margin: 0; color: #aebdca; font-size: 1rem; line-height: 1.85; }
+
+.awardSection {
+  display: grid;
+  width: min(100% - 2.5rem, 1120px);
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 1.5rem;
+  margin: 1rem auto clamp(5rem, 10vw, 9rem);
+  padding: clamp(1.5rem, 4vw, 3rem);
+  border: 1px solid rgb(158 210 255 / 22%);
+  border-radius: 1rem;
+  background: linear-gradient(115deg, rgb(13 28 44 / 82%), rgb(5 11 19 / 60%));
+  backdrop-filter: blur(8px);
+}
+
+.awardGlyph {
+  display: grid;
+  width: 3.6rem;
+  aspect-ratio: 1;
+  place-items: center;
+  border: 1px solid rgb(144 214 255 / 35%);
+  border-radius: 50%;
+  color: #c5ebff;
+  font-size: 1.8rem;
+  text-shadow: 0 0 1rem #8ad6ff;
+}
+
+.awardCopy .sectionLabel { margin-bottom: .4rem; }
+.awardCopy h2 { margin: 0; font-size: clamp(1.55rem, 3vw, 2.3rem); font-weight: 600; }
+.awardCopy > p:last-child { margin: .45rem 0 0; color: #b4c4d3; font-size: .95rem; }
+.awardYear { color: #8ca5bb; font-size: .82rem; }
+
+.projectSection {
+  padding: clamp(4rem, 9vw, 8rem) 0;
+  border-top: 1px solid rgb(255 255 255 / 11%);
+  text-align: center;
+}
+
+.projectSection h2 { max-width: 850px; margin: 0 auto; }
+.projectBody { max-width: 42rem; margin: 1rem auto 0; }
+
+.projectActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem 2rem;
+  margin-top: 2rem;
+}
+
+.primaryLink {
+  display: inline-flex;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  padding: .75rem 1.25rem;
+  border: 1px solid rgb(156 220 255 / 65%);
+  border-radius: 999px;
+  background: rgb(98 185 242 / 12%);
+  color: #e8f7ff;
+  font-size: .95rem;
+  transition: background .2s ease, border-color .2s ease;
+}
+
+.primaryLink:hover { border-color: #dff5ff; background: rgb(98 185 242 / 23%); }
+
+@keyframes star-breathe {
+  0%, 100% { opacity: .55; transform: scale(.82); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+
+@media (max-width: 900px) {
+  .hero { min-height: auto; padding-top: 8rem; padding-bottom: 6rem; }
+  .heroInner { grid-template-columns: minmax(0, 1fr); gap: 3rem; }
+  .heroCopy { max-width: 720px; }
+  .heroVisual { width: min(100%, 720px); margin-left: auto; }
+  .heroIndex { margin-top: 2.5rem; }
+  .scrollHint { display: none; }
+}
+
+@media (min-width: 901px) and (max-width: 1100px) {
+  .heroInner { grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); gap: 1.5rem; }
+  .tagline { font-size: clamp(1.35rem, 2.3vw, 1.75rem); }
+}
+
+@media (max-width: 680px) {
+  .hero { padding: 6.5rem 1.1rem 4rem; }
+  .heroInner { gap: 2rem; }
+  .heroIndex { margin-top: 2rem; }
+  .tagline { margin-top: 1.5rem; }
+  .heroVisual { padding: .95rem; border-radius: .85rem; }
+  .visualMeta { font-size: .57rem; }
+  .conceptSection,
+  .mapSection,
+  .stepsSection,
+  .projectSection { width: min(100% - 2.2rem, 1120px); }
+  .conceptSection { grid-template-columns: 1fr; gap: 1.5rem; padding: 5rem 0; }
+  .mapSectionHead { display: block; }
+  .mapSectionHead > p { margin-top: 1rem; }
+  .mapCard { padding: .85rem; }
+  .worldLegend { gap: .45rem; margin-top: .9rem; }
+  .worldLegend span { padding: .35rem .6rem; font-size: .85rem; }
+  .stepsGrid { grid-template-columns: 1fr; gap: .35rem; margin-top: 2rem; }
+  .step { min-height: 0; padding: 1.3rem 1rem; }
+  .step h3 { margin: 1.7rem 0 .5rem; }
+  .awardSection { width: calc(100% - 2.2rem); grid-template-columns: auto 1fr; gap: 1rem; margin-bottom: 5rem; padding: 1.2rem; }
+  .awardGlyph { width: 2.8rem; }
+  .awardYear { grid-column: 2; margin: -.5rem 0 0; }
+  .projectSection { padding: 5rem 0; }
+  .projectActions { align-items: center; flex-direction: column; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stepStar { animation: none; }
+}
+
