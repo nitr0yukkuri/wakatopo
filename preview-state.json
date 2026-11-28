@@ -1,8 +1,8 @@
 {
   "version": 1,
-  "sourceRevision": "4575f74c171922779f5466e7239d00f98caaa4c9",
-  "weather": "Clouds",
-  "visualWeather": "Clouds",
+  "sourceRevision": "2f1511db9a8a9f46ebc12c9b76363cbb9a9da49a",
+  "weather": "Clear",
+  "visualWeather": "Morning",
   "season": "autumn",
   "seasonEvent": "none"
 }
