@@ -17,7 +17,7 @@ export default function WorksList({ works }: { works: Work[] }) {
     const lang = searchParams.get('lang') === 'en' ? 'en' : 'ja';
     const navigateToWork = useWorkNavigation(lang);
 
-    const workPaths: Record<string, string> = { '01': '/github-planet', '02': '/otenkigurashi', '03': '/coldkeep', '04': '/recaptcha-game', '05': '/denshouo' };
+    const workPaths: Record<string, string> = { '01': '/github-planet', '02': '/otenkigurashi', '03': '/coldkeep', '04': '/recaptcha-game', '05': '/denshouo', '06': '/hoshirube' };
 
     return (
         <>

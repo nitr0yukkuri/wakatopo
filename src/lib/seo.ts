@@ -48,6 +48,11 @@ export const seoPages = {
         title: { ja: 'でんしょうお | 小さな幸せを魚に乗せるSNS — WAKATO', en: 'Denshouo | Sharing Small Moments of Happiness — WAKATO' },
         description: { ja: '小さな幸せを魚に乗せて流すSNS「でんしょうお」。React・Supabaseによる作品のコンセプト、光と影を使った水中表現、コミュニケーションの設計を紹介します。', en: 'Denshouo is a gentle social app where fish carry small moments of happiness. Explore the React and Supabase project, its underwater atmosphere and approach to communication.' },
     },
+    hoshirube: {
+        path: '/hoshirube', name: { ja: 'ほしるべ', en: 'Hoshirube' },
+        title: { ja: 'ほしるべ | 本からまだ知らない「好き」に出会う星座型読書探索 — WAKATO', en: 'Hoshirube | Discover New Interests Through Books — WAKATO' },
+        description: { ja: '本を通して、まだ知らない「好き」に出会う読書探索プロジェクト「ほしるべ」。興味からジャンルの星座をたどり、新しい世界や本を見つける体験を紹介します。', en: 'Hoshirube is a book discovery project that helps readers find new interests. Explore how connected themes form constellations and lead to new worlds and books.' },
+    },
 } as const;
 export type SeoPage = keyof typeof seoPages;
 

@@ -55,6 +55,7 @@ const copyByLang = {
       { id: '03', title: 'ColdKeep', cat: 'AI / IOT', desc: '水筒を振る音で残量の3段階推定を目指す、実験的なAIプロトタイプ。' },
       { id: '04', title: 'reCAPTCHA Game', cat: 'REACT / GO / WEBSOCKET', desc: '60秒以内に何回「人間」を証明できる？対戦型認証ゲーム。' },
       { id: '05', title: 'でんしょうお', cat: 'REACT / SUPABASE', desc: '小さな幸せを魚に乗せて流す、癒しと分かち合いのSNS。' },
+      { id: '06', title: 'ほしるべ', cat: 'BOOK DISCOVERY / CONSTELLATION MAP', desc: '本と興味から、まだ知らないジャンルへつながる星座型の読書探索プロジェクト。' },
     ],
   },
   en: {
@@ -90,6 +91,7 @@ const copyByLang = {
       { id: '03', title: 'ColdKeep', cat: 'AI / IOT', desc: 'An experimental AI prototype exploring three-level bottle fill estimation from smartphone recordings of shaking sounds.' },
       { id: '04', title: 'reCAPTCHA Game', cat: 'REACT / GO / WEBSOCKET', desc: 'How many times can you prove you are human in 60 seconds? A competitive authentication game.' },
       { id: '05', title: 'Denshouo', cat: 'REACT / SUPABASE', desc: 'A gentle SNS where small happiness is sent away on fish, made for healing and sharing.' },
+      { id: '06', title: 'Hoshirube', cat: 'BOOK DISCOVERY / CONSTELLATION MAP', desc: 'A constellation-based book discovery experience connecting readers’ interests with new fields.' },
     ],
   },
 } as const;
